@@ -1,29 +1,28 @@
 @echo off
-chcp 65001 >nul
+chcp 65001 >nul 2>&1
 
-echo ==================================
-echo 👤 İlk Admin Kullanıcısı Oluştur
-echo ==================================
+echo ==========================================
+echo Ilk Admin Kullanicisi Olustur
+echo ==========================================
 echo.
 
-set /p username="Kullanıcı adı (örn: admin): "
-set /p email="Email (örn: admin@okul.com): "
-set /p password="Şifre: "
-set /p fullname="Tam adınız (örn: Ahmet Yılmaz): "
+set /p username="Kullanici adi (ornek: admin): "
+set /p email="Email (ornek: admin@okul.com): "
+set /p password="Sifre: "
+set /p fullname="Tam adiniz (ornek: Ahmet Yilmaz): "
 
 echo.
-echo Kullanıcı oluşturuluyor...
+echo Kullanici olusturuluyor...
+echo.
 
-curl -X POST http://localhost:5000/api/auth/register ^
-  -H "Content-Type: application/json" ^
-  -d "{\"username\": \"%username%\", \"email\": \"%email%\", \"password\": \"%password%\", \"full_name\": \"%fullname%\", \"role\": \"admin\"}"
+curl -X POST http://localhost:5000/api/auth/register -H "Content-Type: application/json" -d "{\"username\": \"%username%\", \"email\": \"%email%\", \"password\": \"%password%\", \"full_name\": \"%fullname%\", \"role\": \"admin\"}"
 
 echo.
 echo.
-echo ==================================
-echo ✅ Kullanıcı oluşturuldu!
-echo ==================================
+echo ==========================================
+echo Kullanici olusturuldu!
+echo ==========================================
 echo.
-echo Şimdi http://localhost:3000 adresinden giriş yapabilirsiniz.
+echo Simdi http://localhost:3000 adresinden giris yapabilirsiniz.
 echo.
 pause

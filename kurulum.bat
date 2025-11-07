@@ -1,58 +1,62 @@
 @echo off
-chcp 65001 >nul
+chcp 65001 >nul 2>&1
 
-echo ==================================
-echo 🏫 Okul SMS Sistemi - Kurulum
-echo ==================================
+echo ==========================================
+echo Okul SMS Sistemi - Kurulum
+echo ==========================================
 echo.
 
-REM Docker kurulu mu kontrol et
+REM Docker kontrolu
 docker --version >nul 2>&1
 if %errorlevel% neq 0 (
-    echo ❌ Docker kurulu değil!
-    echo Docker'ı kurmak için: https://docs.docker.com/get-docker/
+    echo HATA: Docker kurulu degil!
+    echo.
+    echo Docker'i indirmek icin:
+    echo https://www.docker.com/products/docker-desktop/
+    echo.
     pause
     exit /b 1
 )
 
 docker-compose --version >nul 2>&1
 if %errorlevel% neq 0 (
-    echo ❌ Docker Compose kurulu değil!
+    echo HATA: Docker Compose kurulu degil!
     pause
     exit /b 1
 )
 
-echo ✅ Docker ve Docker Compose kurulu
+echo OK: Docker ve Docker Compose kurulu
 echo.
 
-REM Eski containerları durdur
-echo 📦 Eski container'lar durduruluyor...
-docker-compose down
+REM Eski container'lari durdur
+echo Eski container'lar durduruluyor...
+docker-compose down 2>nul
 
-REM Container'ları başlat
-echo 🚀 Sistem başlatılıyor...
+REM Container'lari baslat
+echo.
+echo Sistem baslatiliyor...
 docker-compose up -d
 
 echo.
-echo ⏳ Veritabanının hazır olması bekleniyor...
-timeout /t 10 /nobreak >nul
+echo Veritabaninin hazir olmasi bekleniyor...
+timeout /t 15 /nobreak >nul
 
 echo.
-echo ==================================
-echo ✅ Kurulum tamamlandı!
-echo ==================================
+echo ==========================================
+echo KURULUM TAMAMLANDI!
+echo ==========================================
 echo.
-echo 🌐 Frontend: http://localhost:3000
-echo 🔌 Backend API: http://localhost:5000
-echo 🗄️  Veritabanı: localhost:5432
+echo Frontend: http://localhost:3000
+echo Backend API: http://localhost:5000
+echo Veritabani: localhost:5432
 echo.
-echo 📋 İlk kullanıcı oluşturmak için:
+echo Ilk kullanici olusturmak icin:
 echo    ilk-kullanici-olustur.bat
 echo.
-echo 📊 Logları görmek için:
+echo Loglari gormek icin:
 echo    docker-compose logs -f
 echo.
-echo ⏹️  Durdurmak için:
+echo Durdurmak icin:
 echo    docker-compose down
 echo.
 pause
