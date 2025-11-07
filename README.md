@@ -1,6 +1,12 @@
 # 🏫 Okul Toplu SMS/WhatsApp Sistemi
 
-Okullar için geliştirilmiş kapsamlı bir toplu mesajlaşma sistemi. Velilere, öğretmenlere ve personele SMS ve WhatsApp üzerinden toplu mesaj gönderebilirsiniz.
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Version](https://img.shields.io/badge/version-1.0.0-blue.svg)](https://github.com/fikirkasi-arch/BST)
+[![Node.js](https://img.shields.io/badge/node-%3E%3D18-green.svg)](https://nodejs.org/)
+[![PostgreSQL](https://img.shields.io/badge/postgresql-14%2B-blue.svg)](https://www.postgresql.org/)
+[![Docker](https://img.shields.io/badge/docker-ready-blue.svg)](https://www.docker.com/)
+
+Okullar için geliştirilmiş, **production-ready**, **güvenli** ve **ölçeklenebilir** toplu mesajlaşma sistemi. Velilere, öğretmenlere ve personele SMS, WhatsApp ve Email üzerinden toplu mesaj gönderebilirsiniz.
 
 ## ✨ Özellikler
 
@@ -252,24 +258,52 @@ BST/
 
 ## 🔒 Güvenlik
 
-- JWT token ile kimlik doğrulama
-- Bcrypt ile şifre hashleme
-- Rol bazlı yetkilendirme
-- SQL injection koruması
-- CORS yapılandırması
-- Rate limiting
+Bu sistem **production-ready** güvenlik özellikleriyle donatılmıştır:
+
+- ✅ **JWT Authentication** - Güvenli token tabanlı kimlik doğrulama
+- ✅ **Password Hashing** - Bcrypt ile şifre hashleme
+- ✅ **Role-Based Access Control** - Admin, Manager, Teacher rolleri
+- ✅ **SQL Injection Protection** - Parametreli sorgular
+- ✅ **CORS Configuration** - Origin kontrolü
+- ✅ **Rate Limiting** - DDoS ve brute-force koruması
+- ✅ **Helmet.js** - HTTP header güvenliği
+- ✅ **Input Validation** - Express-validator ile doğrulama
+- ✅ **Compression** - Gzip sıkıştırma
+- ✅ **Security Headers** - X-Frame-Options, CSP, vb.
+- ✅ **HTTPS/SSL Ready** - Production için SSL desteği
 
 ## 📝 Lisans
 
-Bu proje MIT lisansı altında lisanslanmıştır.
+Bu proje MIT lisansı altında lisanslanmıştır. Detaylar için [LICENSE](LICENSE) dosyasına bakınız.
+
+### Kullanım Hakları
+
+- ✅ Bireysel okullar için **ücretsiz** kullanım
+- ✅ Değiştirme ve dağıtma hakkı
+- ✅ Özelleştirme ve geliştirme serbestisi
+- ⚠️ Ticari kullanım için [LICENSE](LICENSE) dosyasını okuyun
+- ❌ Yazılımı kendinizmiş gibi satmak yasaktır
+
+Copyright © 2024 Okul SMS Sistemi
 
 ## 🤝 Katkıda Bulunma
 
-1. Fork edin
+Katkılarınızı bekliyoruz! Detaylı bilgi için [CONTRIBUTING.md](CONTRIBUTING.md) dosyasına bakınız.
+
+**Hızlı Başlangıç:**
+
+1. Repository'yi fork edin
 2. Feature branch oluşturun (`git checkout -b feature/amazing-feature`)
-3. Commit edin (`git commit -m 'feat: Add amazing feature'`)
-4. Push edin (`git push origin feature/amazing-feature`)
+3. Değişikliklerinizi commit edin (`git commit -m 'feat: Add amazing feature'`)
+4. Branch'inizi push edin (`git push origin feature/amazing-feature`)
 5. Pull Request açın
+
+**Commit Mesaj Formatı:**
+- `feat:` - Yeni özellik
+- `fix:` - Hata düzeltmesi
+- `docs:` - Dokümantasyon
+- `refactor:` - Kod iyileştirmesi
+- `test:` - Test ekleme
 
 ## 📧 İletişim
 
@@ -293,4 +327,44 @@ Sorularınız için issue açabilirsiniz.
 
 ---
 
-**Not:** Bu sistem eğitim kurumları için geliştirilmiştir. Ticari kullanım için lütfen lisans koşullarını inceleyin.
+## 📚 Dokümantasyon
+
+- **[SIFIRDAN-KURULUM-REHBERI.md](SIFIRDAN-KURULUM-REHBERI.md)** - Yeni başlayanlar için detaylı rehber
+- **[KOLAY-KURULUM-REHBERI.md](KOLAY-KURULUM-REHBERI.md)** - Hızlı kurulum kılavuzu
+- **[YENI-OZELLIKLER-REHBERI.md](YENI-OZELLIKLER-REHBERI.md)** - Yeni özelliklerin kullanımı
+- **[CONTRIBUTING.md](CONTRIBUTING.md)** - Katkıda bulunma rehberi
+- **[CHANGELOG.md](CHANGELOG.md)** - Versiyon geçmişi
+- **[LICENSE](LICENSE)** - Lisans bilgileri
+
+## 🌟 Özellikler Özeti
+
+| Özellik | Durum |
+|---------|-------|
+| Toplu SMS | ✅ |
+| Toplu WhatsApp | ✅ |
+| Toplu Email | ✅ |
+| Excel Import | ✅ |
+| Mesaj Şablonları | ✅ |
+| Raporlama ve Grafikler | ✅ |
+| Zamanlanmış Mesajlar | ✅ |
+| Rol Tabanlı Yetkilendirme | ✅ |
+| Docker Desteği | ✅ |
+| Production Ready | ✅ |
+| E-Okul API | 🔄 Planlı |
+| Mobil Uygulama | 🔄 Planlı |
+| Multi-tenant | 🔄 Planlı |
+
+## ⚡ Performans
+
+- **Hızlı**: Optimize edilmiş veritabanı sorguları
+- **Ölçeklenebilir**: Docker Swarm/Kubernetes ile horizontal scaling
+- **Güvenli**: Production-ready güvenlik önlemleri
+- **Kararlı**: Error handling ve logging
+
+## 🙏 Teşekkürler
+
+Bu projeye katkıda bulunan herkese teşekkürler!
+
+---
+
+**Not:** Bu sistem eğitim kurumları için geliştirilmiştir. Production kullanımı için [Production Deployment Guide](KOLAY-KURULUM-REHBERI.md#web-sunucusuna-kurulum) bölümünü okuyun.
