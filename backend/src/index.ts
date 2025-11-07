@@ -10,6 +10,8 @@ import { errorHandler, notFound } from './middleware/errorHandler';
 import authRoutes from './routes/authRoutes';
 import messageRoutes from './routes/messageRoutes';
 import studentRoutes from './routes/studentRoutes';
+import templateRoutes from './routes/templateRoutes';
+import reportRoutes from './routes/reportRoutes';
 
 // .env dosyasını yükle
 dotenv.config();
@@ -64,6 +66,8 @@ app.get('/health', async (req, res) => {
 app.use('/api/auth', authRoutes);
 app.use('/api/messages', messageRoutes);
 app.use('/api/students', studentRoutes);
+app.use('/api/templates', templateRoutes);
+app.use('/api/reports', reportRoutes);
 
 // 404 handler
 app.use(notFound);

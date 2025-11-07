@@ -220,6 +220,20 @@ CREATE TABLE system_settings (
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
+-- Mesaj Şablonları
+CREATE TABLE message_templates (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    content TEXT NOT NULL,
+    message_type VARCHAR(20) NOT NULL, -- sms, whatsapp, email
+    category VARCHAR(100), -- devamsizlik, toplanti, genel, vb.
+    variables TEXT[], -- kullanılabilir değişkenler: {ad}, {soyad}, vb.
+    is_active BOOLEAN DEFAULT true,
+    created_by INTEGER REFERENCES users(id),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
 -- İndeksler
 CREATE INDEX idx_students_class ON students(class_id);
 CREATE INDEX idx_students_number ON students(student_number);

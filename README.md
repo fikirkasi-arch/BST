@@ -275,15 +275,21 @@ Bu proje MIT lisansı altında lisanslanmıştır.
 
 Sorularınız için issue açabilirsiniz.
 
+## ✅ Yeni Eklenen Özellikler
+
+- [x] **Excel/CSV ile toplu veri içe aktarma** - Öğrenci ve veli bilgilerini toplu olarak yükleyin
+- [x] **Mesaj şablonları yönetimi** - Sık kullanılan mesajlar için şablonlar oluşturun ve yönetin
+- [x] **Detaylı raporlama ve grafik** - İstatistikler, grafikler ve analiz raporları
+- [x] **Email bildirimi desteği** - SMS ve WhatsApp'a ek olarak email gönderimi
+
 ## 🎯 Gelecek Özellikler
 
 - [ ] E-Okul API entegrasyonu
-- [ ] Excel/CSV ile toplu veri içe aktarma
-- [ ] Mesaj şablonları yönetimi
-- [ ] Detaylı raporlama ve grafik
-- [ ] Email bildirimi desteği
 - [ ] Mobil uygulama (React Native)
 - [ ] Multi-tenant desteği (Çoklu okul)
+- [ ] Gelişmiş bildirim zamanlaması
+- [ ] SMS kredi yönetimi ve takip
+- [ ] Çoklu dil desteği
 
 ---
 
