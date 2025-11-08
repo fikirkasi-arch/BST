@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dijital Ürün Tasarım Simülasyonu</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        .container {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 700px;
+            width: 100%;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        h1 {
+            color: #667eea;
+            text-align: center;
+            margin-bottom: 10px;
+        }
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+        }
+        .question {
+            font-size: 1.3em;
+            color: #333;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+        .options {
+            margin: 20px 0;
+        }
+        .option {
+            background: linear-gradient(135deg, #667eea15 0%, #764ba215 100%);
+            padding: 15px 20px;
+            margin: 10px 0;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+        .option:hover {
+            transform: translateX(5px);
+            border-color: #667eea;
+        }
+        .option.correct {
+            background: linear-gradient(135deg, #4caf5030 0%, #8bc34a30 100%);
+            border-color: #4caf50;
+        }
+        .option.wrong {
+            background: linear-gradient(135deg, #f4433630 0%, #e9173030 100%);
+            border-color: #f44336;
+        }
+        .score {
+            text-align: center;
+            font-size: 1.5em;
+            color: #764ba2;
+            margin: 20px 0;
+            font-weight: bold;
+        }
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 25px;
+            font-size: 1.1em;
+            cursor: pointer;
+            display: block;
+            margin: 20px auto;
+            transition: all 0.3s ease;
+        }
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+        .back-btn {
+            display: inline-block;
+            background: white;
+            color: #667eea;
+            padding: 10px 20px;
+            border-radius: 20px;
+            text-decoration: none;
+            border: 2px solid #667eea;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="../index.html" class="back-btn">← Ana Sayfaya Dön</a>
+        <h1>Dijital Ürün Tasarım Simülasyonu</h1>
+        <p class="subtitle">5. Sınıf - Ünite 2</p>
+        <div class="score">Puan: <span id="score">0</span></div>
+        <div id="quiz">
+            <div class="question" id="question"></div>
+            <div class="options" id="options"></div>
+        </div>
+        <button class="btn" onclick="nextQuestion()" id="nextBtn" style="display:none;">Sonraki Soru →</button>
+        <button class="btn" onclick="resetQuiz()" id="resetBtn" style="display:none;">🔄 Yeniden Başlat</button>
+    </div>
+    <script src="5sinif-unite2-proje-simu.js"></script>
+</body>
+</html>

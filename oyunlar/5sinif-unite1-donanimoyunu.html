@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bilgisayar Bileşenleri Eşleştirme - 5. Sınıf Ünite 1</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        .game-container {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 800px;
+            width: 100%;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        h1 {
+            color: #667eea;
+            text-align: center;
+            margin-bottom: 10px;
+            font-size: 2em;
+        }
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+        }
+        .score {
+            text-align: center;
+            font-size: 1.5em;
+            color: #764ba2;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+        .game-board {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+        .column h3 {
+            text-align: center;
+            color: #667eea;
+            margin-bottom: 15px;
+        }
+        .item {
+            background: linear-gradient(135deg, #667eea15 0%, #764ba215 100%);
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 3px solid transparent;
+            font-size: 1.1em;
+        }
+        .item:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        .item.selected {
+            border-color: #667eea;
+            background: linear-gradient(135deg, #667eea30 0%, #764ba230 100%);
+        }
+        .item.matched {
+            background: linear-gradient(135deg, #4caf5030 0%, #8bc34a30 100%);
+            border-color: #4caf50;
+            pointer-events: none;
+        }
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 25px;
+            font-size: 1.1em;
+            cursor: pointer;
+            display: block;
+            margin: 20px auto;
+            transition: all 0.3s ease;
+        }
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+        .message {
+            text-align: center;
+            font-size: 1.2em;
+            color: #4caf50;
+            margin: 20px 0;
+            font-weight: bold;
+        }
+        .back-btn {
+            display: inline-block;
+            background: white;
+            color: #667eea;
+            padding: 10px 20px;
+            border-radius: 20px;
+            text-decoration: none;
+            border: 2px solid #667eea;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <a href="../index.html" class="back-btn">← Ana Sayfaya Dön</a>
+        <h1>🖥️ Bilgisayar Bileşenleri Eşleştirme</h1>
+        <p class="subtitle">5. Sınıf - Ünite 1: Bilişim Temelleri</p>
+        <div class="score">Puan: <span id="score">0</span> | Doğru: <span id="correct">0</span>/6</div>
+
+        <div class="game-board">
+            <div class="column">
+                <h3>Bileşenler</h3>
+                <div class="item" data-id="cpu">İşlemci (CPU)</div>
+                <div class="item" data-id="ram">Bellek (RAM)</div>
+                <div class="item" data-id="hdd">Sabit Disk (HDD/SSD)</div>
+                <div class="item" data-id="gpu">Ekran Kartı (GPU)</div>
+                <div class="item" data-id="motherboard">Anakart</div>
+                <div class="item" data-id="power">Güç Kaynağı</div>
+            </div>
+            <div class="column">
+                <h3>Görevleri</h3>
+                <div class="item" data-match="cpu">Tüm hesaplamaları yapar, bilgisayarın beynidir</div>
+                <div class="item" data-match="ram">Geçici hafıza, programların çalışma alanı</div>
+                <div class="item" data-match="hdd">Kalıcı depolama, dosyalar burada saklanır</div>
+                <div class="item" data-match="gpu">Görüntü işleme, oyunlar için önemli</div>
+                <div class="item" data-match="motherboard">Tüm parçaları birbirine bağlar</div>
+                <div class="item" data-match="power">Bilgisayarın elektrik ihtiyacını karşılar</div>
+            </div>
+        </div>
+
+        <div id="message" class="message"></div>
+        <button class="btn" onclick="resetGame()">🔄 Yeniden Başlat</button>
+    </div>
+
+    <script>
+        let selectedItem = null;
+        let score = 0;
+        let correctMatches = 0;
+
+        const items = document.querySelectorAll('.item');
+        items.forEach(item => {
+            item.addEventListener('click', () => selectItem(item));
+        });
+
+        function selectItem(item) {
+            if (item.classList.contains('matched')) return;
+
+            if (selectedItem === null) {
+                selectedItem = item;
+                item.classList.add('selected');
+            } else {
+                const id1 = selectedItem.dataset.id;
+                const match1 = selectedItem.dataset.match;
+                const id2 = item.dataset.id;
+                const match2 = item.dataset.match;
+
+                if ((id1 && match2 && id1 === match2) || (id2 && match1 && id2 === match1)) {
+                    // Doğru eşleştirme
+                    selectedItem.classList.remove('selected');
+                    selectedItem.classList.add('matched');
+                    item.classList.add('matched');
+                    score += 10;
+                    correctMatches++;
+                    updateScore();
+                    showMessage('✅ Doğru! +10 puan', 'green');
+
+                    if (correctMatches === 6) {
+                        setTimeout(() => {
+                            showMessage('🎉 Tebrikler! Tüm eşleştirmeleri doğru yaptınız!', 'green');
+                        }, 500);
+                    }
+                } else {
+                    // Yanlış eşleştirme
+                    showMessage('❌ Yanlış eşleştirme, tekrar deneyin!', 'red');
+                    selectedItem.classList.remove('selected');
+                }
+
+                selectedItem = null;
+            }
+        }
+
+        function updateScore() {
+            document.getElementById('score').textContent = score;
+            document.getElementById('correct').textContent = correctMatches;
+        }
+
+        function showMessage(msg, color) {
+            const messageDiv = document.getElementById('message');
+            messageDiv.textContent = msg;
+            messageDiv.style.color = color;
+            setTimeout(() => {
+                messageDiv.textContent = '';
+            }, 2000);
+        }
+
+        function resetGame() {
+            items.forEach(item => {
+                item.classList.remove('selected', 'matched');
+            });
+            selectedItem = null;
+            score = 0;
+            correctMatches = 0;
+            updateScore();
+            document.getElementById('message').textContent = '';
+        }
+    </script>
+</body>
+</html>
