@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>5. Sınıf Ünite 2 - Dijital Ürün Tasarımı Quiz</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #fccb90 0%, #d57eeb 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .quiz-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+        }
+        h1 { text-align: center; color: #d57eeb; margin-bottom: 10px; font-size: 2.5em; }
+        .subtitle { text-align: center; color: #666; margin-bottom: 30px; font-size: 1.2em; }
+        .progress-bar {
+            width: 100%;
+            height: 30px;
+            background: #e0e0e0;
+            border-radius: 15px;
+            overflow: hidden;
+            margin-bottom: 30px;
+        }
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #fccb90 0%, #d57eeb 100%);
+            width: 0%;
+            transition: width 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+        .question-number { color: #d57eeb; font-weight: bold; font-size: 1.2em; margin-bottom: 10px; }
+        .question-text { font-size: 1.3em; color: #333; margin-bottom: 20px; line-height: 1.6; }
+        .options { display: flex; flex-direction: column; gap: 15px; }
+        .option {
+            padding: 20px;
+            border: 3px solid #e0e0e0;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1.1em;
+        }
+        .option:hover { border-color: #d57eeb; background: #fff5f8; transform: translateX(10px); }
+        .option.selected { border-color: #d57eeb; background: linear-gradient(135deg, #fccb90 0%, #d57eeb 100%); color: white; }
+        .option.correct { border-color: #4caf50; background: #4caf50; color: white; }
+        .option.incorrect { border-color: #f44336; background: #f44336; color: white; }
+        .buttons { display: flex; gap: 20px; justify-content: center; margin-top: 30px; }
+        .btn {
+            padding: 15px 40px;
+            font-size: 1.1em;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+        .btn-primary { background: linear-gradient(135deg, #fccb90 0%, #d57eeb 100%); color: white; }
+        .btn-primary:hover { transform: translateY(-3px); box-shadow: 0 5px 15px rgba(213, 126, 235, 0.4); }
+        .btn-secondary { background: #e0e0e0; color: #333; }
+        .btn-secondary:hover { background: #d0d0d0; }
+        .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+        .result-container { text-align: center; display: none; }
+        .score-display { font-size: 5em; color: #d57eeb; font-weight: bold; margin: 30px 0; }
+        .emoji-celebration { font-size: 4em; margin: 20px 0; }
+        .score-details { background: #fff5f8; padding: 30px; border-radius: 15px; margin-bottom: 30px; }
+        .score-item { font-size: 1.2em; margin: 10px 0; color: #555; }
+    </style>
+</head>
+<body>
+    <div class="quiz-container">
+        <h1>🎨 Dijital Ürün Tasarımı Quiz</h1>
+        <p class="subtitle">5. Sınıf - Ünite 2 | 10 Soru</p>
+        <div class="progress-bar"><div class="progress-fill" id="progressBar">0/10</div></div>
+        <div id="quizContent">
+            <div class="question-container">
+                <div class="question-number" id="questionNumber">Soru 1/10</div>
+                <div class="question-text" id="questionText"></div>
+                <div class="options" id="optionsContainer"></div>
+            </div>
+            <div class="buttons">
+                <button class="btn btn-secondary" id="prevBtn" onclick="previousQuestion()" disabled>⬅️ Önceki</button>
+                <button class="btn btn-primary" id="nextBtn" onclick="nextQuestion()" disabled>Sonraki ➡️</button>
+                <button class="btn btn-primary" id="finishBtn" onclick="finishQuiz()" style="display:none;">✅ Bitir</button>
+            </div>
+        </div>
+        <div class="result-container" id="resultContainer">
+            <div class="emoji-celebration" id="celebrationEmoji">🎉</div>
+            <div class="score-display" id="scoreDisplay">0/10</div>
+            <div class="score-details">
+                <div class="score-item">✅ Doğru: <strong id="correctCount">0</strong></div>
+                <div class="score-item">❌ Yanlış: <strong id="incorrectCount">0</strong></div>
+                <div class="score-item">📊 Başarı: <strong id="successRate">0%</strong></div>
+            </div>
+            <button class="btn btn-primary" onclick="restartQuiz()">🔄 Tekrar Dene</button>
+            <br><a href="index.html" style="display: inline-block; margin-top: 20px; color: #d57eeb; text-decoration: none; font-size: 1.1em;">⬅️ Ana Sayfaya Dön</a>
+        </div>
+    </div>
+    <script>
+        const questions = [
+            { question: "Microsoft Word hangi tür belgeler hazırlamak için kullanılır?", options: ["Resim", "Metin belgeleri", "Video", "Müzik"], correct: 1 },
+            { question: "Word'de yazı biçimlendirmek için aşağıdakilerden hangisi YAPILMAZ?", options: ["Yazı tipi değiştirme", "Yazı boyutu ayarlama", "Yazı rengini değiştirme", "Video çekme"], correct: 3 },
+            { question: "Paint programında serbest çizim yapmak için hangi araç kullanılır?", options: ["Dolgu", "Fırça", "Şekiller", "Metin"], correct: 1 },
+            { question: "Alanları renklendirmek için Paint'te hangi araç kullanılır?", options: ["Fırça", "Dolgu", "Kalem", "Silgi"], correct: 1 },
+            { question: "PowerPoint ile ne yapılır?", options: ["Müzik dinleme", "Slayt gösterisi hazırlama", "Oyun oynama", "İnternet gezme"], correct: 1 },
+            { question: "İyi bir PowerPoint sunumunun özelliği hangisidir?", options: ["Çok fazla yazı", "Küçük yazılar", "Sade ve görsel ağırlıklı", "Renklerle abartı"], correct: 2 },
+            { question: "Word'de tablo oluşturmanın amacı nedir?", options: ["Oyun oynamak", "Bilgileri düzenli sunmak", "Resim çizmek", "Müzik yapmak"], correct: 1 },
+            { question: "Aşağıdakilerden hangisi Paint'te ÇİZİLEMEZ?", options: ["Daire", "Kare", "Üçgen", "3D Animasyon"], correct: 3 },
+            { question: "PowerPoint'te slaytlar arası geçişlerde ne yapılmalı?", options: ["Abartılı efektler kullan", "Abart\u0131s\u0131z kullan", "Hiç kullanma", "Her slayta farklı renk"], correct: 1 },
+            { question: "Dijital ürün tasarımında en önemli kural nedir?", options: ["Karışık olsun", "Sade ve anlaşılır olsun", "Çok renkli olsun", "Yazı çok olsun"], correct: 1 }
+        ];
+        let currentQuestion = 0, userAnswers = [], selectedOption = null;
+        function loadQuestion() {
+            const q = questions[currentQuestion];
+            document.getElementById('questionNumber').textContent = \`Soru \${currentQuestion + 1}/\${questions.length}\`;
+            document.getElementById('questionText').textContent = q.question;
+            const optionsContainer = document.getElementById('optionsContainer');
+            optionsContainer.innerHTML = '';
+            q.options.forEach((option, index) => {
+                const div = document.createElement('div');
+                div.className = 'option';
+                div.textContent = option;
+                div.onclick = () => selectOption(index);
+                if (userAnswers[currentQuestion] === index) { div.classList.add('selected'); selectedOption = index; }
+                optionsContainer.appendChild(div);
+            });
+            updateProgress();
+            updateButtons();
+        }
+        function selectOption(index) {
+            selectedOption = index;
+            userAnswers[currentQuestion] = index;
+            const options = document.querySelectorAll('.option');
+            options.forEach((opt, i) => {
+                opt.classList.remove('selected');
+                if (i === index) opt.classList.add('selected');
+            });
+            updateButtons();
+        }
+        function nextQuestion() { if (currentQuestion < questions.length - 1) { currentQuestion++; selectedOption = null; loadQuestion(); } }
+        function previousQuestion() { if (currentQuestion > 0) { currentQuestion--; selectedOption = userAnswers[currentQuestion] !== undefined ? userAnswers[currentQuestion] : null; loadQuestion(); } }
+        function updateButtons() {
+            document.getElementById('prevBtn').disabled = currentQuestion === 0;
+            document.getElementById('nextBtn').disabled = selectedOption === null;
+            if (currentQuestion === questions.length - 1) {
+                document.getElementById('nextBtn').style.display = 'none';
+                document.getElementById('finishBtn').style.display = 'inline-block';
+                document.getElementById('finishBtn').disabled = userAnswers.filter(a => a !== undefined).length !== questions.length;
+            } else {
+                document.getElementById('nextBtn').style.display = 'inline-block';
+                document.getElementById('finishBtn').style.display = 'none';
+            }
+        }
+        function updateProgress() {
+            const answered = userAnswers.filter(a => a !== undefined).length;
+            const percentage = (answered / questions.length) * 100;
+            document.getElementById('progressBar').style.width = percentage + '%';
+            document.getElementById('progressBar').textContent = \`\${answered}/\${questions.length}\`;
+        }
+        function finishQuiz() {
+            let correct = 0;
+            questions.forEach((q, index) => { if (userAnswers[index] === q.correct) correct++; });
+            const percentage = Math.round((correct / questions.length) * 100);
+            document.getElementById('quizContent').style.display = 'none';
+            document.getElementById('resultContainer').style.display = 'block';
+            document.getElementById('scoreDisplay').textContent = \`\${correct}/\${questions.length}\`;
+            document.getElementById('correctCount').textContent = correct;
+            document.getElementById('incorrectCount').textContent = questions.length - correct;
+            document.getElementById('successRate').textContent = percentage + '%';
+            let emoji = percentage >= 90 ? '🏆' : percentage >= 70 ? '🎉' : percentage >= 50 ? '😊' : '📚';
+            document.getElementById('celebrationEmoji').textContent = emoji;
+        }
+        function restartQuiz() { currentQuestion = 0; userAnswers = []; selectedOption = null; document.getElementById('quizContent').style.display = 'block'; document.getElementById('resultContainer').style.display = 'none'; loadQuestion(); }
+        loadQuestion();
+    </script>
+</body>
+</html>
