@@ -481,21 +481,21 @@
                 <p style="margin-bottom: 20px;">Derslerinizi hazırlamak için ihtiyacınız olan her şey</p>
 
                 <div class="tool-list">
-                    <div class="tool-item">
+                        <div class="tool-item" onclick="window.open('ogretmen-yillik-plan.html', '_blank')" style="cursor: pointer;">
                         <strong>📋 Yıllık Plan</strong>
-                        <p>78 haftalık ders planı</p>
+                        <p>38 haftalık detaylı ders planı</p>
                     </div>
-                    <div class="tool-item">
+                    <div class="tool-item" onclick="window.open('ogretmen-kazanimlar.html', '_blank')" style="cursor: pointer;">
                         <strong>📝 Kazanım Listesi</strong>
-                        <p>MEB onaylı kazanımlar</p>
+                        <p>Tüm ünite kazanımları</p>
                     </div>
-                    <div class="tool-item">
+                    <div class="tool-item" onclick="window.open('ogretmen-yillik-plan.html', '_blank')" style="cursor: pointer;">
                         <strong>⏱️ Zaman Çizelgesi</strong>
                         <p>Haftalık ders dağılımı</p>
                     </div>
-                    <div class="tool-item">
+                    <div class="tool-item" onclick="window.open('ogretmen-degerlendirme.html', '_blank')" style="cursor: pointer;">
                         <strong>📊 Değerlendirme</strong>
-                        <p>Sınav ve rubrikler</p>
+                        <p>Değerlendirme kriterleri</p>
                     </div>
                 </div>
             </div>
@@ -672,59 +672,62 @@
             <!-- Çalışma Sayfaları -->
             <h3 style="margin: 40px 0 20px 0; color: #667eea;">📝 Yazdırılabilir Çalışma Sayfaları</h3>
             <div class="resource-grid">
-                <div class="resource-card">
+                    <div class="resource-card">
                     <div class="resource-icon">🧩</div>
                     <h3>Kelime Bulma</h3>
                     <p>Bilişim terimleri bulmaca</p>
-                    <button class="download-btn" onclick="alert('Çalışma sayfası hazırlanıyor...')">İndir (PDF)</button>
+                    <a href="calisma-kelime-bulma.html" target="_blank">
+                        <button class="download-btn">📄 Aç ve Yazdır</button>
+                    </a>
                 </div>
 
                 <div class="resource-card">
                     <div class="resource-icon">🎯</div>
                     <h3>Eşleştirme</h3>
                     <p>Terim-tanım eşleştirme</p>
-                    <button class="download-btn" onclick="alert('Çalışma sayfası hazırlanıyor...')">İndir (PDF)</button>
+                    <a href="calisma-eslestime.html" target="_blank">
+                        <button class="download-btn">📄 Aç ve Yazdır</button>
+                    </a>
                 </div>
 
                 <div class="resource-card">
                     <div class="resource-icon">✍️</div>
                     <h3>Boşluk Doldurma</h3>
                     <p>Konular arası quiz</p>
-                    <button class="download-btn" onclick="alert('Çalışma sayfası hazırlanıyor...')">İndir (PDF)</button>
-                </div>
-
-                <div class="resource-card">
-                    <div class="resource-icon">🎨</div>
-                    <h3>Boyama Sayfaları</h3>
-                    <p>Bilgisayar parçaları</p>
-                    <button class="download-btn" onclick="alert('Çalışma sayfası hazırlanıyor...')">İndir (PDF)</button>
+                    <a href="calisma-bosluk-doldurma.html" target="_blank">
+                        <button class="download-btn">📄 Aç ve Yazdır</button>
+                    </a>
                 </div>
 
                 <div class="resource-card">
                     <div class="resource-icon">📊</div>
                     <h3>Akış Diyagramı</h3>
                     <p>Algoritma çalışmaları</p>
-                    <button class="download-btn" onclick="alert('Çalışma sayfası hazırlanıyor...')">İndir (PDF)</button>
+                    <a href="calisma-akim-diyagrami.html" target="_blank">
+                        <button class="download-btn">📄 Aç ve Yazdır</button>
+                    </a>
                 </div>
 
                 <div class="resource-card">
                     <div class="resource-icon">💻</div>
                     <h3>Kod Yazma</h3>
-                    <p>Scratch blok çalışmaları</p>
-                    <button class="download-btn" onclick="alert('Çalışma sayfası hazırlanıyor...')">İndir (PDF)</button>
+                    <p>Scratch ve Python çalışmaları</p>
+                    <a href="calisma-kod-yazma.html" target="_blank">
+                        <button class="download-btn">📄 Aç ve Yazdır</button>
+                    </a>
                 </div>
             </div>
 
             <h3 style="margin-top: 40px; margin-bottom: 20px;">🎮 İnteraktif Aktiviteler</h3>
             <div style="text-align: center;">
-                <button class="activity-btn" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white;" onclick="alert('Kahoot Quiz açılacak!')">
-                    🎯 Kahoot Quiz
+                <button class="activity-btn" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white;" onclick="window.open('kelime-eslestirme.html', '_blank')">
+                    🎯 Kelime Eşleştirme Oyunu
                 </button>
-                <button class="activity-btn" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); color: white;" onclick="alert('Scratch projeleri açılacak!')">
-                    💻 Scratch Projeleri
+                <button class="activity-btn" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); color: white;" onclick="window.open('game-scratch-bloklar.html', '_blank')">
+                    💻 Scratch Doğru-Yanlış Oyunu
                 </button>
-                <button class="activity-btn" style="background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%); color: white;" onclick="alert('Dijital oyunlar açılacak!')">
-                    🎮 Eğitici Oyunlar
+                <button class="activity-btn" style="background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%); color: white;" onclick="window.open('game-5-unite1.html', '_blank')">
+                    🎮 Hafıza Kartı Eşleştirme
                 </button>
             </div>
         </div>
