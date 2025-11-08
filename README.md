@@ -177,6 +177,64 @@ Bu içerikler aşağıdaki modern eğitim yaklaşımlarına dayanır:
 
 ---
 
+## 🎮 İNTERAKTİF AKTİVİTELER VE OYUNLAR
+
+### Hazır Quiz ve Oyunlar
+
+**📊 İnteraktif Quizler:**
+- 🎯 **5. Sınıf Bilişim Temelleri Quiz** (`quiz-5-unite1.html`)
+  - 10 çoktan seçmeli soru
+  - İlerleme çubuğu
+  - Anlık puan hesaplama
+
+- 🛡️ **6. Sınıf Siber Güvenlik Quiz** (`quiz-6-siber-guvenlik.html`)
+  - 5 gerçek hayat senaryosu
+  - Phishing, KVKK, şifre güvenliği
+  - Detaylı açıklamalar ve rozetler
+
+- 🎯 **Kelime Eşleştirme Oyunu** (`kelime-eslestirme.html`)
+  - 10 bilişim terimi-tanım çifti
+  - Zamanlayıcı ve puan sistemi
+  - Eşleştirme animasyonları
+
+### PowerPoint Sunumları
+
+**📊 Tam Yıl Sunumları:**
+- 📘 **5. Sınıf** (`sunumlar/5-SINIF-FULL-SUNUM.pptx`)
+  - 37 slayt, 38 haftalık içerik
+  - Görsel placeholder'lar
+  - Video linkleri (notlarda)
+
+- 📗 **6. Sınıf** (`sunumlar/6-SINIF-FULL-SUNUM.pptx`)
+  - 35 slayt, 40 haftalık içerik
+  - Görsel placeholder'lar
+  - Video linkleri (notlarda)
+
+**Özellikler:**
+- 🎨 Renkli gradient tasarımlar
+- 📷 Görsel placeholder alanları
+- 🎥 Video slaytları
+- 📝 Her slayta görsel önerileri
+- 🔗 YouTube eğitim videoları
+
+### HTML Eğitim Portalı
+
+**`index.html` - Ana Portal:**
+- 🏠 Modern, responsive tasarım
+- 📱 Mobil uyumlu
+- 🎨 Sınıf bazlı renkli temalar
+- 🗂️ Tab-based navigasyon
+
+**Sekmeler:**
+1. Ana Sayfa - Genel bakış
+2. Öğretmen Hazırlık - Araçlar
+3. Dersler - Haftalık planlar
+4. Çalışma Sayfaları - Quiz ve oyunlar
+5. Sunumlar - PowerPoint indirme
+6. Kaynaklar - Ek materyaller
+
+---
+
 ## 🛠️ KULLANILAN ARAÇLAR VE PLATFORMLAR
 
 ### Yazılımlar ve Uygulamalar
