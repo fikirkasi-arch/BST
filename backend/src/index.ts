@@ -54,7 +54,7 @@ app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
 // Ana route
-app.get('/', (req, res) => {
+app.get('/', (_req, res) => {
   res.json({
     success: true,
     message: 'Okul Toplu SMS/WhatsApp Sistemi API',
@@ -68,7 +68,7 @@ app.get('/', (req, res) => {
 });
 
 // Health check
-app.get('/health', async (req, res) => {
+app.get('/health', async (_req, res) => {
   try {
     await pool.query('SELECT 1');
     res.json({
