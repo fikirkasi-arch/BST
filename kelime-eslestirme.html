@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kelime Eşleştirme Oyunu - Bilişim Terimleri</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .game-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+        }
+
+        h1 {
+            text-align: center;
+            color: #00f2fe;
+            margin-bottom: 10px;
+            font-size: 2.5em;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 1.2em;
+        }
+
+        .game-info {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: linear-gradient(135deg, #e0f7ff 0%, #d0f5ff 100%);
+            border-radius: 15px;
+        }
+
+        .info-item {
+            text-align: center;
+        }
+
+        .info-label {
+            font-size: 1em;
+            color: #666;
+        }
+
+        .info-value {
+            font-size: 2em;
+            font-weight: bold;
+            color: #00f2fe;
+        }
+
+        .game-board {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .column {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .column-title {
+            text-align: center;
+            font-size: 1.3em;
+            font-weight: bold;
+            color: #00f2fe;
+            margin-bottom: 10px;
+            padding: 15px;
+            background: #e0f7ff;
+            border-radius: 10px;
+        }
+
+        .card {
+            padding: 20px;
+            border: 3px solid #e0e0e0;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1.1em;
+            text-align: center;
+            background: white;
+            position: relative;
+        }
+
+        .card:hover {
+            transform: translateX(-5px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .card.selected {
+            border-color: #4facfe;
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            transform: scale(1.05);
+        }
+
+        .card.matched {
+            border-color: #4caf50;
+            background: #4caf50;
+            color: white;
+            cursor: default;
+            pointer-events: none;
+        }
+
+        .card.wrong {
+            border-color: #f44336;
+            background: #f44336;
+            color: white;
+            animation: shake 0.5s;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+        }
+
+        .buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            margin-top: 30px;
+        }
+
+        .btn {
+            padding: 15px 40px;
+            font-size: 1.1em;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(79, 172, 254, 0.4);
+        }
+
+        .btn-secondary {
+            background: #e0e0e0;
+            color: #333;
+        }
+
+        .btn-secondary:hover {
+            background: #d0d0d0;
+        }
+
+        .result-container {
+            text-align: center;
+            display: none;
+            padding: 40px;
+        }
+
+        .result-emoji {
+            font-size: 5em;
+            margin-bottom: 20px;
+        }
+
+        .result-title {
+            font-size: 2.5em;
+            color: #00f2fe;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+
+        .result-stats {
+            background: #e0f7ff;
+            padding: 30px;
+            border-radius: 15px;
+            margin: 20px 0;
+        }
+
+        .result-stat {
+            font-size: 1.3em;
+            margin: 15px 0;
+            color: #333;
+        }
+
+        @media (max-width: 768px) {
+            .game-board {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+
+            .game-container {
+                padding: 20px;
+            }
+
+            h1 {
+                font-size: 2em;
+            }
+
+            .card {
+                padding: 15px;
+                font-size: 1em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <h1>🎮 Kelime Eşleştirme Oyunu</h1>
+        <p class="subtitle">Bilişim terimlerini tanımlarıyla eşleştir!</p>
+
+        <div class="game-info">
+            <div class="info-item">
+                <div class="info-label">⏱️ Süre</div>
+                <div class="info-value" id="timer">0:00</div>
+            </div>
+            <div class="info-item">
+                <div class="info-label">✅ Eşleşme</div>
+                <div class="info-value" id="matches">0/10</div>
+            </div>
+            <div class="info-item">
+                <div class="info-label">❌ Hata</div>
+                <div class="info-value" id="errors">0</div>
+            </div>
+        </div>
+
+        <div id="gameBoard">
+            <div class="game-board">
+                <div class="column">
+                    <div class="column-title">📘 TERİMLER</div>
+                    <div id="termsColumn"></div>
+                </div>
+                <div class="column">
+                    <div class="column-title">📗 TANIMLAR</div>
+                    <div id="definitionsColumn"></div>
+                </div>
+            </div>
+
+            <div class="buttons">
+                <button class="btn btn-secondary" onclick="resetGame()">🔄 Yeniden Başla</button>
+                <button class="btn btn-primary" onclick="window.location.href='index.html'">🏠 Ana Sayfa</button>
+            </div>
+        </div>
+
+        <div class="result-container" id="resultContainer">
+            <div class="result-emoji">🏆</div>
+            <div class="result-title">Tebrikler!</div>
+            <div class="result-stats">
+                <div class="result-stat">⏱️ Süre: <strong id="finalTime">0:00</strong></div>
+                <div class="result-stat">✅ Doğru: <strong>10</strong></div>
+                <div class="result-stat">❌ Hata: <strong id="finalErrors">0</strong></div>
+                <div class="result-stat">🏅 Puan: <strong id="finalScore">0</strong></div>
+            </div>
+            <div class="buttons">
+                <button class="btn btn-primary" onclick="resetGame()">🔄 Tekrar Oyna</button>
+                <button class="btn btn-secondary" onclick="window.location.href='index.html'">🏠 Ana Sayfa</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const pairs = [
+            { term: "CPU", definition: "Bilgisayarın beyni olarak adlandırılan işlemci" },
+            { term: "RAM", definition: "Geçici veri saklayan hızlı bellek" },
+            { term: "İşletim Sistemi", definition: "Donanım ve yazılım arasındaki köprü" },
+            { term: "Phishing", definition: "Sahte mesajlarla kişisel bilgi çalmak" },
+            { term: "KVKK", definition: "Kişisel Verilerin Korunması Kanunu" },
+            { term: "2FA", definition: "İki faktörlü doğrulama güvenlik yöntemi" },
+            { term: "Algoritma", definition: "Adım adım problem çözme yöntemi" },
+            { term: "Scratch", definition: "Blok tabanlı görsel programlama dili" },
+            { term: "Yapay Zeka", definition: "Makinelerin insan gibi düşünme yeteneği" },
+            { term: "Döngü", definition: "Bir işlemi tekrar tekrar yapma komutu" }
+        ];
+
+        let selectedTerm = null;
+        let selectedDefinition = null;
+        let matches = 0;
+        let errors = 0;
+        let startTime = Date.now();
+        let timerInterval;
+        let shuffledDefinitions = [];
+
+        function shuffleArray(array) {
+            const shuffled = [...array];
+            for (let i = shuffled.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+            }
+            return shuffled;
+        }
+
+        function initGame() {
+            matches = 0;
+            errors = 0;
+            selectedTerm = null;
+            selectedDefinition = null;
+            startTime = Date.now();
+
+            document.getElementById('matches').textContent = '0/' + pairs.length;
+            document.getElementById('errors').textContent = '0';
+            document.getElementById('timer').textContent = '0:00';
+
+            // Timer'ı başlat
+            if (timerInterval) clearInterval(timerInterval);
+            timerInterval = setInterval(updateTimer, 1000);
+
+            // Tanımları karıştır
+            shuffledDefinitions = shuffleArray(pairs);
+
+            // Terimleri ekle
+            const termsColumn = document.getElementById('termsColumn');
+            termsColumn.innerHTML = '';
+            pairs.forEach((pair, index) => {
+                const card = document.createElement('div');
+                card.className = 'card';
+                card.textContent = pair.term;
+                card.dataset.index = index;
+                card.onclick = () => selectTerm(index, card);
+                termsColumn.appendChild(card);
+            });
+
+            // Tanımları ekle (karışık sırada)
+            const definitionsColumn = document.getElementById('definitionsColumn');
+            definitionsColumn.innerHTML = '';
+            shuffledDefinitions.forEach((pair, displayIndex) => {
+                const originalIndex = pairs.findIndex(p => p.term === pair.term);
+                const card = document.createElement('div');
+                card.className = 'card';
+                card.textContent = pair.definition;
+                card.dataset.index = originalIndex;
+                card.onclick = () => selectDefinition(originalIndex, card);
+                definitionsColumn.appendChild(card);
+            });
+
+            document.getElementById('gameBoard').style.display = 'block';
+            document.getElementById('resultContainer').style.display = 'none';
+        }
+
+        function updateTimer() {
+            const elapsed = Math.floor((Date.now() - startTime) / 1000);
+            const minutes = Math.floor(elapsed / 60);
+            const seconds = elapsed % 60;
+            document.getElementById('timer').textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+        }
+
+        function selectTerm(index, card) {
+            if (card.classList.contains('matched')) return;
+
+            // Önceki seçimi temizle
+            if (selectedTerm !== null && selectedTerm !== card) {
+                selectedTerm.classList.remove('selected');
+            }
+
+            selectedTerm = card;
+            card.classList.add('selected');
+
+            checkMatch();
+        }
+
+        function selectDefinition(index, card) {
+            if (card.classList.contains('matched')) return;
+
+            // Önceki seçimi temizle
+            if (selectedDefinition !== null && selectedDefinition !== card) {
+                selectedDefinition.classList.remove('selected');
+            }
+
+            selectedDefinition = card;
+            card.classList.add('selected');
+
+            checkMatch();
+        }
+
+        function checkMatch() {
+            if (!selectedTerm || !selectedDefinition) return;
+
+            const termIndex = parseInt(selectedTerm.dataset.index);
+            const defIndex = parseInt(selectedDefinition.dataset.index);
+
+            if (termIndex === defIndex) {
+                // Doğru eşleşme!
+                selectedTerm.classList.remove('selected');
+                selectedTerm.classList.add('matched');
+                selectedDefinition.classList.remove('selected');
+                selectedDefinition.classList.add('matched');
+
+                matches++;
+                document.getElementById('matches').textContent = matches + '/' + pairs.length;
+
+                selectedTerm = null;
+                selectedDefinition = null;
+
+                // Oyun bitti mi?
+                if (matches === pairs.length) {
+                    setTimeout(endGame, 500);
+                }
+            } else {
+                // Yanlış eşleşme
+                selectedTerm.classList.add('wrong');
+                selectedDefinition.classList.add('wrong');
+
+                errors++;
+                document.getElementById('errors').textContent = errors;
+
+                setTimeout(() => {
+                    selectedTerm.classList.remove('selected', 'wrong');
+                    selectedDefinition.classList.remove('selected', 'wrong');
+                    selectedTerm = null;
+                    selectedDefinition = null;
+                }, 800);
+            }
+        }
+
+        function endGame() {
+            clearInterval(timerInterval);
+
+            const elapsed = Math.floor((Date.now() - startTime) / 1000);
+            const minutes = Math.floor(elapsed / 60);
+            const seconds = elapsed % 60;
+            const timeStr = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+
+            // Puan hesapla (süre ve hata sayısına göre)
+            const baseScore = 1000;
+            const timepenalty = elapsed * 2;
+            const errorPenalty = errors * 50;
+            const score = Math.max(0, baseScore - timePenalty - errorPenalty);
+
+            document.getElementById('finalTime').textContent = timeStr;
+            document.getElementById('finalErrors').textContent = errors;
+            document.getElementById('finalScore').textContent = score;
+
+            document.getElementById('gameBoard').style.display = 'none';
+            document.getElementById('resultContainer').style.display = 'block';
+        }
+
+        function resetGame() {
+            clearInterval(timerInterval);
+            initGame();
+        }
+
+        // Oyunu başlat
+        initGame();
+    </script>
+</body>
+</html>
