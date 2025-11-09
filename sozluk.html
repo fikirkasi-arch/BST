@@ -1,0 +1,1029 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bilişim Sözlüğü - BST Eğitim Portalı</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+
+        header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px;
+            text-align: center;
+        }
+
+        header h1 {
+            font-size: 2.2em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+
+        header p {
+            font-size: 1em;
+            opacity: 0.95;
+        }
+
+        .controls {
+            padding: 30px;
+            background: #f8f9fa;
+            border-bottom: 2px solid #e9ecef;
+        }
+
+        .search-box {
+            margin-bottom: 20px;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 15px 20px;
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            font-size: 1.1em;
+            transition: border-color 0.3s;
+        }
+
+        .search-box input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .filters {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            padding: 10px 20px;
+            border: 2px solid #ddd;
+            background: white;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 0.95em;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+
+        .filter-btn:hover {
+            border-color: #667eea;
+            color: #667eea;
+        }
+
+        .filter-btn.active {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+
+        .glossary-content {
+            padding: 30px;
+        }
+
+        .glossary-item {
+            margin-bottom: 15px;
+            border: 2px solid #f0f0f0;
+            border-radius: 12px;
+            overflow: hidden;
+            transition: all 0.3s;
+        }
+
+        .glossary-item:hover {
+            border-color: #667eea;
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.1);
+        }
+
+        .glossary-header {
+            padding: 20px;
+            background: #f8f9fa;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            user-select: none;
+        }
+
+        .glossary-header:hover {
+            background: #f0f0f0;
+        }
+
+        .glossary-header.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .term-main {
+            flex: 1;
+        }
+
+        .term-name {
+            font-size: 1.2em;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .term-en {
+            font-size: 0.95em;
+            opacity: 0.8;
+            font-style: italic;
+        }
+
+        .term-unit {
+            display: inline-block;
+            background: #667eea;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: 600;
+            margin-left: 15px;
+        }
+
+        .glossary-header.active .term-unit {
+            background: rgba(255,255,255,0.3);
+        }
+
+        .toggle-icon {
+            font-size: 1.5em;
+            transition: transform 0.3s;
+        }
+
+        .glossary-item.expanded .toggle-icon {
+            transform: rotate(180deg);
+        }
+
+        .glossary-body {
+            display: none;
+            padding: 20px;
+            border-top: 2px solid #f0f0f0;
+            background: white;
+        }
+
+        .glossary-item.expanded .glossary-body {
+            display: block;
+        }
+
+        .glossary-body p {
+            margin-bottom: 15px;
+            line-height: 1.6;
+            color: #333;
+        }
+
+        .definition-label {
+            font-weight: 700;
+            color: #667eea;
+            margin-bottom: 5px;
+        }
+
+        .related-topics {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+
+        .related-topics strong {
+            color: #667eea;
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        .topic-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .topic-tag {
+            background: #e9ecef;
+            padding: 5px 12px;
+            border-radius: 15px;
+            font-size: 0.9em;
+            color: #555;
+        }
+
+        .links-section {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-top: 15px;
+        }
+
+        .link-btn {
+            padding: 10px 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-size: 0.95em;
+            border: none;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .link-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .no-results {
+            text-align: center;
+            padding: 40px;
+            color: #999;
+        }
+
+        .no-results h3 {
+            margin-bottom: 10px;
+            color: #667eea;
+        }
+
+        .stats {
+            text-align: center;
+            padding: 20px;
+            color: #666;
+            font-size: 0.95em;
+            border-top: 2px solid #f0f0f0;
+        }
+
+        @media (max-width: 600px) {
+            header h1 {
+                font-size: 1.8em;
+            }
+
+            .filters {
+                justify-content: center;
+            }
+
+            .glossary-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .term-unit {
+                margin-left: 0;
+                margin-top: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>📚 Bilişim Sözlüğü</h1>
+            <p>5. ve 6. Sınıf Bilişim Teknolojileri Ders Terimleri</p>
+        </header>
+
+        <div class="controls">
+            <div class="search-box">
+                <input type="text" id="searchInput" placeholder="🔍 Terim ara (Türkçe veya English)...">
+            </div>
+            <div class="filters">
+                <button class="filter-btn active" data-filter="all">Tümü</button>
+                <button class="filter-btn" data-filter="5-sinif">5. Sınıf</button>
+                <button class="filter-btn" data-filter="6-sinif">6. Sınıf</button>
+                <button class="filter-btn" data-filter="U1">Ünite 1</button>
+                <button class="filter-btn" data-filter="U2">Ünite 2</button>
+                <button class="filter-btn" data-filter="U3">Ünite 3</button>
+                <button class="filter-btn" data-filter="U4">Ünite 4</button>
+                <button class="filter-btn" data-filter="U5">Ünite 5</button>
+                <button class="filter-btn" data-filter="U6">Ünite 6</button>
+            </div>
+        </div>
+
+        <div class="glossary-content" id="glossaryContent">
+            <!-- Glossary items will be inserted here by JavaScript -->
+        </div>
+
+        <div class="stats">
+            <span id="resultCount">0 terim gösteriliyor</span>
+        </div>
+    </div>
+
+    <script>
+        // Glossary data
+        const glossaryData = [
+            // Unit 1: IT Fundamentals (5. Sınıf)
+            {
+                tr: "Bilişim",
+                en: "Information Technology (IT)",
+                definition: "Bilgi işleme ve iletişim teknolojilerinin bilimi",
+                grade: "5-sinif",
+                unit: "U1",
+                related: ["Teknoloji", "Bilgisayar"],
+                videoLink: "https://www.youtube.com/embed/dQw4w9WgXcQ",
+                infoLink: ""
+            },
+            {
+                tr: "Bilgisayar",
+                en: "Computer",
+                definition: "Veri işleyen, saklayan ve sonuç üreten elektronik cihaz",
+                grade: "5-sinif",
+                unit: "U1",
+                related: ["Donanım", "Yazılım"],
+                videoLink: "https://www.youtube.com/embed/dQw4w9WgXcQ",
+                infoLink: ""
+            },
+            {
+                tr: "Donanım",
+                en: "Hardware",
+                definition: "Bilgisayarın fiziksel parçaları; görebildiğimiz, dokunabildiğimiz kısımlar",
+                grade: "5-sinif",
+                unit: "U1",
+                related: ["Klavye", "Mouse", "Monitör"],
+                videoLink: "",
+                infoLink: ""
+            },
+            {
+                tr: "Yazılım",
+                en: "Software",
+                definition: "Bilgisayarı çalıştıran programlar; fiziksel olmayan dijital komutlar",
+                grade: "5-sinif",
+                unit: "U1",
+                related: ["Program", "İşletim Sistemi"],
+                videoLink: "",
+                infoLink: ""
+            },
+            {
+                tr: "İşletim Sistemi",
+                en: "Operating System (OS)",
+                definition: "Bilgisayarı kontrol eden ve diğer programları çalıştıran temel yazılım",
+                grade: "5-sinif",
+                unit: "U1",
+                related: ["Windows", "macOS", "Linux"],
+                videoLink: "",
+                infoLink: ""
+            },
+            {
+                tr: "İşlemci (CPU)",
+                en: "CPU (Central Processing Unit)",
+                definition: "Bilgisayarın beyni; tüm hesaplamaları yapan ve komutları işleyen parça",
+                grade: "5-sinif",
+                unit: "U1",
+                related: ["GHz", "Çekirdek"],
+                videoLink: "",
+                infoLink: ""
+            },
+            {
+                tr: "Bellek (RAM)",
+                en: "RAM (Random Access Memory)",
+                definition: "Kısa süreli hafıza; çalışma esnasında veri tutar, kapanınca silinir",
+                grade: "5-sinif",
+                unit: "U1",
+                related: ["GB", "Hız"],
+                videoLink: "",
+                infoLink: ""
+            },
+            {
+                tr: "Sabit Disk",
+                en: "Hard Disk Drive (HDD)",
+                definition: "Uzun süreli depolama; mekanik, dönen diskler, ucuz ama daha yavaş",
+                grade: "5-sinif",
+                unit: "U1",
+                related: ["Depolama", "SSD"],
+                videoLink: "",
+                infoLink: ""
+            },
+            {
+                tr: "SSD",
+                en: "Solid State Drive",
+                definition: "Elektronik depolama; hareketli parça yok, çok hızlı ama daha pahalı",
+                grade: "5-sinif",
+                unit: "U1",
+                related: ["Depolama", "Sabit Disk"],
+                videoLink: "",
+                infoLink: ""
+            },
+            {
+                tr: "Klavye",
+                en: "Keyboard",
+                definition: "Girdi cihazı; harf, sayı ve sembol girmek için kullanılır",
+                grade: "5-sinif",
+                unit: "U1",
+                related: ["Girdi", "Kontrolcü"],
+                videoLink: "",
+                infoLink: ""
+            },
+            {
+                tr: "Fare (Mouse)",
+                en: "Mouse",
+                definition: "Girdi cihazı; imleç kontrolü, tıklama ve kaydırma için",
+                grade: "5-sinif",
+                unit: "U1",
+                related: ["Girdi", "Touchpad"],
+                videoLink: "",
+                infoLink: ""
+            },
+            {
+                tr: "Monitör",
+                en: "Monitor/Display",
+                definition: "Çıktı cihazı; bilgisayarın işlediği bilgiyi gösteriyor (15-27 inç)",
+                grade: "5-sinif",
+                unit: "U1",
+                related: ["Çıktı", "Ekran"],
+                videoLink: "",
+                infoLink: ""
+            },
+            {
+                tr: "Yazıcı",
+                en: "Printer",
+                definition: "Çıktı cihazı; dijital dosyaları kağıda yazdırır",
+                grade: "5-sinif",
+                unit: "U1",
+                related: ["Çıktı", "Mürekkep"],
+                videoLink: "",
+                infoLink: ""
+            },
+            {
+                tr: "Dosya",
+                en: "File",
+                definition: "Bilgisayarda saklanan bilgi; resim, metin, video, ses vb.",
+                grade: "5-sinif",
+                unit: "U1",
+                related: ["Klasör", "Depolama"],
+                videoLink: "",
+                infoLink: ""
+            },
+            {
+                tr: "Klasör",
+                en: "Folder",
+                definition: "Dosyaları organize etmek için kullanılan dijital kapsayıcı",
+                grade: "5-sinif",
+                unit: "U1",
+                related: ["Dosya", "Hiyerarşi"],
+                videoLink: "",
+                infoLink: ""
+            },
+
+            // Unit 2: Digital Products (5. Sınıf)
+            {
+                tr: "Kelime İşlemci",
+                en: "Word Processor",
+                definition: "Metin yazma, düzenleme ve biçimlendirme programı (Microsoft Word)",
+                grade: "5-sinif",
+                unit: "U2",
+                related: ["Word", "Belge"],
+                videoLink: "",
+                infoLink: ""
+            },
+            {
+                tr: "Microsoft Word",
+                en: "Microsoft Word",
+                definition: "Metin belgesi oluşturmak için profesyonel kelime işlemci",
+                grade: "5-sinif",
+                unit: "U2",
+                related: ["Belge", "Biçimlendirme"],
+                videoLink: "",
+                infoLink: ""
+            },
+            {
+                tr: "Sunum",
+                en: "Presentation",
+                definition: "Bilginin slaytlar şeklinde görsel olarak sunulması",
+                grade: "5-sinif",
+                unit: "U2",
+                related: ["PowerPoint", "Slayt"],
+                videoLink: "",
+                infoLink: ""
+            },
+            {
+                tr: "PowerPoint",
+                en: "PowerPoint",
+                definition: "Slayt sunumu hazırlama ve sunmak için kullanılan program",
+                grade: "5-sinif",
+                unit: "U2",
+                related: ["Sunum", "Slayt", "Tasarım"],
+                videoLink: "",
+                infoLink: ""
+            },
+            {
+                tr: "Paint",
+                en: "Paint",
+                definition: "Dijital resim çizme ve düzenleme programı",
+                grade: "5-sinif",
+                unit: "U2",
+                related: ["Grafik", "Tasarım"],
+                videoLink: "",
+                infoLink: ""
+            },
+            {
+                tr: "Slayt",
+                en: "Slide",
+                definition: "PowerPoint'te bir sayfa; metin, resim, video içerebilir",
+                grade: "5-sinif",
+                unit: "U2",
+                related: ["Sunum", "PowerPoint"],
+                videoLink: "",
+                infoLink: ""
+            },
+            {
+                tr: "Yazı Tipi",
+                en: "Font",
+                definition: "Metin karakterinin görünümü (Arial, Times New Roman vb.)",
+                grade: "5-sinif",
+                unit: "U2",
+                related: ["Biçimlendirme", "Stil"],
+                videoLink: "",
+                infoLink: ""
+            },
+            {
+                tr: "Kalın",
+                en: "Bold",
+                definition: "Metni daha koyu göstermek (Ctrl+B kısayolu)",
+                grade: "5-sinif",
+                unit: "U2",
+                related: ["Vurgu", "Biçimlendirme"],
+                videoLink: "",
+                infoLink: ""
+            },
+            {
+                tr: "İtalik",
+                en: "Italic",
+                definition: "Metni eğik yapmak (Ctrl+I kısayolu)",
+                grade: "5-sinif",
+                unit: "U2",
+                related: ["Vurgu", "Biçimlendirme"],
+                videoLink: "",
+                infoLink: ""
+            },
+            {
+                tr: "Altı Çizgili",
+                en: "Underline",
+                definition: "Metin altına çizgi koymak (Ctrl+U kısayolu)",
+                grade: "5-sinif",
+                unit: "U2",
+                related: ["Vurgu", "Biçimlendirme"],
+                videoLink: "",
+                infoLink: ""
+            },
+
+            // Unit 3: Networks & Communication (5. Sınıf)
+            {
+                tr: "Bilgisayar Ağı",
+                en: "Computer Network",
+                definition: "Birbirine bağlı bilgisayarlar arasında veri paylaşımı",
+                grade: "5-sinif",
+                unit: "U3",
+                related: ["LAN", "WAN", "İnternet"],
+                videoLink: "",
+                infoLink: ""
+            },
+            {
+                tr: "İnternet",
+                en: "Internet",
+                definition: "Dünya çapında milyonlarca bilgisayarı birbirine bağlayan ağ",
+                grade: "5-sinif",
+                unit: "U3",
+                related: ["Web Sitesi", "İSS"],
+                videoLink: "",
+                infoLink: ""
+            },
+            {
+                tr: "Wi-Fi",
+                en: "Wi-Fi",
+                definition: "Kablosuz internet bağlantısı; telsizsiz ağ",
+                grade: "5-sinif",
+                unit: "U3",
+                related: ["İnternet", "Router"],
+                videoLink: "",
+                infoLink: ""
+            },
+            {
+                tr: "E-posta",
+                en: "Email",
+                definition: "Elektronik posta; dijital olarak mesaj göndermek ve almak",
+                grade: "5-sinif",
+                unit: "U3",
+                related: ["İletişim", "İnternet"],
+                videoLink: "",
+                infoLink: ""
+            },
+            {
+                tr: "Web Sitesi",
+                en: "Website",
+                definition: "İnternet üzerindeki sayfalar; google.com, wikipedia.org vb.",
+                grade: "5-sinif",
+                unit: "U3",
+                related: ["İnternet", "Tarayıcı"],
+                videoLink: "",
+                infoLink: ""
+            },
+            {
+                tr: "Tarayıcı",
+                en: "Web Browser",
+                definition: "İnternette gezinmeye yarayan program (Chrome, Firefox vb.)",
+                grade: "5-sinif",
+                unit: "U3",
+                related: ["Web Sitesi", "İnternet"],
+                videoLink: "",
+                infoLink: ""
+            },
+
+            // Unit 4: Ethics & Security (5. Sınıf)
+            {
+                tr: "Siber Güvenlik",
+                en: "Cybersecurity",
+                definition: "Dijital dünyada kendini ve verilerini koruma",
+                grade: "5-sinif",
+                unit: "U4",
+                related: ["Virüs", "Şifre", "Phishing"],
+                videoLink: "",
+                infoLink: ""
+            },
+            {
+                tr: "Virüs",
+                en: "Virus",
+                definition: "Bilgisayara zarar veren program; kendini kopyalar",
+                grade: "5-sinif",
+                unit: "U4",
+                related: ["Zararlı Yazılım", "Antivirüs"],
+                videoLink: "",
+                infoLink: ""
+            },
+            {
+                tr: "Güçlü Şifre",
+                en: "Strong Password",
+                definition: "Güvenli şifre; en az 8 karakter, büyük-küçük harf, sayı, sembol",
+                grade: "5-sinif",
+                unit: "U4",
+                related: ["Koruma", "Gizlilik"],
+                videoLink: "",
+                infoLink: ""
+            },
+            {
+                tr: "Phishing (Oltalama)",
+                en: "Phishing",
+                definition: "Sahte e-posta/mesajla bilgi çalma tekniği",
+                grade: "5-sinif",
+                unit: "U4",
+                related: ["Dolandırıcılık", "İnternet Güvenliği"],
+                videoLink: "",
+                infoLink: ""
+            },
+            {
+                tr: "Dijital Vatandaşlık",
+                en: "Digital Citizenship",
+                definition: "İnternette sorumlu, etik ve saygılı davranmak",
+                grade: "5-sinif",
+                unit: "U4",
+                related: ["Etik", "İnternet Güvenliği"],
+                videoLink: "",
+                infoLink: ""
+            },
+            {
+                tr: "Siber Zorbalık",
+                en: "Cyberbullying",
+                definition: "İnternet ortamında birini taciz etme, kötü söz söyleme",
+                grade: "5-sinif",
+                unit: "U4",
+                related: ["Etik", "Sorumluluk"],
+                videoLink: "",
+                infoLink: ""
+            },
+
+            // Unit 5: AI (5. Sınıf)
+            {
+                tr: "Yapay Zeka (YZ)",
+                en: "Artificial Intelligence (AI)",
+                definition: "Makinelerin insan gibi düşünmesi, öğrenmesi ve karar vermesi",
+                grade: "5-sinif",
+                unit: "U5",
+                related: ["Makine Öğrenmesi", "Algoritma"],
+                videoLink: "https://www.youtube.com/embed/kHBcVlqpsgA",
+                infoLink: "https://www.ibm.com/cloud/learn/artificial-intelligence"
+            },
+            {
+                tr: "Makine Öğrenmesi",
+                en: "Machine Learning",
+                definition: "Yapay zekanın verilerden öğrenmesi ve geliştirmesi",
+                grade: "5-sinif",
+                unit: "U5",
+                related: ["Yapay Zeka", "Veri"],
+                videoLink: "",
+                infoLink: ""
+            },
+            {
+                tr: "Siri",
+                en: "Siri",
+                definition: "Apple'ın sesli yardımcısı; komut alan YZ",
+                grade: "5-sinif",
+                unit: "U5",
+                related: ["Yapay Zeka", "Sesli Asistan"],
+                videoLink: "",
+                infoLink: ""
+            },
+            {
+                tr: "Alexa",
+                en: "Alexa",
+                definition: "Amazon'un sesli yardımcısı; akıllı ev kontrolü",
+                grade: "5-sinif",
+                unit: "U5",
+                related: ["Yapay Zeka", "Sesli Asistan"],
+                videoLink: "",
+                infoLink: ""
+            },
+            {
+                tr: "Yüz Tanıma",
+                en: "Facial Recognition",
+                definition: "Yapay zekanın yüzü tanıyarak kimliği tespit etmesi",
+                grade: "5-sinif",
+                unit: "U5",
+                related: ["Yapay Zeka", "Güvenlik"],
+                videoLink: "",
+                infoLink: ""
+            },
+
+            // Unit 6: Programming (5. Sınıf)
+            {
+                tr: "Programlama",
+                en: "Programming",
+                definition: "Bilgisayara ne yapmasını istediğimizi komutlarla söyleme",
+                grade: "5-sinif",
+                unit: "U6",
+                related: ["Algoritma", "Kod", "Scratch"],
+                videoLink: "",
+                infoLink: ""
+            },
+            {
+                tr: "Algoritma",
+                en: "Algorithm",
+                definition: "Bir işi yapmak için adım adım talimatlar dizisi",
+                grade: "5-sinif",
+                unit: "U6",
+                related: ["Lojik", "Programlama"],
+                videoLink: "",
+                infoLink: ""
+            },
+            {
+                tr: "Scratch",
+                en: "Scratch",
+                definition: "Çocuklar için blok tabanlı programlama dili (MIT)",
+                grade: "5-sinif",
+                unit: "U6",
+                related: ["Programlama", "Blok", "Oyun"],
+                videoLink: "https://scratch.mit.edu/",
+                infoLink: "https://scratch.mit.edu/"
+            },
+            {
+                tr: "Blok",
+                en: "Block",
+                definition: "Scratch'teki sürükle-bırak komutları",
+                grade: "5-sinif",
+                unit: "U6",
+                related: ["Scratch", "Programlama"],
+                videoLink: "",
+                infoLink: ""
+            },
+            {
+                tr: "Sprite",
+                en: "Sprite",
+                definition: "Scratch'te karakter; kedi, araba, insan vb.",
+                grade: "5-sinif",
+                unit: "U6",
+                related: ["Scratch", "Nesne"],
+                videoLink: "",
+                infoLink: ""
+            },
+            {
+                tr: "Döngü",
+                en: "Loop",
+                definition: "Bir işi tekrar tekrar yapma; Forever, Repeat N",
+                grade: "5-sinif",
+                unit: "U6",
+                related: ["Programlama", "Kontrol"],
+                videoLink: "",
+                infoLink: ""
+            },
+            {
+                tr: "Koşul",
+                en: "Condition",
+                definition: "Belirli bir durumda işi yapma; if-else yapısı",
+                grade: "5-sinif",
+                unit: "U6",
+                related: ["Programlama", "Karar"],
+                videoLink: "",
+                infoLink: ""
+            },
+            {
+                tr: "Değişken",
+                en: "Variable",
+                definition: "Değeri değişen bilgi saklama yeri; skor, yaş, isim",
+                grade: "5-sinif",
+                unit: "U6",
+                related: ["Programlama", "Veri"],
+                videoLink: "",
+                infoLink: ""
+            },
+            {
+                tr: "Olay",
+                en: "Event",
+                definition: "Programı başlatan şey; bayrak, tuş basma, tıklama",
+                grade: "5-sinif",
+                unit: "U6",
+                related: ["Programlama", "Kontrol"],
+                videoLink: "",
+                infoLink: ""
+            },
+
+            // 6. Sınıf terms
+            {
+                tr: "Grafik Tasarım",
+                en: "Graphic Design",
+                definition: "Görsel ürün tasarımı; posterler, afişler, logo",
+                grade: "6-sinif",
+                unit: "U4",
+                related: ["Tasarım", "Sanat"],
+                videoLink: "",
+                infoLink: ""
+            },
+            {
+                tr: "Video Düzenleme",
+                en: "Video Editing",
+                definition: "Video kesmek, birleştirmek, efekt ve müzik ekleme",
+                grade: "6-sinif",
+                unit: "U4",
+                related: ["Multimedya", "Prodüksiyon"],
+                videoLink: "",
+                infoLink: ""
+            },
+            {
+                tr: "Çoklu Ortam (Multimedya)",
+                en: "Multimedia",
+                definition: "Video, ses, resim, metin birlikte kullanılması",
+                grade: "6-sinif",
+                unit: "U4",
+                related: ["İçerik", "Tasarım"],
+                videoLink: "",
+                infoLink: ""
+            },
+            {
+                tr: "Kişisel Veri",
+                en: "Personal Data",
+                definition: "Kimliğini tanımlayan bilgiler; ad, soyad, doğum tarihi",
+                grade: "6-sinif",
+                unit: "U2",
+                related: ["Gizlilik", "Güvenlik"],
+                videoLink: "",
+                infoLink: ""
+            },
+            {
+                tr: "Bilgi Okuryazarlığı",
+                en: "Information Literacy",
+                definition: "Bilgiyi bulma, değerlendirme ve doğru kullanma becerisi",
+                grade: "6-sinif",
+                unit: "U3",
+                related: ["Araştırma", "Kritik Düşünme"],
+                videoLink: "",
+                infoLink: ""
+            },
+        ];
+
+        // DOM elements
+        const searchInput = document.getElementById('searchInput');
+        const filterBtns = document.querySelectorAll('.filter-btn');
+        const glossaryContent = document.getElementById('glossaryContent');
+        const resultCount = document.getElementById('resultCount');
+
+        let activeFilter = 'all';
+
+        // Initialize
+        function init() {
+            renderGlossary(glossaryData);
+            addEventListeners();
+        }
+
+        // Render glossary
+        function renderGlossary(data) {
+            glossaryContent.innerHTML = '';
+
+            if (data.length === 0) {
+                glossaryContent.innerHTML = `
+                    <div class="no-results">
+                        <h3>😢 Sonuç bulunamadı</h3>
+                        <p>Arama kriterlerinize uygun terim yok. Başka bir arama deneyin.</p>
+                    </div>
+                `;
+                resultCount.textContent = '0 terim gösteriliyor';
+                return;
+            }
+
+            data.forEach((term, index) => {
+                const item = document.createElement('div');
+                item.className = 'glossary-item';
+                item.dataset.index = index;
+
+                const relatedHTML = term.related.length > 0
+                    ? `<div class="related-topics">
+                        <strong>İlgili Konular:</strong>
+                        <div class="topic-list">
+                            ${term.related.map(t => `<span class="topic-tag">${t}</span>`).join('')}
+                        </div>
+                       </div>`
+                    : '';
+
+                const linksHTML = term.videoLink || term.infoLink
+                    ? `<div class="links-section">
+                        ${term.videoLink ? `<a href="${term.videoLink}" target="_blank" class="link-btn">🎥 Videoyu İzle</a>` : ''}
+                        ${term.infoLink ? `<a href="${term.infoLink}" target="_blank" class="link-btn">📖 Daha Fazla Bilgi</a>` : ''}
+                       </div>`
+                    : '';
+
+                item.innerHTML = `
+                    <div class="glossary-header">
+                        <div class="term-main">
+                            <div class="term-name">${term.tr}</div>
+                            <div class="term-en">${term.en}</div>
+                        </div>
+                        <span class="term-unit">${term.unit}</span>
+                        <span class="toggle-icon">▼</span>
+                    </div>
+                    <div class="glossary-body">
+                        <p>
+                            <div class="definition-label">📝 Tanım:</div>
+                            ${term.definition}
+                        </p>
+                        ${relatedHTML}
+                        ${linksHTML}
+                    </div>
+                `;
+
+                item.querySelector('.glossary-header').addEventListener('click', () => toggleItem(item));
+                glossaryContent.appendChild(item);
+            });
+
+            resultCount.textContent = `${data.length} terim gösteriliyor`;
+        }
+
+        // Toggle item
+        function toggleItem(item) {
+            item.classList.toggle('expanded');
+            const header = item.querySelector('.glossary-header');
+            header.classList.toggle('active');
+        }
+
+        // Filter and search
+        function filterAndSearch() {
+            let filtered = glossaryData;
+
+            // Apply grade/unit filter
+            if (activeFilter !== 'all') {
+                filtered = filtered.filter(term =>
+                    term.grade === activeFilter || term.unit === activeFilter
+                );
+            }
+
+            // Apply search filter
+            const searchTerm = searchInput.value.toLowerCase();
+            if (searchTerm) {
+                filtered = filtered.filter(term =>
+                    term.tr.toLowerCase().includes(searchTerm) ||
+                    term.en.toLowerCase().includes(searchTerm) ||
+                    term.definition.toLowerCase().includes(searchTerm)
+                );
+            }
+
+            renderGlossary(filtered);
+        }
+
+        // Event listeners
+        function addEventListeners() {
+            // Search
+            searchInput.addEventListener('input', filterAndSearch);
+
+            // Filters
+            filterBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    filterBtns.forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    activeFilter = btn.dataset.filter;
+                    filterAndSearch();
+                });
+            });
+        }
+
+        // Start
+        init();
+    </script>
+</body>
+</html>

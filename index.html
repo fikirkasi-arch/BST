@@ -1,0 +1,1105 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bilişim Teknolojileri Eğitim Portalı - 5. ve 6. Sınıf</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+
+        header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px;
+            text-align: center;
+        }
+
+        header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+
+        header p {
+            font-size: 1.2em;
+            opacity: 0.95;
+        }
+
+        .tabs {
+            display: flex;
+            background: #f8f9fa;
+            border-bottom: 3px solid #667eea;
+            overflow-x: auto;
+        }
+
+        .tab {
+            padding: 20px 30px;
+            cursor: pointer;
+            border: none;
+            background: transparent;
+            font-size: 1.1em;
+            font-weight: 600;
+            color: #555;
+            transition: all 0.3s;
+            white-space: nowrap;
+        }
+
+        .tab:hover {
+            background: #e9ecef;
+        }
+
+        .tab.active {
+            background: white;
+            color: #667eea;
+            border-bottom: 4px solid #667eea;
+        }
+
+        .tab-content {
+            display: none;
+            padding: 40px;
+            animation: fadeIn 0.5s;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .grade-selector {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 30px;
+            justify-content: center;
+        }
+
+        .grade-btn {
+            padding: 20px 40px;
+            font-size: 1.3em;
+            font-weight: bold;
+            border: none;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        .grade-btn.grade-5 {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+        }
+
+        .grade-btn.grade-6 {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+        }
+
+        .grade-btn:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+        }
+
+        .unit-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin-top: 30px;
+        }
+
+        .unit-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        .unit-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 12px 30px rgba(0,0,0,0.3);
+        }
+
+        .unit-card h3 {
+            font-size: 1.5em;
+            margin-bottom: 15px;
+        }
+
+        .unit-card p {
+            opacity: 0.9;
+            line-height: 1.6;
+        }
+
+        .unit-card .weeks {
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid rgba(255,255,255,0.3);
+            font-size: 0.9em;
+        }
+
+        .lesson-list {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+        }
+
+        .lesson-item {
+            background: white;
+            padding: 20px;
+            margin-bottom: 15px;
+            border-radius: 10px;
+            border-left: 5px solid #667eea;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .lesson-item:hover {
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            transform: translateX(10px);
+        }
+
+        .lesson-item h4 {
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+
+        .resource-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .resource-card {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            border: 2px solid #e9ecef;
+            text-align: center;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .resource-card:hover {
+            border-color: #667eea;
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.2);
+        }
+
+        .resource-icon {
+            font-size: 3em;
+            margin-bottom: 15px;
+        }
+
+        .resource-card h3 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .download-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 25px;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 15px;
+            transition: all 0.3s;
+        }
+
+        .download-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .teacher-tools {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+        }
+
+        .teacher-tools h2 {
+            margin-bottom: 20px;
+        }
+
+        .tool-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+
+        .tool-item {
+            background: rgba(255,255,255,0.2);
+            padding: 15px;
+            border-radius: 10px;
+            backdrop-filter: blur(10px);
+        }
+
+        .student-workspace {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            padding: 40px;
+            border-radius: 15px;
+            text-align: center;
+        }
+
+        .student-workspace h2 {
+            font-size: 2em;
+            margin-bottom: 20px;
+        }
+
+        .activity-btn {
+            background: white;
+            color: #4facfe;
+            padding: 20px 40px;
+            border: none;
+            border-radius: 15px;
+            font-size: 1.2em;
+            font-weight: bold;
+            margin: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .activity-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+        }
+
+        .footer {
+            background: #2d3748;
+            color: white;
+            padding: 30px;
+            text-align: center;
+            margin-top: 40px;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            animation: fadeIn 0.3s;
+        }
+
+        .modal-content {
+            background: white;
+            margin: 5% auto;
+            padding: 40px;
+            width: 80%;
+            max-width: 800px;
+            border-radius: 20px;
+            max-height: 80vh;
+            overflow-y: auto;
+            animation: slideUp 0.3s;
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .close:hover {
+            color: #000;
+        }
+
+        /* Accordion Styles */
+        .accordion {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            cursor: pointer;
+            padding: 20px 30px;
+            width: 100%;
+            text-align: left;
+            border: none;
+            outline: none;
+            transition: 0.4s;
+            border-radius: 12px;
+            margin-bottom: 10px;
+            font-size: 1.2em;
+            font-weight: 600;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .accordion:hover {
+            opacity: 0.9;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .accordion.active {
+            background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+        }
+
+        .accordion-icon {
+            font-size: 1.3em;
+            transition: transform 0.3s;
+        }
+
+        .accordion.active .accordion-icon {
+            transform: rotate(180deg);
+        }
+
+        .accordion-panel {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+            background: white;
+            border-radius: 0 0 12px 12px;
+            margin-bottom: 20px;
+        }
+
+        .accordion-panel.show {
+            padding: 20px;
+            max-height: 2000px;
+            transition: max-height 0.5s ease-in;
+        }
+
+        /* Search and Filter Styles */
+        .search-filter-container {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+
+        .search-box {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .search-box input {
+            flex: 1;
+            padding: 15px 20px;
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            font-size: 1em;
+            transition: border-color 0.3s;
+        }
+
+        .search-box input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .search-box button {
+            padding: 15px 30px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1em;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .search-box button:hover {
+            transform: scale(1.05);
+        }
+
+        .filter-buttons {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            padding: 10px 20px;
+            border: 2px solid #e9ecef;
+            background: white;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 0.95em;
+        }
+
+        .filter-btn:hover {
+            border-color: #667eea;
+            background: #f8f9ff;
+        }
+
+        .filter-btn.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-color: #667eea;
+        }
+
+        /* Dashboard Styles */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            transition: transform 0.3s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .stat-card h3 {
+            color: #667eea;
+            margin-bottom: 15px;
+            font-size: 1.1em;
+        }
+
+        .stat-number {
+            font-size: 2.5em;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 20px;
+            background: #e9ecef;
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 15px 0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            transition: width 0.5s ease;
+            border-radius: 10px;
+        }
+
+        .badge-container {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-top: 20px;
+        }
+
+        .badge {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .badge.locked {
+            background: #e9ecef;
+            color: #999;
+        }
+
+        .recent-activity {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            margin-top: 30px;
+        }
+
+        .activity-item {
+            padding: 15px;
+            border-left: 4px solid #667eea;
+            background: #f8f9ff;
+            margin-bottom: 15px;
+            border-radius: 5px;
+        }
+
+        .activity-item .time {
+            color: #999;
+            font-size: 0.85em;
+        }
+
+        .today-task {
+            background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+        }
+
+        .today-task h2 {
+            color: white;
+            margin-bottom: 15px;
+        }
+
+        .mark-complete-btn {
+            background: white;
+            color: #38f9d7;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 25px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 15px;
+            transition: transform 0.2s;
+        }
+
+        .mark-complete-btn:hover {
+            transform: scale(1.05);
+        }
+
+        .mark-complete-btn.completed {
+            background: #2ecc71;
+            color: white;
+        }
+
+        /* Glossary Styles */
+        .letter-section {
+            margin-bottom: 50px;
+        }
+
+        .letter-title {
+            font-size: 3em;
+            color: #667eea;
+            background: linear-gradient(135deg, #f8f9ff 0%, #e7ebff 100%);
+            padding: 20px 30px;
+            border-radius: 15px;
+            border-left: 6px solid #667eea;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.1);
+        }
+
+        .term-card {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 25px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+            transition: all 0.3s;
+            border-left: 5px solid transparent;
+        }
+
+        .term-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.15);
+            border-left-color: #667eea;
+        }
+
+        .term-name {
+            color: #667eea;
+            font-size: 1.6em;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .term-definition {
+            color: #555;
+            line-height: 1.9;
+            font-size: 1.05em;
+        }
+
+        .term-definition p {
+            margin-bottom: 12px;
+        }
+
+        .term-definition strong {
+            color: #333;
+            font-weight: 600;
+        }
+
+        .term-links {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 2px dashed #e9ecef;
+        }
+
+        .term-link {
+            display: inline-block;
+            padding: 10px 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 20px;
+            transition: all 0.3s;
+            font-size: 0.95em;
+            font-weight: 500;
+        }
+
+        .term-link:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 1.8em;
+            }
+
+            .tabs {
+                flex-wrap: wrap;
+            }
+
+            .grade-selector {
+                flex-direction: column;
+            }
+
+            .unit-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .accordion {
+                font-size: 1em;
+                padding: 15px 20px;
+            }
+
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .filter-buttons {
+                justify-content: center;
+            }
+
+            .search-box {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🎓 Bilişim Teknolojileri Eğitim Portalı</h1>
+            <p>5. ve 6. Sınıf - Kapsamlı Eğitim Materyalleri</p>
+            <p style="font-size: 0.9em; margin-top: 10px;">2025-2026 Eğitim Yılı</p>
+        </header>
+
+        <div class="tabs">
+            <button class="tab active" onclick="openTab('anasayfa')">🏠 Ana Sayfa</button>
+            <button class="tab" onclick="openTab('dashboard')">📊 Öğrenci Paneli</button>
+            <button class="tab" onclick="openTab('sozluk')">📖 Bilişim Sözlüğü</button>
+            <button class="tab" onclick="openTab('ogretmen')">👨‍🏫 Öğretmen Hazırlık</button>
+            <button class="tab" onclick="openTab('dersler')">📚 Ders Anlatımı</button>
+            <button class="tab" onclick="openTab('calisma')">📝 Çalışma Sayfaları</button>
+            <button class="tab" onclick="openTab('sunumlar')">🎬 Sunumlar</button>
+            <button class="tab" onclick="openTab('kaynaklar')">💾 Kaynaklar</button>
+        <!-- ANA SAYFA -->
+        <div id="anasayfa" class="tab-content active">
+            <div class="student-workspace">
+                <h2>🚀 Hoş Geldiniz!</h2>
+                <p style="font-size: 1.2em; margin-bottom: 30px;">Bilişim Teknolojileri dersinde neler öğreneceğiz?</p>
+
+                <div class="grade-selector">
+                    <button class="grade-btn grade-5" onclick="showGrade(5)">
+                        5. SINIF<br>
+                        <small>36 Hafta | 6 Ünite</small>
+                    </button>
+                    <button class="grade-btn grade-6" onclick="showGrade(6)">
+                        6. SINIF<br>
+                        <small>31 Hafta | 5 Ünite</small>
+                    </button>
+                </div>
+            </div>
+
+            <div id="grade-5-content" style="display:none; margin-top: 30px;">
+                <h2 style="color: #f5576c; text-align: center; margin-bottom: 30px;">5. SINIF ÜNİTELERİ</h2>
+                <div class="unit-grid">
+                    <div class="unit-card" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
+                        <h3>📱 Ünite 1: Bilişim Temelleri</h3>
+                        <p>Donanım, yazılım, işletim sistemleri, dosya yönetimi</p>
+                        <div class="weeks">📅 9 Hafta (Hafta 1-9)</div>
+                    </div>
+
+                    <div class="unit-card" style="background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);">
+                        <h3>🎨 Ünite 2: Dijital Ürün Tasarımı</h3>
+                        <p>Word, Paint, PowerPoint kullanımı</p>
+                        <div class="weeks">📅 6 Hafta (Hafta 10-15)</div>
+                    </div>
+
+                    <div class="unit-card" style="background: linear-gradient(135deg, #30cfd0 0%, #330867 100%);">
+                        <h3>🌐 Ünite 3: Ağlar ve İletişim</h3>
+                        <p>İnternet, ağlar, e-posta, tarayıcı kullanımı</p>
+                        <div class="weeks">📅 3 Hafta (Hafta 16-18)</div>
+                    </div>
+
+                    <div class="unit-card" style="background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);">
+                        <h3>🔒 Ünite 4: Etik ve Güvenlik</h3>
+                        <p>Bilişim etiği, siber güvenlik, güçlü şifreler</p>
+                        <div class="weeks">📅 2 Hafta (Hafta 19-20)</div>
+                    </div>
+
+                    <div class="unit-card" style="background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);">
+                        <h3>🤖 Ünite 5: Yapay Zeka</h3>
+                        <p>YZ kavramı, uygulamalar, etik konular</p>
+                        <div class="weeks">📅 4 Hafta (Hafta 21-24)</div>
+                    </div>
+
+                    <div class="unit-card" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                        <h3>💻 Ünite 6: Programlama (Scratch)</h3>
+                        <p>Algoritma, Scratch, oyun yapımı, projeler</p>
+                        <div class="weeks">📅 14 Hafta (Hafta 25-38)</div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="grade-6-content" style="display:none; margin-top: 30px;">
+                <h2 style="color: #00f2fe; text-align: center; margin-bottom: 30px;">6. SINIF ÜNİTELERİ</h2>
+                <div class="unit-grid">
+                    <div class="unit-card" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">
+                        <h3>💡 Ünite 1: Bilişim Teknolojileri</h3>
+                        <p>Donanım, yazılım, işletim sistemleri temelleri</p>
+                        <div class="weeks">📅 4 Hafta (Hafta 1-4)</div>
+                    </div>
+
+                    <div class="unit-card" style="background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);">
+                        <h3>🛡️ Ünite 2: Etik ve Güvenlik</h3>
+                        <p>Dijital etik, KVKK, siber tehditler, güvenli internet</p>
+                        <div class="weeks">📅 5 Hafta (Hafta 5-9)</div>
+                    </div>
+
+                    <div class="unit-card" style="background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);">
+                        <h3>📧 Ünite 3: İletişim ve İşbirliği</h3>
+                        <p>E-posta, araştırma, bilgi okuryazarlığı</p>
+                        <div class="weeks">📅 2 Hafta (Hafta 11-12)</div>
+                    </div>
+
+                    <div class="unit-card" style="background: linear-gradient(135deg, #fccb90 0%, #d57eeb 100%);">
+                        <h3>🎬 Ünite 4: Ürün Oluşturma</h3>
+                        <p>Grafik, video, animasyon, podcast, web sitesi</p>
+                        <div class="weeks">📅 7 Hafta (Hafta 13-19)</div>
+                    </div>
+
+                    <div class="unit-card" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                        <h3>🧩 Ünite 5: Problem Çözme</h3>
+                        <p>Algoritma, ileri programlama, projeler</p>
+                        <div class="weeks">📅 21 Hafta (Hafta 20-40)</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- ÖĞRENCİ PANELİ / DASHBOARD -->
+        <div id="dashboard" class="tab-content">
+            <h2 style="margin-bottom: 30px;">📊 Öğrenci Paneli</h2>
+
+            <!-- Bugünün Görevi -->
+            <div class="today-task" id="todayTask">
+                <h2>🎯 Bugünün Görevi</h2>
+                <p id="taskDescription">Hafta 1 - Bilişim Temelleri: Bilgisayar Bileşenleri</p>
+                <p style="font-size: 0.9em; opacity: 0.9; margin-top: 5px;">📚 5. Sınıf | ⏱️ Tahmini Süre: 45 dakika</p>
+                <button class="mark-complete-btn" id="markCompleteBtn" onclick="markTaskComplete()">
+                    ✓ Tamamlandı Olarak İşaretle
+                </button>
+            </div>
+
+            <!-- İstatistikler -->
+            <div class="dashboard-grid">
+                <div class="stat-card" style="border-top: 4px solid #f5576c;">
+                    <h3>📚 Tamamlanan Haftalar</h3>
+                    <div class="stat-number" style="color: #f5576c;" id="completedWeeks">0</div>
+                    <p style="color: #999;">/ 67 Hafta</p>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="weeksProgress" style="width: 0%"></div>
+                    </div>
+                </div>
+
+                <div class="stat-card" style="border-top: 4px solid #4facfe;">
+                    <h3>🎮 Oynanan Oyunlar</h3>
+                    <div class="stat-number" style="color: #4facfe;" id="completedGames">0</div>
+                    <p style="color: #999;">/ 67 Oyun</p>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="gamesProgress" style="width: 0%"></div>
+                    </div>
+                </div>
+
+                <div class="stat-card" style="border-top: 4px solid #43e97b;">
+                    <h3>📝 Tamamlanan Çalışma Sayfaları</h3>
+                    <div class="stat-number" style="color: #43e97b;" id="completedWorksheets">0</div>
+                    <p style="color: #999;">/ 67 Sayfa</p>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="worksheetsProgress" style="width: 0%"></div>
+                    </div>
+                </div>
+
+                <div class="stat-card" style="border-top: 4px solid #fccb90;">
+                    <h3>🏆 Toplam İlerleme</h3>
+                    <div class="stat-number" style="color: #d57eeb;" id="totalProgress">0%</div>
+                    <p style="color: #999;">Genel Başarı Oranı</p>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="totalProgressBar" style="width: 0%"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Rozetler ve Başarılar -->
+            <div class="stat-card">
+                <h3>🏅 Kazanılan Rozetler ve Başarılar</h3>
+                <div class="badge-container" id="badgesContainer">
+                    <div class="badge locked" id="badge1">
+                        <span>🔒</span>
+                        <span>İlk Adım - İlk haftayı tamamla</span>
+                    </div>
+                    <div class="badge locked" id="badge2">
+                        <span>🔒</span>
+                        <span>Oyun Tutkunu - 5 oyun oyna</span>
+                    </div>
+                    <div class="badge locked" id="badge3">
+                        <span>🔒</span>
+                        <span>Çalışkan - 10 çalışma sayfası tamamla</span>
+                    </div>
+                    <div class="badge locked" id="badge4">
+                        <span>🔒</span>
+                        <span>Yarı Yol - 50% ilerleme</span>
+                    </div>
+                    <div class="badge locked" id="badge5">
+                        <span>🔒</span>
+                        <span>Şampiyon - Tüm içeriği tamamla</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Son Aktiviteler -->
+            <div class="recent-activity">
+                <h3 style="margin-bottom: 20px;">📋 Son Aktiviteler</h3>
+                <div id="activityList">
+                    <div style="text-align: center; padding: 30px; color: #999;">
+                        <p>Henüz hiç aktivite yok. Öğrenmeye başla!</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Veri Yönetimi Butonları -->
+            <div style="margin-top: 30px; text-align: center;">
+                <button onclick="resetProgress()" style="background: #e74c3c; color: white; padding: 15px 30px; border: none; border-radius: 10px; cursor: pointer; margin: 0 10px;">
+                    🔄 İlerlemeyi Sıfırla
+                </button>
+                <button onclick="exportProgress()" style="background: #3498db; color: white; padding: 15px 30px; border: none; border-radius: 10px; cursor: pointer; margin: 0 10px;">
+                    📥 İlerlemeyi Dışa Aktar
+                </button>
+            </div>
+        </div>
+        <!-- BİLİŞİM TERİMLERİ SÖZLÜĞÜ -->
+        <div id="sozluk" class="tab-content">
+            <iframe src="sozluk.html" style="width: 100%; height: 1200px; border: none; border-radius: 15px;"></iframe>
+        </div>
+
+                <!-- KAYNAKLAR -->
+        <div id="kaynaklar" class="tab-content">
+            <h2 style="margin-bottom: 30px;">💾 Ek Kaynaklar ve Materyaller</h2>
+
+            <div class="resource-grid">
+                <div class="resource-card">
+                    <div class="resource-icon">📄</div>
+                    <h3>Tüm Ders Planları</h3>
+                    <p>5. ve 6. sınıf için 67 haftalık detaylı planlar</p>
+                    <a href="kaynaklar/ders-planlari.html" target="_blank">
+                        <button class="download-btn">📚 Planları Görüntüle</button>
+                    </a>
+                </div>
+
+                <div class="resource-card">
+                    <div class="resource-icon">📝</div>
+                    <h3>Yazılı Sınav Soruları</h3>
+                    <p>Dönem bazlı 8 yazılı sınav sorusu (PDF)</p>
+                    <a href="sinav-sorulari.html" target="_blank">
+                        <button class="download-btn">📥 Sınav Sorularını Gör</button>
+                    </a>
+                </div>
+
+                <div class="resource-card">
+                    <div class="resource-icon">🎮</div>
+                    <h3>Scratch Projeleri</h3>
+                    <p>Örnek oyun ve animasyon projeleri</p>
+                    <a href="kaynaklar/scratch-projeleri.html" target="_blank">
+                        <button class="download-btn">🎯 Projeleri Gör</button>
+                    </a>
+                </div>
+
+                <div class="resource-card">
+                    <div class="resource-icon">📹</div>
+                    <h3>Video Dersler</h3>
+                    <p>Konuların video anlatımları ve kaynaklar</p>
+                    <a href="kaynaklar/video-dersler.html" target="_blank">
+                        <button class="download-btn">📺 Videoları İzle</button>
+                    </a>
+                </div>
+
+                <div class="resource-card">
+                    <div class="resource-icon">🔗</div>
+                    <h3>Faydalı Linkler</h3>
+                    <p>Eğitici web siteleri ve platformlar</p>
+                    <a href="kaynaklar/faydali-linkler.html" target="_blank">
+                        <button class="download-btn">🌐 Linkleri Gör</button>
+                    </a>
+                </div>
+
+                <div class="resource-card">
+                    <div class="resource-icon">📧</div>
+                    <h3>Veli Bilgilendirme</h3>
+                    <p>Hazır veli mektupları ve formlar</p>
+                    <a href="kaynaklar/veli-mektuplari.html" target="_blank">
+                        <button class="download-btn">✉️ Mektupları Gör</button>
+                    </a>
+                </div>
+            </div>
+
+            <div style="background: #e7f3ff; padding: 30px; border-radius: 15px; margin-top: 40px; border-left: 5px solid #0066cc;">
+                <h3 style="color: #0066cc; margin-bottom: 15px;">🌐 Online Kaynaklar</h3>
+                <ul style="line-height: 2.5; font-size: 1.1em;">
+                    <li><strong>Scratch:</strong> <a href="https://scratch.mit.edu" target="_blank">scratch.mit.edu</a></li>
+                    <li><strong>Code.org:</strong> <a href="https://code.org" target="_blank">code.org</a></li>
+                    <li><strong>Google CS First:</strong> <a href="https://csfirst.withgoogle.com" target="_blank">csfirst.withgoogle.com</a></li>
+                    <li><strong>Khan Academy:</strong> <a href="https://tr.khanacademy.org" target="_blank">tr.khanacademy.org</a></li>
+                    <li><strong>TÜBİTAK:</strong> <a href="https://www.tubitak.gov.tr" target="_blank">tubitak.gov.tr</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div id="myModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <div id="modalBody"></div>
+        </div>
+    </div>
+
+    <div class="footer">
+        <p><strong>📚 Bilişim Teknolojileri Eğitim Portalı</strong></p>
+        <p>2025-2026 Eğitim Yılı | Tüm Hakları Saklıdır</p>
+        <p style="margin-top: 10px;">✨ Kodlayarak Geleceği Şekillendiriyoruz! ✨</p>
+    </div>
+
+    <script>
+        function openTab(tabName) {
+            var i, tabContent, tabs;
+            tabContent = document.getElementsByClassName("tab-content");
+            for (i = 0; i < tabContent.length; i++) {
+                tabContent[i].classList.remove("active");
+            }
+            tabs = document.getElementsByClassName("tab");
+            for (i = 0; i < tabs.length; i++) {
+                tabs[i].classList.remove("active");
+            }
+            document.getElementById(tabName).classList.add("active");
+            event.target.classList.add("active");
+        }
+
+        function showGrade(grade) {
+            document.getElementById('grade-5-content').style.display = 'none';
+            document.getElementById('grade-6-content').style.display = 'none';
+            document.getElementById('grade-' + grade + '-content').style.display = 'block';
+        }
+
+        function showModal(content) {
+            var modal = document.getElementById('myModal');
+            var modalBody = document.getElementById('modalBody');
+
+            var contents = {
+                'lesson-prep': '<h2>🎯 Ders Öncesi Hazırlık</h2><ul><li>Bilgisayar lab rezervasyonu</li><li>Projeksiyon testi</li><li>İnternet bağlantısı kontrolü</li><li>Materyallerin hazırlanması</li></ul>',
+                'lesson-structure': '<h2>⏰ 80 Dakikalık Ders Yapısı</h2><p><strong>Giriş (10 dk):</strong> Motivasyon, günlük hayattan örnek</p><p><strong>Anlatım (25 dk):</strong> Konu anlatımı, demo</p><p><strong>Uygulama (40 dk):</strong> Öğrenciler uygulamalı çalışır</p><p><strong>Kapanış (5 dk):</strong> Özet, ödev</p>',
+                'assessment': '<h2>✅ Değerlendirme</h2><p>Katılım: %20</p><p>Projeler: %40</p><p>Sınavlar: %40</p>',
+
+                'lesson-5-unite1': '<div style="background: linear-gradient(135deg, #f5576c 0%, #f093fb 100%); color: white; padding: 20px; border-radius: 15px; margin-bottom: 20px;"><h2 style="color: white;">📱 5. SINIF - ÜNİTE 1: BİLİŞİM TEMELLERİ</h2><p style="font-size: 1.1em;">9 Hafta | Bilgisayar donanımı ve temel kavramlar</p></div><div style="text-align: left; line-height: 1.8;"><h3 style="color: #f5576c;">📋 KONU ÖZETLERİ</h3><div style="background: #fff5f8; padding: 15px; border-radius: 10px; margin: 15px 0;"><h4>🖥️ 1. Bilgisayar Bileşenleri</h4><p><strong>Donanım nedir?</strong> Bilgisayarın elle tutulabilen, gözle görülebilen parçalarına donanım denir. Örneğin: Klavye, mouse, ekran, kasa içindeki parçalar.</p><p><strong>Ana parçalar:</strong></p><ul><li><strong>İşlemci (CPU):</strong> Bilgisayarın beyni! Tüm hesaplamaları yapar.</li><li><strong>RAM (Bellek):</strong> Geçici hafıza. Bilgisayar kapalıyken bilgileri unutur.</li><li><strong>Hard Disk/SSD:</strong> Kalıcı hafıza. Dosyalarımızı burada saklarız.</li><li><strong>Anakart:</strong> Tüm parçaları birbirine bağlar.</li></ul></div><div style="background: #fff5f8; padding: 15px; border-radius: 10px; margin: 15px 0;"><h4>💾 2. İşletim Sistemleri</h4><p><strong>İşletim sistemi nedir?</strong> Bilgisayarı çalıştıran ve yöneten ana yazılımdır. Donanım ile yazılım arasında köprü görevi görür.</p><p><strong>Popüler işletim sistemleri:</strong></p><ul><li><strong>Windows:</strong> En yaygın işletim sistemi</li><li><strong>macOS:</strong> Apple bilgisayarlarda kullanılır</li><li><strong>Linux:</strong> Açık kaynak kodlu, ücretsiz</li></ul><p><strong>Görevleri:</strong> Dosyaları yönetir, programları çalıştırır, donanımı kontrol eder.</p></div><div style="background: #fff5f8; padding: 15px; border-radius: 10px; margin: 15px 0;"><h4>📁 3. Dosya ve Klasör Yönetimi</h4><p><strong>Dosya nedir?</strong> Bilgisayarda saklanan her türlü bilgi (resim, video, metin, müzik).</p><p><strong>Klasör nedir?</strong> Dosyaları düzenli tutmak için kullanılan sanal çekmece.</p><p><strong>Dosya uzantıları:</strong></p><ul><li>.docx → Word belgesi</li><li>.jpg, .png → Resim</li><li>.mp4 → Video</li><li>.mp3 → Müzik</li></ul><p><strong>İyi düzenleme ipuçları:</strong> Dosyalara anlamlı isimler ver, benzer dosyaları aynı klasörde tut, düzenli yedekleme yap.</p></div><h3 style="color: #f5576c; margin-top: 30px;">🎯 ÜNİTE ÖZETİ</h3><div style="background: #ffe5ed; padding: 20px; border-radius: 10px; border-left: 5px solid #f5576c;"><p>Bu ünitede bilgisayarın temel parçalarını, nasıl çalıştığını ve dosyalarımızı nasıl düzenleyeceğimizi öğrendik. Bilgisayar donanım ve yazılım olmak üzere iki ana bölümden oluşur. İşletim sistemi, bilgisayarın çalışmasını sağlayan en önemli yazılımdır. Dosya ve klasörleri iyi organize etmek, bilgilerimize hızlı ulaşmamızı sağlar.</p><p style="margin-top: 15px;"><strong>💡 Önemli Noktalar:</strong></p><ul><li>Her bilgisayarın işlemci, RAM, hard disk gibi temel parçaları vardır</li><li>İşletim sistemi olmadan bilgisayar çalışamaz</li><li>Dosya uzantıları, dosya türünü gösterir</li><li>Düzenli klasör yapısı, işlerimizi kolaylaştırır</li></ul></div></div>',
+
+                'lesson-5-unite2': '<div style="background: linear-gradient(135deg, #fccb90 0%, #d57eeb 100%); color: white; padding: 20px; border-radius: 15px; margin-bottom: 20px;"><h2 style="color: white;">🎨 5. SINIF - ÜNİTE 2: DİJİTAL ÜRÜN TASARIMI</h2><p style="font-size: 1.1em;">6 Hafta | Word, Paint ve PowerPoint ile tasarım</p></div><div style="text-align: left; line-height: 1.8;"><h3 style="color: #d57eeb;">📋 KONU ÖZETLERİ</h3><div style="background: #fff5f8; padding: 15px; border-radius: 10px; margin: 15px 0;"><h4>📝 1. Microsoft Word ile Belge Oluşturma</h4><p><strong>Word nedir?</strong> Metin belgesi hazırlamak için kullanılan kelime işlemci programıdır.</p><p><strong>Temel özellikler:</strong></p><ul><li><strong>Yazı biçimlendirme:</strong> Yazı tipi, boyutu, rengi değiştirme</li><li><strong>Paragraf düzenleme:</strong> Hizalama, satır aralığı</li><li><strong>Resim ekleme:</strong> Belgeye görsel zenginlik katma</li><li><strong>Tablo oluşturma:</strong> Bilgileri düzenli sunma</li></ul><p><strong>Kullanım alanları:</strong> Ödevler, mektuplar, raporlar, davetiyeler</p></div><div style="background: #fff5f8; padding: 15px; border-radius: 10px; margin: 15px 0;"><h4>🎨 2. Paint ile Dijital Resim</h4><p><strong>Paint nedir?</strong> Basit çizimler ve resim düzenleme yapabileceğimiz programdır.</p><p><strong>Araçlar:</strong></p><ul><li><strong>Fırça:</strong> Serbest çizim yapmak için</li><li><strong>Şekiller:</strong> Daire, kare, üçgen çizmek için</li><li><strong>Metin:</strong> Resme yazı eklemek için</li><li><strong>Dolgu:</strong> Alanları renklendirmek için</li></ul><p><strong>İpuçları:</strong> Katmanlar kullan, sık sık kaydet, farklı kaydet ile yedek oluştur.</p></div><div style="background: #fff5f8; padding: 15px; border-radius: 10px; margin: 15px 0;"><h4>📊 3. PowerPoint ile Sunum Hazırlama</h4><p><strong>PowerPoint nedir?</strong> Slayt gösterisi hazırlamak için kullanılan sunum programıdır.</p><p><strong>İyi bir sunumun özellikleri:</strong></p><ul><li>Sade ve anlaşılır slaytlar</li><li>Az yazı, çok görsel</li><li>Büyük ve okunabilir yazılar</li><li>Uyumlu renkler</li><li>İlgi çekici geçiş efektleri (abartısız)</li></ul><p><strong>Kullanım alanları:</strong> Ders sunumları, proje tanıtımları, bilgilendirme</p></div><h3 style="color: #d57eeb; margin-top: 30px;">🎯 ÜNİTE ÖZETİ</h3><div style="background: #fff0f8; padding: 20px; border-radius: 10px; border-left: 5px solid #d57eeb;"><p>Bu ünitede dijital belgeler, çizimler ve sunumlar hazırlamayı öğrendik. Word ile profesyonel belgeler, Paint ile yaratıcı çizimler, PowerPoint ile etkileyici sunumlar oluşturabiliriz. Her program farklı amaçlar için kullanılır ve doğru kullanıldığında güçlü araçlardır.</p><p style="margin-top: 15px;"><strong>💡 Önemli Noktalar:</strong></p><ul><li>Word metin tabanlı işler için idealdir</li><li>Paint basit ama etkili bir çizim aracıdır</li><li>PowerPoint bilgileri görsel olarak sunmamızı sağlar</li><li>Tüm programlarda düzenli kaydetme önemlidir</li></ul></div></div>',
+
+                'lesson-5-unite3': '<div style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); color: white; padding: 20px; border-radius: 15px; margin-bottom: 20px;"><h2 style="color: white;">🌐 5. SINIF - ÜNİTE 3: AĞLAR VE İLETİŞİM</h2><p style="font-size: 1.1em;">3 Hafta | İnternet ve dijital iletişim</p></div><div style="text-align: left; line-height: 1.8;"><h3 style="color: #00f2fe;">📋 KONU ÖZETLERİ</h3><div style="background: #e7f9ff; padding: 15px; border-radius: 10px; margin: 15px 0;"><h4>🌍 1. İnternet ve Ağlar</h4><p><strong>İnternet nedir?</strong> Dünyadaki milyonlarca bilgisayarın birbirine bağlanmasıyla oluşan dev bir ağdır.</p><p><strong>Ağ türleri:</strong></p><ul><li><strong>LAN (Yerel Ağ):</strong> Evdeki veya okuldaki bilgisayarları birbirine bağlar</li><li><strong>WAN (Geniş Ağ):</strong> Farklı şehirlerdeki ağları birleştirir</li><li><strong>İnternet:</strong> Tüm dünyayı kapsayan en büyük ağ</li></ul><p><strong>İnternet nasıl çalışır?</strong> Bilgiler küçük paketlere bölünür ve yönlendiriciler aracılığıyla hedefe ulaşır.</p></div><div style="background: #e7f9ff; padding: 15px; border-radius: 10px; margin: 15px 0;"><h4>📧 2. E-posta ve Dijital İletişim</h4><p><strong>E-posta nedir?</strong> Elektronik mektuptur. İnternet üzerinden mesaj gönderme yöntemidir.</p><p><strong>E-posta bölümleri:</strong></p><ul><li><strong>Kime:</strong> Alıcının e-posta adresi</li><li><strong>Konu:</strong> Mailin konusu (kısa ve açıklayıcı)</li><li><strong>İçerik:</strong> Mesajınız</li><li><strong>Ek:</strong> Dosya ekleme (resim, belge vb.)</li></ul><p><strong>E-posta görgü kuralları:</strong> Kibar dil kullan, konu başlığı yaz, gereksiz büyük dosya gönderme, spam yapma.</p></div><div style="background: #e7f9ff; padding: 15px; border-radius: 10px; margin: 15px 0;"><h4>💬 3. Çevrimiçi İşbirliği Araçları</h4><p><strong>İşbirliği araçları nedir?</strong> Birden fazla kişinin aynı anda çalışabildiği programlardır.</p><p><strong>Örnekler:</strong></p><ul><li><strong>Google Docs:</strong> Birlikte belge hazırlama</li><li><strong>Google Slides:</strong> Grup sunumları</li><li><strong>Zoom/Teams:</strong> Çevrimiçi görüşme</li></ul><p><strong>Avantajları:</strong> Uzaktan çalışma imkanı, anlık güncelleme, zaman tasarrufu</p></div><h3 style="color: #00f2fe; margin-top: 30px;">🎯 ÜNİTE ÖZETİ</h3><div style="background: #e0f7ff; padding: 20px; border-radius: 10px; border-left: 5px solid #00f2fe;"><p>Bu ünitede internet, ağlar ve dijital iletişim araçlarını öğrendik. İnternet sayesinde dünyanın her yerindeki insanlarla iletişim kurabiliyor, bilgiye hızlıca ulaşabiliyoruz. E-posta, anlık mesajlaşma ve işbirliği araçları hayatımızı kolaylaştırıyor.</p><p style="margin-top: 15px;"><strong>💡 Önemli Noktalar:</strong></p><ul><li>İnternet, birbirine bağlı bilgisayarlardan oluşan dev bir ağdır</li><li>E-posta profesyonel iletişim için kullanılır</li><li>İşbirliği araçları grup çalışmalarını kolaylaştırır</li><li>Dijital iletişimde görgü kurallarına uymak önemlidir</li></ul></div></div>',
+
+                'lesson-5-unite4': '<div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 20px; border-radius: 15px; margin-bottom: 20px;"><h2 style="color: white;">🛡️ 5. SINIF - ÜNİTE 4: ETİK VE GÜVENLİK</h2><p style="font-size: 1.1em;">2 Hafta | Dijital vatandaşlık ve güvenlik</p></div><div style="text-align: left; line-height: 1.8;"><h3 style="color: #764ba2;">📋 KONU ÖZETLERİ</h3><div style="background: #f5f0ff; padding: 15px; border-radius: 10px; margin: 15px 0;"><h4>⚖️ 1. Dijital Etik</h4><p><strong>Dijital etik nedir?</strong> İnternet ve teknoloji kullanırken uyulması gereken davranış kurallarıdır.</p><p><strong>Temel kurallar:</strong></p><ul><li><strong>Saygı:</strong> Başkalarına saygılı yorum yap</li><li><strong>Dürüstlük:</strong> Kopya çekme, başkasının çalışmasını çalma</li><li><strong>Sorumluluk:</strong> Paylaşımlarının sonuçlarını düşün</li><li><strong>Gizlilik:</strong> Başkalarının özel bilgilerini paylaşma</li></ul><p><strong>Siber zorbalık:</strong> İnternette birini rahatsız etme, aşağılama veya tehdit etmedir. ASLA yapılmamalı!</p></div><div style="background: #f5f0ff; padding: 15px; border-radius: 10px; margin: 15px 0;"><h4>🔐 2. Şifre Güvenliği</h4><p><strong>Güçlü şifre nasıl olmalı?</strong></p><ul><li>En az 8 karakter uzunluğunda</li><li>Büyük ve küçük harf içermeli</li><li>Rakam içermeli</li><li>Özel karakter içermeli (@, !, # vb.)</li><li>Tahmin edilebilir olmamalı (doğum tarihi, 123456 gibi)</li></ul><p><strong>Şifre güvenliği ipuçları:</strong></p><ul><li>Her hesap için farklı şifre kullan</li><li>Şifrelerini kimseyle paylaşma</li><li>Şifreni yaz değil, hatırla</li><li>Düzenli olarak değiştir</li></ul></div><div style="background: #f5f0ff; padding: 15px; border-radius: 10px; margin: 15px 0;"><h4>🚨 3. Kişisel Bilgi Güvenliği</h4><p><strong>Kişisel bilgi nedir?</strong> Adın, adresin, telefon numaran, okul bilgilerin gibi seni tanımlayan bilgilerdir.</p><p><strong>Güvenlik kuralları:</strong></p><ul><li>Kişisel bilgilerini sosyal medyada paylaşma</li><li>Tanımadığın kişilere bilgi verme</li><li>Ebeveyn izni olmadan kayıt olma</li><li>Şüpheli linklere tıklama</li><li>Garip durumları ailene haber ver</li></ul><p><strong>Unutma:</strong> İnternette paylaştığın her şey kalıcıdır!</p></div><h3 style="color: #764ba2; margin-top: 30px;">🎯 ÜNİTE ÖZETİ</h3><div style="background: #f0e8ff; padding: 20px; border-radius: 10px; border-left: 5px solid #764ba2;"><p>Bu ünitede dijital dünyada güvenli ve etik davranmayı öğrendik. İnternette de gerçek hayattaki gibi davranmalı, başkalarına saygılı olmalı ve kişisel bilgilerimizi korumalıyız. Güçlü şifreler kullanmak ve dikkatli olmak bizi tehlikelerden korur.</p><p style="margin-top: 15px;"><strong>💡 Önemli Noktalar:</strong></p><ul><li>İnternette saygılı ve sorumlu davran</li><li>Güçlü şifreler kullan ve kimseyle paylaşma</li><li>Kişisel bilgilerini koruma altında tut</li><li>Siber zorbalığa hayır de</li></ul></div></div>',
+
+                'lesson-5-unite5': '<div style="background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%); color: white; padding: 20px; border-radius: 15px; margin-bottom: 20px;"><h2 style="color: white;">🤖 5. SINIF - ÜNİTE 5: YAPAY ZEKA</h2><p style="font-size: 1.1em;">4 Hafta | Yapay zekaya giriş</p></div><div style="text-align: left; line-height: 1.8;"><h3 style="color: #38f9d7;">📋 KONU ÖZETLERİ</h3><div style="background: #e7fff9; padding: 15px; border-radius: 10px; margin: 15px 0;"><h4>🧠 1. Yapay Zeka Nedir?</h4><p><strong>Yapay zeka (AI) nedir?</strong> Bilgisayarların insan gibi düşünmesini, öğrenmesini ve karar vermesini sağlayan teknolojidir.</p><p><strong>Yapay zeka nasıl çalışır?</strong></p><ul><li><strong>Öğrenme:</strong> Verilerden örüntüler bulur</li><li><strong>Karar verme:</strong> Öğrendiklerini kullanarak seçim yapar</li><li><strong>Tahmin:</strong> Gelecek hakkında öngörülerde bulunur</li></ul><p><strong>Gerçek hayattan örnekler:</strong> Siri/Alexa gibi sesli asistanlar, Netflix film önerileri, otomatik yazım düzeltme</p></div><div style="background: #e7fff9; padding: 15px; border-radius: 10px; margin: 15px 0;"><h4>🎯 2. Yapay Zeka Kullanım Alanları</h4><p><strong>Günlük hayatta yapay zeka:</strong></p><ul><li><strong>Sağlık:</strong> Hastalık teşhisi, ilaç geliştirme</li><li><strong>Eğitim:</strong> Kişiselleştirilmiş öğrenme</li><li><strong>Ulaşım:</strong> Otonom araçlar, trafik yönetimi</li><li><strong>Eğlence:</strong> Oyunlar, müzik önerileri</li><li><strong>Alışveriş:</strong> Ürün önerileri, chatbotlar</li></ul><p><strong>Akıllı ev cihazları:</strong> Termostat, aydınlatma, güvenlik sistemleri</p></div><div style="background: #e7fff9; padding: 15px; border-radius: 10px; margin: 15px 0;"><h4>⚡ 3. Yapay Zekanın Avantaj ve Dezavantajları</h4><p><strong>Avantajları:</strong></p><ul><li>Hızlı ve hatasız çalışma</li><li>Yorulmadan 7/24 çalışabilme</li><li>Tekrarlayan işleri yapabilme</li><li>Karmaşık problemleri çözebilme</li></ul><p><strong>Dezavantajları:</strong></p><ul><li>İş kaybına yol açabilir</li><li>Pahalı olabilir</li><li>Yanlış kullanılabilir</li><li>Gizlilik endişeleri</li></ul><p><strong>Etik konular:</strong> Yapay zeka sorumlu kullanılmalı, insan haklarına saygılı olmalı</p></div><h3 style="color: #38f9d7; margin-top: 30px;">🎯 ÜNİTE ÖZETİ</h3><div style="background: #e0fff7; padding: 20px; border-radius: 10px; border-left: 5px solid #38f9d7;"><p>Bu ünitede yapay zekayı, nasıl çalıştığını ve hayatımızdaki yerini öğrendik. Yapay zeka günümüzde birçok alanda kullanılıyor ve geleceğin teknolojilerinden biri. Avantajları çok olsa da sorumlu kullanılması gerekiyor.</p><p style="margin-top: 15px;"><strong>💡 Önemli Noktalar:</strong></p><ul><li>Yapay zeka, makinelerin öğrenmesini sağlar</li><li>Günlük hayatta birçok yerde kullanılıyor</li><li>Hem avantajları hem de dezavantajları var</li><li>Etik kullanım çok önemlidir</li></ul></div></div>',
+
+                'lesson-5-unite6': '<div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 20px; border-radius: 15px; margin-bottom: 20px;"><h2 style="color: white;">💻 5. SINIF - ÜNİTE 6: SCRATCH PROGRAMLAMA</h2><p style="font-size: 1.1em;">14 Hafta | Blok tabanlı programlama</p></div><div style="text-align: left; line-height: 1.8;"><h3 style="color: #667eea;">📋 KONU ÖZETLERİ</h3><div style="background: #f0f2ff; padding: 15px; border-radius: 10px; margin: 15px 0;"><h4>🎮 1. Scratch Nedir?</h4><p><strong>Scratch nedir?</strong> MIT tarafından geliştirilen, blokları birleştirerek kod yazılan görsel programlama dilidir.</p><p><strong>Neden Scratch?</strong></p><ul><li>Kolay ve eğlenceli</li><li>Görsel olarak öğretir</li><li>Hata yapmak zor</li><li>Yaratıcılığı geliştirir</li><li>Ücretsiz ve Türkçe</li></ul><p><strong>Scratch ile neler yapılır?</strong> Oyunlar, animasyonlar, hikayeler, müzik ve daha fazlası!</p></div><div style="background: #f0f2ff; padding: 15px; border-radius: 10px; margin: 15px 0;"><h4>🧩 2. Temel Programlama Kavramları</h4><p><strong>Bloklar:</strong></p><ul><li><strong>Hareket:</strong> Karakteri hareket ettirme</li><li><strong>Görünüm:</strong> Görsel efektler, konuşma</li><li><strong>Ses:</strong> Müzik ve ses efektleri</li><li><strong>Olaylar:</strong> Yeşil bayrak, tıklama</li><li><strong>Kontrol:</strong> Döngüler, koşullar</li><li><strong>Algılama:</strong> Çarpışma, mesafe</li></ul><p><strong>Sıralama:</strong> Komutlar sırayla çalışır (yukarıdan aşağıya)</p><p><strong>Döngü:</strong> Bir işi tekrar tekrar yaptırma (10 kez tekrarla)</p><p><strong>Koşul:</strong> Eğer-o zaman mantığı (eğer duvara çarptıysa dur)</p></div><div style="background: #f0f2ff; padding: 15px; border-radius: 10px; margin: 15px 0;"><h4>🎨 3. Proje Oluşturma</h4><p><strong>Basit bir oyun nasıl yapılır?</strong></p><ol><li><strong>Fikir:</strong> Ne yapmak istiyorsun? (Örn: Top yakalama oyunu)</li><li><strong>Karakterler:</strong> Sprite (karakter) seç veya çiz</li><li><strong>Arka plan:</strong> Sahne tasarımı</li><li><strong>Kodlama:</strong> Blokları birleştir</li><li><strong>Test:</strong> Oynat ve hataları düzelt</li><li><strong>Geliştir:</strong> Yeni özellikler ekle</li></ol><p><strong>İpuçları:</strong> Küçük başla, adım adım geliştir, sık sık test et, arkadaşlarınla paylaş!</p></div><h3 style="color: #667eea; margin-top: 30px;">🎯 ÜNİTE ÖZETİ</h3><div style="background: #e8ebff; padding: 20px; border-radius: 10px; border-left: 5px solid #667eea;"><p>Bu ünitede Scratch ile programlamayı öğrendik. Blokları birleştirerek oyunlar, animasyonlar ve interaktif hikayeler oluşturabildik. Programlama sadece kod yazmak değil, problem çözme ve yaratıcı düşünme becerisidir. Scratch bu becerileri geliştirmemize yardımcı olur.</p><p style="margin-top: 15px;"><strong>💡 Önemli Noktalar:</strong></p><ul><li>Scratch görsel programlama dilidir</li><li>Blokları birleştirerek program yazarız</li><li>Döngü ve koşullar programlamanın temelidir</li><li>Hayal gücün sınır tanımaz - ne istersen yapabilirsin!</li></ul></div></div>',
+
+                'lesson-6-unite1': '<div style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); color: white; padding: 20px; border-radius: 15px; margin-bottom: 20px;"><h2 style="color: white;">💾 6. SINIF - ÜNİTE 1: BİLİŞİM TEKNOLOJİLERİ</h2><p style="font-size: 1.1em;">4 Hafta | Teknoloji tarihçesi ve gelişimi</p></div><div style="text-align: left; line-height: 1.8;"><h3 style="color: #00f2fe;">📋 KONU ÖZETLERİ</h3><div style="background: #e7f9ff; padding: 15px; border-radius: 10px; margin: 15px 0;"><h4>📜 1. Bilişim Tarihçesi</h4><p><strong>Bilgisayarın evrimi:</strong></p><ul><li><strong>1940lar:</strong> İlk bilgisayarlar (oda büyüklüğünde, çok ağır)</li><li><strong>1970ler:</strong> Kişisel bilgisayarlar geliştirildi</li><li><strong>1990lar:</strong> İnternet yaygınlaştı</li><li><strong>2000ler:</strong> Akıllı telefonlar hayatımıza girdi</li><li><strong>Günümüz:</strong> Bulut bilişim, yapay zeka çağı</li></ul><p><strong>Önemli isimler:</strong> Charles Babbage, Alan Turing, Steve Jobs, Bill Gates</p></div><div style="background: #e7f9ff; padding: 15px; border-radius: 10px; margin: 15px 0;"><h4>🔢 2. İkili Sayı Sistemi</h4><p><strong>Bilgisayarlar nasıl düşünür?</strong> Sadece 0 ve 1 kullanarak!</p><p><strong>Bit ve Byte:</strong></p><ul><li><strong>Bit:</strong> En küçük veri birimi (0 veya 1)</li><li><strong>Byte:</strong> 8 bit = 1 byte</li><li><strong>KB (Kilobyte):</strong> 1024 byte</li><li><strong>MB (Megabyte):</strong> 1024 KB</li><li><strong>GB (Gigabyte):</strong> 1024 MB</li></ul><p><strong>Örnek:</strong> 5 sayısı ikili sistemde 101 olur</p></div><div style="background: #e7f9ff; padding: 15px; border-radius: 10px; margin: 15px 0;"><h4>🌐 3. Güncel Teknolojiler</h4><p><strong>Bulut bilişim:</strong> Verilerimizi internetteki sunucularda saklama (Google Drive, iCloud)</p><p><strong>Nesnelerin interneti (IoT):</strong> Akıllı ev cihazları, giyilebilir teknolojiler</p><p><strong>Mobil teknolojiler:</strong> Akıllı telefonlar, tabletler, akıllı saatler</p><p><strong>Artırılmış gerçeklik (AR):</strong> Dijital nesneleri gerçek dünyaya ekleme</p></div><h3 style="color: #00f2fe; margin-top: 30px;">🎯 ÜNİTE ÖZETİ</h3><div style="background: #e0f7ff; padding: 20px; border-radius: 10px; border-left: 5px solid #00f2fe;"><p>Bu ünitede bilişim teknolojilerinin tarihini ve gelişimini öğrendik. Bilgisayarlar oda büyüklüğünden cep boyutuna küçüldü. İkili sayı sistemi bilgisayarların dilini oluşturur. Günümüzde bulut bilişim, IoT gibi teknolojiler hayatımızı şekillendiriyor.</p><p style="margin-top: 15px;"><strong>💡 Önemli Noktalar:</strong></p><ul><li>Bilgisayar teknolojisi sürekli gelişiyor</li><li>Bilgisayarlar ikili (0-1) sistemle çalışır</li><li>Bulut bilişim verilerimizi güvende tutar</li><li>Teknoloji hayatımızı kolaylaştırır</li></ul></div></div>',
+
+                'lesson-6-unite2': '<div style="background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%); color: white; padding: 20px; border-radius: 15px; margin-bottom: 20px;"><h2 style="color: white;">🛡️ 6. SINIF - ÜNİTE 2: ETİK VE GÜVENLİK</h2><p style="font-size: 1.1em;">5 Hafta | Siber güvenlik ve KVKK</p></div><div style="text-align: left; line-height: 1.8;"><h3 style="color: #38f9d7;">📋 KONU ÖZETLERİ</h3><div style="background: #e7fff9; padding: 15px; border-radius: 10px; margin: 15px 0;"><h4>📜 1. KVKK (Kişisel Verilerin Korunması Kanunu)</h4><p><strong>KVKK nedir?</strong> Kişisel verilerimizin nasıl toplanacağını, kullanılacağını ve korunacağını düzenleyen kanundur.</p><p><strong>Kişisel veri nedir?</strong></p><ul><li>Ad, soyad, TC kimlik no</li><li>Adres, telefon numarası</li><li>E-posta adresi</li><li>Fotoğraflar, videolar</li><li>Sağlık bilgileri</li></ul><p><strong>Haklarımız:</strong></p><ul><li>Verilerimizin nerede kullanıldığını öğrenme</li><li>Yanlış bilgilerin düzeltilmesini isteme</li><li>Verilerimizin silinmesini talep etme</li></ul></div><div style="background: #e7fff9; padding: 15px; border-radius: 10px; margin: 15px 0;"><h4>🎣 2. Phishing (Kimlik Avı) Saldırıları</h4><p><strong>Phishing nedir?</strong> Sahte e-postalar veya web siteleri kullanarak kişisel bilgilerimizi çalmaya çalışan dolandırıcılık yöntemidir.</p><p><strong>Phishing nasıl anlaşılır?</strong></p><ul><li>Acil eylem isteyen mesajlar ("Hesabınız kapatılacak!")</li><li>Yazım hataları ve garip dil</li><li>Şüpheli gönderici adresi</li><li>Beklenmeyen ek dosyalar</li><li>Kişisel bilgi isteyen linkler</li></ul><p><strong>Korunma yolları:</strong></p><ul><li>Şüpheli linklere tıklama</li><li>Bilinmeyen kaynaklardan gelen ekleri açma</li><li>Web sitelerinin HTTPS olduğunu kontrol et</li><li>Resmi kurumlar şifre sormaz!</li></ul></div><div style="background: #e7fff9; padding: 15px; border-radius: 10px; margin: 15px 0;"><h4>🔐 3. İki Faktörlü Kimlik Doğrulama (2FA)</h4><p><strong>2FA nedir?</strong> Hesabına giriş yaparken şifrenin yanında bir de doğrulama kodu istenmesidir.</p><p><strong>Nasıl çalışır?</strong></p><ol><li>Kullanıcı adı ve şifreni gir</li><li>Telefonuna veya e-postana kod gelir</li><li>Kodu girerek girişi tamamla</li></ol><p><strong>Neden önemli?</strong></p><ul><li>Şifren çalınsa bile hesabın güvende</li><li>Yetkisiz girişleri engeller</li><li>Ekstra güvenlik katmanı sağlar</li></ul><p><strong>Öneriler:</strong> Tüm önemli hesaplarında (e-posta, sosyal medya) 2FA aç!</p></div><h3 style="color: #38f9d7; margin-top: 30px;">🎯 ÜNİTE ÖZETİ</h3><div style="background: #e0fff7; padding: 20px; border-radius: 10px; border-left: 5px solid #38f9d7;"><p>Bu ünitede dijital güvenlik ve kişisel veri korumasını öğrendik. KVKK kişisel verilerimizi korur. Phishing saldırılarından korunmak için dikkatli olmalıyız. İki faktörlü kimlik doğrulama hesaplarımızı çok daha güvenli hale getirir.</p><p style="margin-top: 15px;"><strong>💡 Önemli Noktalar:</strong></p><ul><li>KVKK kişisel verilerimizi korur</li><li>Phishing dolandırıcılığına dikkat et</li><li>2FA kullanarak hesaplarını güvenli tut</li><li>Şüpheli durumlarda büyüklerine danış</li></ul></div></div>',
+
+                'lesson-6-unite3': '<div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 20px; border-radius: 15px; margin-bottom: 20px;"><h2 style="color: white;">📡 6. SINIF - ÜNİTE 3: İLETİŞİM VE İŞBİRLİĞİ</h2><p style="font-size: 1.1em;">2 Hafta | Dijital işbirliği araçları</p></div><div style="text-align: left; line-height: 1.8;"><h3 style="color: #764ba2;">📋 KONU ÖZETLERİ</h3><div style="background: #f5f0ff; padding: 15px; border-radius: 10px; margin: 15px 0;"><h4>☁️ 1. Bulut Tabanlı İşbirliği</h4><p><strong>Bulut depolama nedir?</strong> Dosyalarını internet üzerindeki sunucularda saklama ve paylaşma yöntemidir.</p><p><strong>Popüler servisler:</strong></p><ul><li><strong>Google Drive:</strong> 15 GB ücretsiz alan</li><li><strong>OneDrive:</strong> Microsoft servisi</li><li><strong>Dropbox:</strong> Kolay paylaşım</li></ul><p><strong>Avantajları:</strong></p><ul><li>Her yerden erişim (bilgisayar, telefon, tablet)</li><li>Otomatik yedekleme</li><li>Kolay paylaşım</li><li>Birlikte çalışma imkanı</li></ul></div><div style="background: #f5f0ff; padding: 15px; border-radius: 10px; margin: 15px 0;"><h4>👥 2. Çevrimiçi Toplantı Araçları</h4><p><strong>Video konferans araçları:</strong></p><ul><li><strong>Zoom:</strong> Çevrimiçi dersler, toplantılar</li><li><strong>Microsoft Teams:</strong> Ekip çalışması</li><li><strong>Google Meet:</strong> Hızlı görüşmeler</li></ul><p><strong>Özellikler:</strong></p><ul><li>Ekran paylaşımı</li><li>Sohbet (chat)</li><li>Kayıt alma</li><li>Arka plan bulanıklaştırma</li></ul><p><strong>Toplantı görgüsü:</strong> Mikrofonu kapalı tut, gerektiğinde aç, kamerayı kullan, dikkatli dinle</p></div><div style="background: #f5f0ff; padding: 15px; border-radius: 10px; margin: 15px 0;"><h4>📝 3. Ortak Belge Hazırlama</h4><p><strong>Google Workspace araçları:</strong></p><ul><li><strong>Google Docs:</strong> Birlikte belge yazma</li><li><strong>Google Sheets:</strong> Ortak tablolar</li><li><strong>Google Slides:</strong> Grup sunumları</li></ul><p><strong>İşbirliği özellikleri:</strong></p><ul><li>Aynı anda birden fazla kişi çalışabilir</li><li>Yorum bırakma ve öneriler</li><li>Değişiklik geçmişi</li><li>Otomatik kaydetme</li></ul><p><strong>İpuçları:</strong> Görev dağılımı yap, iletişimde kal, düzenli kontrol et</p></div><h3 style="color: #764ba2; margin-top: 30px;">🎯 ÜNİTE ÖZETİ</h3><div style="background: #f0e8ff; padding: 20px; border-radius: 10px; border-left: 5px solid #764ba2;"><p>Bu ünitede dijital işbirliği araçlarını öğrendik. Bulut depolama dosyalarımızı güvende tutar ve paylaşmamızı sağlar. Video konferans araçları uzaktan iletişimi kolaylaştırır. Google Workspace gibi araçlarla grup projeleri çok daha kolay hale gelir.</p><p style="margin-top: 15px;"><strong>💡 Önemli Noktalar:</strong></p><ul><li>Bulut depolama her yerden erişim sağlar</li><li>Video konferans uzaktan eğitimi mümkün kılar</li><li>Ortak belgeler ekip çalışmasını kolaylaştırır</li><li>Dijital araçlar zamandan tasarruf sağlar</li></ul></div></div>',
+
+                'lesson-6-unite4': '<div style="background: linear-gradient(135deg, #fccb90 0%, #d57eeb 100%); color: white; padding: 20px; border-radius: 15px; margin-bottom: 20px;"><h2 style="color: white;">🎬 6. SINIF - ÜNİTE 4: ÜRÜN OLUŞTURMA</h2><p style="font-size: 1.1em;">7 Hafta | Dijital içerik üretimi</p></div><div style="text-align: left; line-height: 1.8;"><h3 style="color: #d57eeb;">📋 KONU ÖZETLERİ</h3><div style="background: #fff5f8; padding: 15px; border-radius: 10px; margin: 15px 0;"><h4>🎨 1. Grafik Tasarım</h4><p><strong>Grafik tasarım nedir?</strong> Görseller, renkler ve yazıları kullanarak mesaj ileten sanat ve iletişim dalıdır.</p><p><strong>Araçlar:</strong></p><ul><li><strong>Canva:</strong> Kolay ve web tabanlı</li><li><strong>GIMP:</strong> Ücretsiz, profesyonel</li><li><strong>Paint.NET:</strong> Basit ama güçlü</li></ul><p><strong>Tasarım prensipleri:</strong></p><ul><li><strong>Denge:</strong> Öğelerin uyumlu dağılımı</li><li><strong>Kontrast:</strong> Zıtlıklarla dikkat çekme</li><li><strong>Hiyerarşi:</strong> Önemli öğeleri öne çıkarma</li><li><strong>Renk uyumu:</strong> Uyumlu renk paletleri</li></ul></div><div style="background: #fff5f8; padding: 15px; border-radius: 10px; margin: 15px 0;"><h4>🎥 2. Video Düzenleme</h4><p><strong>Video düzenleme nedir?</strong> Ham video görüntülerini kesip birleştirerek profesyonel videolar oluşturma sürecidir.</p><p><strong>Temel programlar:</strong></p><ul><li><strong>Windows Movie Maker:</strong> Başlangıç seviyesi</li><li><strong>iMovie:</strong> Mac kullanıcıları için</li><li><strong>DaVinci Resolve:</strong> Ücretsiz, ileri seviye</li></ul><p><strong>Video düzenleme adımları:</strong></p><ol><li>Videoları içe aktar</li><li>Gereksiz kısımları kes</li><li>Klipleri sırala</li><li>Geçiş efektleri ekle</li><li>Müzik ve ses ekle</li><li>Başlık ve yazılar ekle</li><li>Dışa aktar</li></ol></div><div style="background: #fff5f8; padding: 15px; border-radius: 10px; margin: 15px 0;"><h4>🎭 3. Animasyon ve Podcast</h4><p><strong>Animasyon:</strong></p><ul><li><strong>Scratch:</strong> Basit animasyonlar</li><li><strong>Animaker:</strong> Web tabanlı</li><li><strong>Stop motion:</strong> Kare kare fotoğraf çekerek</li></ul><p><strong>Podcast (Ses yayını):</strong></p><ul><li><strong>Konu seç:</strong> İlgi alanın ne?</li><li><strong>Senaryo yaz:</strong> Ne konuşacaksın?</li><li><strong>Kaydet:</strong> Mikrofon ve Audacity kullan</li><li><strong>Düzenle:</strong> Gereksiz kısımları çıkar</li><li><strong>Yayınla:</strong> YouTube, Spotify</li></ul></div><h3 style="color: #d57eeb; margin-top: 30px;">🎯 ÜNİTE ÖZETİ</h3><div style="background: #fff0f8; padding: 20px; border-radius: 10px; border-left: 5px solid #d57eeb;"><p>Bu ünitede dijital ürünler oluşturmayı öğrendik. Grafik tasarım görsel iletişimin temelidir. Video düzenleme hikayeler anlatmamızı sağlar. Animasyon ve podcast ile yaratıcılığımızı ifade edebiliriz. Tüm bu araçlar içerik üreticisi olmamızı sağlar.</p><p style="margin-top: 15px;"><strong>💡 Önemli Noktalar:</strong></p><ul><li>Grafik tasarımda tasarım prensipleri önemlidir</li><li>Video düzenleme planlamayla başlar</li><li>Animasyon sabır ve yaratıcılık gerektirir</li><li>Podcast ile sesini duyurabilirsin</li></ul></div></div>',
+
+                'lesson-6-unite5': '<div style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white; padding: 20px; border-radius: 15px; margin-bottom: 20px;"><h2 style="color: white;">🧩 6. SINIF - ÜNİTE 5: PROBLEM ÇÖZME VE PROGRAMLAMA</h2><p style="font-size: 1.1em;">21 Hafta | Algoritmik düşünme ve Python</p></div><div style="text-align: left; line-height: 1.8;"><h3 style="color: #f5576c;">📋 KONU ÖZETLERİ</h3><div style="background: #fff5f8; padding: 15px; border-radius: 10px; margin: 15px 0;"><h4>🔍 1. Algoritmik Düşünme</h4><p><strong>Algoritma nedir?</strong> Bir problemi çözmek için izlenen adım adım yoldur.</p><p><strong>Günlük hayattan örnek:</strong> Çay yapma algoritması</p><ol><li>Çaydanlığı al</li><li>Su doldur</li><li>Ocağa koy</li><li>Yak</li><li>Kaynayana kadar bekle</li><li>Çay demle</li></ol><p><strong>Algoritmik düşünmenin 4 adımı:</strong></p><ul><li><strong>Parçalama:</strong> Büyük problemi küçük parçalara ayır</li><li><strong>Örüntü bulma:</strong> Benzer durumları fark et</li><li><strong>Soyutlama:</strong> Gereksiz detayları çıkar</li><li><strong>Algoritma tasarımı:</strong> Adım adım çözüm oluştur</li></ul></div><div style="background: #fff5f8; padding: 15px; border-radius: 10px; margin: 15px 0;"><h4>🐍 2. Python Programlamaya Giriş</h4><p><strong>Python nedir?</strong> Öğrenmesi kolay, güçlü ve popüler bir programlama dilidir.</p><p><strong>Temel komutlar:</strong></p><ul><li><strong>print():</strong> Ekrana yazı yazdırma<br><code>print("Merhaba Dünya")</code></li><li><strong>input():</strong> Kullanıcıdan veri alma<br><code>isim = input("Adın ne?")</code></li><li><strong>Değişkenler:</strong> Veri saklama<br><code>yas = 12</code></li></ul><p><strong>Veri tipleri:</strong></p><ul><li><strong>str (string):</strong> Metin → "Merhaba"</li><li><strong>int (integer):</strong> Tam sayı → 42</li><li><strong>float:</strong> Ondalıklı sayı → 3.14</li></ul></div><div style="background: #fff5f8; padding: 15px; border-radius: 10px; margin: 15px 0;"><h4>🔄 3. Koşullar ve Döngüler</h4><p><strong>Koşullu ifadeler (if-else):</strong></p><pre style="background: white; padding: 10px; border-radius: 5px; overflow-x: auto;"><code>yas = 13\nif yas >= 12:\n    print("Ortaokul öğrencisisin")\nelse:\n    print("İlkokul öğrencisisin")</code></pre><p><strong>Döngüler (for, while):</strong></p><pre style="background: white; padding: 10px; border-radius: 5px; overflow-x: auto;"><code># For döngüsü\nfor i in range(5):\n    print("Python")\n\n# While döngüsü\nsayac = 0\nwhile sayac < 3:\n    print(sayac)\n    sayac = sayac + 1</code></pre><p><strong>Listeler:</strong></p><pre style="background: white; padding: 10px; border-radius: 5px; overflow-x: auto;"><code>meyveler = ["elma", "armut", "muz"]\nprint(meyveler[0])  # elma</code></pre></div><h3 style="color: #f5576c; margin-top: 30px;">🎯 ÜNİTE ÖZETİ</h3><div style="background: #ffe5ed; padding: 20px; border-radius: 10px; border-left: 5px solid #f5576c;"><p>Bu ünitede algoritmik düşünme ve Python programlamayı öğrendik. Algoritma problemleri çözmek için yol haritasıdır. Python ile basit programlar yazabilir, koşullar ve döngüler kullanarak karmaşık işlemler yapabiliriz. Programlama mantıksal düşünme becerimizi geliştirir.</p><p style="margin-top: 15px;"><strong>💡 Önemli Noktalar:</strong></p><ul><li>Algoritma problem çözmenin temelidir</li><li>Python yeni başlayanlar için idealdir</li><li>Koşullar programın karar vermesini sağlar</li><li>Döngüler tekrarlı işleri kolaylaştırır</li></ul></div></div>'
+            };
+
+            modalBody.innerHTML = contents[content] || '<h2>İçerik hazırlanıyor...</h2>';
+            modal.style.display = 'block';
+        }
+
+        function closeModal() {
+            document.getElementById('myModal').style.display = 'none';
+        }
+
+        window.onclick = function(event) {
+            var modal = document.getElementById('myModal');
+            if (event.target == modal) {
+                modal.style.display = 'none';
+            }
+        }
+
+        // Accordion toggle function
+        function toggleAccordion(element) {
+            element.classList.toggle('active');
+            var panel = element.nextElementSibling;
+            panel.classList.toggle('show');
+        }
+
+        // Open first accordion by default on page load (optional)
+        window.addEventListener('DOMContentLoaded', function() {
+            var firstAccordions = document.querySelectorAll('.accordion');
+            if (firstAccordions.length > 0) {
+                // İsteğe bağlı: ilk accordion'ı otomatik açabilirsiniz
+                // firstAccordions[0].click();
+            }
+        });
+    </script>
+    <script src="dashboard_scripts.js"></script>
+</body>
+</html>
