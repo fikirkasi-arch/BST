@@ -398,6 +398,203 @@
             transition: max-height 0.5s ease-in;
         }
 
+        /* Search and Filter Styles */
+        .search-filter-container {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+
+        .search-box {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .search-box input {
+            flex: 1;
+            padding: 15px 20px;
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            font-size: 1em;
+            transition: border-color 0.3s;
+        }
+
+        .search-box input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .search-box button {
+            padding: 15px 30px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1em;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .search-box button:hover {
+            transform: scale(1.05);
+        }
+
+        .filter-buttons {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            padding: 10px 20px;
+            border: 2px solid #e9ecef;
+            background: white;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 0.95em;
+        }
+
+        .filter-btn:hover {
+            border-color: #667eea;
+            background: #f8f9ff;
+        }
+
+        .filter-btn.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-color: #667eea;
+        }
+
+        /* Dashboard Styles */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            transition: transform 0.3s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .stat-card h3 {
+            color: #667eea;
+            margin-bottom: 15px;
+            font-size: 1.1em;
+        }
+
+        .stat-number {
+            font-size: 2.5em;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 20px;
+            background: #e9ecef;
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 15px 0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            transition: width 0.5s ease;
+            border-radius: 10px;
+        }
+
+        .badge-container {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-top: 20px;
+        }
+
+        .badge {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .badge.locked {
+            background: #e9ecef;
+            color: #999;
+        }
+
+        .recent-activity {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            margin-top: 30px;
+        }
+
+        .activity-item {
+            padding: 15px;
+            border-left: 4px solid #667eea;
+            background: #f8f9ff;
+            margin-bottom: 15px;
+            border-radius: 5px;
+        }
+
+        .activity-item .time {
+            color: #999;
+            font-size: 0.85em;
+        }
+
+        .today-task {
+            background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+        }
+
+        .today-task h2 {
+            color: white;
+            margin-bottom: 15px;
+        }
+
+        .mark-complete-btn {
+            background: white;
+            color: #38f9d7;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 25px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 15px;
+            transition: transform 0.2s;
+        }
+
+        .mark-complete-btn:hover {
+            transform: scale(1.05);
+        }
+
+        .mark-complete-btn.completed {
+            background: #2ecc71;
+            color: white;
+        }
+
         @media (max-width: 768px) {
             header h1 {
                 font-size: 1.8em;
@@ -419,6 +616,18 @@
                 font-size: 1em;
                 padding: 15px 20px;
             }
+
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .filter-buttons {
+                justify-content: center;
+            }
+
+            .search-box {
+                flex-direction: column;
+            }
         }
     </style>
 </head>
@@ -432,6 +641,7 @@
 
         <div class="tabs">
             <button class="tab active" onclick="openTab('anasayfa')">🏠 Ana Sayfa</button>
+            <button class="tab" onclick="openTab('dashboard')">📊 Öğrenci Paneli</button>
             <button class="tab" onclick="openTab('ogretmen')">👨‍🏫 Öğretmen Hazırlık</button>
             <button class="tab" onclick="openTab('dersler')">📚 Ders Anlatımı</button>
             <button class="tab" onclick="openTab('calisma')">📝 Çalışma Sayfaları</button>
@@ -531,6 +741,107 @@
                         <div class="weeks">📅 21 Hafta (Hafta 20-40)</div>
                     </div>
                 </div>
+            </div>
+        </div>
+
+        <!-- ÖĞRENCİ PANELİ / DASHBOARD -->
+        <div id="dashboard" class="tab-content">
+            <h2 style="margin-bottom: 30px;">📊 Öğrenci Paneli</h2>
+
+            <!-- Bugünün Görevi -->
+            <div class="today-task" id="todayTask">
+                <h2>🎯 Bugünün Görevi</h2>
+                <p id="taskDescription">Hafta 1 - Bilişim Temelleri: Bilgisayar Bileşenleri</p>
+                <p style="font-size: 0.9em; opacity: 0.9; margin-top: 5px;">📚 5. Sınıf | ⏱️ Tahmini Süre: 45 dakika</p>
+                <button class="mark-complete-btn" id="markCompleteBtn" onclick="markTaskComplete()">
+                    ✓ Tamamlandı Olarak İşaretle
+                </button>
+            </div>
+
+            <!-- İstatistikler -->
+            <div class="dashboard-grid">
+                <div class="stat-card" style="border-top: 4px solid #f5576c;">
+                    <h3>📚 Tamamlanan Haftalar</h3>
+                    <div class="stat-number" style="color: #f5576c;" id="completedWeeks">0</div>
+                    <p style="color: #999;">/ 67 Hafta</p>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="weeksProgress" style="width: 0%"></div>
+                    </div>
+                </div>
+
+                <div class="stat-card" style="border-top: 4px solid #4facfe;">
+                    <h3>🎮 Oynanan Oyunlar</h3>
+                    <div class="stat-number" style="color: #4facfe;" id="completedGames">0</div>
+                    <p style="color: #999;">/ 67 Oyun</p>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="gamesProgress" style="width: 0%"></div>
+                    </div>
+                </div>
+
+                <div class="stat-card" style="border-top: 4px solid #43e97b;">
+                    <h3>📝 Tamamlanan Çalışma Sayfaları</h3>
+                    <div class="stat-number" style="color: #43e97b;" id="completedWorksheets">0</div>
+                    <p style="color: #999;">/ 67 Sayfa</p>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="worksheetsProgress" style="width: 0%"></div>
+                    </div>
+                </div>
+
+                <div class="stat-card" style="border-top: 4px solid #fccb90;">
+                    <h3>🏆 Toplam İlerleme</h3>
+                    <div class="stat-number" style="color: #d57eeb;" id="totalProgress">0%</div>
+                    <p style="color: #999;">Genel Başarı Oranı</p>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="totalProgressBar" style="width: 0%"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Rozetler ve Başarılar -->
+            <div class="stat-card">
+                <h3>🏅 Kazanılan Rozetler ve Başarılar</h3>
+                <div class="badge-container" id="badgesContainer">
+                    <div class="badge locked" id="badge1">
+                        <span>🔒</span>
+                        <span>İlk Adım - İlk haftayı tamamla</span>
+                    </div>
+                    <div class="badge locked" id="badge2">
+                        <span>🔒</span>
+                        <span>Oyun Tutkunu - 5 oyun oyna</span>
+                    </div>
+                    <div class="badge locked" id="badge3">
+                        <span>🔒</span>
+                        <span>Çalışkan - 10 çalışma sayfası tamamla</span>
+                    </div>
+                    <div class="badge locked" id="badge4">
+                        <span>🔒</span>
+                        <span>Yarı Yol - 50% ilerleme</span>
+                    </div>
+                    <div class="badge locked" id="badge5">
+                        <span>🔒</span>
+                        <span>Şampiyon - Tüm içeriği tamamla</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Son Aktiviteler -->
+            <div class="recent-activity">
+                <h3 style="margin-bottom: 20px;">📋 Son Aktiviteler</h3>
+                <div id="activityList">
+                    <div style="text-align: center; padding: 30px; color: #999;">
+                        <p>Henüz hiç aktivite yok. Öğrenmeye başla!</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Veri Yönetimi Butonları -->
+            <div style="margin-top: 30px; text-align: center;">
+                <button onclick="resetProgress()" style="background: #e74c3c; color: white; padding: 15px 30px; border: none; border-radius: 10px; cursor: pointer; margin: 0 10px;">
+                    🔄 İlerlemeyi Sıfırla
+                </button>
+                <button onclick="exportProgress()" style="background: #3498db; color: white; padding: 15px 30px; border: none; border-radius: 10px; cursor: pointer; margin: 0 10px;">
+                    📥 İlerlemeyi Dışa Aktar
+                </button>
             </div>
         </div>
 
@@ -696,6 +1007,23 @@
             <div class="student-workspace" style="margin-bottom: 30px;">
                 <h2>✏️ Öğrenciler İçin Eğlenceli Aktiviteler!</h2>
                 <p style="font-size: 1.1em; margin-bottom: 20px;">Her ünite için çalışma sayfaları, bulmacalar ve oyunlar</p>
+            </div>
+
+            <!-- Arama ve Filtreleme -->
+            <div class="search-filter-container">
+                <div class="search-box">
+                    <input type="text" id="searchInput" placeholder="🔍 Hafta, konu veya ünite ara... (örn: 'Hafta 5', 'Scratch', 'Güvenlik')" oninput="performSearch()">
+                    <button onclick="performSearch()">🔍 Ara</button>
+                </div>
+                <div class="filter-buttons">
+                    <button class="filter-btn active" onclick="filterContent('all')">🌐 Tümü</button>
+                    <button class="filter-btn" onclick="filterContent('5-sinif')">5️⃣ 5. Sınıf</button>
+                    <button class="filter-btn" onclick="filterContent('6-sinif')">6️⃣ 6. Sınıf</button>
+                    <button class="filter-btn" onclick="filterContent('oyun')">🎮 Oyunlar</button>
+                    <button class="filter-btn" onclick="filterContent('calisma')">📝 Çalışma Sayfaları</button>
+                    <button class="filter-btn" onclick="filterContent('quiz')">🎯 Quizler</button>
+                </div>
+                <div id="searchResults" style="margin-top: 15px; color: #667eea; font-weight: 500;"></div>
             </div>
 
             <!-- İnteraktif Quizler -->
@@ -1495,5 +1823,6 @@
             }
         });
     </script>
+    <script src="dashboard_scripts.js"></script>
 </body>
 </html>
