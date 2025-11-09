@@ -2898,6 +2898,12 @@
                         <h4 style="color: #333; margin: 15px 0;">${data.game.title}</h4>
                         <p style="color: #666; line-height: 1.6;">${data.game.description}</p>
                         <span class="game-type-badge">${getGameTypeName(data.game.type)}</span>
+                        <br><br>
+                        <a href="haftalik-oyunlar/oyun-${data.grade}sinif-hafta${data.week}.html" target="_blank" style="text-decoration: none;">
+                            <button style="background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%); color: white; padding: 15px 30px; border: none; border-radius: 10px; font-size: 1.1em; font-weight: bold; cursor: pointer; transition: all 0.3s; width: 100%;">
+                                🎮 Oyunu Oyna
+                            </button>
+                        </a>
                     </div>
 
                     <!-- ÖDEV -->
@@ -2908,6 +2914,12 @@
                         <ul class="task-list">
                             ${data.homework.tasks.map(task => `<li>${task}</li>`).join('')}
                         </ul>
+                        <br>
+                        <a href="haftalik-calisma-sayfalari/calisma-${data.grade}sinif-hafta${data.week}.html" target="_blank" style="text-decoration: none;">
+                            <button style="background: linear-gradient(135deg, #FF9800 0%, #FB8C00 100%); color: white; padding: 15px 30px; border: none; border-radius: 10px; font-size: 1.1em; font-weight: bold; cursor: pointer; transition: all 0.3s; width: 100%;">
+                                📄 Çalışma Sayfasını İndir / Yazdır
+                            </button>
+                        </a>
                     </div>
 
                     <!-- MERAKLISINA -->
