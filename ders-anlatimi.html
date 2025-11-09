@@ -68,6 +68,7 @@
             margin-bottom: 25px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.15);
             transition: transform 0.3s ease, box-shadow 0.3s ease;
+            cursor: pointer;
         }
 
         .unit-card:hover {
@@ -79,7 +80,6 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 20px;
             padding-bottom: 15px;
             border-bottom: 3px solid #667eea;
         }
@@ -98,29 +98,134 @@
             font-size: 0.9em;
         }
 
-        .unit-content {
-            line-height: 1.8;
-            color: #333;
+        .unit-preview {
+            margin-top: 15px;
+            color: #666;
             font-size: 1.05em;
         }
 
-        .unit-content h3 {
+        .click-hint {
+            text-align: center;
+            color: #667eea;
+            font-weight: bold;
+            margin-top: 15px;
+            font-size: 0.95em;
+        }
+
+        /* MODAL */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            animation: fadeIn 0.3s;
+        }
+
+        .modal.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background: white;
+            width: 90%;
+            max-width: 1000px;
+            max-height: 85vh;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            display: flex;
+            flex-direction: column;
+            animation: slideUp 0.3s;
+        }
+
+        .modal-content.fullscreen {
+            width: 100vw;
+            max-width: 100vw;
+            height: 100vh;
+            max-height: 100vh;
+            border-radius: 0;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .modal-header {
+            padding: 25px 30px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 20px 20px 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-content.fullscreen .modal-header {
+            border-radius: 0;
+        }
+
+        .modal-title {
+            font-size: 1.8em;
+            font-weight: bold;
+        }
+
+        .modal-controls {
+            display: flex;
+            gap: 10px;
+        }
+
+        .modal-btn {
+            background: rgba(255,255,255,0.2);
+            border: 2px solid white;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+
+        .modal-btn:hover {
+            background: white;
+            color: #667eea;
+        }
+
+        .modal-body {
+            padding: 30px;
+            overflow-y: auto;
+            flex: 1;
+        }
+
+        .modal-body h3 {
             color: #764ba2;
-            margin-top: 20px;
-            margin-bottom: 10px;
-            font-size: 1.3em;
-        }
-
-        .unit-content ul {
-            margin-left: 25px;
+            margin-top: 25px;
             margin-bottom: 15px;
+            font-size: 1.4em;
         }
 
-        .unit-content li {
-            margin-bottom: 8px;
+        .modal-body ul {
+            margin-left: 25px;
+            margin-bottom: 20px;
         }
 
-        .unit-content strong {
+        .modal-body li {
+            margin-bottom: 10px;
+            line-height: 1.6;
+        }
+
+        .modal-body strong {
             color: #667eea;
         }
 
@@ -132,33 +237,17 @@
             border-radius: 8px;
         }
 
-        .download-btn {
-            display: inline-block;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 12px 30px;
-            border-radius: 25px;
-            text-decoration: none;
+        .close-btn {
+            font-size: 2em;
             font-weight: bold;
-            transition: all 0.3s ease;
-            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
-            margin-top: 15px;
+            color: white;
             cursor: pointer;
-            border: none;
-            font-size: 1em;
+            padding: 0 15px;
+            transition: all 0.3s;
         }
 
-        .download-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.6);
-        }
-
-        .download-btn:active {
-            transform: translateY(0);
-        }
-
-        .download-btn::before {
-            content: "📥 ";
+        .close-btn:hover {
+            transform: scale(1.2);
         }
 
         .back-btn {
@@ -183,6 +272,41 @@
             content: "← ";
         }
 
+        @media print {
+            body {
+                background: white;
+                padding: 0;
+            }
+
+            .modal {
+                display: block !important;
+                position: relative;
+                background: white;
+            }
+
+            .modal-content {
+                width: 100%;
+                max-width: 100%;
+                height: auto;
+                max-height: none;
+                box-shadow: none;
+            }
+
+            .modal-header {
+                background: white;
+                color: #667eea;
+                border-bottom: 3px solid #667eea;
+            }
+
+            .modal-controls,
+            .close-btn,
+            header,
+            .grade-title,
+            .back-btn {
+                display: none !important;
+            }
+        }
+
         @media (max-width: 768px) {
             header h1 {
                 font-size: 1.8em;
@@ -197,635 +321,549 @@
             .unit-title {
                 font-size: 1.3em;
             }
+
+            .modal-content {
+                width: 95%;
+                max-height: 90vh;
+            }
+
+            .modal-title {
+                font-size: 1.3em;
+            }
+
+            .modal-btn {
+                padding: 8px 15px;
+                font-size: 0.9em;
+            }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <a href="index.html" class="back-btn">Ana Sayfaya Dön</a>
+        <a href="index.html" class="back-btn">Ana Sayfa</a>
 
         <header>
             <h1>📖 Ders Anlatımı ve Konu Özetleri</h1>
-            <p>Tüm ünitelerin detaylı konu anlatımları ve PDF indirme seçenekleri</p>
+            <p>Tüm ünitelerin detaylı konu anlatımları</p>
         </header>
 
         <!-- 5. SINIF -->
         <div class="grade-section">
             <div class="grade-title">
-                🎓 5. SINIF - Bilişim Teknolojileri ve Yazılım
+                📘 5. SINIF ÜNİTELERİ
             </div>
 
-            <!-- Ünite 1 -->
-            <div class="unit-card">
+            <div class="unit-card" onclick="openModal('unite1-5')">
                 <div class="unit-header">
-                    <div class="unit-title">Ünite 1: Bilişim Temelleri</div>
+                    <div class="unit-title">📱 Ünite 1: Bilişim Temelleri</div>
                     <div class="unit-duration">⏰ 9 Hafta</div>
                 </div>
-                <div class="unit-content">
-                    <h3>🎯 Ünite Hedefleri</h3>
-                    <p>Bu ünitede öğrenciler bilgisayarın temel bileşenlerini, işletim sistemlerinin görevlerini ve dosya yönetimini öğreneceklerdir.</p>
-
-                    <h3>💻 Bilgisayar Donanımı</h3>
-                    <ul>
-                        <li><strong>İşlemci (CPU):</strong> Bilgisayarın beyni, tüm hesaplamaları yapar. GHz (Gigahertz) ile hızı ölçülür. Örnek: Intel i5, AMD Ryzen 5.</li>
-                        <li><strong>Bellek (RAM):</strong> Geçici hafıza, programların çalışma alanı. Bilgisayar kapanınca silinir. GB ile ölçülür (örn: 8GB, 16GB).</li>
-                        <li><strong>Sabit Disk (HDD/SSD):</strong> Kalıcı depolama alanı. HDD mekanik, yavaş; SSD elektronik, hızlı.</li>
-                        <li><strong>Anakart:</strong> Tüm parçaları birbirine bağlayan ana kart. Elektronik otobüs gibi çalışır.</li>
-                        <li><strong>Ekran Kartı (GPU):</strong> Görüntü işleme, oyunlar ve grafikler için önemli.</li>
-                        <li><strong>Güç Kaynağı:</strong> Bilgisayarın elektrik ihtiyacını karşılar.</li>
-                    </ul>
-
-                    <div class="highlight-box">
-                        <strong>💡 Analoji:</strong> Bilgisayar bir ofis gibidir: İşlemci çalışan kişi, RAM masa üstü (çalışma alanı), Sabit Disk dolap (arşiv), Anakart ofis binası.
-                    </div>
-
-                    <h3>🖥️ İşletim Sistemleri</h3>
-                    <ul>
-                        <li><strong>Windows:</strong> En yaygın işletim sistemi. Kullanıcı dostu, oyunlar ve programlarla uyumlu.</li>
-                        <li><strong>macOS:</strong> Apple bilgisayarlarında kullanılır. Tasarım ve medya işleri için popüler.</li>
-                        <li><strong>Linux:</strong> Açık kaynak, ücretsiz. Programcılar ve sunucular için ideal.</li>
-                        <li><strong>Android/iOS:</strong> Mobil cihazlarda kullanılan işletim sistemleri.</li>
-                    </ul>
-
-                    <h3>📁 Dosya ve Klasör Yönetimi</h3>
-                    <ul>
-                        <li><strong>Dosya:</strong> Bilgisayarda saklanan veri (metin, resim, video vb.)</li>
-                        <li><strong>Klasör:</strong> Dosyaları organize etmek için kullanılan dizinler.</li>
-                        <li><strong>Dosya Uzantıları:</strong> .docx (Word), .xlsx (Excel), .jpg (Resim), .mp4 (Video), .exe (Program)</li>
-                        <li><strong>Yol (Path):</strong> Dosyanın konumu. Örnek: C:\Belgeler\Ödevler\Matematik.docx</li>
-                    </ul>
-
-                    <div class="highlight-box">
-                        <strong>📌 İpucu:</strong> Dosyalarınızı düzenli tutun! Her konu için ayrı klasör açın. Anlamlı isimler kullanın (kötü: "belge1.docx", iyi: "matematik-ödevi-2024.docx").
-                    </div>
-
-                    <h3>⌨️ Kısayol Tuşları (Windows)</h3>
-                    <ul>
-                        <li>Ctrl+C: Kopyala</li>
-                        <li>Ctrl+V: Yapıştır</li>
-                        <li>Ctrl+X: Kes</li>
-                        <li>Ctrl+Z: Geri al</li>
-                        <li>Ctrl+S: Kaydet</li>
-                        <li>Ctrl+A: Tümünü seç</li>
-                        <li>Windows+E: Dosya Gezgini aç</li>
-                    </ul>
-
-                    <button class="download-btn" onclick="downloadPDF('5-sinif-unite1')">PDF Olarak İndir</button>
+                <div class="unit-preview">
+                    Bilgisayar donanımı, yazılım, işletim sistemleri ve dosya yönetimi konularını kapsayan temel ünite.
                 </div>
+                <div class="click-hint">👆 Detaylı içeriği görmek için tıklayın</div>
             </div>
 
-            <!-- Ünite 2 -->
-            <div class="unit-card">
+            <div class="unit-card" onclick="openModal('unite2-5')">
                 <div class="unit-header">
-                    <div class="unit-title">Ünite 2: Dijital Ürün Tasarımı ve Proje Yönetimi</div>
+                    <div class="unit-title">🎨 Ünite 2: Dijital Ürün Tasarımı</div>
                     <div class="unit-duration">⏰ 6 Hafta</div>
                 </div>
-                <div class="unit-content">
-                    <h3>🎯 Ünite Hedefleri</h3>
-                    <p>Öğrenciler proje yönetiminin temellerini, dijital ürün tasarım sürecini ve kullanıcı odaklı tasarım prensiplerini öğreneceklerdir.</p>
-
-                    <h3>📋 Proje Yönetimi Nedir?</h3>
-                    <ul>
-                        <li><strong>Proje:</strong> Belirli bir hedefe ulaşmak için yapılan planlı çalışma. Başlangıcı ve bitişi vardır.</li>
-                        <li><strong>Proje Yönetimi Aşamaları:</strong>
-                            <ul>
-                                <li>1. Planlama: Ne yapacağız? Nasıl? Ne zaman?</li>
-                                <li>2. Uygulama: Planı hayata geçirme</li>
-                                <li>3. İzleme ve Kontrol: İşler yolunda mı?</li>
-                                <li>4. Tamamlama: Projeyi bitirme ve değerlendirme</li>
-                            </ul>
-                        </li>
-                    </ul>
-
-                    <h3>💡 Dijital Ürün Nedir?</h3>
-                    <p>Dijital ürün, bilgisayar, telefon veya tablet gibi elektronik cihazlarda kullanılan ürünlerdir.</p>
-                    <ul>
-                        <li>Mobil uygulamalar (WhatsApp, Instagram, oyunlar)</li>
-                        <li>Web siteleri (YouTube, Google, Wikipedia)</li>
-                        <li>Dijital oyunlar (Minecraft, Roblox)</li>
-                        <li>E-kitaplar, podcast'ler, müzik uygulamaları</li>
-                    </ul>
-
-                    <h3>🎨 Dijital Ürün Tasarım Süreci</h3>
-                    <ol>
-                        <li><strong>İhtiyaç Analizi:</strong> Hangi problemi çözeceğiz? Kim kullanacak? Mevcut çözümler var mı?</li>
-                        <li><strong>Fikir Geliştirme:</strong> Beyin fırtınası, kullanıcı görüşleri toplama, benzer ürünleri inceleme.</li>
-                        <li><strong>Tasarım:</strong> Kullanıcı arayüzü çizme, renk ve görsel seçimi, kullanılabilirlik testleri.</li>
-                        <li><strong>Prototip Oluşturma:</strong> İlk deneme versiyonu yapma (kağıt veya dijital prototip).</li>
-                        <li><strong>Test Etme:</strong> Kullanıcılarla deneme, gözlem yapma, geri bildirim toplama.</li>
-                        <li><strong>İyileştirme:</strong> Test sonuçlarına göre değişiklikler yapma, eksikleri tamamlama.</li>
-                        <li><strong>Yayınlama:</strong> Ürünü kullanıma sunma (App Store, Google Play vb.)</li>
-                    </ol>
-
-                    <div class="highlight-box">
-                        <strong>🎯 Kullanıcı Odaklı Tasarım:</strong> İyi bir dijital ürün kullanıcının ihtiyaçlarını karşılar, kolay kullanılır ve estetik açıdan hoştur. "Kullanıcı her zaman haklıdır" prensibiyle tasarlayın!
-                    </div>
-
-                    <h3>🛠️ Prototip Türleri</h3>
-                    <ul>
-                        <li><strong>Düşük Kaliteli Prototip:</strong> Kağıda çizilmiş ekranlar, hızlı ve ucuz, ilk fikirleri test etmek için ideal.</li>
-                        <li><strong>Yüksek Kaliteli Prototip:</strong> Bilgisayarda tasarlanan, gerçeğe yakın mockup'lar. Canva, Figma, PowerPoint ile yapılabilir.</li>
-                    </ul>
-
-                    <h3>📊 Proje Planlama Araçları</h3>
-                    <ul>
-                        <li>To-Do List (Yapılacaklar listesi)</li>
-                        <li>Takvim ve zaman çizelgesi</li>
-                        <li>Gantt Şeması (görevlerin zaman çizelgesi)</li>
-                        <li>Kanban Tahtası (Trello, Padlet)</li>
-                    </ul>
-
-                    <button class="download-btn" onclick="downloadPDF('5-sinif-unite2')">PDF Olarak İndir</button>
+                <div class="unit-preview">
+                    Paint, Word ve PowerPoint kullanarak dijital ürünler oluşturma.
                 </div>
+                <div class="click-hint">👆 Detaylı içeriği görmek için tıklayın</div>
             </div>
 
-            <!-- Ünite 3 -->
-            <div class="unit-card">
+            <div class="unit-card" onclick="openModal('unite3-5')">
                 <div class="unit-header">
-                    <div class="unit-title">Ünite 3: Ağlar ve İletişim</div>
+                    <div class="unit-title">🌐 Ünite 3: Ağlar ve İletişim</div>
                     <div class="unit-duration">⏰ 3 Hafta</div>
                 </div>
-                <div class="unit-content">
-                    <h3>🎯 Ünite Hedefleri</h3>
-                    <p>Öğrenciler bilgisayar ağlarını, internetin çalışma prensibini ve güvenli internet kullanımını öğreneceklerdir.</p>
-
-                    <h3>🌐 Bilgisayar Ağı Nedir?</h3>
-                    <p>Bilgisayar ağı, birbirine bağlı bilgisayar ve cihazların oluşturduğu sistemdir. Amacı bilgi paylaşımı, kaynak paylaşımı ve iletişimdir.</p>
-
-                    <h3>🏠 LAN (Yerel Alan Ağı)</h3>
-                    <ul>
-                        <li>Küçük bir alanda çalışır (ev, okul, ofis)</li>
-                        <li>Hızlı veri transferi</li>
-                        <li>Kablo (Ethernet) veya Wi-Fi ile bağlantı</li>
-                        <li>Örnek: Evinizdeki WiFi ağı, okul bilgisayar laboratuvarı</li>
-                    </ul>
-
-                    <h3>🌍 WAN ve İnternet</h3>
-                    <ul>
-                        <li><strong>WAN (Wide Area Network):</strong> Geniş alan ağı, şehirler ve ülkeler arası bağlantı</li>
-                        <li><strong>İnternet:</strong> Dünyadaki tüm ağların birbirine bağlanması, en büyük WAN</li>
-                        <li>Milyarlarca cihaz birbiriyle bağlı</li>
-                        <li>Deniz altı kabloları dünyayı birbirine bağlar</li>
-                    </ul>
-
-                    <h3>🔢 IP Adresi</h3>
-                    <ul>
-                        <li>Her cihazın internetteki benzersiz kimlik numarası</li>
-                        <li>4 sayı grubundan oluşur: 192.168.1.1</li>
-                        <li>Veri paketlerinin doğru cihaza ulaşmasını sağlar</li>
-                        <li>İki tür: IPv4 (eski) ve IPv6 (yeni, daha fazla adres)</li>
-                    </ul>
-
-                    <h3>🌐 Domain (Alan Adı)</h3>
-                    <ul>
-                        <li>Web sitesinin kolay hatırlanan ismi</li>
-                        <li>Örnek: google.com, youtube.com, meb.gov.tr</li>
-                        <li>DNS (Domain Name System) IP'yi domain'e çevirir</li>
-                        <li>Uzantılar: .com (ticari), .org (organizasyon), .edu (eğitim), .gov (hükümet), .tr (Türkiye)</li>
-                    </ul>
-
-                    <h3>🔍 Arama Motorları</h3>
-                    <ul>
-                        <li><strong>Google:</strong> En popüler arama motoru</li>
-                        <li><strong>Etkili Arama İpuçları:</strong>
-                            <ul>
-                                <li>Kısa ve net kelimeler kullan</li>
-                                <li>Tırnak kullan: "tam cümle" araması</li>
-                                <li>Eksi işareti: elma -telefon (telefon hariç)</li>
-                                <li>site: operatörü: site:meb.gov.tr bilişim</li>
-                            </ul>
-                        </li>
-                    </ul>
-
-                    <h3>🔒 Güvenli İnternet Kullanımı</h3>
-                    <ul>
-                        <li><strong>Kişisel Bilgileri Paylaşma:</strong> Ad, soyad, adres, telefon, okul bilgilerini asla paylaşma</li>
-                        <li><strong>Güçlü Şifre:</strong> En az 8 karakter, büyük/küçük harf, rakam, sembol</li>
-                        <li><strong>Tanımadığın Kişiler:</strong> Buluşma, kişisel bilgi verme, ebeveynlerine haber ver</li>
-                        <li><strong>Şüpheli Linkler:</strong> Bilmediğin linklere tıklama</li>
-                        <li><strong>Siber Zorbalık:</strong> Cevap verme, engelle, kanıt sakla, büyüklerine söyle</li>
-                    </ul>
-
-                    <div class="highlight-box">
-                        <strong>⚠️ Önemli:</strong> İnternet'te de gerçek hayat gibi davran! Yüz yüze yapmayacağın şeyi online da yapma.
-                    </div>
-
-                    <h3>📧 E-posta Kullanımı</h3>
-                    <ul>
-                        <li>E-posta adresi yapısı: kullaniciadi@gmail.com</li>
-                        <li>Alıcı, Konu, Mesaj, Ek dosya</li>
-                        <li>CC (Kopya), BCC (Gizli kopya)</li>
-                        <li>E-posta etiği: Kibarca yaz, spam yapma, konuyu belirt</li>
-                    </ul>
-
-                    <button class="download-btn" onclick="downloadPDF('5-sinif-unite3')">PDF Olarak İndir</button>
+                <div class="unit-preview">
+                    Bilgisayar ağları, internet, e-posta ve güvenli internet kullanımı.
                 </div>
+                <div class="click-hint">👆 Detaylı içeriği görmek için tıklayın</div>
             </div>
 
-            <!-- Ünite 4 -->
-            <div class="unit-card">
+            <div class="unit-card" onclick="openModal('unite4-5')">
                 <div class="unit-header">
-                    <div class="unit-title">Ünite 4: Etik ve Güvenlik</div>
+                    <div class="unit-title">🔒 Ünite 4: Etik ve Güvenlik</div>
                     <div class="unit-duration">⏰ 2 Hafta</div>
                 </div>
-                <div class="unit-content">
-                    <h3>🎯 Ünite Hedefleri</h3>
-                    <p>Öğrenciler dijital etik kurallarını, siber güvenlik tehditlerini ve korunma yöntemlerini öğreneceklerdir.</p>
-
-                    <h3>⚖️ Dijital Etik</h3>
-                    <ul>
-                        <li><strong>Saygı:</strong> Başkalarına saygılı ol, kötü yorum yapma, nefret söylemi kullanma</li>
-                        <li><strong>Dürüstlük:</strong> Yalan bilgi paylaşma, başkasının eserini çalma, kaynak göster</li>
-                        <li><strong>Gizlilik:</strong> Başkasının özel bilgilerini paylaşma, izinsiz fotoğraf yayınlama</li>
-                        <li><strong>Sorumluluk:</strong> Paylaştıklarından sorumlusun, "İnternet'te dedim" mazeret değil</li>
-                    </ul>
-
-                    <h3>👣 Dijital Ayak İzi</h3>
-                    <ul>
-                        <li>İnternet'te bıraktığın izler: Paylaşımlar, yorumlar, beğeniler, arama geçmişi</li>
-                        <li><strong>İki Tür:</strong>
-                            <ul>
-                                <li>Aktif: Sen paylaşıyorsun (fotoğraf, yorum)</li>
-                                <li>Pasif: Otomatik kaydediliyor (IP, çerezler)</li>
-                            </ul>
-                        </li>
-                        <li><strong>Tehlike:</strong> Dijital ayak izin silinmez, gelecekte sana zarar verebilir</li>
-                        <li><strong>Önlem:</strong> Paylaşmadan önce düşün: "Bunu 10 yıl sonra görmek ister miyim?"</li>
-                    </ul>
-
-                    <h3>🔐 Güçlü Şifre Oluşturma</h3>
-                    <ul>
-                        <li><strong>Özellikler:</strong>
-                            <ul>
-                                <li>En az 8 karakter (12+ daha iyi)</li>
-                                <li>Büyük harf (A-Z), küçük harf (a-z), rakam (0-9), sembol (!@#$%)</li>
-                                <li>Örnek: K1rm1z1Elma!2024</li>
-                            </ul>
-                        </li>
-                        <li><strong>Zayıf Şifreler (KULLANMA!):</strong> 12345678, adınsoyadın, doğumtarihin</li>
-                        <li><strong>Güvenlik:</strong> Her hesap için farklı şifre, kimseyle paylaşma, düzenli değiştir</li>
-                    </ul>
-
-                    <h3>🎣 Phishing (Oltalama)</h3>
-                    <ul>
-                        <li><strong>Tanım:</strong> Dijital dolandırıcılık, seni kandırıp bilgilerini çalmaya çalışırlar</li>
-                        <li><strong>Nasıl Anlaşılır?</strong>
-                            <ul>
-                                <li>Acele ettiriyor: "Hemen tıkla, hesabın kapatılacak!"</li>
-                                <li>Kişisel bilgi istiyor</li>
-                                <li>Garip e-posta adresi (goog1e.com gibi)</li>
-                                <li>Yazım hataları çok</li>
-                            </ul>
-                        </li>
-                        <li><strong>Korunma:</strong> Şüphe duyarsan tıklama, ebeveynine göster, sil</li>
-                    </ul>
-
-                    <h3>🦠 Zararlı Yazılımlar</h3>
-                    <ul>
-                        <li><strong>Virüs:</strong> Kendini kopyalar, dosyalara bulaşır</li>
-                        <li><strong>Truva Atı:</strong> Masum görünür ama zararlı</li>
-                        <li><strong>Fidye Yazılımı:</strong> Dosyalarını kilitler, para ister</li>
-                        <li><strong>Casus Yazılım:</strong> Yaptıklarını izler</li>
-                        <li><strong>Korunma:</strong> Antivirüs kullan, güncelleme yap, bilinmeyen dosya açma</li>
-                    </ul>
-
-                    <h3>🎭 Sosyal Mühendislik</h3>
-                    <ul>
-                        <li><strong>Tanım:</strong> İnsanları kandırma sanatı, psikolojik saldırı</li>
-                        <li><strong>Örnekler:</strong>
-                            <ul>
-                                <li>"Bankadan arıyorum, kart bilgilerinizi söyleyin"</li>
-                                <li>"Bedava telefon kazandınız!"</li>
-                                <li>"Ben öğretmenim, şifreni ver"</li>
-                            </ul>
-                        </li>
-                        <li><strong>Korunma:</strong> Acele kararlar alma, doğrula, şüphe duy, "Hayır" deme hakkın var</li>
-                    </ul>
-
-                    <div class="highlight-box">
-                        <strong>🔐 İki Faktörlü Doğrulama (2FA):</strong> Şifre + SMS kodu. Mutlaka aç! Şifren çalınsa bile girişi engelliyor.
-                    </div>
-
-                    <button class="download-btn" onclick="downloadPDF('5-sinif-unite4')">PDF Olarak İndir</button>
+                <div class="unit-preview">
+                    Bilişim etiği, telif hakları, güvenli şifre oluşturma ve siber güvenlik.
                 </div>
+                <div class="click-hint">👆 Detaylı içeriği görmek için tıklayın</div>
             </div>
 
-            <!-- Ünite 5 -->
-            <div class="unit-card">
+            <div class="unit-card" onclick="openModal('unite5-5')">
                 <div class="unit-header">
-                    <div class="unit-title">Ünite 5: Yapay Zeka</div>
+                    <div class="unit-title">🤖 Ünite 5: Yapay Zeka</div>
                     <div class="unit-duration">⏰ 4 Hafta</div>
                 </div>
-                <div class="unit-content">
-                    <h3>🎯 Ünite Hedefleri</h3>
-                    <p>Öğrenciler yapay zekanın temellerini, kullanım alanlarını ve etik sorunlarını öğreneceklerdir.</p>
-
-                    <h3>🤖 Yapay Zeka (AI) Nedir?</h3>
-                    <ul>
-                        <li>Makinelerin insan gibi düşünmesi ve öğrenmesi</li>
-                        <li><strong>Özellikler:</strong> Öğrenir, problem çözer, karar verir, uyum sağlar</li>
-                        <li><strong>İnsan vs AI:</strong>
-                            <ul>
-                                <li>İnsan: Duygular, yaratıcılık, genel zeka</li>
-                                <li>AI: Duygu yok, veri analizi, dar (spesifik) zeka</li>
-                            </ul>
-                        </li>
-                    </ul>
-
-                    <h3>📜 Yapay Zekanın Tarihi</h3>
-                    <ul>
-                        <li>1950: Alan Turing "Makineler düşünebilir mi?" sorusu</li>
-                        <li>1956: "Yapay Zeka" terimi kullanıldı</li>
-                        <li>1997: Deep Blue satranç şampiyonunu yendi</li>
-                        <li>2011: Siri sesli asistan</li>
-                        <li>2016: AlphaGo Go oyununda dünya şampiyonu</li>
-                        <li>2022: ChatGPT, DALL-E (metin ve görsel üreten AI)</li>
-                    </ul>
-
-                    <h3>📊 Makine Öğrenmesi</h3>
-                    <ul>
-                        <li><strong>Nasıl Çalışır?</strong>
-                            <ol>
-                                <li>Veri topla (binlerce örnek)</li>
-                                <li>Kalıpları öğren</li>
-                                <li>Yeni örneklerde tahmin et</li>
-                            </ol>
-                        </li>
-                        <li><strong>Örnek:</strong> Kedi-köpek tanıma
-                            <ul>
-                                <li>Binlerce kedi ve köpek fotoğrafı göster</li>
-                                <li>AI kulak, burun, vücut şeklini öğrenir</li>
-                                <li>Yeni fotoğrafta tanır: "Bu bir kedi!"</li>
-                            </ul>
-                        </li>
-                    </ul>
-
-                    <h3>🎤 Günlük Hayatta AI</h3>
-                    <ul>
-                        <li><strong>Sesli Asistanlar:</strong> Siri, Google Asistan, Alexa - Soru cevaplar, alarm kurar, müzik çalar</li>
-                        <li><strong>Görüntü Tanıma:</strong> Yüz tanıma (telefon kilidi), fotoğraf etiketleme</li>
-                        <li><strong>Öneri Sistemleri:</strong> YouTube, Netflix, Spotify önerileri</li>
-                        <li><strong>Oyunlarda AI:</strong> Akıllı düşmanlar, NPC davranışları</li>
-                        <li><strong>Yaratıcı AI:</strong> DALL-E (resim), ChatGPT (metin), Suno (müzik)</li>
-                    </ul>
-
-                    <h3>⚖️ Yapay Zekanın Etik Sorunları</h3>
-                    <ul>
-                        <li><strong>Önyargı:</strong> Yanlış veri → Yanlış karar. Örnek: Sadece erkek doktor fotoğrafları → "Doktor = Erkek"</li>
-                        <li><strong>Gizlilik:</strong> AI çok veri topluyor, kişisel bilgiler tehlikede</li>
-                        <li><strong>İş Kaybı:</strong> Bazı meslekler AI ile değişebilir (kasiyerlik, fabrika işleri)</li>
-                        <li><strong>Deepfake:</strong> Sahte video/ses oluşturma, yalan haber yayma</li>
-                        <li><strong>Sorumluluk:</strong> AI hata yaparsa kim sorumlu?</li>
-                    </ul>
-
-                    <h3>👨‍💼 Geleceğin Meslekleri</h3>
-                    <ul>
-                        <li><strong>Yeni Meslekler:</strong> AI Eğitim Uzmanı, Veri Bilimcisi, Makine Öğrenmesi Mühendisi, AI Etik Uzmanı</li>
-                        <li><strong>Değişen Meslekler:</strong> Öğretmen (AI yardımcı), Doktor (AI teşhis), Sanatçı (AI araçları)</li>
-                        <li><strong>Gelecekte Önemli:</strong> Yaratıcılık, eleştirel düşünme, kodlama, işbirliği</li>
-                    </ul>
-
-                    <div class="highlight-box">
-                        <strong>💡 AI İle Başla:</strong>
-                        <ul>
-                            <li>Google Teachable Machine (kendi AI modelini eğit)</li>
-                            <li>Scratch AI blokları</li>
-                            <li>Bing Image Creator (görsel oluştur)</li>
-                        </ul>
-                    </div>
-
-                    <button class="download-btn" onclick="downloadPDF('5-sinif-unite5')">PDF Olarak İndir</button>
+                <div class="unit-preview">
+                    Yapay zeka kavramı, kullanım alanları, günlük hayatta yapay zeka uygulamaları.
                 </div>
+                <div class="click-hint">👆 Detaylı içeriği görmek için tıklayın</div>
             </div>
 
-            <!-- Ünite 6 -->
-            <div class="unit-card">
+            <div class="unit-card" onclick="openModal('unite6-5')">
                 <div class="unit-header">
-                    <div class="unit-title">Ünite 6: Scratch ile Programlama</div>
+                    <div class="unit-title">💻 Ünite 6: Scratch Programlama</div>
                     <div class="unit-duration">⏰ 14 Hafta</div>
                 </div>
-                <div class="unit-content">
-                    <h3>🎯 Ünite Hedefleri</h3>
-                    <p>Öğrenciler blok tabanlı programlama ile algoritma, döngü, koşul, değişken kavramlarını öğrenip kendi oyunlarını yapacaklardır.</p>
-
-                    <h3>🎨 Scratch Nedir?</h3>
-                    <ul>
-                        <li>MIT tarafından geliştirilmiş görsel programlama dili</li>
-                        <li>Ücretsiz, kod yazmadan programlama</li>
-                        <li>Blokları sürükle-bırak</li>
-                        <li>scratch.mit.edu adresinden erişim</li>
-                    </ul>
-
-                    <h3>🖥️ Scratch Arayüzü</h3>
-                    <ul>
-                        <li><strong>Blok Paleti (Sol):</strong> Tüm bloklar burada (Hareket, Görünüm, Ses, Olaylar...)</li>
-                        <li><strong>Kod Alanı (Orta):</strong> Blokları buraya sürükleyip programını yazarsın</li>
-                        <li><strong>Sahne (Sağ Üst):</strong> Projenin çalıştığı yer, 480x360 piksel</li>
-                        <li><strong>Sprite Listesi (Sağ Alt):</strong> Karakterlerin listesi</li>
-                    </ul>
-
-                    <h3>🧩 Blok Kategorileri</h3>
-                    <ul>
-                        <li>🔵 Hareket: Sprite'ı hareket ettir</li>
-                        <li>🟣 Görünüm: Gizle, göster, konuş</li>
-                        <li>🟡 Ses: Müzik, ses efektleri</li>
-                        <li>🔵 Olaylar: Başlangıç, tıklama</li>
-                        <li>🟠 Kontrol: Döngüler, koşullar</li>
-                        <li>🟢 Algılama: Dokunma, mesafe</li>
-                        <li>🔵 Operatörler: Matematik, karşılaştırma</li>
-                        <li>🔴 Değişkenler: Veri saklama</li>
-                        <li>🟣 Kendi Bloklarım: Fonksiyonlar</li>
-                    </ul>
-
-                    <h3>🔁 Döngüler</h3>
-                    <ul>
-                        <li><strong>[10] kez tekrarla:</strong> Belirli sayıda tekrar</li>
-                        <li><strong>Sürekli tekrarla:</strong> Sonsuza kadar</li>
-                        <li><strong>... olana kadar tekrarla:</strong> Koşul sağlanana kadar</li>
-                        <li><strong>Örnek:</strong> Kare çizme - [4 kez tekrarla: 100 adım git, 90 derece dön]</li>
-                    </ul>
-
-                    <h3>❓ Koşullar</h3>
-                    <ul>
-                        <li><strong>Eğer ... ise:</strong> Tek koşul</li>
-                        <li><strong>Eğer ... ise ... değilse:</strong> İki seçenek</li>
-                        <li><strong>Örnek:</strong> [Eğer kenara değiyor ise] → [180 derece dön]</li>
-                    </ul>
-
-                    <h3>📦 Değişkenler</h3>
-                    <ul>
-                        <li>Bilgi saklayan kutu (sayı veya metin)</li>
-                        <li>Oyunlarda kullanım: Puan, can, seviye, zaman</li>
-                        <li><strong>İşlemler:</strong> Oluştur, değer ata, arttır/azalt, göster/gizle</li>
-                    </ul>
-
-                    <h3>🎮 Proje Örnekleri</h3>
-                    <ul>
-                        <li><strong>Labirent Oyunu:</strong> Ok tuşları ile kontrol, duvara çarparsa kaybeder</li>
-                        <li><strong>Top Sektirme:</strong> Top sürekli hareket, raket ile sektir, topu kaçırırsan kaybedersin</li>
-                        <li><strong>Meyve Yakalama:</strong> Yukarıdan düşen meyveleri sepet ile yakala, puan kazan</li>
-                        <li><strong>Quiz Uygulaması:</strong> Soru sor, cevap al, doğru/yanlış kontrol, puan ver</li>
-                    </ul>
-
-                    <div class="highlight-box">
-                        <strong>💡 İleri Seviye:</strong>
-                        <ul>
-                            <li>Klonlama: Çok sprite oluşturma</li>
-                            <li>Mesajlaşma: Sprite'lar arası iletişim</li>
-                            <li>Kendi bloklarını oluştur (fonksiyonlar)</li>
-                            <li>Kalem uzantısı (çizim)</li>
-                            <li>Müzik uzantısı (melodi)</li>
-                        </ul>
-                    </div>
-
-                    <button class="download-btn" onclick="downloadPDF('5-sinif-unite6')">PDF Olarak İndir</button>
+                <div class="unit-preview">
+                    Algoritma, Scratch ile programlama, döngüler, koşullar, değişkenler ve oyun yapımı.
                 </div>
+                <div class="click-hint">👆 Detaylı içeriği görmek için tıklayın</div>
             </div>
         </div>
 
         <!-- 6. SINIF -->
         <div class="grade-section">
-            <div class="grade-title">
-                🎓 6. SINIF - Bilişim Teknolojileri ve Yazılım
+            <div class="grade-title" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">
+                📗 6. SINIF ÜNİTELERİ
             </div>
 
-            <!-- 6. Sınıf Ünite 1 -->
-            <div class="unit-card">
+            <div class="unit-card" onclick="openModal('unite1-6')">
                 <div class="unit-header">
-                    <div class="unit-title">Ünite 1: Veri ve Analiz</div>
+                    <div class="unit-title">💾 Ünite 1: Veri Yönetimi</div>
                     <div class="unit-duration">⏰ 4 Hafta</div>
                 </div>
-                <div class="unit-content">
-                    <h3>🎯 Ünite Hedefleri</h3>
-                    <p>Öğrenciler veri toplama, düzenleme, görselleştirme ve analiz etme becerilerini kazanacaklardır.</p>
-
-                    <h3>📊 Veri Nedir?</h3>
-                    <ul>
-                        <li><strong>Veri:</strong> Ham bilgi, işlenmemiş gerçekler (örn: 15, 23, 42)</li>
-                        <li><strong>Bilgi:</strong> İşlenmiş, anlamlı veri (örn: "Sınıf ortalaması 16.2")</li>
-                        <li><strong>Süreç:</strong> Veri → İşleme → Bilgi → Bilgelik</li>
-                    </ul>
-
-                    <h3>🔍 Veri Toplama Yöntemleri</h3>
-                    <ul>
-                        <li><strong>Anket:</strong> Sorular sor, cevapları topla</li>
-                        <li><strong>Gözlem:</strong> İzle ve kaydet</li>
-                        <li><strong>Deney:</strong> Test yap, sonuçları kaydet</li>
-                        <li><strong>Sensörler:</strong> Otomatik veri toplama (sıcaklık, nem vb.)</li>
-                        <li><strong>İnternet:</strong> Hazır veri setleri</li>
-                    </ul>
-
-                    <h3>📊 Veri Türleri</h3>
-                    <ul>
-                        <li><strong>Sayısal Veri:</strong>
-                            <ul>
-                                <li>Kesikli: Tamsayılar (öğrenci sayısı: 25, 30)</li>
-                                <li>Sürekli: Ondalıklı (boy: 1.65m, ağırlık: 52.5kg)</li>
-                            </ul>
-                        </li>
-                        <li><strong>Kategorik Veri:</strong>
-                            <ul>
-                                <li>İsimsel: Renk, cinsiyet (sıralama yok)</li>
-                                <li>Sıralı: Not (Pekiyi, İyi, Orta)</li>
-                            </ul>
-                        </li>
-                    </ul>
-
-                    <h3>📈 Grafik Türleri</h3>
-                    <ul>
-                        <li><strong>Sütun Grafiği:</strong> Kategorileri karşılaştırma</li>
-                        <li><strong>Çizgi Grafiği:</strong> Zamana göre değişim</li>
-                        <li><strong>Pasta Grafiği:</strong> Yüzdeler, oranlar</li>
-                        <li><strong>Dağılım Grafiği:</strong> İki değişken ilişkisi</li>
-                        <li><strong>Histogram:</strong> Veri dağılımı</li>
-                    </ul>
-
-                    <h3>💻 Excel/Sheets Kullanımı</h3>
-                    <ul>
-                        <li><strong>Temel Kavramlar:</strong> Hücre, satır, sütun, formül</li>
-                        <li><strong>Formüller:</strong>
-                            <ul>
-                                <li>=SUM(A1:A10) - Toplama</li>
-                                <li>=AVERAGE(A1:A10) - Ortalama</li>
-                                <li>=MAX(A1:A10) - En büyük</li>
-                                <li>=MIN(A1:A10) - En küçük</li>
-                                <li>=COUNT(A1:A10) - Sayma</li>
-                            </ul>
-                        </li>
-                        <li><strong>Grafik Oluşturma:</strong> Veriyi seç → Ekle → Grafik → Tür seç → Özelleştir</li>
-                    </ul>
-
-                    <h3>📊 Veri Analizi</h3>
-                    <ul>
-                        <li><strong>Ortalama (Mean):</strong> Tüm değerleri topla, sayıya böl</li>
-                        <li><strong>Medyan (Median):</strong> Ortadaki değer</li>
-                        <li><strong>Mod (Mode):</strong> En çok tekrar eden</li>
-                        <li><strong>Veri Odaklı Karar:</strong> Objektif, kanıta dayalı, savunulabilir</li>
-                    </ul>
-
-                    <div class="highlight-box">
-                        <strong>🔒 Veri Güvenliği:</strong> Kişisel verileri toplarken izin al, gizli tut, anonim yap, gereksiz veri toplama. KVKK (Kişisel Verilerin Korunması Kanunu) önemli!
-                    </div>
-
-                    <button class="download-btn" onclick="downloadPDF('6-sinif-unite1')">PDF Olarak İndir</button>
+                <div class="unit-preview">
+                    Veri analizi, tablo ve grafik oluşturma, veri filtreleme ve sıralama.
                 </div>
+                <div class="click-hint">👆 Detaylı içeriği görmek için tıklayın</div>
             </div>
 
-            <!-- 6. Sınıf diğer üniteler benzer şekilde devam ediyor... -->
-            <!-- Kısa tutmak için 6. sınıfın geri kalan ünitelerini özet olarak ekliyorum -->
-
-            <div class="unit-card">
+            <div class="unit-card" onclick="openModal('unite2-6')">
                 <div class="unit-header">
-                    <div class="unit-title">Ünite 2-5: Diğer Üniteler</div>
-                    <div class="unit-duration">⏰ 17 Hafta</div>
+                    <div class="unit-title">📝 Ünite 2: Kelime İşlemci</div>
+                    <div class="unit-duration">⏰ 5 Hafta</div>
                 </div>
-                <div class="unit-content">
-                    <h3>📝 Ünite 2: Kelime İşlemci Programları (3 hafta)</h3>
-                    <p>Word ve Google Docs kullanarak profesyonel belge hazırlama, biçimlendirme, tablo/görsel ekleme, işbirlikli çalışma.</p>
-
-                    <h3>🧩 Ünite 3: Algoritmalar ve Problem Çözme (3 hafta)</h3>
-                    <p>Algoritma tasarımı, akış diyagramları, sıralı/seçimli/döngülü yapılar, problem çözme basamakları.</p>
-
-                    <h3>🎮 Ünite 4: Blok Tabanlı Programlama II (8 hafta)</h3>
-                    <p>İleri seviye Scratch: Klonlama, mesajlaşma, uzantılar, platform oyunu projesi.</p>
-
-                    <h3>🎬 Ünite 5: Sunum Programları (3 hafta)</h3>
-                    <p>PowerPoint/Google Slides ile etkili sunum hazırlama, tasarım ilkeleri, animasyonlar, sunum yapma teknikleri.</p>
-
-                    <button class="download-btn" onclick="downloadPDF('6-sinif-tumu')">Tüm Üniteler PDF</button>
+                <div class="unit-preview">
+                    İleri düzey Word kullanımı, formatlama, şablonlar ve profesyonel doküman hazırlama.
                 </div>
+                <div class="click-hint">👆 Detaylı içeriği görmek için tıklayın</div>
+            </div>
+
+            <div class="unit-card" onclick="openModal('unite3-6')">
+                <div class="unit-header">
+                    <div class="unit-title">🧩 Ünite 3: Algoritmalar</div>
+                    <div class="unit-duration">⏰ 2 Hafta</div>
+                </div>
+                <div class="unit-preview">
+                    Algoritma tasarımı, akış diyagramları ve problem çözme stratejileri.
+                </div>
+                <div class="click-hint">👆 Detaylı içeriği görmek için tıklayın</div>
+            </div>
+
+            <div class="unit-card" onclick="openModal('unite4-6')">
+                <div class="unit-header">
+                    <div class="unit-title">💻 Ünite 4: Scratch İleri</div>
+                    <div class="unit-duration">⏰ 7 Hafta</div>
+                </div>
+                <div class="unit-preview">
+                    İleri Scratch programlama, klonlama, listeler, özel bloklar ve karmaşık projeler.
+                </div>
+                <div class="click-hint">👆 Detaylı içeriği görmek için tıklayın</div>
+            </div>
+
+            <div class="unit-card" onclick="openModal('unite5-6')">
+                <div class="unit-header">
+                    <div class="unit-title">🎬 Ünite 5: Sunum Programları</div>
+                    <div class="unit-duration">⏰ 21 Hafta</div>
+                </div>
+                <div class="unit-preview">
+                    İleri PowerPoint, animasyon, multimedya, geçişler ve interaktif sunumlar.
+                </div>
+                <div class="click-hint">👆 Detaylı içeriği görmek için tıklayın</div>
             </div>
         </div>
     </div>
 
+    <!-- MODAL TEMPLATE -->
+    <div id="modal" class="modal">
+        <div class="modal-content" id="modalContent">
+            <div class="modal-header">
+                <div class="modal-title" id="modalTitle"></div>
+                <div class="modal-controls">
+                    <button class="modal-btn" onclick="toggleFullscreen()">⛶ Tam Ekran</button>
+                    <button class="modal-btn" onclick="printContent()">🖨️ PDF İndir</button>
+                    <span class="close-btn" onclick="closeModal()">&times;</span>
+                </div>
+            </div>
+            <div class="modal-body" id="modalBody"></div>
+        </div>
+    </div>
+
     <script>
-        function downloadPDF(unitId) {
-            // Bu fonksiyon gerçek uygulamada sunucuya istek gönderir
-            // Şimdilik alert ile bilgi veriyoruz
-            alert('PDF indirme özelliği aktif edilecek!\n\nÜnite: ' + unitId + '\n\nŞu an için lütfen sayfayı yazdırma (Ctrl+P) özelliğini kullanarak PDF olarak kaydedin.');
+        // Ünite içerikleri (özet olarak - gerçekte çok daha uzun)
+        const unitContents = {
+            'unite1-5': {
+                title: '📱 Ünite 1: Bilişim Temelleri',
+                content: `
+                    <h3>💻 Bilgisayar Donanımı</h3>
+                    <ul>
+                        <li><strong>İşlemci (CPU):</strong> Bilgisayarın beyni, tüm işlemleri gerçekleştirir</li>
+                        <li><strong>RAM:</strong> Geçici bellek, çalışan programlar burada tutulur</li>
+                        <li><strong>Hard Disk/SSD:</strong> Kalıcı depolama, dosyalarınız burada saklanır</li>
+                        <li><strong>Anakart:</strong> Tüm bileşenleri birbirine bağlayan ana kart</li>
+                        <li><strong>Ekran Kartı:</strong> Görüntüyü ekrana aktarır</li>
+                    </ul>
 
-            // Gerçek uygulamada:
-            // window.location.href = '/download-pdf/' + unitId;
+                    <h3>💿 Yazılım Türleri</h3>
+                    <ul>
+                        <li><strong>İşletim Sistemi:</strong> Windows, macOS, Linux gibi temel yazılımlar</li>
+                        <li><strong>Uygulama Yazılımları:</strong> Word, Chrome, Oyunlar vb.</li>
+                        <li><strong>Yardımcı Programlar:</strong> Antivirüs, sıkıştırma programları</li>
+                    </ul>
 
-            // veya modern yaklaşım:
-            // window.print(); // Tarayıcının yazdır penceresini açar, PDF olarak kaydedebilir
+                    <div class="highlight-box">
+                        <strong>💡 Önemli Not:</strong> Donanım fiziksel parçalardır, yazılım ise komutlar ve programlardır.
+                    </div>
+
+                    <h3>🗂️ Dosya Yönetimi</h3>
+                    <ul>
+                        <li>Dosya ve klasör oluşturma</li>
+                        <li>Kopyalama, taşıma, silme işlemleri</li>
+                        <li>Dosya uzantıları (.docx, .pdf, .jpg vb.)</li>
+                        <li>Dosya sıkıştırma (.zip, .rar)</li>
+                    </ul>
+                `
+            },
+            'unite2-5': {
+                title: '🎨 Ünite 2: Dijital Ürün Tasarımı',
+                content: `
+                    <h3>🖌️ Paint ile Çizim</h3>
+                    <ul>
+                        <li>Temel çizim araçları (fırça, kalem, silgi)</li>
+                        <li>Şekiller çizme (daire, kare, çizgi)</li>
+                        <li>Renk seçimi ve doldurma</li>
+                        <li>Görüntü düzenleme (boyutlandırma, kırpma)</li>
+                    </ul>
+
+                    <h3>📝 Word ile Doküman</h3>
+                    <ul>
+                        <li>Metin yazma ve düzenleme</li>
+                        <li>Yazı tipi, boyut ve renk değiştirme</li>
+                        <li>Paragraf hizalama</li>
+                        <li>Resim ve tablo ekleme</li>
+                        <li>Kaydetme ve yazdırma</li>
+                    </ul>
+
+                    <h3>🎭 PowerPoint ile Sunum</h3>
+                    <ul>
+                        <li>Slayt oluşturma ve düzenleme</li>
+                        <li>Metin, resim ve şekil ekleme</li>
+                        <li>Slayt geçişleri</li>
+                        <li>Basit animasyonlar</li>
+                        <li>Sunum yapma</li>
+                    </ul>
+                `
+            },
+            'unite3-5': {
+                title: '🌐 Ünite 3: Ağlar ve İletişim',
+                content: `
+                    <h3>🌐 Bilgisayar Ağları</h3>
+                    <ul>
+                        <li><strong>LAN (Local Area Network):</strong> Yerel ağ, ev veya okul ağı</li>
+                        <li><strong>WAN (Wide Area Network):</strong> Geniş alan ağı, internet</li>
+                        <li><strong>Router:</strong> Ağ trafiğini yönlendirir</li>
+                        <li><strong>Modem:</strong> İnternete bağlantı sağlar</li>
+                    </ul>
+
+                    <h3>📧 İnternet ve E-posta</h3>
+                    <ul>
+                        <li>Tarayıcı kullanımı (Chrome, Firefox vb.)</li>
+                        <li>Güvenli web siteleri (HTTPS)</li>
+                        <li>E-posta gönderme ve alma</li>
+                        <li>Eklenti gönderme</li>
+                    </ul>
+
+                    <div class="highlight-box">
+                        <strong>⚠️ Güvenlik:</strong> Bilinmeyen kaynaklardan gelen e-postalardaki linklere tıklamayın!
+                    </div>
+                `
+            },
+            'unite4-5': {
+                title: '🔒 Ünite 4: Etik ve Güvenlik',
+                content: `
+                    <h3>⚖️ Bilişim Etiği</h3>
+                    <ul>
+                        <li>Telif hakları ve lisanslar</li>
+                        <li>Dijital içerik paylaşımı</li>
+                        <li>Siber zorbalık</li>
+                        <li>Kişisel bilgilerin korunması</li>
+                    </ul>
+
+                    <h3>🔐 Güvenli Şifre</h3>
+                    <ul>
+                        <li>En az 8-12 karakter uzunluğunda</li>
+                        <li>Büyük ve küçük harf kullanımı</li>
+                        <li>Rakam ve özel karakterler (!@#$%)</li>
+                        <li>Kişisel bilgiler içermemeli</li>
+                    </ul>
+
+                    <div class="highlight-box">
+                        <strong>💡 İyi Şifre Örneği:</strong> M3rh@b@Dunya!2024
+                    </div>
+
+                    <h3>🛡️ Siber Güvenlik</h3>
+                    <ul>
+                        <li>Antivirüs kullanımı</li>
+                        <li>Phishing (oltalama) saldırıları</li>
+                        <li>Güvenli internet kullanımı</li>
+                        <li>İki faktörlü doğrulama</li>
+                    </ul>
+                `
+            },
+            'unite5-5': {
+                title: '🤖 Ünite 5: Yapay Zeka',
+                content: `
+                    <h3>🧠 Yapay Zeka Nedir?</h3>
+                    <ul>
+                        <li>Makinelerin insan gibi düşünmesi ve öğrenmesi</li>
+                        <li>Veri analizi ve karar verme</li>
+                        <li>Örüntü tanıma</li>
+                        <li>Sürekli öğrenme ve gelişme</li>
+                    </ul>
+
+                    <h3>📱 Günlük Hayatta YZ</h3>
+                    <ul>
+                        <li><strong>Sesli Asistanlar:</strong> Siri, Alexa, Google Assistant</li>
+                        <li><strong>Öneri Sistemleri:</strong> Netflix, YouTube, Spotify</li>
+                        <li><strong>Yüz Tanıma:</strong> Telefon kilidi, fotoğraf uygulamaları</li>
+                        <li><strong>Çeviri:</strong> Google Translate</li>
+                        <li><strong>Navigasyon:</strong> Google Maps</li>
+                    </ul>
+
+                    <h3>🎮 YZ Kullanım Alanları</h3>
+                    <ul>
+                        <li>Sağlık (hastalık teşhisi)</li>
+                        <li>Eğitim (kişiselleştirilmiş öğrenme)</li>
+                        <li>Oyun (akıllı rakipler)</li>
+                        <li>Güvenlik (yüz tanıma)</li>
+                        <li>Ulaşım (otonom araçlar)</li>
+                    </ul>
+                `
+            },
+            'unite6-5': {
+                title: '💻 Ünite 6: Scratch Programlama',
+                content: `
+                    <h3>🔢 Algoritma</h3>
+                    <ul>
+                        <li>Problemi adım adım çözme yöntemi</li>
+                        <li>Akış diyagramları</li>
+                        <li>Sıralı, seçimli ve döngülü yapılar</li>
+                    </ul>
+
+                    <h3>🎨 Scratch Temelleri</h3>
+                    <ul>
+                        <li><strong>Sprite:</strong> Karakterler ve nesneler</li>
+                        <li><strong>Sahne:</strong> Arka plan</li>
+                        <li><strong>Bloklar:</strong> Hareket, görünüm, ses, olay blokları</li>
+                        <li><strong>Script:</strong> Blokların birleşimi</li>
+                    </ul>
+
+                    <h3>🔁 Programlama Kavramları</h3>
+                    <ul>
+                        <li><strong>Döngüler:</strong> Tekrar eden işlemler (for, while)</li>
+                        <li><strong>Koşullar:</strong> Karar yapıları (if, else)</li>
+                        <li><strong>Değişkenler:</strong> Veri saklama</li>
+                        <li><strong>Operatörler:</strong> Matematik ve mantık işlemleri</li>
+                    </ul>
+
+                    <h3>🎮 Proje Örnekleri</h3>
+                    <ul>
+                        <li>Kedi-Fare kovalamaca oyunu</li>
+                        <li>Matematik quiz</li>
+                        <li>Labirent oyunu</li>
+                        <li>Platform oyunu</li>
+                        <li>Animasyon ve hikaye</li>
+                    </ul>
+                `
+            },
+            'unite1-6': {
+                title: '💾 Ünite 1: Veri Yönetimi',
+                content: `
+                    <h3>📊 Tablolama Programları</h3>
+                    <ul>
+                        <li>Hücre, satır ve sütun kavramları</li>
+                        <li>Veri girişi ve düzenleme</li>
+                        <li>Formüller ve fonksiyonlar (SUM, AVERAGE, MAX, MIN)</li>
+                    </ul>
+
+                    <h3>📈 Grafik Oluşturma</h3>
+                    <ul>
+                        <li>Pasta grafik</li>
+                        <li>Çubuk grafik</li>
+                        <li>Çizgi grafik</li>
+                        <li>Grafik özelleştirme</li>
+                    </ul>
+
+                    <h3>🔍 Veri Analizi</h3>
+                    <ul>
+                        <li>Sıralama (A-Z, Z-A)</li>
+                        <li>Filtreleme</li>
+                        <li>Veri doğrulama</li>
+                        <li>Koşullu biçimlendirme</li>
+                    </ul>
+                `
+            },
+            'unite2-6': {
+                title: '📝 Ünite 2: Kelime İşlemci',
+                content: `
+                    <h3>📄 İleri Formatlama</h3>
+                    <ul>
+                        <li>Stiller ve şablonlar</li>
+                        <li>Başlıklar ve alt başlıklar</li>
+                        <li>İçindekiler otomatik oluşturma</li>
+                        <li>Sayfa numaraları</li>
+                    </ul>
+
+                    <h3>🖼️ Görsel Öğeler</h3>
+                    <ul>
+                        <li>SmartArt grafikleri</li>
+                        <li>Şekiller ve çizimler</li>
+                        <li>Resim düzenleme</li>
+                        <li>Tablocürekler</li>
+                    </ul>
+
+                    <h3>📑 Profesyonel Dokümanlar</h3>
+                    <ul>
+                        <li>Üstbilgi ve altbilgi</li>
+                        <li>Dipnotlar</li>
+                        <li>Kaynakça oluşturma</li>
+                        <li>Belge birleştirme</li>
+                    </ul>
+                `
+            },
+            'unite3-6': {
+                title: '🧩 Ünite 3: Algoritmalar',
+                content: `
+                    <h3>🎯 Algoritma Tasarımı</h3>
+                    <ul>
+                        <li>Problem analizi</li>
+                        <li>Adım adım çözüm planı</li>
+                        <li>Akış diyagramı sembolleri</li>
+                        <li>Pseudocode yazımı</li>
+                    </ul>
+
+                    <h3>🔄 Algoritma Türleri</h3>
+                    <ul>
+                        <li>Sıralı algoritmalar</li>
+                        <li>Seçimli algoritmalar (if-else)</li>
+                        <li>Döngülü algoritmalar (for, while)</li>
+                    </ul>
+
+                    <h3>💡 Problem Çözme</h3>
+                    <ul>
+                        <li>Problemi anlama</li>
+                        <li>Çözüm yolları bulma</li>
+                        <li>En iyi çözümü seçme</li>
+                        <li>Test etme ve hata ayıklama</li>
+                    </ul>
+                `
+            },
+            'unite4-6': {
+                title: '💻 Ünite 4: Scratch İleri',
+                content: `
+                    <h3>🔧 İleri Teknikler</h3>
+                    <ul>
+                        <li><strong>Klonlama:</strong> Sprite kopyalama ve çoğaltma</li>
+                        <li><strong>Listeler:</strong> Çoklu veri saklama</li>
+                        <li><strong>Özel Bloklar:</strong> Kendi komutlarını oluşturma</li>
+                        <li><strong>Mesajlaşma:</strong> Sprite'lar arası iletişim</li>
+                    </ul>
+
+                    <h3>🎨 İleri Projeler</h3>
+                    <ul>
+                        <li>Çok seviyeli oyunlar</li>
+                        <li>Skorlu sistemler</li>
+                        <li>Karakter özelleştirme</li>
+                        <li>Ses ve müzik ekleme</li>
+                    </ul>
+                `
+            },
+            'unite5-6': {
+                title: '🎬 Ünite 5: Sunum Programları',
+                content: `
+                    <h3>✨ İleri Animasyonlar</h3>
+                    <ul>
+                        <li>Giriş animasyonları</li>
+                        <li>Vurgu animasyonları</li>
+                        <li>Çıkış animasyonları</li>
+                        <li>Animasyon sıralama ve zamanlama</li>
+                    </ul>
+
+                    <h3>🎥 Multimedya</h3>
+                    <ul>
+                        <li>Video ekleme</li>
+                        <li>Ses kayıtları</li>
+                        <li>Müzik ekleme</li>
+                        <li>Ekran kaydı</li>
+                    </ul>
+
+                    <h3>🖱️ İnteraktif Sunumlar</h3>
+                    <ul>
+                        <li>Hiperlink kullanımı</li>
+                        <li>Eylem butonları</li>
+                        <li>Quiz sunumları</li>
+                        <li>Dokunmatik sunum tasarımı</li>
+                    </ul>
+                `
+            }
+        };
+
+        let isFullscreen = false;
+
+        function openModal(unitId) {
+            const modal = document.getElementById('modal');
+            const title = document.getElementById('modalTitle');
+            const body = document.getElementById('modalBody');
+
+            const unit = unitContents[unitId];
+            title.textContent = unit.title;
+            body.innerHTML = unit.content;
+
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
         }
 
-        // Sayfa yüklendiğinde animasyon
-        document.addEventListener('DOMContentLoaded', function() {
-            const cards = document.querySelectorAll('.unit-card');
-            cards.forEach((card, index) => {
-                setTimeout(() => {
-                    card.style.opacity = '0';
-                    card.style.transform = 'translateY(20px)';
-                    card.style.transition = 'all 0.5s ease';
+        function closeModal() {
+            const modal = document.getElementById('modal');
+            const content = document.getElementById('modalContent');
 
-                    setTimeout(() => {
-                        card.style.opacity = '1';
-                        card.style.transform = 'translateY(0)';
-                    }, 50);
-                }, index * 100);
-            });
+            modal.classList.remove('active');
+            content.classList.remove('fullscreen');
+            document.body.style.overflow = 'auto';
+            isFullscreen = false;
+        }
+
+        function toggleFullscreen() {
+            const content = document.getElementById('modalContent');
+            content.classList.toggle('fullscreen');
+            isFullscreen = !isFullscreen;
+        }
+
+        function printContent() {
+            window.print();
+        }
+
+        // Modal dışına tıklayınca kapat
+        document.getElementById('modal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeModal();
+            }
+        });
+
+        // ESC tuşu ile kapat
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeModal();
+            }
         });
     </script>
 </body>
