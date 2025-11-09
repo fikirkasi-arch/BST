@@ -1,0 +1,870 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ders Anlatımı - Bilişim Teknolojileri ve Yazılım</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            color: white;
+            margin-bottom: 40px;
+            padding: 30px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+        }
+
+        header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+
+        .grade-section {
+            margin-bottom: 40px;
+        }
+
+        .grade-title {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            padding: 20px 30px;
+            border-radius: 15px;
+            font-size: 1.8em;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .unit-card {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            cursor: pointer;
+        }
+
+        .unit-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.25);
+        }
+
+        .unit-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 15px;
+            border-bottom: 3px solid #667eea;
+        }
+
+        .unit-title {
+            font-size: 1.6em;
+            color: #667eea;
+            font-weight: bold;
+        }
+
+        .unit-duration {
+            background: #667eea;
+            color: white;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 0.9em;
+        }
+
+        .unit-preview {
+            margin-top: 15px;
+            color: #666;
+            font-size: 1.05em;
+        }
+
+        .click-hint {
+            text-align: center;
+            color: #667eea;
+            font-weight: bold;
+            margin-top: 15px;
+            font-size: 0.95em;
+        }
+
+        /* MODAL */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            animation: fadeIn 0.3s;
+        }
+
+        .modal.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background: white;
+            width: 90%;
+            max-width: 1000px;
+            max-height: 85vh;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            display: flex;
+            flex-direction: column;
+            animation: slideUp 0.3s;
+        }
+
+        .modal-content.fullscreen {
+            width: 100vw;
+            max-width: 100vw;
+            height: 100vh;
+            max-height: 100vh;
+            border-radius: 0;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .modal-header {
+            padding: 25px 30px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 20px 20px 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-content.fullscreen .modal-header {
+            border-radius: 0;
+        }
+
+        .modal-title {
+            font-size: 1.8em;
+            font-weight: bold;
+        }
+
+        .modal-controls {
+            display: flex;
+            gap: 10px;
+        }
+
+        .modal-btn {
+            background: rgba(255,255,255,0.2);
+            border: 2px solid white;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+
+        .modal-btn:hover {
+            background: white;
+            color: #667eea;
+        }
+
+        .modal-body {
+            padding: 30px;
+            overflow-y: auto;
+            flex: 1;
+        }
+
+        .modal-body h3 {
+            color: #764ba2;
+            margin-top: 25px;
+            margin-bottom: 15px;
+            font-size: 1.4em;
+        }
+
+        .modal-body ul {
+            margin-left: 25px;
+            margin-bottom: 20px;
+        }
+
+        .modal-body li {
+            margin-bottom: 10px;
+            line-height: 1.6;
+        }
+
+        .modal-body strong {
+            color: #667eea;
+        }
+
+        .highlight-box {
+            background: linear-gradient(135deg, #667eea15 0%, #764ba215 100%);
+            border-left: 4px solid #667eea;
+            padding: 15px 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+        }
+
+        .close-btn {
+            font-size: 2em;
+            font-weight: bold;
+            color: white;
+            cursor: pointer;
+            padding: 0 15px;
+            transition: all 0.3s;
+        }
+
+        .close-btn:hover {
+            transform: scale(1.2);
+        }
+
+        .back-btn {
+            display: inline-block;
+            background: white;
+            color: #667eea;
+            padding: 12px 30px;
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+
+        .back-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+        }
+
+        .back-btn::before {
+            content: "← ";
+        }
+
+        @media print {
+            body {
+                background: white;
+                padding: 0;
+            }
+
+            .modal {
+                display: block !important;
+                position: relative;
+                background: white;
+            }
+
+            .modal-content {
+                width: 100%;
+                max-width: 100%;
+                height: auto;
+                max-height: none;
+                box-shadow: none;
+            }
+
+            .modal-header {
+                background: white;
+                color: #667eea;
+                border-bottom: 3px solid #667eea;
+            }
+
+            .modal-controls,
+            .close-btn,
+            header,
+            .grade-title,
+            .back-btn {
+                display: none !important;
+            }
+        }
+
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 1.8em;
+            }
+
+            .unit-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+
+            .unit-title {
+                font-size: 1.3em;
+            }
+
+            .modal-content {
+                width: 95%;
+                max-height: 90vh;
+            }
+
+            .modal-title {
+                font-size: 1.3em;
+            }
+
+            .modal-btn {
+                padding: 8px 15px;
+                font-size: 0.9em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="index.html" class="back-btn">Ana Sayfa</a>
+
+        <header>
+            <h1>📖 Ders Anlatımı ve Konu Özetleri</h1>
+            <p>Tüm ünitelerin detaylı konu anlatımları</p>
+        </header>
+
+        <!-- 5. SINIF -->
+        <div class="grade-section">
+            <div class="grade-title">
+                📘 5. SINIF ÜNİTELERİ
+            </div>
+
+            <div class="unit-card" onclick="openModal('unite1-5')">
+                <div class="unit-header">
+                    <div class="unit-title">📱 Ünite 1: Bilişim Temelleri</div>
+                    <div class="unit-duration">⏰ 9 Hafta</div>
+                </div>
+                <div class="unit-preview">
+                    Bilgisayar donanımı, yazılım, işletim sistemleri ve dosya yönetimi konularını kapsayan temel ünite.
+                </div>
+                <div class="click-hint">👆 Detaylı içeriği görmek için tıklayın</div>
+            </div>
+
+            <div class="unit-card" onclick="openModal('unite2-5')">
+                <div class="unit-header">
+                    <div class="unit-title">🎨 Ünite 2: Dijital Ürün Tasarımı</div>
+                    <div class="unit-duration">⏰ 6 Hafta</div>
+                </div>
+                <div class="unit-preview">
+                    Paint, Word ve PowerPoint kullanarak dijital ürünler oluşturma.
+                </div>
+                <div class="click-hint">👆 Detaylı içeriği görmek için tıklayın</div>
+            </div>
+
+            <div class="unit-card" onclick="openModal('unite3-5')">
+                <div class="unit-header">
+                    <div class="unit-title">🌐 Ünite 3: Ağlar ve İletişim</div>
+                    <div class="unit-duration">⏰ 3 Hafta</div>
+                </div>
+                <div class="unit-preview">
+                    Bilgisayar ağları, internet, e-posta ve güvenli internet kullanımı.
+                </div>
+                <div class="click-hint">👆 Detaylı içeriği görmek için tıklayın</div>
+            </div>
+
+            <div class="unit-card" onclick="openModal('unite4-5')">
+                <div class="unit-header">
+                    <div class="unit-title">🔒 Ünite 4: Etik ve Güvenlik</div>
+                    <div class="unit-duration">⏰ 2 Hafta</div>
+                </div>
+                <div class="unit-preview">
+                    Bilişim etiği, telif hakları, güvenli şifre oluşturma ve siber güvenlik.
+                </div>
+                <div class="click-hint">👆 Detaylı içeriği görmek için tıklayın</div>
+            </div>
+
+            <div class="unit-card" onclick="openModal('unite5-5')">
+                <div class="unit-header">
+                    <div class="unit-title">🤖 Ünite 5: Yapay Zeka</div>
+                    <div class="unit-duration">⏰ 4 Hafta</div>
+                </div>
+                <div class="unit-preview">
+                    Yapay zeka kavramı, kullanım alanları, günlük hayatta yapay zeka uygulamaları.
+                </div>
+                <div class="click-hint">👆 Detaylı içeriği görmek için tıklayın</div>
+            </div>
+
+            <div class="unit-card" onclick="openModal('unite6-5')">
+                <div class="unit-header">
+                    <div class="unit-title">💻 Ünite 6: Scratch Programlama</div>
+                    <div class="unit-duration">⏰ 14 Hafta</div>
+                </div>
+                <div class="unit-preview">
+                    Algoritma, Scratch ile programlama, döngüler, koşullar, değişkenler ve oyun yapımı.
+                </div>
+                <div class="click-hint">👆 Detaylı içeriği görmek için tıklayın</div>
+            </div>
+        </div>
+
+        <!-- 6. SINIF -->
+        <div class="grade-section">
+            <div class="grade-title" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">
+                📗 6. SINIF ÜNİTELERİ
+            </div>
+
+            <div class="unit-card" onclick="openModal('unite1-6')">
+                <div class="unit-header">
+                    <div class="unit-title">💾 Ünite 1: Veri Yönetimi</div>
+                    <div class="unit-duration">⏰ 4 Hafta</div>
+                </div>
+                <div class="unit-preview">
+                    Veri analizi, tablo ve grafik oluşturma, veri filtreleme ve sıralama.
+                </div>
+                <div class="click-hint">👆 Detaylı içeriği görmek için tıklayın</div>
+            </div>
+
+            <div class="unit-card" onclick="openModal('unite2-6')">
+                <div class="unit-header">
+                    <div class="unit-title">📝 Ünite 2: Kelime İşlemci</div>
+                    <div class="unit-duration">⏰ 5 Hafta</div>
+                </div>
+                <div class="unit-preview">
+                    İleri düzey Word kullanımı, formatlama, şablonlar ve profesyonel doküman hazırlama.
+                </div>
+                <div class="click-hint">👆 Detaylı içeriği görmek için tıklayın</div>
+            </div>
+
+            <div class="unit-card" onclick="openModal('unite3-6')">
+                <div class="unit-header">
+                    <div class="unit-title">🧩 Ünite 3: Algoritmalar</div>
+                    <div class="unit-duration">⏰ 2 Hafta</div>
+                </div>
+                <div class="unit-preview">
+                    Algoritma tasarımı, akış diyagramları ve problem çözme stratejileri.
+                </div>
+                <div class="click-hint">👆 Detaylı içeriği görmek için tıklayın</div>
+            </div>
+
+            <div class="unit-card" onclick="openModal('unite4-6')">
+                <div class="unit-header">
+                    <div class="unit-title">💻 Ünite 4: Scratch İleri</div>
+                    <div class="unit-duration">⏰ 7 Hafta</div>
+                </div>
+                <div class="unit-preview">
+                    İleri Scratch programlama, klonlama, listeler, özel bloklar ve karmaşık projeler.
+                </div>
+                <div class="click-hint">👆 Detaylı içeriği görmek için tıklayın</div>
+            </div>
+
+            <div class="unit-card" onclick="openModal('unite5-6')">
+                <div class="unit-header">
+                    <div class="unit-title">🎬 Ünite 5: Sunum Programları</div>
+                    <div class="unit-duration">⏰ 21 Hafta</div>
+                </div>
+                <div class="unit-preview">
+                    İleri PowerPoint, animasyon, multimedya, geçişler ve interaktif sunumlar.
+                </div>
+                <div class="click-hint">👆 Detaylı içeriği görmek için tıklayın</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL TEMPLATE -->
+    <div id="modal" class="modal">
+        <div class="modal-content" id="modalContent">
+            <div class="modal-header">
+                <div class="modal-title" id="modalTitle"></div>
+                <div class="modal-controls">
+                    <button class="modal-btn" onclick="toggleFullscreen()">⛶ Tam Ekran</button>
+                    <button class="modal-btn" onclick="printContent()">🖨️ PDF İndir</button>
+                    <span class="close-btn" onclick="closeModal()">&times;</span>
+                </div>
+            </div>
+            <div class="modal-body" id="modalBody"></div>
+        </div>
+    </div>
+
+    <script>
+        // Ünite içerikleri (özet olarak - gerçekte çok daha uzun)
+        const unitContents = {
+            'unite1-5': {
+                title: '📱 Ünite 1: Bilişim Temelleri',
+                content: `
+                    <h3>💻 Bilgisayar Donanımı</h3>
+                    <ul>
+                        <li><strong>İşlemci (CPU):</strong> Bilgisayarın beyni, tüm işlemleri gerçekleştirir</li>
+                        <li><strong>RAM:</strong> Geçici bellek, çalışan programlar burada tutulur</li>
+                        <li><strong>Hard Disk/SSD:</strong> Kalıcı depolama, dosyalarınız burada saklanır</li>
+                        <li><strong>Anakart:</strong> Tüm bileşenleri birbirine bağlayan ana kart</li>
+                        <li><strong>Ekran Kartı:</strong> Görüntüyü ekrana aktarır</li>
+                    </ul>
+
+                    <h3>💿 Yazılım Türleri</h3>
+                    <ul>
+                        <li><strong>İşletim Sistemi:</strong> Windows, macOS, Linux gibi temel yazılımlar</li>
+                        <li><strong>Uygulama Yazılımları:</strong> Word, Chrome, Oyunlar vb.</li>
+                        <li><strong>Yardımcı Programlar:</strong> Antivirüs, sıkıştırma programları</li>
+                    </ul>
+
+                    <div class="highlight-box">
+                        <strong>💡 Önemli Not:</strong> Donanım fiziksel parçalardır, yazılım ise komutlar ve programlardır.
+                    </div>
+
+                    <h3>🗂️ Dosya Yönetimi</h3>
+                    <ul>
+                        <li>Dosya ve klasör oluşturma</li>
+                        <li>Kopyalama, taşıma, silme işlemleri</li>
+                        <li>Dosya uzantıları (.docx, .pdf, .jpg vb.)</li>
+                        <li>Dosya sıkıştırma (.zip, .rar)</li>
+                    </ul>
+                `
+            },
+            'unite2-5': {
+                title: '🎨 Ünite 2: Dijital Ürün Tasarımı',
+                content: `
+                    <h3>🖌️ Paint ile Çizim</h3>
+                    <ul>
+                        <li>Temel çizim araçları (fırça, kalem, silgi)</li>
+                        <li>Şekiller çizme (daire, kare, çizgi)</li>
+                        <li>Renk seçimi ve doldurma</li>
+                        <li>Görüntü düzenleme (boyutlandırma, kırpma)</li>
+                    </ul>
+
+                    <h3>📝 Word ile Doküman</h3>
+                    <ul>
+                        <li>Metin yazma ve düzenleme</li>
+                        <li>Yazı tipi, boyut ve renk değiştirme</li>
+                        <li>Paragraf hizalama</li>
+                        <li>Resim ve tablo ekleme</li>
+                        <li>Kaydetme ve yazdırma</li>
+                    </ul>
+
+                    <h3>🎭 PowerPoint ile Sunum</h3>
+                    <ul>
+                        <li>Slayt oluşturma ve düzenleme</li>
+                        <li>Metin, resim ve şekil ekleme</li>
+                        <li>Slayt geçişleri</li>
+                        <li>Basit animasyonlar</li>
+                        <li>Sunum yapma</li>
+                    </ul>
+                `
+            },
+            'unite3-5': {
+                title: '🌐 Ünite 3: Ağlar ve İletişim',
+                content: `
+                    <h3>🌐 Bilgisayar Ağları</h3>
+                    <ul>
+                        <li><strong>LAN (Local Area Network):</strong> Yerel ağ, ev veya okul ağı</li>
+                        <li><strong>WAN (Wide Area Network):</strong> Geniş alan ağı, internet</li>
+                        <li><strong>Router:</strong> Ağ trafiğini yönlendirir</li>
+                        <li><strong>Modem:</strong> İnternete bağlantı sağlar</li>
+                    </ul>
+
+                    <h3>📧 İnternet ve E-posta</h3>
+                    <ul>
+                        <li>Tarayıcı kullanımı (Chrome, Firefox vb.)</li>
+                        <li>Güvenli web siteleri (HTTPS)</li>
+                        <li>E-posta gönderme ve alma</li>
+                        <li>Eklenti gönderme</li>
+                    </ul>
+
+                    <div class="highlight-box">
+                        <strong>⚠️ Güvenlik:</strong> Bilinmeyen kaynaklardan gelen e-postalardaki linklere tıklamayın!
+                    </div>
+                `
+            },
+            'unite4-5': {
+                title: '🔒 Ünite 4: Etik ve Güvenlik',
+                content: `
+                    <h3>⚖️ Bilişim Etiği</h3>
+                    <ul>
+                        <li>Telif hakları ve lisanslar</li>
+                        <li>Dijital içerik paylaşımı</li>
+                        <li>Siber zorbalık</li>
+                        <li>Kişisel bilgilerin korunması</li>
+                    </ul>
+
+                    <h3>🔐 Güvenli Şifre</h3>
+                    <ul>
+                        <li>En az 8-12 karakter uzunluğunda</li>
+                        <li>Büyük ve küçük harf kullanımı</li>
+                        <li>Rakam ve özel karakterler (!@#$%)</li>
+                        <li>Kişisel bilgiler içermemeli</li>
+                    </ul>
+
+                    <div class="highlight-box">
+                        <strong>💡 İyi Şifre Örneği:</strong> M3rh@b@Dunya!2024
+                    </div>
+
+                    <h3>🛡️ Siber Güvenlik</h3>
+                    <ul>
+                        <li>Antivirüs kullanımı</li>
+                        <li>Phishing (oltalama) saldırıları</li>
+                        <li>Güvenli internet kullanımı</li>
+                        <li>İki faktörlü doğrulama</li>
+                    </ul>
+                `
+            },
+            'unite5-5': {
+                title: '🤖 Ünite 5: Yapay Zeka',
+                content: `
+                    <h3>🧠 Yapay Zeka Nedir?</h3>
+                    <ul>
+                        <li>Makinelerin insan gibi düşünmesi ve öğrenmesi</li>
+                        <li>Veri analizi ve karar verme</li>
+                        <li>Örüntü tanıma</li>
+                        <li>Sürekli öğrenme ve gelişme</li>
+                    </ul>
+
+                    <h3>📱 Günlük Hayatta YZ</h3>
+                    <ul>
+                        <li><strong>Sesli Asistanlar:</strong> Siri, Alexa, Google Assistant</li>
+                        <li><strong>Öneri Sistemleri:</strong> Netflix, YouTube, Spotify</li>
+                        <li><strong>Yüz Tanıma:</strong> Telefon kilidi, fotoğraf uygulamaları</li>
+                        <li><strong>Çeviri:</strong> Google Translate</li>
+                        <li><strong>Navigasyon:</strong> Google Maps</li>
+                    </ul>
+
+                    <h3>🎮 YZ Kullanım Alanları</h3>
+                    <ul>
+                        <li>Sağlık (hastalık teşhisi)</li>
+                        <li>Eğitim (kişiselleştirilmiş öğrenme)</li>
+                        <li>Oyun (akıllı rakipler)</li>
+                        <li>Güvenlik (yüz tanıma)</li>
+                        <li>Ulaşım (otonom araçlar)</li>
+                    </ul>
+                `
+            },
+            'unite6-5': {
+                title: '💻 Ünite 6: Scratch Programlama',
+                content: `
+                    <h3>🔢 Algoritma</h3>
+                    <ul>
+                        <li>Problemi adım adım çözme yöntemi</li>
+                        <li>Akış diyagramları</li>
+                        <li>Sıralı, seçimli ve döngülü yapılar</li>
+                    </ul>
+
+                    <h3>🎨 Scratch Temelleri</h3>
+                    <ul>
+                        <li><strong>Sprite:</strong> Karakterler ve nesneler</li>
+                        <li><strong>Sahne:</strong> Arka plan</li>
+                        <li><strong>Bloklar:</strong> Hareket, görünüm, ses, olay blokları</li>
+                        <li><strong>Script:</strong> Blokların birleşimi</li>
+                    </ul>
+
+                    <h3>🔁 Programlama Kavramları</h3>
+                    <ul>
+                        <li><strong>Döngüler:</strong> Tekrar eden işlemler (for, while)</li>
+                        <li><strong>Koşullar:</strong> Karar yapıları (if, else)</li>
+                        <li><strong>Değişkenler:</strong> Veri saklama</li>
+                        <li><strong>Operatörler:</strong> Matematik ve mantık işlemleri</li>
+                    </ul>
+
+                    <h3>🎮 Proje Örnekleri</h3>
+                    <ul>
+                        <li>Kedi-Fare kovalamaca oyunu</li>
+                        <li>Matematik quiz</li>
+                        <li>Labirent oyunu</li>
+                        <li>Platform oyunu</li>
+                        <li>Animasyon ve hikaye</li>
+                    </ul>
+                `
+            },
+            'unite1-6': {
+                title: '💾 Ünite 1: Veri Yönetimi',
+                content: `
+                    <h3>📊 Tablolama Programları</h3>
+                    <ul>
+                        <li>Hücre, satır ve sütun kavramları</li>
+                        <li>Veri girişi ve düzenleme</li>
+                        <li>Formüller ve fonksiyonlar (SUM, AVERAGE, MAX, MIN)</li>
+                    </ul>
+
+                    <h3>📈 Grafik Oluşturma</h3>
+                    <ul>
+                        <li>Pasta grafik</li>
+                        <li>Çubuk grafik</li>
+                        <li>Çizgi grafik</li>
+                        <li>Grafik özelleştirme</li>
+                    </ul>
+
+                    <h3>🔍 Veri Analizi</h3>
+                    <ul>
+                        <li>Sıralama (A-Z, Z-A)</li>
+                        <li>Filtreleme</li>
+                        <li>Veri doğrulama</li>
+                        <li>Koşullu biçimlendirme</li>
+                    </ul>
+                `
+            },
+            'unite2-6': {
+                title: '📝 Ünite 2: Kelime İşlemci',
+                content: `
+                    <h3>📄 İleri Formatlama</h3>
+                    <ul>
+                        <li>Stiller ve şablonlar</li>
+                        <li>Başlıklar ve alt başlıklar</li>
+                        <li>İçindekiler otomatik oluşturma</li>
+                        <li>Sayfa numaraları</li>
+                    </ul>
+
+                    <h3>🖼️ Görsel Öğeler</h3>
+                    <ul>
+                        <li>SmartArt grafikleri</li>
+                        <li>Şekiller ve çizimler</li>
+                        <li>Resim düzenleme</li>
+                        <li>Tablocürekler</li>
+                    </ul>
+
+                    <h3>📑 Profesyonel Dokümanlar</h3>
+                    <ul>
+                        <li>Üstbilgi ve altbilgi</li>
+                        <li>Dipnotlar</li>
+                        <li>Kaynakça oluşturma</li>
+                        <li>Belge birleştirme</li>
+                    </ul>
+                `
+            },
+            'unite3-6': {
+                title: '🧩 Ünite 3: Algoritmalar',
+                content: `
+                    <h3>🎯 Algoritma Tasarımı</h3>
+                    <ul>
+                        <li>Problem analizi</li>
+                        <li>Adım adım çözüm planı</li>
+                        <li>Akış diyagramı sembolleri</li>
+                        <li>Pseudocode yazımı</li>
+                    </ul>
+
+                    <h3>🔄 Algoritma Türleri</h3>
+                    <ul>
+                        <li>Sıralı algoritmalar</li>
+                        <li>Seçimli algoritmalar (if-else)</li>
+                        <li>Döngülü algoritmalar (for, while)</li>
+                    </ul>
+
+                    <h3>💡 Problem Çözme</h3>
+                    <ul>
+                        <li>Problemi anlama</li>
+                        <li>Çözüm yolları bulma</li>
+                        <li>En iyi çözümü seçme</li>
+                        <li>Test etme ve hata ayıklama</li>
+                    </ul>
+                `
+            },
+            'unite4-6': {
+                title: '💻 Ünite 4: Scratch İleri',
+                content: `
+                    <h3>🔧 İleri Teknikler</h3>
+                    <ul>
+                        <li><strong>Klonlama:</strong> Sprite kopyalama ve çoğaltma</li>
+                        <li><strong>Listeler:</strong> Çoklu veri saklama</li>
+                        <li><strong>Özel Bloklar:</strong> Kendi komutlarını oluşturma</li>
+                        <li><strong>Mesajlaşma:</strong> Sprite'lar arası iletişim</li>
+                    </ul>
+
+                    <h3>🎨 İleri Projeler</h3>
+                    <ul>
+                        <li>Çok seviyeli oyunlar</li>
+                        <li>Skorlu sistemler</li>
+                        <li>Karakter özelleştirme</li>
+                        <li>Ses ve müzik ekleme</li>
+                    </ul>
+                `
+            },
+            'unite5-6': {
+                title: '🎬 Ünite 5: Sunum Programları',
+                content: `
+                    <h3>✨ İleri Animasyonlar</h3>
+                    <ul>
+                        <li>Giriş animasyonları</li>
+                        <li>Vurgu animasyonları</li>
+                        <li>Çıkış animasyonları</li>
+                        <li>Animasyon sıralama ve zamanlama</li>
+                    </ul>
+
+                    <h3>🎥 Multimedya</h3>
+                    <ul>
+                        <li>Video ekleme</li>
+                        <li>Ses kayıtları</li>
+                        <li>Müzik ekleme</li>
+                        <li>Ekran kaydı</li>
+                    </ul>
+
+                    <h3>🖱️ İnteraktif Sunumlar</h3>
+                    <ul>
+                        <li>Hiperlink kullanımı</li>
+                        <li>Eylem butonları</li>
+                        <li>Quiz sunumları</li>
+                        <li>Dokunmatik sunum tasarımı</li>
+                    </ul>
+                `
+            }
+        };
+
+        let isFullscreen = false;
+
+        function openModal(unitId) {
+            const modal = document.getElementById('modal');
+            const title = document.getElementById('modalTitle');
+            const body = document.getElementById('modalBody');
+
+            const unit = unitContents[unitId];
+            title.textContent = unit.title;
+            body.innerHTML = unit.content;
+
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeModal() {
+            const modal = document.getElementById('modal');
+            const content = document.getElementById('modalContent');
+
+            modal.classList.remove('active');
+            content.classList.remove('fullscreen');
+            document.body.style.overflow = 'auto';
+            isFullscreen = false;
+        }
+
+        function toggleFullscreen() {
+            const content = document.getElementById('modalContent');
+            content.classList.toggle('fullscreen');
+            isFullscreen = !isFullscreen;
+        }
+
+        function printContent() {
+            window.print();
+        }
+
+        // Modal dışına tıklayınca kapat
+        document.getElementById('modal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeModal();
+            }
+        });
+
+        // ESC tuşu ile kapat
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeModal();
+            }
+        });
+    </script>
+</body>
+</html>

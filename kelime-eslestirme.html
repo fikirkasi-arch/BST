@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <title>Bilişim Terimleri - Kelime Eşleştirme Oyunu</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #00f2fe 0%, #4facfe 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        h1 { text-align: center; color: #00f2fe; margin-bottom: 30px; font-size: 2.5em; }
+        .game-area {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+        .column {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        .term, .definition {
+            padding: 20px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 3px solid #e0e0e0;
+        }
+        .term {
+            background: linear-gradient(135deg, #00f2fe 0%, #4facfe 100%);
+            color: white;
+            font-weight: bold;
+        }
+        .definition {
+            background: #f5f5f5;
+        }
+        .term:hover, .definition:hover {
+            transform: translateX(5px);
+            box-shadow: 0 5px 15px rgba(0,242,254,0.3);
+        }
+        .term.selected {
+            border-color: #ffd700;
+            box-shadow: 0 0 20px rgba(255,215,0,0.5);
+        }
+        .definition.matched, .term.matched {
+            background: #4caf50;
+            color: white;
+            cursor: default;
+            border-color: #4caf50;
+        }
+        .stats {
+            text-align: center;
+            font-size: 1.3em;
+            margin-bottom: 20px;
+            color: #00f2fe;
+            font-weight: bold;
+        }
+        .buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+        }
+        .btn {
+            padding: 15px 40px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1em;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #00f2fe 0%, #4facfe 100%);
+            color: white;
+        }
+        .btn-primary:hover { transform: translateY(-3px); }
+        .btn-secondary { background: #e0e0e0; color: #333; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎯 Bilişim Terimleri Eşleştirme</h1>
+        <div class="stats" id="stats">Eşleşme: 0/10</div>
+        <div class="game-area">
+            <div class="column" id="terms"></div>
+            <div class="column" id="definitions"></div>
+        </div>
+        <div class="buttons">
+            <button class="btn btn-primary" onclick="startGame()">🔄 Yeni Oyun</button>
+            <button class="btn btn-secondary" onclick="window.location.href='index.html'">🏠 Ana Sayfa</button>
+        </div>
+    </div>
+    <script>
+        const pairs = [
+            { term: 'CPU', definition: 'İşlemci - Bilgisayarın beyni' },
+            { term: 'RAM', definition: 'Geçici hafıza - Bilgisayar kapatılınca sil inir' },
+            { term: 'Hard Disk', definition: 'Kalıcı hafıza - Dosyaları saklar' },
+            { term: 'İşletim Sistemi', definition: 'Bilgisayarı çalıştıran ana yazılım' },
+            { term: 'Algoritma', definition: 'Problemi çözmek için adım adım yol' },
+            { term: 'Yapay Zeka', definition: 'Bilgisayarların insan gibi düşünmesi' },
+            { term: 'Bulut Bilişim', definition: 'Verileri internette saklama' },
+            { term: 'Phishing', definition: 'Kimlik avı - Bilgi çalma dolandırıcılığı' },
+            { term: 'Pixel', definition: 'Dijital görüntünün en küçük birimi' },
+            { term: 'Podcast', definition: 'İnternetten dinlenebilen ses yayını' }
+        ];
+
+        let selectedTerm = null;
+        let matches = 0;
+
+        function shuffle(array) {
+            return array.sort(() => Math.random() - 0.5);
+        }
+
+        function startGame() {
+            selectedTerm = null;
+            matches = 0;
+            document.getElementById('stats').textContent = 'Eşleşme: 0/10';
+            
+            const shuffledTerms = shuffle([...pairs]);
+            const shuffledDefs = shuffle([...pairs]);
+            
+            const termsContainer = document.getElementById('terms');
+            const defsContainer = document.getElementById('definitions');
+            
+            termsContainer.innerHTML = '';
+            defsContainer.innerHTML = '';
+            
+            shuffledTerms.forEach((pair, idx) => {
+                const termEl = document.createElement('div');
+                termEl.className = 'term';
+                termEl.textContent = pair.term;
+                termEl.dataset.id = pairs.findIndex(p => p.term === pair.term);
+                termEl.onclick = () => selectTerm(termEl);
+                termsContainer.appendChild(termEl);
+            });
+            
+            shuffledDefs.forEach((pair, idx) => {
+                const defEl = document.createElement('div');
+                defEl.className = 'definition';
+                defEl.textContent = pair.definition;
+                defEl.dataset.id = pairs.findIndex(p => p.definition === pair.definition);
+                defEl.onclick = () => selectDefinition(defEl);
+                defsContainer.appendChild(defEl);
+            });
+        }
+
+        function selectTerm(termEl) {
+            if (termEl.classList.contains('matched')) return;
+            
+            document.querySelectorAll('.term').forEach(t => t.classList.remove('selected'));
+            termEl.classList.add('selected');
+            selectedTerm = termEl;
+        }
+
+        function selectDefinition(defEl) {
+            if (!selectedTerm || defEl.classList.contains('matched')) return;
+            
+            if (selectedTerm.dataset.id === defEl.dataset.id) {
+                selectedTerm.classList.add('matched');
+                selectedTerm.classList.remove('selected');
+                defEl.classList.add('matched');
+                matches++;
+                document.getElementById('stats').textContent = `Eşleşme: ${matches}/10`;
+                
+                if (matches === 10) {
+                    setTimeout(() => {
+                        alert('🎉 Tebrikler! Tüm terimleri doğru eşleştirdin!');
+                    }, 300);
+                }
+                
+                selectedTerm = null;
+            } else {
+                defEl.style.background = '#ffebee';
+                setTimeout(() => {
+                    defEl.style.background = '#f5f5f5';
+                }, 500);
+            }
+        }
+
+        startGame();
+    </script>
+</body>
+</html>

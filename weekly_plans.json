@@ -1,0 +1,542 @@
+{
+  "grade5": [
+    {
+      "week": 1,
+      "week_text": "1. Hafta:\n 8-12 Eylül",
+      "unit": "Bilişim Teknolojilerinin Hayatımızdaki Yeri",
+      "topic": "Bilişim Teknolojilerinin Sınıflandırılması",
+      "outcome": "BTY.5.1.1 Günlük yaşamda kullanılan bilişim teknolojilerini sınıflandırabilme",
+      "grade": 5
+    },
+    {
+      "week": 2,
+      "week_text": "2. Hafta:\n 15-19 Eylül",
+      "unit": "",
+      "topic": "Bilişim Teknolojilerinin Etkileri ve Dijital Sağlık",
+      "outcome": "BTY.5.1.2 Bilişim teknolojilerinin birey ve toplum üzerindeki etkilerini özetleyebilme",
+      "grade": 5
+    },
+    {
+      "week": 3,
+      "week_text": "3. Hafta:\n 22-26 Eylül",
+      "unit": "",
+      "topic": "Dijital Vatandaşlık Uygulamaları",
+      "outcome": "BTY.5.1.3 Dijital vatandaşlık uygulamalarını sınıflandırabilme",
+      "grade": 5
+    },
+    {
+      "week": 4,
+      "week_text": "4. Hafta:\n 29 Eylül-3 Ekim",
+      "unit": "",
+      "topic": "Yapay Zekâda Temel Kavram ve Özellikler",
+      "outcome": "BTY.5.1.4 Yapay zekâ ile ilgili temel kavramları ve özellikleri sorgulayabilme",
+      "grade": 5
+    },
+    {
+      "week": 5,
+      "week_text": "5. Hafta:\n 6-10 Ekim",
+      "unit": "",
+      "topic": "Yapay Zekâda Temel Kavram ve Özellikler",
+      "outcome": "BTY.5.1.4 Yapay zekâ ile ilgili temel kavramları ve özellikleri sorgulayabilme",
+      "grade": 5
+    },
+    {
+      "week": 6,
+      "week_text": "6. Hafta:\n 13-17 Ekim",
+      "unit": "",
+      "topic": "Bilgisayar Sistemlerinin Kullanımı",
+      "outcome": "BTY.5.1.5 Bilgisayar sistemlerini çözümleyebilme",
+      "grade": 5
+    },
+    {
+      "week": 7,
+      "week_text": "7. Hafta:\n 20-24 Ekim",
+      "unit": "",
+      "topic": "Dosya ve Klasör Yönetimi",
+      "outcome": "BTY.5.1.6 Dosya ve klasör yönetimi ile ilgili temel işlemlerle çalışabilme",
+      "grade": 5
+    },
+    {
+      "week": 8,
+      "week_text": "8. Hafta:\n 27-31 Ekim",
+      "unit": "Dijital Ürün Tasarımı ve Geliştirme",
+      "topic": "Görsel Düzenleme Programlarına Giriş",
+      "outcome": "BTY.5.2.1 Görsel düzenleme programlarından yararlanabilme",
+      "grade": 5
+    },
+    {
+      "week": 9,
+      "week_text": "9. Hafta:\n 3-7 Kasım",
+      "unit": "",
+      "topic": "Görsel Tasarıma Yönelik Kurgu Oluşturma\n\nGörsel Ürün Geliştirme",
+      "outcome": "BTY.5.2.2 Görsel için kurgu oluşturabilme\n\nBTY.5.2.3 Görsel dosyası geliştirebilme",
+      "grade": 5
+    },
+    {
+      "week": 10,
+      "week_text": "10. Hafta:\n 17-21 Kasım",
+      "unit": "Dijital Ürün Tasarımı ve Geliştirme",
+      "topic": "Kelime İşlemci Programlarına Giriş",
+      "outcome": "BTY.5.2.4 Kelime işlemci programlarından yararlanabilme",
+      "grade": 5
+    },
+    {
+      "week": 11,
+      "week_text": "11. Hafta:\n 24-28 Kasım",
+      "unit": "",
+      "topic": "Kelime İşlemci Dosyası Geliştirme",
+      "outcome": "BTY.5.2.5 Kelime işlemci dosyası geliştirebilme",
+      "grade": 5
+    },
+    {
+      "week": 12,
+      "week_text": "12. Hafta:\n 1-5 Aralık",
+      "unit": "",
+      "topic": "Sunum Programlarına Giriş",
+      "outcome": "BTY.5.2.6 Sunum programlarından yararlanabilme",
+      "grade": 5
+    },
+    {
+      "week": 13,
+      "week_text": "13. Hafta:\n 8-12 Aralık",
+      "unit": "",
+      "topic": "Sunum Dosyası Oluşturma",
+      "outcome": "BTY.5.2.7 Sunum dosyası geliştirebilme",
+      "grade": 5
+    },
+    {
+      "week": 14,
+      "week_text": "14. Hafta:\n 15-19 Aralık",
+      "unit": "Bilgisayar Ağları ve İletişim",
+      "topic": "Bilgisayar Ağları ve Ağ Bileşenleri",
+      "outcome": "BTY.5.3.1 Bilgisayar ağları ve bileşenlerini sorgulayabilme",
+      "grade": 5
+    },
+    {
+      "week": 15,
+      "week_text": "15. Hafta:\n 22-26 Aralık",
+      "unit": "",
+      "topic": "Bilgisayar Ağ Türleri ve Bağlanma Yöntemleri",
+      "outcome": "BTY.5.3.2 Bilgisayar ağları ve bağlanma yöntemlerini sınıflandırabilme",
+      "grade": 5
+    },
+    {
+      "week": 16,
+      "week_text": "16. Hafta:\n 29 Aralık-2 Ocak",
+      "unit": "",
+      "topic": "İnternette Bilgi Kaynakları ve Arama Yöntemleri",
+      "outcome": "BTY.5.3.3 İnternet ile amacına uygun olarak çalışabilme",
+      "grade": 5
+    },
+    {
+      "week": 17,
+      "week_text": "17. Hafta:\n 5-9 Ocak",
+      "unit": "Bilişim Etiği ve Siber Güvenlik",
+      "topic": "Bilişim Etiği ve İlkeleri",
+      "outcome": "BTY.5.4.1 Bilişim etiği kural ve ilkelerini yorumlayabilme",
+      "grade": 5
+    },
+    {
+      "week": 18,
+      "week_text": "18. Hafta:\n 12-16 Ocak",
+      "unit": "",
+      "topic": "Dijital Ortamlarda Gizlilik ve Güvenlik",
+      "outcome": "BTY.5.4.2 Dijital ortamlarda gizlilik ve güvenlik önlemlerini yönetebilme",
+      "grade": 5
+    },
+    {
+      "week": 19,
+      "week_text": "19. Hafta:\n 2-6 Şubat",
+      "unit": "Yapay Zeka",
+      "topic": "Yapay Zekâ Kullanım Alanları ve Alt Dalları",
+      "outcome": "BTY.5.5.1 Yapay zekâ uygulamalarını sınıflandırabilme",
+      "grade": 5
+    },
+    {
+      "week": 20,
+      "week_text": "20. Hafta:\n 9-13 Şubat",
+      "unit": "",
+      "topic": "Yapay Zekâ Kullanım Alanları ve Alt Dalları",
+      "outcome": "BTY.5.5.1 Yapay zekâ uygulamalarını sınıflandırabilme",
+      "grade": 5
+    },
+    {
+      "week": 21,
+      "week_text": "21. Hafta:\n 16-20 Şubat",
+      "unit": "",
+      "topic": "Yapay Zekâda Güvenlik",
+      "outcome": "BTY.5.5.2 Yapay zekâya ilişkin etik ve güvenlik/gizlilik önlemlerini yönetebilme",
+      "grade": 5
+    },
+    {
+      "week": 22,
+      "week_text": "22. Hafta:\n 23-27 Şubat",
+      "unit": "",
+      "topic": "Yapay Zekâda Güvenlik",
+      "outcome": "BTY.5.5.2 Yapay zekâya ilişkin etik ve güvenlik/gizlilik önlemlerini yönetebilme",
+      "grade": 5
+    },
+    {
+      "week": 23,
+      "week_text": "23. Hafta:\n 2-6 Mart",
+      "unit": "Yazılım Tasarımı ve Programlama",
+      "topic": "Problem Belirleme ve Algoritma Oluşturma",
+      "outcome": "BTY.5.6.1 Problem çözümü için algoritmik düşünebilme",
+      "grade": 5
+    },
+    {
+      "week": 24,
+      "week_text": "24. Hafta:\n 9-13 Mart",
+      "unit": "",
+      "topic": "Problem Belirleme ve Algoritma Oluşturma",
+      "outcome": "BTY.5.6.1 Problem çözümü için algoritmik düşünebilme",
+      "grade": 5
+    },
+    {
+      "week": 25,
+      "week_text": "25. Hafta:\n 23-27 Mart",
+      "unit": "Yazılım Tasarımı ve Programlama",
+      "topic": "Algoritma Test Etme ve Geri Bildirim Alma",
+      "outcome": "BTY.5.6.2 Algoritma oluşturmada test edebilme-hata ayıklayabilme",
+      "grade": 5
+    },
+    {
+      "week": 26,
+      "week_text": "26. Hafta:\n 30 Mart-3 Nisan",
+      "unit": "",
+      "topic": "Algoritma Test Etme ve Geri Bildirim Alma",
+      "outcome": "BTY.5.6.2 Algoritma oluşturmada test edebilme-hata ayıklayabilme",
+      "grade": 5
+    },
+    {
+      "week": 27,
+      "week_text": "27. Hafta:\n 6-10 Nisan",
+      "unit": "OKUL TEMELLİ PLANLAMA*",
+      "topic": "",
+      "outcome": "",
+      "grade": 5
+    },
+    {
+      "week": 28,
+      "week_text": "28. Hafta:\n 13-17 Nisan",
+      "unit": "Yazılım Tasarımı ve Programlama",
+      "topic": "Yazılımda Kullanılan Bileşenler",
+      "outcome": "BTY.5.6.3 Yazılım geliştirme sürecinde kullanılan bileşenlerden yararlanabilme",
+      "grade": 5
+    },
+    {
+      "week": 29,
+      "week_text": "29. Hafta:\n 20-24 Nisan",
+      "unit": "",
+      "topic": "Yazılımda Kullanılan Bileşenler",
+      "outcome": "BTY.5.6.3 Yazılım geliştirme sürecinde kullanılan bileşenlerden yararlanabilme",
+      "grade": 5
+    },
+    {
+      "week": 30,
+      "week_text": "30. Hafta:\n 27 Nisan-1 Mayıs",
+      "unit": "",
+      "topic": "Blok Tabanlı Ortamda Yazılım Geliştirme",
+      "outcome": "BTY.5.6.4 Blok tabanlı ortamda yazılım geliştirme sürecini yönetebilme",
+      "grade": 5
+    },
+    {
+      "week": 31,
+      "week_text": "31. Hafta:\n 4-8 Mayıs",
+      "unit": "",
+      "topic": "Blok Tabanlı Ortamda Yazılım Geliştirme",
+      "outcome": "BTY.5.6.4 Blok tabanlı ortamda yazılım geliştirme sürecini yönetebilme",
+      "grade": 5
+    },
+    {
+      "week": 32,
+      "week_text": "32. Hafta:\n 11-15 Mayıs",
+      "unit": "",
+      "topic": "Blok Tabanlı Ortamda Yazılım Geliştirme",
+      "outcome": "BTY.5.6.4 Blok tabanlı ortamda yazılım geliştirme sürecini yönetebilme",
+      "grade": 5
+    },
+    {
+      "week": 33,
+      "week_text": "33. Hafta:\n 18-22 Mayıs",
+      "unit": "",
+      "topic": "Blok Tabanlı Ortamda Yazılım Geliştirme",
+      "outcome": "BTY.5.6.4 Blok tabanlı ortamda yazılım geliştirme sürecini yönetebilme",
+      "grade": 5
+    },
+    {
+      "week": 34,
+      "week_text": "34. Hafta:\n 25-29 Mayıs",
+      "unit": "OKUL TEMELLİ PLANLAMA*",
+      "topic": "",
+      "outcome": "",
+      "grade": 5
+    },
+    {
+      "week": 35,
+      "week_text": "35. Hafta:\n 1-5 Haziran",
+      "unit": "Yazılım Tasarımı ve Programlama",
+      "topic": "Blok Tabanlı Ortamda Yazılım Geliştirme",
+      "outcome": "BTY.5.6.4 Blok tabanlı ortamda yazılım geliştirme sürecini yönetebilme",
+      "grade": 5
+    },
+    {
+      "week": 36,
+      "week_text": "36. Hafta:\n 8-12 Haziran",
+      "unit": "",
+      "topic": "Blok Tabanlı Ortamda Yazılım Geliştirme",
+      "outcome": "BTY.5.6.4 Blok tabanlı ortamda yazılım geliştirme sürecini yönetebilme",
+      "grade": 5
+    }
+  ],
+  "grade6": [
+    {
+      "week": 1,
+      "week_text": "2. Hafta:\n 15-19 Eylül",
+      "unit": "BT.6.1. BİLİŞİM TEKNOLOJİLERİ",
+      "topic": "BT.6.1.2 - İŞLETİM SİSTEMİNİ TANIYORUM",
+      "outcome": "BT.6.1.2.1. İşletim sistemi kavramını açıklar.\nBT.6.1.2.2. İşletim sistemlerinin bileşenlerinin görevlerini kavrar.\nBT.6.1.2.3. Farklı işletim sistemlerini karşılaştırır.",
+      "grade": 6
+    },
+    {
+      "week": 2,
+      "week_text": "3. Hafta:\n 22-26 Eylül",
+      "unit": "BT.6.1. BİLİŞİM TEKNOLOJİLERİ",
+      "topic": "BT.6.1.3 - DOSYALARIM NEREDE?",
+      "outcome": "BT.6.1.3.1. Dosya uzantılarına göre dosyaların temel özelliklerini açıklar.\nBT.6.1.3.2. Basılı ortamdaki verileri elektronik ortama aktarır.\nBT.6.1.3.3. Elektronik ortamdaki verilerin sınıflanması ve saklanması için doğru yaklaşımları uygular.\nBT.6.1.3.4. Dosya ve klasör sıkıştırma işlemlerini yapar.\nBT.6.1.3.5. Dosyaların saklanması ve dosyalara erişilmesi konusunda strateji geliştirir.",
+      "grade": 6
+    },
+    {
+      "week": 3,
+      "week_text": "4. Hafta:\n 29 Eylül-3 Ekim",
+      "unit": "BT.6.2. ETİK VE GÜVENLİK",
+      "topic": "BT.6.1.4 - ARTIK DAHA BİLİNÇLİYİM",
+      "outcome": "BT.6.2.1.1. İnternet etiğinin önemini ifade eder.\nBT.6.2.1.2. Etik ilkelerin ihlali sonucunda karşılaşılabilecek durumlara örnekler verir.\nBT.6.2.1.3. Siber zorbalık kavramını açıklayarak korunma amacıyla alınabilecek önlemleri tartışır.",
+      "grade": 6
+    },
+    {
+      "week": 4,
+      "week_text": "5. Hafta:\n 6-10 Ekim",
+      "unit": "BT.6.2. ETİK VE GÜVENLİK",
+      "topic": "BT.6.1.5 - YARATICI ÜRÜNLERİMİZ NASIL KORUNUYOR?",
+      "outcome": "BT.6.2.1.4. Telif hakkı kavramını ve önemini araştırır.\nBT.6.2.1.5. Kullanım haklarını düzenleyen lisans türlerini açıklar.",
+      "grade": 6
+    },
+    {
+      "week": 5,
+      "week_text": "6. Hafta:\n 13-17 Ekim",
+      "unit": "BT.6.2. ETİK VE GÜVENLİK",
+      "topic": "BT.6.1.6 - DİJİTAL DÜNYANIN SUÇLULARI",
+      "outcome": "BT.6.2.1.6. Bilişim suçlarının neler olduğunu açıklayarak ilgili kanunları özetler.\nBT.6.2.1.7. Bilişim suçlarına karşı alınabilecek önlemler ve stratejiler geliştirir.",
+      "grade": 6
+    },
+    {
+      "week": 6,
+      "week_text": "7. Hafta:\n 20-24 Ekim",
+      "unit": "BT.6.2. ETİK VE GÜVENLİK",
+      "topic": "BT.6.1.7 - DİJİTAL DÜNYA",
+      "outcome": "BT.6.1.1.4. Bilişim teknolojilerinin sosyal ve kültürel hayata katkıları ve riskleri örnekler üzerinden tartışır.\nBT.6.2.2.1. Dijital paylaşımların kendisi ve başkaları üzerindeki etkilerini fark eder.\nBT.6.2.2.2. Öğrenci, bilişsel ve ahlaki gelişimine uygun olan dijital oyun ve içerikleri ayırt eder.",
+      "grade": 6
+    },
+    {
+      "week": 8,
+      "week_text": "9. Hafta:\n 3-7 Kasım",
+      "unit": "BT.6.2. ETİK VE GÜVENLİK",
+      "topic": "BT.6.1.9 - BİLGİM DEĞERLİ VE ÖNEMLİ",
+      "outcome": "BT.6.2.3.1. Bilişim teknolojilerinin kullanımında gizlilik ve güvenlik boyutlarının önemini tartışır.\nBT.6.2.3.2. Güvenlik açıklarının oluşumu konusunda yorum yapar.\nBT.6.2.3.3. Bilgi koruma yöntemlerini ifade eder.\nBT.6.2.3.4. Bilgi paylaşımı sürecinde olası riskleri değerlendirerek alınabilecek önlemleri tartışır.",
+      "grade": 6
+    },
+    {
+      "week": 9,
+      "week_text": "10. Hafta:\n 17-21 Kasım",
+      "unit": "BT.6.3. İLETİŞİM, ARAŞTIRMA VE İŞ BİRLİĞİ",
+      "topic": "BT.6.1.10 - DİJİTAL TEHLİKELER",
+      "outcome": "BT.6.2.3.5. Zararlı yazılımları kavrar.\nBT.6.2.3.6. Güvenlik yazılımlarının kullanım amaçlarını açıklar.",
+      "grade": 6
+    },
+    {
+      "week": 10,
+      "week_text": "11. Hafta:\n 24-28 Kasım",
+      "unit": "BT.6.3. İLETİŞİM, ARAŞTIRMA VE İŞ BİRLİĞİ",
+      "topic": "BT.6.1.11 - BİLGİSAYAR AĞLARI",
+      "outcome": "BT.6.3.1.1. Ağ kurmak için gerekli bileşenleri ve bileşenlerin özelliklerini açıklar.\nBT.6.3.1.2. Bir ağdan dosya ve yazıcı paylaşımı yapar.\nBT.6.3.1.3. Bilgisayar ağlarının boyutlarına ve bileşenlerine ilişkin farklılıkların nedenlerini tartışır.",
+      "grade": 6
+    },
+    {
+      "week": 11,
+      "week_text": "12. Hafta:\n 1-5 Aralık",
+      "unit": "BT.6.3. İLETİŞİM, ARAŞTIRMA VE İŞ BİRLİĞİ",
+      "topic": "BT.6.1.12 - ARA-TARA, SOR-SORGULA",
+      "outcome": "BT.6.3.2.1. Arama motorlarını kullanarak ileri düzeyde araştırma yapar.\nBT.6.3.2.2. Bilgiye ulaşırken zararlı ve gereksiz içerikleri ayırt eder.\nBT.6.3.2.3. Bilgi yönetimi kavramını ve önemini ifade eder.\nBT.6.3.2.4. EBA üzerinden farklı içeriklere erişim sağlar.",
+      "grade": 6
+    },
+    {
+      "week": 12,
+      "week_text": "13. Hafta:\n 8-12 Aralık",
+      "unit": "BT.6.3. İLETİŞİM, ARAŞTIRMA VE İŞ BİRLİĞİ",
+      "topic": "BT.6.1.13 - İLETİŞİM BENİM İŞİM!",
+      "outcome": "BT.6.3.3.1. Farklı ve eş zamanlı iletişim sürecini kavrar.\nBT.6.3.3.2. Farklı ve eş zamanlı olarak kullanılan iletişim teknolojilerini sınıflandırır.\nBT.6.3.3.3. Forum ve sohbet araçlarını listeler.\nBT.6.3.3.4. Sesli ve görüntülü iletişim araçlarını listeler.\nBT.6.3.3.5. İletişim süreci açısından araçlar arasındaki farklılıkları tartışır.\nBT.6.3.3.6. İhtiyaca göre doğru iletişim aracını seçerek etkili biçimde kullanır.",
+      "grade": 6
+    },
+    {
+      "week": 13,
+      "week_text": "14. Hafta:\n 15-19 Aralık",
+      "unit": "BT.6.4. ÜRÜN OLUŞTURMA",
+      "topic": "BT.6.1.14 - SAYILARLA OYNUYORUM",
+      "outcome": "BT.6.4.1.1. Tablolama programının arayüzünü ve özelliklerini tanıyarak amaca uygun bir tablo oluşturur.\nBT.6.4.1.2. Belirli bir amaç için oluşturduğu tabloyu biçimlendirir.\nBT.6.4.1.3. Oluşturduğu tablo üzerinde hesaplama işlemleri yapar.\nBT.6.4.1.4. Tablodaki verilere filtre uygular.\nBT.6.4.1.5. Amaca uygun grafik türlerini kullanarak veriyi görselleştirir.\nBT.6.4.1.6. Farklı tablolama programlarını keşfeder.\nBT.6.4.1.7. İş birliğine dayalı olarak oluşturduğu belgeyi paylaşır.",
+      "grade": 6
+    },
+    {
+      "week": 14,
+      "week_text": "15. Hafta:\n 22-26 Aralık",
+      "unit": "BT.6.4. ÜRÜN OLUŞTURMA",
+      "topic": "BT.6.1.15 - VERİLER FİLTRELENİYOR VE SIRALANIYOR",
+      "outcome": "BT.6.4.1.2. Belirli bir amaç için oluşturduğu tabloyu biçimlendirir.\nBT.6.4.1.3. Oluşturduğu tablo üzerinde hesaplama işlemleri yapar.\nBT.6.4.1.4. Tablodaki verilere filtre uygular.\nBT.6.4.1.5. Amaca uygun grafik türlerini kullanarak veriyi görselleştirir.\nBT.6.4.1.7. İş birliğine dayalı olarak oluşturduğu belgeyi paylaşır.",
+      "grade": 6
+    },
+    {
+      "week": 16,
+      "week_text": "17. Hafta:\n 5-9 Ocak",
+      "unit": "BT.6.4. ÜRÜN OLUŞTURMA",
+      "topic": "BT.6.1.17 - SES VE VİDEO İŞLEME\nPROGRAMLARI",
+      "outcome": "BT.6.4.2. Ses ve Video İşleme Programları\nBT.6.4.2.1. Ses ve video dosya biçimlerini bilir.\nBT.6.4.2.2. Ses ve video dosyalarını düzenleyebileceği yazılımları kullanır.\nBT.6.4.2.3. Ses dosyaları ile ilgili düzenleme işlemlerini yürütür.",
+      "grade": 6
+    },
+    {
+      "week": 17,
+      "week_text": "18. Hafta:\n 12-16 Ocak",
+      "unit": "BT.6.4. ÜRÜN OLUŞTURMA",
+      "topic": "BT.6.1.18 - VİDEOMU DÜZENLİYORUM",
+      "outcome": "BT.6.4.3.4. Video dosyaları ile ilgili düzenleme işlemlerini yürütür.\nBT.6.4.3.5. İş birliğine dayalı olarak oluşturduğu video dosyasını çevrimiçi ortamda paylaşır.",
+      "grade": 6
+    },
+    {
+      "week": 18,
+      "week_text": "19. Hafta:\n 2-6 Şubat",
+      "unit": "BT.6.5. PROBLEM ÇÖZME VE PROGRAMLAMA",
+      "topic": "BT.6.2.1 - HAYDİ VERİ TOPLAMAYA!",
+      "outcome": "BT.6.5.1.1. Verileri toplayarak türlerine göre sınıflandırır.\nBT.6.5.1.10. Matematik ve bilgisayar bilimi arasındaki ilişkiyi tartışır.",
+      "grade": 6
+    },
+    {
+      "week": 19,
+      "week_text": "20. Hafta:\n 9-13 Şubat",
+      "unit": "BT.6.5. PROBLEM ÇÖZME VE PROGRAMLAMA",
+      "topic": "BT.6.2.2 - SABİT Mİ DEĞİŞKEN Mİ?",
+      "outcome": "BT.6.5.1.2. Sabitleri ve değişkenleri problem çözümünde kullanır.",
+      "grade": 6
+    },
+    {
+      "week": 20,
+      "week_text": "21. Hafta:\n 16-20 Şubat",
+      "unit": "BT.6.5. PROBLEM ÇÖZME VE PROGRAMLAMA",
+      "topic": "BT.6.2.3 - BÖL, PARÇALA, ÇÖZ",
+      "outcome": "BT.6.5.1.3. Bir problemi alt problemlere böler.\nBT.6.5.1.4. Temel fonksiyonları problem çözme sürecinde kullanır.",
+      "grade": 6
+    },
+    {
+      "week": 21,
+      "week_text": "22. Hafta:\n 23-27 Şubat",
+      "unit": "BT.6.5. PROBLEM ÇÖZME VE PROGRAMLAMA",
+      "topic": "BT.6.2.4 - PROBLEM ÇÖZMEK BENİM İŞİM!",
+      "outcome": "BT.6.5.1.5. Problemin çözümü için bir algoritma geliştirir.\nBT.6.5.1.6. Bir algoritmanın çözümünü test eder.",
+      "grade": 6
+    },
+    {
+      "week": 22,
+      "week_text": "23. Hafta:\n 2-6 Mart",
+      "unit": "BT.6.5. PROBLEM ÇÖZME VE PROGRAMLAMA",
+      "topic": "BT.6.2.5 - FARKLI YOLLARDAN AYNI ÇÖZÜME",
+      "outcome": "BT.6.5.1.5. Problemin çözümü için bir algoritma geliştirir.\nBT.6.5.1.6. Bir algoritmanın çözümünü test eder.\nBT.6.5.1.7. Farklı algoritmaları inceleyerek en hızlı ve doğru çözümü seçer.",
+      "grade": 6
+    },
+    {
+      "week": 23,
+      "week_text": "24. Hafta:\n 9-13 Mart",
+      "unit": "BT.6.5. PROBLEM ÇÖZME VE PROGRAMLAMA",
+      "topic": "BT.6.2.6 - AYIKLA PİRİNCİN TAŞINI",
+      "outcome": "BT.6.5.1.8. Hatalı bir algoritmayı doğru çalışacak biçimde düzenler.",
+      "grade": 6
+    },
+    {
+      "week": 24,
+      "week_text": "25. Hafta:\n 23-27 Mart",
+      "unit": "BT.6.5. PROBLEM ÇÖZME VE PROGRAMLAMA",
+      "topic": "BT.6.2.7 - BENZER SORUN BENZER ÇÖZÜM",
+      "outcome": "BT.6.5.1.9. Problemin çözümünü, benzer problemler için geneller.",
+      "grade": 6
+    },
+    {
+      "week": 26,
+      "week_text": "27. Hafta:\n 6-10 Nisan",
+      "unit": "BT.6.5. PROBLEM ÇÖZME VE PROGRAMLAMA",
+      "topic": "BT.6.2.9 - BLOK TABANLI KODLAMA İLE TANIŞIYORUM",
+      "outcome": "BT.6.5.2.1. Blok tabanlı programlama aracının arayüzünü ve özelliklerini tanır.\nBT.6.5.2.2. Blok tabanlı programlama aracında sunulan bir programın işlevlerini açıklar.",
+      "grade": 6
+    },
+    {
+      "week": 27,
+      "week_text": "28. Hafta:\n 13-17 Nisan",
+      "unit": "BT.6.5. PROBLEM ÇÖZME VE PROGRAMLAMA",
+      "topic": "BT.6.2.10 - BLOK TABANLI KODLAMA PROGRAMINI KEŞFEDİYORUM",
+      "outcome": "BT.6.5.2.2. Blok tabanlı programlama aracında sunulan bir programın işlevlerini açıklar.\nBT.6.5.2.3. Blok tabanlı programlama aracında sunulan bir programın hatalarını ayıklar.\nBT.6.5.2.4. Blok tabanlı programlama aracında sunulan bir programı verilen ölçütlere göre geliştirerek düzenler.",
+      "grade": 6
+    },
+    {
+      "week": 28,
+      "week_text": "29. Hafta:\n 20-24 Nisan",
+      "unit": "BT.6.5. PROBLEM ÇÖZME VE PROGRAMLAMA",
+      "topic": "BT.6.2.11 - HAYDİ CANLANALIM",
+      "outcome": "BT.6.5.2.3. Blok tabanlı programlama aracında sunulan bir programın hatalarını ayıklar.\nBT.6.5.2.4. Blok tabanlı programlama aracında sunulan bir programı verilen ölçütlere göre geliştirerek düzenler.\nBT.6.5.2.5. Doğrusal mantık yapısını içeren programlar oluşturur.\nBT.6.5.2.6. Doğrusal mantık yapısını içeren programları test ederek hatalarını ayıklar.",
+      "grade": 6
+    },
+    {
+      "week": 29,
+      "week_text": "30. Hafta:\n 27 Nisan-1 Mayıs",
+      "unit": "BT.6.5. PROBLEM ÇÖZME VE PROGRAMLAMA",
+      "topic": "BT.6.2.12 - NESNELER KONUŞUYOR",
+      "outcome": "BT.6.5.2.5. Doğrusal mantık yapısını içeren programlar oluşturur.\nBT.6.5.2.6. Doğrusal mantık yapısını içeren programları test ederek hatalarını ayıklar.\nBT.6.5.2.7. Karar yapısını içeren programlar oluşturur\nBT.6.5.2.8. Karar yapısını içeren programları test ederek hatalarını ayıklar.",
+      "grade": 6
+    },
+    {
+      "week": 30,
+      "week_text": "31. Hafta:\n 4-8 Mayıs",
+      "unit": "BT.6.5. PROBLEM ÇÖZME VE PROGRAMLAMA",
+      "topic": "BT.6.2.13 - DÜŞÜNEN BİLGİSAYAR",
+      "outcome": "BT.6.5.2.5. Doğrusal mantık yapısını içeren programlar oluşturur.\nBT.6.5.2.6. Doğrusal mantık yapısını içeren programları test ederek hatalarını ayıklar.\nBT.6.5.2.7. Karar yapısını içeren programlar oluşturur.\nBT.6.5.2.8. Karar yapısını içeren programları test ederek hatalarını ayıklar.\nBT.6.5.2.9. Çoklu karar yapıları içeren programlar oluşturur.\nBT.6.5.2.10. Çoklu karar yapısını içeren programları test ederek hatalarını ayıklar.\nBT.6.5.2.11. Döngü yapısını içeren programlar oluşturur.\nBT.6.5.2.12. Döngü yapısını içeren programları test ederek hatalarını ayıklar.\nBT.6.5.2.13. Bir algoritmayı uyarlamak için en uygun karar yapılarını seçer.\nBT.6.5.2.14. Farklı programlama yapılarını kullanarak karmaşık problemlere çözüm üretir.",
+      "grade": 6
+    },
+    {
+      "week": 31,
+      "week_text": "32. Hafta:\n 11-15 Mayıs",
+      "unit": "BT.6.5. PROBLEM ÇÖZME VE PROGRAMLAMA",
+      "topic": "BT.6.2.14 - ÇİZİM YAPIYORUM",
+      "outcome": "",
+      "grade": 6
+    },
+    {
+      "week": 32,
+      "week_text": "33. Hafta:\n 18-22 Mayıs",
+      "unit": "BT.6.5. PROBLEM ÇÖZME VE PROGRAMLAMA",
+      "topic": "BT.6.2.15 - OYUN YAZIYORUM",
+      "outcome": "",
+      "grade": 6
+    },
+    {
+      "week": 33,
+      "week_text": "34. Hafta:\n 25-29 Mayıs",
+      "unit": "BT.6.5. PROBLEM ÇÖZME VE PROGRAMLAMA",
+      "topic": "BT.6.2.16 - BLOK TABANLI KODLAMA PROJEM",
+      "outcome": "6.5.2.15. Tüm programlama yapılarını içeren özgün bir proje oluşturur.",
+      "grade": 6
+    },
+    {
+      "week": 35,
+      "week_text": "36. Hafta:\n 8-12 Haziran",
+      "unit": "BT.6.5. PROBLEM ÇÖZME VE PROGRAMLAMA",
+      "topic": "BT.6.2.17 - PROJELERİMİZİ\nDEĞERLENDİRİYORUZ\nBT.6.2.18 - TEKRAR EDELİM",
+      "outcome": "BT.6.5.2.13. Bir algoritmayı uyarlamak için en uygun karar yapılarını seçer.\nBT.6.5.2.14. Farklı programlama yapılarını kullanarak karmaşık problemlere çözüm üretir.\nBT.6.5.2.15. Tüm programlama yapılarını içeren özgün bir proje oluşturur.",
+      "grade": 6
+    }
+  ]
+}
