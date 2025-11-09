@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>5. Sınıf 1. Dönem 1. Yazılı</title>
+    <style>
+        @media print {
+            .no-print { display: none !important; }
+            body { background: white; padding: 20px; }
+            .exam-container { box-shadow: none; padding: 0; }
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .exam-container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+        }
+
+        .exam-header {
+            text-align: center;
+            border-bottom: 3px solid #667eea;
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+        }
+
+        .exam-header h1 {
+            color: #667eea;
+            font-size: 2em;
+            margin-bottom: 10px;
+        }
+
+        .exam-info {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin: 20px 0;
+            padding: 15px;
+            background: #f5f7fa;
+            border-radius: 8px;
+        }
+
+        .exam-info div {
+            text-align: center;
+            padding: 10px;
+        }
+
+        .exam-info strong {
+            color: #667eea;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .student-info {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+
+        .student-info div {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .student-info strong {
+            color: #555;
+        }
+
+        .student-info input {
+            flex: 1;
+            border: none;
+            border-bottom: 2px solid #667eea;
+            padding: 8px;
+            background: transparent;
+            font-size: 1em;
+        }
+
+        .question {
+            margin: 25px 0;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            border-left: 4px solid #667eea;
+        }
+
+        .question-header {
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 12px;
+            font-size: 1.1em;
+        }
+
+        .question-text {
+            color: #333;
+            line-height: 1.8;
+            margin-bottom: 15px;
+        }
+
+        .options {
+            margin-left: 20px;
+        }
+
+        .option {
+            margin: 10px 0;
+            padding: 10px;
+            background: white;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .option:hover {
+            background: #e7f3ff;
+            transform: translateX(5px);
+        }
+
+        .section-title {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin: 30px 0 20px 0;
+            font-size: 1.3em;
+            font-weight: bold;
+        }
+
+        .answer-key {
+            margin-top: 40px;
+            padding: 30px;
+            background: #e7f3ff;
+            border-radius: 10px;
+            border: 2px solid #0066cc;
+        }
+
+        .answer-key h3 {
+            color: #0066cc;
+            margin-bottom: 20px;
+            font-size: 1.5em;
+        }
+
+        .answer-item {
+            padding: 8px;
+            margin: 5px 0;
+            background: white;
+            border-radius: 5px;
+        }
+
+        .buttons {
+            display: flex;
+            gap: 15px;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 25px;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-print {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-answers {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+        }
+
+        .btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+
+        .matching-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin: 15px 0;
+        }
+
+        .matching-col {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+        }
+
+        .matching-item {
+            padding: 10px;
+            margin: 8px 0;
+            background: #f5f7fa;
+            border-radius: 5px;
+            border-left: 3px solid #667eea;
+        }
+    </style>
+</head>
+<body>
+    <div class="exam-container">
+        <div class="exam-header">
+            <h1>📝 BİLİŞİM TEKNOLOJİLERİ VE YAZILIM DERSİ</h1>
+            <h2 style="color: #764ba2; margin-top: 10px;">5. SINIF - 1. DÖNEM 1. YAZILI SINAVI</h2>
+            <div class="exam-info">
+                <div>
+                    <strong>📅 Dönem</strong>
+                    <span>1. Dönem</span>
+                </div>
+                <div>
+                    <strong>⏰ Süre</strong>
+                    <span>40 Dakika</span>
+                </div>
+                <div>
+                    <strong>💯 Toplam Puan</strong>
+                    <span>100 Puan</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="student-info no-print">
+            <div>
+                <strong>Adı Soyadı:</strong>
+                <input type="text" placeholder="Adınızı yazınız">
+            </div>
+            <div>
+                <strong>Sınıf/No:</strong>
+                <input type="text" placeholder="Örn: 5-A / 12">
+            </div>
+            <div>
+                <strong>Tarih:</strong>
+                <input type="date">
+            </div>
+        </div>
+
+        <div class="buttons no-print">
+            <button class="btn btn-print" onclick="window.print()">🖨️ Sınavı Yazdır (PDF)</button>
+            <button class="btn btn-answers" onclick="document.getElementById('answers').style.display='block'">📖 Cevap Anahtarını Göster</button>
+        </div>
+
+        <!-- BÖLÜM 1: ÇOKTAN SEÇMELİ SORULAR -->
+        <div class="section-title">📚 BÖLÜM 1: ÇOKTAN SEÇMELİ SORULAR (Her biri 4 puan - 40 puan)</div>
+
+        <div class="question">
+            <div class="question-header">SORU 1:</div>
+            <div class="question-text">
+                Bilişim teknolojileri ile ilgili aşağıdaki ifadelerden hangisi YANLIŞTIR?
+            </div>
+            <div class="options">
+                <div class="option">A) Bilişim teknolojileri günlük hayatımızı kolaylaştırır</div>
+                <div class="option">B) Bilişim teknolojileri sadece bilgisayarlardan oluşur</div>
+                <div class="option">C) Akıllı telefonlar bilişim teknolojisi ürünüdür</div>
+                <div class="option">D) Bilişim teknolojileri sürekli gelişir</div>
+            </div>
+        </div>
+
+        <div class="question">
+            <div class="question-header">SORU 2:</div>
+            <div class="question-text">
+                Aşağıdakilerden hangisi bilişim teknolojilerinin OLUMSUZ etkilerindendir?
+            </div>
+            <div class="options">
+                <div class="option">A) Hızlı bilgiye erişim</div>
+                <div class="option">B) Uzaktan eğitim olanağı</div>
+                <div class="option">C) Aşırı kullanımda sağlık sorunları</div>
+                <div class="option">D) İletişimin kolaylaşması</div>
+            </div>
+        </div>
+
+        <div class="question">
+            <div class="question-header">SORU 3:</div>
+            <div class="question-text">
+                Dijital ayak izi ile ilgili aşağıdaki ifadelerden hangisi DOĞRUDUR?
+            </div>
+            <div class="options">
+                <div class="option">A) İnternette yaptığımız her şey kayıt altına alınmaz</div>
+                <div class="option">B) Dijital ayak izi sadece sosyal medyada oluşur</div>
+                <div class="option">C) İnternetteki tüm aktivitelerimiz dijital iz bırakır</div>
+                <div class="option">D) Dijital ayak izi kolayca silinebilir</div>
+            </div>
+        </div>
+
+        <div class="question">
+            <div class="question-header">SORU 4:</div>
+            <div class="question-text">
+                Yapay zeka ile ilgili aşağıdakilerden hangisi YANLIŞTIR?
+            </div>
+            <div class="options">
+                <div class="option">A) Yapay zeka sadece insanlar gibi düşünebilir</div>
+                <div class="option">B) Siri ve Alexa yapay zeka örnekleridir</div>
+                <div class="option">C) Yapay zeka öğrenebilir ve gelişebilir</div>
+                <div class="option">D) Yapay zeka günlük hayatımızda kullanılır</div>
+            </div>
+        </div>
+
+        <div class="question">
+            <div class="question-header">SORU 5:</div>
+            <div class="question-text">
+                Bilgisayarın fiziksel parçalarına ne ad verilir?
+            </div>
+            <div class="options">
+                <div class="option">A) Yazılım</div>
+                <div class="option">B) Donanım</div>
+                <div class="option">C) İşletim Sistemi</div>
+                <div class="option">D) Program</div>
+            </div>
+        </div>
+
+        <div class="question">
+            <div class="question-header">SORU 6:</div>
+            <div class="question-text">
+                Aşağıdakilerden hangisi GİRDİ BİRİMİ değildir?
+            </div>
+            <div class="options">
+                <div class="option">A) Klavye</div>
+                <div class="option">B) Fare</div>
+                <div class="option">C) Mikrofon</div>
+                <div class="option">D) Hoparlör</div>
+            </div>
+        </div>
+
+        <div class="question">
+            <div class="question-header">SORU 7:</div>
+            <div class="question-text">
+                Bilgisayarın "beyni" olarak adlandırılan donanım parçası hangisidir?
+            </div>
+            <div class="options">
+                <div class="option">A) RAM</div>
+                <div class="option">B) İşlemci (CPU)</div>
+                <div class="option">C) Sabit Disk</div>
+                <div class="option">D) Ekran Kartı</div>
+            </div>
+        </div>
+
+        <div class="question">
+            <div class="question-header">SORU 8:</div>
+            <div class="question-text">
+                Dosya ve klasörler ile ilgili aşağıdaki ifadelerden hangisi DOĞRUDUR?
+            </div>
+            <div class="options">
+                <div class="option">A) Klasörler dosya içeremez</div>
+                <div class="option">B) Bir klasör içinde başka klasörler oluşturulamaz</div>
+                <div class="option">C) Dosya uzantıları dosya türünü belirtir</div>
+                <div class="option">D) Tüm dosyalar aynı uzantıya sahiptir</div>
+            </div>
+        </div>
+
+        <div class="question">
+            <div class="question-header">SORU 9:</div>
+            <div class="question-text">
+                ".docx" uzantılı dosya hangi tür dosyadır?
+            </div>
+            <div class="options">
+                <div class="option">A) Resim dosyası</div>
+                <div class="option">B) Ses dosyası</div>
+                <div class="option">C) Kelime işlemci dosyası</div>
+                <div class="option">D) Video dosyası</div>
+            </div>
+        </div>
+
+        <div class="question">
+            <div class="question-header">SORU 10:</div>
+            <div class="question-text">
+                Dosya sıkıştırma işleminin amacı aşağıdakilerden hangisidir?
+            </div>
+            <div class="options">
+                <div class="option">A) Dosyayı daha renkli yapmak</div>
+                <div class="option">B) Dosyanın kapladığı alanı azaltmak</div>
+                <div class="option">C) Dosyayı daha hızlı açmak</div>
+                <div class="option">D) Dosyayı silmek</div>
+            </div>
+        </div>
+
+        <!-- BÖLÜM 2: DOĞRU-YANLIŞ SORULARI -->
+        <div class="section-title">✓✗ BÖLÜM 2: DOĞRU-YANLIŞ SORULARI (Her biri 3 puan - 24 puan)</div>
+
+        <div class="question">
+            <div class="question-header">SORU 11:</div>
+            <div class="question-text">
+                Teknoloji bağımlılığı sağlık sorunlarına yol açabilir. ( )
+            </div>
+        </div>
+
+        <div class="question">
+            <div class="question-header">SORU 12:</div>
+            <div class="question-text">
+                Dijital vatandaşlık sadece internette sorumsuz davranmaktır. ( )
+            </div>
+        </div>
+
+        <div class="question">
+            <div class="question-header">SORU 13:</div>
+            <div class="question-text">
+                Yapay zeka uygulamaları sadece robotlarda kullanılır. ( )
+            </div>
+        </div>
+
+        <div class="question">
+            <div class="question-header">SORU 14:</div>
+            <div class="question-text">
+                RAM, bilgisayarın geçici belleğidir. ( )
+            </div>
+        </div>
+
+        <div class="question">
+            <div class="question-header">SORU 15:</div>
+            <div class="question-text">
+                Yazılım, bilgisayarın fiziksel parçalarıdır. ( )
+            </div>
+        </div>
+
+        <div class="question">
+            <div class="question-header">SORU 16:</div>
+            <div class="question-text">
+                Monitör bir çıktı birimidir. ( )
+            </div>
+        </div>
+
+        <div class="question">
+            <div class="question-header">SORU 17:</div>
+            <div class="question-text">
+                Dosya uzantısı dosyanın türünü gösterir. ( )
+            </div>
+        </div>
+
+        <div class="question">
+            <div class="question-header">SORU 18:</div>
+            <div class="question-text">
+                Bir klasör içinde başka klasörler oluşturulamaz. ( )
+            </div>
+        </div>
+
+        <!-- BÖLÜM 3: EŞLEŞTİRME -->
+        <div class="section-title">🔗 BÖLÜM 3: EŞLEŞTİRME (16 puan)</div>
+
+        <div class="question">
+            <div class="question-header">SORU 19:</div>
+            <div class="question-text">
+                Aşağıdaki donanım parçalarını görevleri ile eşleştiriniz:
+            </div>
+            <div class="matching-grid">
+                <div class="matching-col">
+                    <strong style="color: #667eea; display: block; margin-bottom: 10px;">Donanım Parçası</strong>
+                    <div class="matching-item">1. Klavye</div>
+                    <div class="matching-item">2. CPU</div>
+                    <div class="matching-item">3. Monitör</div>
+                    <div class="matching-item">4. Sabit Disk</div>
+                </div>
+                <div class="matching-col">
+                    <strong style="color: #667eea; display: block; margin-bottom: 10px;">Görevi</strong>
+                    <div class="matching-item">(....) Veri saklama</div>
+                    <div class="matching-item">(....) Bilgi işleme</div>
+                    <div class="matching-item">(....) Veri girişi</div>
+                    <div class="matching-item">(....) Görüntü çıkışı</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- BÖLÜM 4: AÇIK UÇLU SORU -->
+        <div class="section-title">✍️ BÖLÜM 4: AÇIK UÇLU SORU (20 puan)</div>
+
+        <div class="question">
+            <div class="question-header">SORU 20:</div>
+            <div class="question-text">
+                <strong>Dijital vatandaşlık nedir? İyi bir dijital vatandaş olmanın 4 önemli kuralını yazınız ve açıklayınız.</strong>
+                <div style="margin-top: 20px; padding: 20px; background: white; min-height: 200px; border: 1px dashed #667eea; border-radius: 8px;">
+                    <em style="color: #999;">Cevabınızı buraya yazınız...</em>
+                </div>
+            </div>
+        </div>
+
+        <!-- CEVAP ANAHTARI -->
+        <div id="answers" class="answer-key no-print" style="display: none;">
+            <h3>📖 CEVAP ANAHTARI VE PUANLAMA</h3>
+
+            <div style="background: white; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
+                <h4 style="color: #667eea; margin-bottom: 15px;">BÖLÜM 1: Çoktan Seçmeli (40 puan)</h4>
+                <div class="answer-item"><strong>1.</strong> B - Bilişim teknolojileri sadece bilgisayarlardan oluşur (4 puan)</div>
+                <div class="answer-item"><strong>2.</strong> C - Aşırı kullanımda sağlık sorunları (4 puan)</div>
+                <div class="answer-item"><strong>3.</strong> C - İnternetteki tüm aktivitelerimiz dijital iz bırakır (4 puan)</div>
+                <div class="answer-item"><strong>4.</strong> A - Yapay zeka sadece insanlar gibi düşünebilir (4 puan)</div>
+                <div class="answer-item"><strong>5.</strong> B - Donanım (4 puan)</div>
+                <div class="answer-item"><strong>6.</strong> D - Hoparlör (4 puan)</div>
+                <div class="answer-item"><strong>7.</strong> B - İşlemci (CPU) (4 puan)</div>
+                <div class="answer-item"><strong>8.</strong> C - Dosya uzantıları dosya türünü belirtir (4 puan)</div>
+                <div class="answer-item"><strong>9.</strong> C - Kelime işlemci dosyası (4 puan)</div>
+                <div class="answer-item"><strong>10.</strong> B - Dosyanın kapladığı alanı azaltmak (4 puan)</div>
+            </div>
+
+            <div style="background: white; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
+                <h4 style="color: #667eea; margin-bottom: 15px;">BÖLÜM 2: Doğru-Yanlış (24 puan)</h4>
+                <div class="answer-item"><strong>11.</strong> DOĞRU (3 puan)</div>
+                <div class="answer-item"><strong>12.</strong> YANLIŞ (3 puan)</div>
+                <div class="answer-item"><strong>13.</strong> YANLIŞ (3 puan)</div>
+                <div class="answer-item"><strong>14.</strong> DOĞRU (3 puan)</div>
+                <div class="answer-item"><strong>15.</strong> YANLIŞ (Yazılım fiziksel değil, programlardır) (3 puan)</div>
+                <div class="answer-item"><strong>16.</strong> DOĞRU (3 puan)</div>
+                <div class="answer-item"><strong>17.</strong> DOĞRU (3 puan)</div>
+                <div class="answer-item"><strong>18.</strong> YANLIŞ (Alt klasörler oluşturulabilir) (3 puan)</div>
+            </div>
+
+            <div style="background: white; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
+                <h4 style="color: #667eea; margin-bottom: 15px;">BÖLÜM 3: Eşleştirme (16 puan)</h4>
+                <div class="answer-item"><strong>19.</strong> 1-C (Klavye - Veri girişi), 2-B (CPU - Bilgi işleme), 3-D (Monitör - Görüntü çıkışı), 4-A (Sabit Disk - Veri saklama) - Her eşleşme 4 puan</div>
+            </div>
+
+            <div style="background: white; padding: 20px; border-radius: 8px;">
+                <h4 style="color: #667eea; margin-bottom: 15px;">BÖLÜM 4: Açık Uçlu (20 puan)</h4>
+                <div class="answer-item">
+                    <strong>20.</strong> Örnek Cevap: Dijital vatandaşlık, dijital ortamlarda sorumlu, güvenli ve etik davranmaktır.
+                    <br><br>
+                    <strong>Kurallar:</strong><br>
+                    1. <strong>Saygılı olma:</strong> Başkalarına saygı göstermek, küfür ve hakaret etmemek (5 puan)<br>
+                    2. <strong>Güvenlik:</strong> Kişisel bilgileri korumak, güçlü şifre kullanmak (5 puan)<br>
+                    3. <strong>Mahremiyet:</strong> Başkalarının özel bilgilerini paylaşmamak (5 puan)<br>
+                    4. <strong>Doğru bilgi paylaşma:</strong> Yalan ve yanıltıcı bilgi yaymamak (5 puan)
+                </div>
+            </div>
+        </div>
+
+        <div style="margin-top: 40px; padding: 20px; background: #f8f9fa; border-radius: 10px; text-align: center;">
+            <p style="color: #667eea; font-weight: bold; font-size: 1.2em;">BAŞARILAR DİLERİZ! 🎉</p>
+            <p style="color: #666; margin-top: 10px;">Sorularınız için öğretmeninize danışabilirsiniz.</p>
+        </div>
+    </div>
+
+    <script>
+        // Yazdırma öncesi tarih ekleme
+        document.addEventListener('DOMContentLoaded', function() {
+            const today = new Date().toISOString().split('T')[0];
+            const dateInputs = document.querySelectorAll('input[type="date"]');
+            dateInputs.forEach(input => input.value = today);
+        });
+    </script>
+</body>
+</html>
