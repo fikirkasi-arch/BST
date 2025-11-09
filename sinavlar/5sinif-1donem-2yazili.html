@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>5. Sınıf 1. Dönem 2. Yazılı</title>
+    <style>
+        @media print {
+            .no-print { display: none !important; }
+            body { background: white; padding: 20px; }
+            .exam-container { box-shadow: none; padding: 0; }
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+            min-height: 100vh;
+        }
+        .exam-container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+        }
+        .exam-header {
+            text-align: center;
+            border-bottom: 3px solid #667eea;
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+        }
+        .exam-header h1 { color: #667eea; font-size: 2em; margin-bottom: 10px; }
+        .exam-info {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin: 20px 0;
+            padding: 15px;
+            background: #f5f7fa;
+            border-radius: 8px;
+        }
+        .exam-info div { text-align: center; padding: 10px; }
+        .exam-info strong { color: #667eea; display: block; margin-bottom: 5px; }
+        .student-info {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+        .student-info div { display: flex; align-items: center; gap: 10px; }
+        .student-info strong { color: #555; }
+        .student-info input {
+            flex: 1;
+            border: none;
+            border-bottom: 2px solid #667eea;
+            padding: 8px;
+            background: transparent;
+            font-size: 1em;
+        }
+        .question {
+            margin: 25px 0;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            border-left: 4px solid #667eea;
+        }
+        .question-header {
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 12px;
+            font-size: 1.1em;
+        }
+        .question-text {
+            color: #333;
+            line-height: 1.8;
+            margin-bottom: 15px;
+        }
+        .options { margin-left: 20px; }
+        .option {
+            margin: 10px 0;
+            padding: 10px;
+            background: white;
+            border-radius: 5px;
+        }
+        .section-title {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin: 30px 0 20px 0;
+            font-size: 1.3em;
+            font-weight: bold;
+        }
+        .answer-key {
+            margin-top: 40px;
+            padding: 30px;
+            background: #e7f3ff;
+            border-radius: 10px;
+            border: 2px solid #0066cc;
+        }
+        .answer-key h3 {
+            color: #0066cc;
+            margin-bottom: 20px;
+            font-size: 1.5em;
+        }
+        .answer-item {
+            padding: 8px;
+            margin: 5px 0;
+            background: white;
+            border-radius: 5px;
+        }
+        .buttons {
+            display: flex;
+            gap: 15px;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+        .btn {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 25px;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .btn-print {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        .btn-answers {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+        }
+        .btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+    </style>
+</head>
+<body>
+    <div class="exam-container">
+        <div class="exam-header">
+            <h1>📝 BİLİŞİM TEKNOLOJİLERİ VE YAZILIM DERSİ</h1>
+            <h2 style="color: #764ba2; margin-top: 10px;">5. SINIF - 1. DÖNEM 2. YAZILI SINAVI</h2>
+            <div class="exam-info">
+                <div><strong>📅 Dönem</strong><span>1. Dönem</span></div>
+                <div><strong>⏰ Süre</strong><span>40 Dakika</span></div>
+                <div><strong>💯 Toplam Puan</strong><span>100 Puan</span></div>
+            </div>
+        </div>
+
+        <div class="student-info no-print">
+            <div><strong>Adı Soyadı:</strong><input type="text" placeholder="Adınızı yazınız"></div>
+            <div><strong>Sınıf/No:</strong><input type="text" placeholder="Örn: 5-A / 12"></div>
+            <div><strong>Tarih:</strong><input type="date"></div>
+        </div>
+
+        <div class="buttons no-print">
+            <button class="btn btn-print" onclick="window.print()">🖨️ Sınavı Yazdır (PDF)</button>
+            <button class="btn btn-answers" onclick="document.getElementById('answers').style.display='block'">📖 Cevap Anahtarını Göster</button>
+        </div>
+
+        <!-- BÖLÜM 1 -->
+        <div class="section-title">📚 BÖLÜM 1: ÇOKTAN SEÇMELİ SORULAR (Her biri 4 puan - 48 puan)</div>
+
+        <div class="question">
+            <div class="question-header">SORU 1:</div>
+            <div class="question-text">Canva gibi görsel işleme programlarında aşağıdakilerden hangisi YAPILAMAZ?</div>
+            <div class="options">
+                <div class="option">A) Poster tasarlama</div>
+                <div class="option">B) Fotoğraf düzenleme</div>
+                <div class="option">C) Video montajı yapma</div>
+                <div class="option">D) 3D modelleme yapma</div>
+            </div>
+        </div>
+
+        <div class="question">
+            <div class="question-header">SORU 2:</div>
+            <div class="question-text">Kelime işlemci programlarında "Ctrl+C" kısayolu ne işe yarar?</div>
+            <div class="options">
+                <div class="option">A) Kesme</div>
+                <div class="option">B) Kopyalama</div>
+                <div class="option">C) Yapıştırma</div>
+                <div class="option">D) Silme</div>
+            </div>
+        </div>
+
+        <div class="question">
+            <div class="question-header">SORU 3:</div>
+            <div class="question-text">PowerPoint'te slaytlar arası geçişi daha etkileyici yapmak için kullanılan özellik hangisidir?</div>
+            <div class="options">
+                <div class="option">A) Yazı tipi</div>
+                <div class="option">B) Animasyon ve geçiş efektleri</div>
+                <div class="option">C) Tablo ekleme</div>
+                <div class="option">D) Yazım denetimi</div>
+            </div>
+        </div>
+
+        <div class="question">
+            <div class="question-header">SORU 4:</div>
+            <div class="question-text">Bilgisayar ağlarında hangi cihaz birden fazla bilgisayarı birbirine bağlar?</div>
+            <div class="options">
+                <div class="option">A) Yazıcı</div>
+                <div class="option">B) Switch/Router</div>
+                <div class="option">C) Monitör</div>
+                <div class="option">D) Klavye</div>
+            </div>
+        </div>
+
+        <div class="question">
+            <div class="question-header">SORU 5:</div>
+            <div class="question-text">LAN (Local Area Network) nedir?</div>
+            <div class="options">
+                <div class="option">A) Geniş alan ağı</div>
+                <div class="option">B) Yerel alan ağı</div>
+                <div class="option">C) Kablosuz ağ</div>
+                <div class="option">D) İnternet ağı</div>
+            </div>
+        </div>
+
+        <div class="question">
+            <div class="question-header">SORU 6:</div>
+            <div class="question-text">İnternette bilgi kirliliğinden korunmak için ne yapmalıyız?</div>
+            <div class="options">
+                <div class="option">A) Her gördüğümüz bilgiye inanmalıyız</div>
+                <div class="option">B) Kaynak kontrolü yapmalı, güvenilir siteleri tercih etmeliyiz</div>
+                <div class="option">C) Sadece sosyal medya kullanmalıyız</div>
+                <div class="option">D) Hiç araştırma yapmamalıyız</div>
+            </div>
+        </div>
+
+        <div class="question">
+            <div class="question-header">SORU 7:</div>
+            <div class="question-text">Aşağıdakilerden hangisi bilişim etiği DIŞINDA bir davranıştır?</div>
+            <div class="options">
+                <div class="option">A) Başkalarının ödevlerini kendi adımıza sunmak</div>
+                <div class="option">B) İzinsiz fotoğraf paylaşmamak</div>
+                <div class="option">C) Telif haklarına saygı göstermek</div>
+                <div class="option">D) Doğru bilgi paylaşmak</div>
+            </div>
+        </div>
+
+        <div class="question">
+            <div class="question-header">SORU 8:</div>
+            <div class="question-text">Güçlü bir şifre oluştururken aşağıdakilerden hangisi YAPILMALIDIR?</div>
+            <div class="options">
+                <div class="option">A) Sadece küçük harf kullanmalı</div>
+                <div class="option">B) Doğum tarihini şifre yapmalı</div>
+                <div class="option">C) Büyük-küçük harf, rakam ve sembol karışımı kullanmalı</div>
+                <div class="option">D) Aynı şifreyi her yerde kullanmalı</div>
+            </div>
+        </div>
+
+        <div class="question">
+            <div class="question-header">SORU 9:</div>
+            <div class="question-text">Siber zorbalık ile ilgili doğru olan ifade hangisidir?</div>
+            <div class="options">
+                <div class="option">A) İnternette yapılan her eleştiri siber zorbalıktır</div>
+                <div class="option">B) Dijital ortamda kasıtlı olarak başkalarına zarar vermektir</div>
+                <div class="option">C) Sadece yetişkinler arasında olur</div>
+                <div class="option">D) Hiçbir hukuki yaptırımı yoktur</div>
+            </div>
+        </div>
+
+        <div class="question">
+            <div class="question-header">SORU 10:</div>
+            <div class="question-text">Dijital ürün tasarlarken "storyboard" (hikaye panosu) ne işe yarar?</div>
+            <div class="options">
+                <div class="option">A) Sadece renk seçimi için kullanılır</div>
+                <div class="option">B) Tasarımın adım adım planlanması ve görselleştirilmesi için kullanılır</div>
+                <div class="option">C) Yazı tiplerini seçmek için kullanılır</div>
+                <div class="option">D) Programı kapatmak için kullanılır</div>
+            </div>
+        </div>
+
+        <div class="question">
+            <div class="question-header">SORU 11:</div>
+            <div class="question-text">Telif hakkı ile ilgili aşağıdakilerden hangisi DOĞRUDUR?</div>
+            <div class="options">
+                <div class="option">A) İnternetteki tüm içerikler ücretsizdir</div>
+                <div class="option">B) Müzik ve videoları izinsiz paylaşmak yasaldır</div>
+                <div class="option">C) Başkalarının eserlerini izinsiz kullanmak telif hakkı ihlalidir</div>
+                <div class="option">D) Telif hakkı sadece kitaplar için geçerlidir</div>
+            </div>
+        </div>
+
+        <div class="question">
+            <div class="question-header">SORU 12:</div>
+            <div class="question-text">Word gibi kelime işlemci programlarında hangi özellik YOKTUR?</div>
+            <div class="options">
+                <div class="option">A) Yazı tipi değiştirme</div>
+                <div class="option">B) Tablo ekleme</div>
+                <div class="option">C) Yazım denetimi</div>
+                <div class="option">D) 3D animasyon oluşturma</div>
+            </div>
+        </div>
+
+        <!-- BÖLÜM 2 -->
+        <div class="section-title">✓✗ BÖLÜM 2: DOĞRU-YANLIŞ SORULARI (Her biri 3 puan - 24 puan)</div>
+
+        <div class="question">
+            <div class="question-header">SORU 13:</div>
+            <div class="question-text">Bilgisayar ağları sayesinde dosya paylaşımı yapılabilir. ( )</div>
+        </div>
+
+        <div class="question">
+            <div class="question-header">SORU 14:</div>
+            <div class="question-text">Dijital ayak izi kolayca silinebilir ve kaybolur. ( )</div>
+        </div>
+
+        <div class="question">
+            <div class="question-header">SORU 15:</div>
+            <div class="question-text">Sunu programlarında animasyon ve geçiş efektleri kullanılamaz. ( )</div>
+        </div>
+
+        <div class="question">
+            <div class="question-header">SORU 16:</div>
+            <div class="question-text">İnternetten indirdiğimiz her görsel özgürce kullanılabilir. ( )</div>
+        </div>
+
+        <div class="question">
+            <div class="question-header">SORU 17:</div>
+            <div class="question-text">Güçlü bir şifre en az 8 karakter olmalı ve karışık karakterler içermelidir. ( )</div>
+        </div>
+
+        <div class="question">
+            <div class="question-header">SORU 18:</div>
+            <div class="question-text">Kelime işlemci programlarında sadece metin yazılabilir, resim eklenemez. ( )</div>
+        </div>
+
+        <div class="question">
+            <div class="question-header">SORU 19:</div>
+            <div class="question-text">Router, bilgisayarları birbirine bağlayan bir ağ cihazıdır. ( )</div>
+        </div>
+
+        <div class="question">
+            <div class="question-header">SORU 20:</div>
+            <div class="question-text">Bilişim etiği sadece yasalara uymakla ilgilidir, ahlaki değerlerle ilgisi yoktur. ( )</div>
+        </div>
+
+        <!-- BÖLÜM 3 -->
+        <div class="section-title">✍️ BÖLÜM 3: BOŞLUK DOLDURMA (Her biri 2 puan - 10 puan)</div>
+
+        <div class="question">
+            <div class="question-header">SORU 21:</div>
+            <div class="question-text">
+                Bilgisayar ağlarında küçük bir alan içindeki (ev, okul, ofis) bilgisayarların bağlantısına _____________ denir.
+            </div>
+        </div>
+
+        <div class="question">
+            <div class="question-header">SORU 22:</div>
+            <div class="question-text">
+                PowerPoint gibi programlarda hazırlanan görsel sunumlara _____________ denir.
+            </div>
+        </div>
+
+        <div class="question">
+            <div class="question-header">SORU 23:</div>
+            <div class="question-text">
+                Başkalarının fikri eserlerini korumaya yönelik yasal hakka _____________ denir.
+            </div>
+        </div>
+
+        <div class="question">
+            <div class="question-header">SORU 24:</div>
+            <div class="question-text">
+                İnternette bıraktığımız tüm izlere _____________ adı verilir.
+            </div>
+        </div>
+
+        <div class="question">
+            <div class="question-header">SORU 25:</div>
+            <div class="question-text">
+                Dijital ortamda sorumlu, güvenli ve etik davranışa _____________ denir.
+            </div>
+        </div>
+
+        <!-- BÖLÜM 4 -->
+        <div class="section-title">✍️ BÖLÜM 4: AÇIK UÇLU SORU (18 puan)</div>
+
+        <div class="question">
+            <div class="question-header">SORU 26 (18 puan):</div>
+            <div class="question-text">
+                <strong>İnternette güvenli olmak için almanız gereken önlemleri yazınız. En az 6 önlem belirtiniz ve her birini kısaca açıklayınız.</strong>
+                <div style="margin-top: 20px; padding: 20px; background: white; min-height: 200px; border: 1px dashed #667eea; border-radius: 8px;">
+                    <em style="color: #999;">Cevabınızı buraya yazınız...</em>
+                </div>
+            </div>
+        </div>
+
+        <!-- CEVAP ANAHTARI -->
+        <div id="answers" class="answer-key no-print" style="display: none;">
+            <h3>📖 CEVAP ANAHTARI VE PUANLAMA</h3>
+
+            <div style="background: white; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
+                <h4 style="color: #667eea; margin-bottom: 15px;">BÖLÜM 1: Çoktan Seçmeli (48 puan)</h4>
+                <div class="answer-item"><strong>1.</strong> D (4 puan)</div>
+                <div class="answer-item"><strong>2.</strong> B (4 puan)</div>
+                <div class="answer-item"><strong>3.</strong> B (4 puan)</div>
+                <div class="answer-item"><strong>4.</strong> B (4 puan)</div>
+                <div class="answer-item"><strong>5.</strong> B (4 puan)</div>
+                <div class="answer-item"><strong>6.</strong> B (4 puan)</div>
+                <div class="answer-item"><strong>7.</strong> A (4 puan)</div>
+                <div class="answer-item"><strong>8.</strong> C (4 puan)</div>
+                <div class="answer-item"><strong>9.</strong> B (4 puan)</div>
+                <div class="answer-item"><strong>10.</strong> B (4 puan)</div>
+                <div class="answer-item"><strong>11.</strong> C (4 puan)</div>
+                <div class="answer-item"><strong>12.</strong> D (4 puan)</div>
+            </div>
+
+            <div style="background: white; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
+                <h4 style="color: #667eea; margin-bottom: 15px;">BÖLÜM 2: Doğru-Yanlış (24 puan)</h4>
+                <div class="answer-item"><strong>13.</strong> DOĞRU (3 puan)</div>
+                <div class="answer-item"><strong>14.</strong> YANLIŞ (3 puan)</div>
+                <div class="answer-item"><strong>15.</strong> YANLIŞ (3 puan)</div>
+                <div class="answer-item"><strong>16.</strong> YANLIŞ (3 puan)</div>
+                <div class="answer-item"><strong>17.</strong> DOĞRU (3 puan)</div>
+                <div class="answer-item"><strong>18.</strong> YANLIŞ (3 puan)</div>
+                <div class="answer-item"><strong>19.</strong> DOĞRU (3 puan)</div>
+                <div class="answer-item"><strong>20.</strong> YANLIŞ (3 puan)</div>
+            </div>
+
+            <div style="background: white; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
+                <h4 style="color: #667eea; margin-bottom: 15px;">BÖLÜM 3: Boşluk Doldurma (10 puan)</h4>
+                <div class="answer-item"><strong>21.</strong> LAN / Yerel Alan Ağı (2 puan)</div>
+                <div class="answer-item"><strong>22.</strong> Sunum / Slayt / Prezentasyon (2 puan)</div>
+                <div class="answer-item"><strong>23.</strong> Telif hakkı (2 puan)</div>
+                <div class="answer-item"><strong>24.</strong> Dijital ayak izi (2 puan)</div>
+                <div class="answer-item"><strong>25.</strong> Dijital vatandaşlık (2 puan)</div>
+            </div>
+
+            <div style="background: white; padding: 20px; border-radius: 8px;">
+                <h4 style="color: #667eea; margin-bottom: 15px;">BÖLÜM 4: Açık Uçlu (18 puan)</h4>
+                <div class="answer-item">
+                    <strong>26.</strong> Örnek Cevap (Her önlem 3 puan):<br><br>
+                    1. <strong>Güçlü şifre kullanma:</strong> Büyük-küçük harf, rakam ve sembol içeren şifreler<br>
+                    2. <strong>Kişisel bilgileri koruma:</strong> Ad, adres, telefon gibi bilgileri paylaşmama<br>
+                    3. <strong>Güvenilir siteleri tercih etme:</strong> HTTPS ile başlayan, güvenli siteleri kullanma<br>
+                    4. <strong>Antivirüs kullanma:</strong> Bilgisayarda güncel antivirüs programı bulundurma<br>
+                    5. <strong>Şüpheli linklere tıklamama:</strong> Bilinmeyen kaynaklardan gelen linkleri açmama<br>
+                    6. <strong>Ebeveyn gözetimi:</strong> İnternet kullanımında aile ile paylaşımda bulunma
+                </div>
+            </div>
+        </div>
+
+        <div style="margin-top: 40px; padding: 20px; background: #f8f9fa; border-radius: 10px; text-align: center;">
+            <p style="color: #667eea; font-weight: bold; font-size: 1.2em;">BAŞARILAR DİLERİZ! 🎉</p>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const today = new Date().toISOString().split('T')[0];
+            const dateInputs = document.querySelectorAll('input[type="date"]');
+            dateInputs.forEach(input => input.value = today);
+        });
+    </script>
+</body>
+</html>
