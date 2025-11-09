@@ -1,0 +1,673 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bilişim Sözlüğü - BST Eğitim Portalı</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f8f9fa;
+        }
+
+        .glossary-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .glossary-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            text-align: center;
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.2);
+        }
+
+        .glossary-header h1 {
+            font-size: 2.2em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .glossary-header p {
+            font-size: 1.1em;
+            opacity: 0.95;
+        }
+
+        .controls {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .search-box {
+            margin-bottom: 20px;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 15px 20px;
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            font-size: 1.1em;
+            transition: all 0.3s;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .search-box input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .filters {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            padding: 10px 20px;
+            border: 2px solid #e9ecef;
+            background: white;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 0.95em;
+            font-weight: 600;
+            transition: all 0.3s;
+            color: #555;
+        }
+
+        .filter-btn:hover {
+            border-color: #667eea;
+            color: #667eea;
+        }
+
+        .filter-btn.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-color: #667eea;
+        }
+
+        .glossary-list {
+            display: grid;
+            gap: 15px;
+        }
+
+        .glossary-item {
+            background: white;
+            border: 2px solid #f0f0f0;
+            border-radius: 12px;
+            overflow: hidden;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .glossary-item:hover {
+            border-color: #667eea;
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.15);
+            transform: translateY(-2px);
+        }
+
+        .glossary-item.expanded {
+            border-color: #667eea;
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.15);
+        }
+
+        .glossary-header-btn {
+            padding: 20px;
+            background: #f8f9fa;
+            border: none;
+            cursor: pointer;
+            width: 100%;
+            text-align: left;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s;
+            font-size: 1em;
+        }
+
+        .glossary-item:hover .glossary-header-btn {
+            background: #f0f0f0;
+        }
+
+        .glossary-item.expanded .glossary-header-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .term-info {
+            flex: 1;
+        }
+
+        .term-name {
+            font-size: 1.2em;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .term-en {
+            font-size: 0.95em;
+            opacity: 0.7;
+            font-style: italic;
+        }
+
+        .term-unit {
+            display: inline-block;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: 600;
+            margin-left: 15px;
+            margin-top: 5px;
+        }
+
+        .glossary-item.expanded .term-unit {
+            background: rgba(255,255,255,0.3);
+        }
+
+        .toggle-icon {
+            font-size: 1.5em;
+            transition: transform 0.3s;
+            color: #667eea;
+        }
+
+        .glossary-item.expanded .toggle-icon {
+            transform: rotate(180deg);
+            color: white;
+        }
+
+        .glossary-body {
+            display: none;
+            padding: 25px;
+            border-top: 2px solid #f0f0f0;
+            background: white;
+        }
+
+        .glossary-item.expanded .glossary-body {
+            display: block;
+            animation: slideDown 0.3s ease-out;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .glossary-body p {
+            margin-bottom: 15px;
+            line-height: 1.7;
+            color: #333;
+        }
+
+        .definition-label {
+            font-weight: 700;
+            color: #667eea;
+            margin-bottom: 5px;
+            display: block;
+        }
+
+        .related-topics {
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.05) 0%, rgba(118, 75, 162, 0.05) 100%);
+            padding: 15px;
+            border-left: 4px solid #667eea;
+            border-radius: 8px;
+            margin: 15px 0;
+        }
+
+        .related-topics strong {
+            color: #667eea;
+            display: block;
+            margin-bottom: 10px;
+            font-size: 0.95em;
+        }
+
+        .topic-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .topic-tag {
+            background: white;
+            border: 1px solid #ddd;
+            padding: 5px 12px;
+            border-radius: 15px;
+            font-size: 0.9em;
+            color: #666;
+            transition: all 0.3s;
+        }
+
+        .topic-tag:hover {
+            border-color: #667eea;
+            color: #667eea;
+            background: #f8f9fa;
+        }
+
+        .links-section {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid #f0f0f0;
+        }
+
+        .link-btn {
+            padding: 10px 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-size: 0.9em;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 500;
+        }
+
+        .link-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+        }
+
+        .no-results {
+            text-align: center;
+            padding: 60px 20px;
+            background: white;
+            border-radius: 15px;
+            color: #999;
+        }
+
+        .no-results h3 {
+            margin-bottom: 10px;
+            color: #667eea;
+            font-size: 1.3em;
+        }
+
+        .stats {
+            text-align: center;
+            padding: 20px;
+            color: #999;
+            font-size: 0.95em;
+            background: white;
+            border-radius: 15px;
+            margin-top: 20px;
+        }
+
+        .grade-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+        }
+
+        .grade-tab {
+            padding: 10px 20px;
+            border: 2px solid #e9ecef;
+            background: white;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .grade-tab.grade-5 {
+            color: #f5576c;
+            border-color: #f5576c;
+        }
+
+        .grade-tab.grade-6 {
+            color: #4facfe;
+            border-color: #4facfe;
+        }
+
+        .grade-tab.all {
+            color: #667eea;
+            border-color: #667eea;
+        }
+
+        .grade-tab.active.grade-5 {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            border-color: transparent;
+        }
+
+        .grade-tab.active.grade-6 {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            border-color: transparent;
+        }
+
+        .grade-tab.active.all {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-color: transparent;
+        }
+
+        @media (max-width: 600px) {
+            .glossary-header h1 {
+                font-size: 1.8em;
+            }
+
+            .glossary-header-btn {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .term-unit {
+                margin-left: 0;
+                margin-top: 10px;
+            }
+
+            .filters {
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="glossary-container">
+        <div class="glossary-header">
+            <h1>📖 Bilişim Terim Sözlüğü</h1>
+            <p>5. ve 6. Sınıf Bilişim Teknolojileri Ders Terimleri</p>
+        </div>
+
+        <div class="controls">
+            <div class="search-box">
+                <input type="text" id="searchInput" placeholder="🔍 Terim ara (Türkçe veya English)...">
+            </div>
+            <div class="grade-tabs">
+                <button class="grade-tab all active" data-grade="all">Tümü</button>
+                <button class="grade-tab grade-5" data-grade="5-sinif">5. Sınıf</button>
+                <button class="grade-tab grade-6" data-grade="6-sinif">6. Sınıf</button>
+            </div>
+            <div class="filters" id="filterContainer">
+                <!-- Filters will be generated by JavaScript -->
+            </div>
+        </div>
+
+        <div class="glossary-list" id="glossaryContent">
+            <!-- Glossary items will be inserted here -->
+        </div>
+
+        <div class="stats">
+            <span id="resultCount">0 terim gösteriliyor</span>
+        </div>
+    </div>
+
+    <script>
+        // Glossary Data
+        const glossaryData = [
+            // 5. SINIF - UNIT 1
+            { tr: "Bilişim", en: "Information Technology (IT)", def: "Bilgi işleme ve iletişim teknolojilerinin bilimi", grade: "5-sinif", unit: "U1", related: ["Teknoloji", "Bilgisayar"], video: "", info: "" },
+            { tr: "Bilgisayar", en: "Computer", def: "Veri işleyen, saklayan ve sonuç üreten elektronik cihaz", grade: "5-sinif", unit: "U1", related: ["Donanım", "Yazılım"], video: "", info: "" },
+            { tr: "Donanım", en: "Hardware", def: "Bilgisayarın fiziksel parçaları; görebildiğimiz, dokunabildiğimiz kısımlar", grade: "5-sinif", unit: "U1", related: ["Klavye", "Mouse", "Monitör"], video: "", info: "" },
+            { tr: "Yazılım", en: "Software", def: "Bilgisayarı çalıştıran programlar; fiziksel olmayan dijital komutlar", grade: "5-sinif", unit: "U1", related: ["Program", "İşletim Sistemi"], video: "", info: "" },
+            { tr: "İşletim Sistemi", en: "Operating System (OS)", def: "Bilgisayarı kontrol eden ve diğer programları çalıştıran temel yazılım", grade: "5-sinif", unit: "U1", related: ["Windows", "macOS", "Linux"], video: "", info: "" },
+            { tr: "İşlemci (CPU)", en: "CPU (Central Processing Unit)", def: "Bilgisayarın beyni; tüm hesaplamaları yapan ve komutları işleyen parça", grade: "5-sinif", unit: "U1", related: ["GHz", "Çekirdek"], video: "", info: "" },
+            { tr: "Bellek (RAM)", en: "RAM (Random Access Memory)", def: "Kısa süreli hafıza; çalışma esnasında veri tutar, kapanınca silinir", grade: "5-sinif", unit: "U1", related: ["GB", "Hız"], video: "", info: "" },
+            { tr: "Sabit Disk", en: "Hard Disk Drive (HDD)", def: "Uzun süreli depolama; mekanik, dönen diskler, ucuz ama daha yavaş", grade: "5-sinif", unit: "U1", related: ["Depolama", "SSD"], video: "", info: "" },
+            { tr: "Klavye", en: "Keyboard", def: "Girdi cihazı; harf, sayı ve sembol girmek için kullanılır", grade: "5-sinif", unit: "U1", related: ["Girdi", "Kontrol"], video: "", info: "" },
+            { tr: "Fare (Mouse)", en: "Mouse", def: "Girdi cihazı; imleç kontrolü, tıklama ve kaydırma için", grade: "5-sinif", unit: "U1", related: ["Girdi", "Touchpad"], video: "", info: "" },
+            { tr: "Monitör", en: "Monitor/Display", def: "Çıktı cihazı; bilgisayarın işlediği bilgiyi gösteriyor", grade: "5-sinif", unit: "U1", related: ["Çıktı", "Ekran"], video: "", info: "" },
+            { tr: "Yazıcı", en: "Printer", def: "Çıktı cihazı; dijital dosyaları kağıda yazdırır", grade: "5-sinif", unit: "U1", related: ["Çıktı", "Mürekkep"], video: "", info: "" },
+            { tr: "Dosya", en: "File", def: "Bilgisayarda saklanan bilgi; resim, metin, video, ses vb.", grade: "5-sinif", unit: "U1", related: ["Klasör", "Depolama"], video: "", info: "" },
+            { tr: "Klasör", en: "Folder", def: "Dosyaları organize etmek için kullanılan dijital kapsayıcı", grade: "5-sinif", unit: "U1", related: ["Dosya", "Hiyerarşi"], video: "", info: "" },
+
+            // 5. SINIF - UNIT 2
+            { tr: "Microsoft Word", en: "Microsoft Word", def: "Metin belgesi oluşturmak için profesyonel kelime işlemci", grade: "5-sinif", unit: "U2", related: ["Belge", "Biçimlendirme"], video: "", info: "" },
+            { tr: "PowerPoint", en: "PowerPoint", def: "Slayt sunumu hazırlama ve sunmak için kullanılan program", grade: "5-sinif", unit: "U2", related: ["Sunum", "Slayt"], video: "", info: "" },
+            { tr: "Sunum", en: "Presentation", def: "Bilginin slaytlar şeklinde görsel olarak sunulması", grade: "5-sinif", unit: "U2", related: ["PowerPoint", "Slayt"], video: "", info: "" },
+            { tr: "Slayt", en: "Slide", def: "PowerPoint'te bir sayfa; metin, resim, video içerebilir", grade: "5-sinif", unit: "U2", related: ["Sunum", "PowerPoint"], video: "", info: "" },
+            { tr: "Paint", en: "Paint", def: "Dijital resim çizme ve düzenleme programı", grade: "5-sinif", unit: "U2", related: ["Grafik", "Tasarım"], video: "", info: "" },
+            { tr: "Yazı Tipi", en: "Font", def: "Metin karakterinin görünümü (Arial, Times New Roman vb.)", grade: "5-sinif", unit: "U2", related: ["Biçimlendirme", "Stil"], video: "", info: "" },
+            { tr: "Kalın", en: "Bold", def: "Metni daha koyu göstermek (Ctrl+B kısayolu)", grade: "5-sinif", unit: "U2", related: ["Vurgu", "Biçimlendirme"], video: "", info: "" },
+            { tr: "İtalik", en: "Italic", def: "Metni eğik yapmak (Ctrl+I kısayolu)", grade: "5-sinif", unit: "U2", related: ["Vurgu", "Biçimlendirme"], video: "", info: "" },
+
+            // 5. SINIF - UNIT 3
+            { tr: "Bilgisayar Ağı", en: "Computer Network", def: "Birbirine bağlı bilgisayarlar arasında veri paylaşımı", grade: "5-sinif", unit: "U3", related: ["LAN", "WAN", "İnternet"], video: "", info: "" },
+            { tr: "İnternet", en: "Internet", def: "Dünya çapında milyonlarca bilgisayarı birbirine bağlayan ağ", grade: "5-sinif", unit: "U3", related: ["Web Sitesi", "İSS"], video: "", info: "" },
+            { tr: "Wi-Fi", en: "Wi-Fi", def: "Kablosuz internet bağlantısı; telsizsiz ağ", grade: "5-sinif", unit: "U3", related: ["İnternet", "Router"], video: "", info: "" },
+            { tr: "E-posta", en: "Email", def: "Elektronik posta; dijital olarak mesaj göndermek ve almak", grade: "5-sinif", unit: "U3", related: ["İletişim", "İnternet"], video: "", info: "" },
+            { tr: "Web Sitesi", en: "Website", def: "İnternet üzerindeki sayfalar; google.com, wikipedia.org vb.", grade: "5-sinif", unit: "U3", related: ["İnternet", "Tarayıcı"], video: "", info: "" },
+            { tr: "Tarayıcı", en: "Web Browser", def: "İnternette gezinmeye yarayan program (Chrome, Firefox vb.)", grade: "5-sinif", unit: "U3", related: ["Web Sitesi", "İnternet"], video: "", info: "" },
+
+            // 5. SINIF - UNIT 4
+            { tr: "Siber Güvenlik", en: "Cybersecurity", def: "Dijital dünyada kendini ve verilerini koruma", grade: "5-sinif", unit: "U4", related: ["Virüs", "Şifre", "Phishing"], video: "", info: "" },
+            { tr: "Virüs", en: "Virus", def: "Bilgisayara zarar veren program; kendini kopyalar", grade: "5-sinif", unit: "U4", related: ["Zararlı Yazılım", "Antivirüs"], video: "", info: "" },
+            { tr: "Güçlü Şifre", en: "Strong Password", def: "Güvenli şifre; en az 8 karakter, büyük-küçük harf, sayı, sembol", grade: "5-sinif", unit: "U4", related: ["Koruma", "Gizlilik"], video: "", info: "" },
+            { tr: "Phishing (Oltalama)", en: "Phishing", def: "Sahte e-posta/mesajla bilgi çalma tekniği", grade: "5-sinif", unit: "U4", related: ["Dolandırıcılık", "İnternet Güvenliği"], video: "", info: "" },
+            { tr: "Dijital Vatandaşlık", en: "Digital Citizenship", def: "İnternette sorumlu, etik ve saygılı davranmak", grade: "5-sinif", unit: "U4", related: ["Etik", "İnternet Güvenliği"], video: "", info: "" },
+
+            // 5. SINIF - UNIT 5
+            { tr: "Yapay Zeka (YZ)", en: "Artificial Intelligence (AI)", def: "Makinelerin insan gibi düşünmesi, öğrenmesi ve karar vermesi", grade: "5-sinif", unit: "U5", related: ["Makine Öğrenmesi", "Algoritma"], video: "", info: "" },
+            { tr: "Makine Öğrenmesi", en: "Machine Learning", def: "Yapay zekanın verilerden öğrenmesi ve geliştirmesi", grade: "5-sinif", unit: "U5", related: ["Yapay Zeka", "Veri"], video: "", info: "" },
+            { tr: "Siri", en: "Siri", def: "Apple'ın sesli yardımcısı; komut alan YZ", grade: "5-sinif", unit: "U5", related: ["Yapay Zeka", "Sesli Asistan"], video: "", info: "" },
+            { tr: "Yüz Tanıma", en: "Facial Recognition", def: "Yapay zekanın yüzü tanıyarak kimliği tespit etmesi", grade: "5-sinif", unit: "U5", related: ["Yapay Zeka", "Güvenlik"], video: "", info: "" },
+
+            // 5. SINIF - UNIT 6
+            { tr: "Programlama", en: "Programming", def: "Bilgisayara ne yapmasını istediğimizi komutlarla söyleme", grade: "5-sinif", unit: "U6", related: ["Algoritma", "Kod", "Scratch"], video: "", info: "" },
+            { tr: "Algoritma", en: "Algorithm", def: "Bir işi yapmak için adım adım talimatlar dizisi", grade: "5-sinif", unit: "U6", related: ["Lojik", "Programlama"], video: "", info: "" },
+            { tr: "Scratch", en: "Scratch", def: "Çocuklar için blok tabanlı programlama dili (MIT)", grade: "5-sinif", unit: "U6", related: ["Programlama", "Blok"], video: "https://www.youtube.com/embed/kHBcVlqpsgA", info: "https://scratch.mit.edu/" },
+            { tr: "Blok", en: "Block", def: "Scratch'teki sürükle-bırak komutları", grade: "5-sinif", unit: "U6", related: ["Scratch", "Programlama"], video: "", info: "" },
+            { tr: "Sprite", en: "Sprite", def: "Scratch'te karakter; kedi, araba, insan vb.", grade: "5-sinif", unit: "U6", related: ["Scratch", "Nesne"], video: "", info: "" },
+            { tr: "Döngü", en: "Loop", def: "Bir işi tekrar tekrar yapma; Forever, Repeat N", grade: "5-sinif", unit: "U6", related: ["Programlama", "Kontrol"], video: "", info: "" },
+            { tr: "Koşul", en: "Condition", def: "Belirli bir durumda işi yapma; if-else yapısı", grade: "5-sinif", unit: "U6", related: ["Programlama", "Karar"], video: "", info: "" },
+            { tr: "Değişken", en: "Variable", def: "Değeri değişen bilgi saklama yeri; skor, yaş, isim", grade: "5-sinif", unit: "U6", related: ["Programlama", "Veri"], video: "", info: "" },
+
+            // 6. SINIF - UNIT 1
+            { tr: "Grafik Tasarım", en: "Graphic Design", def: "Görsel ürün tasarımı; posterler, afişler, logo", grade: "6-sinif", unit: "U1", related: ["Tasarım", "Sanat"], video: "", info: "" },
+            { tr: "Video Düzenleme", en: "Video Editing", def: "Video kesmek, birleştirmek, efekt ve müzik ekleme", grade: "6-sinif", unit: "U1", related: ["Multimedya", "Prodüksiyon"], video: "", info: "" },
+            { tr: "Çoklu Ortam", en: "Multimedia", def: "Video, ses, resim, metin birlikte kullanılması", grade: "6-sinif", unit: "U1", related: ["İçerik", "Tasarım"], video: "", info: "" },
+
+            // 6. SINIF - UNIT 2
+            { tr: "Kişisel Veri", en: "Personal Data", def: "Kimliğini tanımlayan bilgiler; ad, soyad, doğum tarihi", grade: "6-sinif", unit: "U2", related: ["Gizlilik", "Güvenlik"], video: "", info: "" },
+            { tr: "Gizlilik", en: "Privacy", def: "Kişisel bilgilerini koruma hakkı ve sorumluluğu", grade: "6-sinif", unit: "U2", related: ["Veri", "Güvenlik"], video: "", info: "" },
+            { tr: "Siber Tehdit", en: "Cyber Threat", def: "İnternette karşılaşılabilecek tehlikeler ve riskler", grade: "6-sinif", unit: "U2", related: ["Siber Güvenlik", "Virüs"], video: "", info: "" },
+
+            // 6. SINIF - UNIT 3
+            { tr: "Bilgi Okuryazarlığı", en: "Information Literacy", def: "Bilgiyi bulma, değerlendirme ve doğru kullanma becerisi", grade: "6-sinif", unit: "U3", related: ["Araştırma", "Kritik Düşünme"], video: "", info: "" },
+            { tr: "Araştırma", en: "Research", def: "Bilgi arama ve toplama; güvenilir kaynakları kullanma", grade: "6-sinif", unit: "U3", related: ["Bilgi Okuryazarlığı"], video: "", info: "" },
+
+            // 6. SINIF - UNIT 4
+            { tr: "Web Tasarım", en: "Web Design", def: "İnternet sitesi görsel ve yapısını tasarlama", grade: "6-sinif", unit: "U4", related: ["HTML", "CSS"], video: "", info: "" },
+            { tr: "HTML", en: "HTML", def: "Web sayfalarının yapısını oluşturan programlama dili", grade: "6-sinif", unit: "U4", related: ["Web Tasarım", "Kod"], video: "", info: "" },
+
+            // 6. SINIF - UNIT 5
+            { tr: "Problem Çözme", en: "Problem Solving", def: "Bir sorunu analiz edip çözüm bulmak", grade: "6-sinif", unit: "U5", related: ["Algoritma", "Lojik"], video: "", info: "" },
+            { tr: "Veri Analizi", en: "Data Analysis", def: "Toplanan verileri inceleyip anlamlandırma", grade: "6-sinif", unit: "U5", related: ["Bilgi", "İstatistik"], video: "", info: "" },
+        ];
+
+        // DOM Elements
+        const searchInput = document.getElementById('searchInput');
+        const gradeTabsContainer = document.querySelector('.grade-tabs');
+        const filterContainer = document.getElementById('filterContainer');
+        const glossaryContent = document.getElementById('glossaryContent');
+        const resultCount = document.getElementById('resultCount');
+
+        let activeGrade = 'all';
+        let activeUnits = new Set();
+
+        // Initialize
+        function init() {
+            generateUnitFilters();
+            renderGlossary(glossaryData);
+            addEventListeners();
+        }
+
+        // Generate unit filters
+        function generateUnitFilters() {
+            const units = new Set();
+            glossaryData.forEach(item => units.add(item.unit));
+
+            [...units].sort().forEach(unit => {
+                const btn = document.createElement('button');
+                btn.className = 'filter-btn';
+                btn.textContent = unit;
+                btn.dataset.filter = unit;
+                btn.addEventListener('click', () => toggleFilter(btn, unit));
+                filterContainer.appendChild(btn);
+            });
+        }
+
+        // Toggle filter
+        function toggleFilter(btn, unit) {
+            btn.classList.toggle('active');
+            if (btn.classList.contains('active')) {
+                activeUnits.add(unit);
+            } else {
+                activeUnits.delete(unit);
+            }
+            filterAndSearch();
+        }
+
+        // Toggle grade
+        function toggleGrade(btn, grade) {
+            document.querySelectorAll('.grade-tab').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            activeGrade = grade;
+            activeUnits.clear();
+            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+            filterAndSearch();
+        }
+
+        // Render glossary
+        function renderGlossary(data) {
+            glossaryContent.innerHTML = '';
+
+            if (data.length === 0) {
+                glossaryContent.innerHTML = `
+                    <div class="no-results">
+                        <h3>😢 Sonuç bulunamadı</h3>
+                        <p>Arama kriterlerinize uygun terim yok.</p>
+                    </div>
+                `;
+                resultCount.textContent = '0 terim gösteriliyor';
+                return;
+            }
+
+            data.forEach((term, index) => {
+                const item = document.createElement('div');
+                item.className = 'glossary-item';
+                item.dataset.index = index;
+
+                const relatedHTML = term.related.length > 0
+                    ? `<div class="related-topics">
+                        <strong>📌 İlgili Konular:</strong>
+                        <div class="topic-list">
+                            ${term.related.map(t => `<span class="topic-tag">${t}</span>`).join('')}
+                        </div>
+                       </div>`
+                    : '';
+
+                const linksHTML = term.video || term.info
+                    ? `<div class="links-section">
+                        ${term.video ? `<a href="${term.video}" target="_blank" class="link-btn">🎥 Videoyu İzle</a>` : ''}
+                        ${term.info ? `<a href="${term.info}" target="_blank" class="link-btn">📖 Daha Fazla</a>` : ''}
+                       </div>`
+                    : '';
+
+                item.innerHTML = `
+                    <button class="glossary-header-btn">
+                        <div class="term-info">
+                            <div class="term-name">${term.tr}</div>
+                            <div class="term-en">${term.en}</div>
+                            <span class="term-unit">${term.unit}</span>
+                        </div>
+                        <span class="toggle-icon">▼</span>
+                    </button>
+                    <div class="glossary-body">
+                        <p>
+                            <span class="definition-label">📝 Tanım:</span>
+                            ${term.def}
+                        </p>
+                        ${relatedHTML}
+                        ${linksHTML}
+                    </div>
+                `;
+
+                item.querySelector('.glossary-header-btn').addEventListener('click', (e) => {
+                    e.preventDefault();
+                    toggleItem(item);
+                });
+
+                glossaryContent.appendChild(item);
+            });
+
+            resultCount.textContent = `${data.length} terim gösteriliyor`;
+        }
+
+        // Toggle item expand/collapse
+        function toggleItem(item) {
+            item.classList.toggle('expanded');
+        }
+
+        // Filter and search
+        function filterAndSearch() {
+            let filtered = glossaryData;
+
+            // Apply grade filter
+            if (activeGrade !== 'all') {
+                filtered = filtered.filter(term => term.grade === activeGrade);
+            }
+
+            // Apply unit filters
+            if (activeUnits.size > 0) {
+                filtered = filtered.filter(term => activeUnits.has(term.unit));
+            }
+
+            // Apply search
+            const searchTerm = searchInput.value.toLowerCase();
+            if (searchTerm) {
+                filtered = filtered.filter(term =>
+                    term.tr.toLowerCase().includes(searchTerm) ||
+                    term.en.toLowerCase().includes(searchTerm) ||
+                    term.def.toLowerCase().includes(searchTerm)
+                );
+            }
+
+            renderGlossary(filtered);
+        }
+
+        // Add event listeners
+        function addEventListeners() {
+            // Search
+            searchInput.addEventListener('input', filterAndSearch);
+
+            // Grade tabs
+            document.querySelectorAll('.grade-tab').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    toggleGrade(btn, btn.dataset.grade);
+                });
+            });
+
+            // Set first grade tab as active
+            document.querySelector('.grade-tab.all').classList.add('active');
+        }
+
+        // Initialize
+        init();
+    </script>
+</body>
+</html>
