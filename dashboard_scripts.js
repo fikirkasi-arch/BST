@@ -274,3 +274,11 @@ window.addEventListener('DOMContentLoaded', function() {
         // firstAccordions[0].click();
     }
 });
+
+// ==================== GLOSSARY NAVIGATION ====================
+function scrollToLetter(letter) {
+    const element = document.getElementById('letter-' + letter);
+    if (element) {
+        element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+}
