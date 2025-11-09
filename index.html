@@ -343,6 +343,61 @@
             color: #000;
         }
 
+        /* Accordion Styles */
+        .accordion {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            cursor: pointer;
+            padding: 20px 30px;
+            width: 100%;
+            text-align: left;
+            border: none;
+            outline: none;
+            transition: 0.4s;
+            border-radius: 12px;
+            margin-bottom: 10px;
+            font-size: 1.2em;
+            font-weight: 600;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .accordion:hover {
+            opacity: 0.9;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .accordion.active {
+            background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+        }
+
+        .accordion-icon {
+            font-size: 1.3em;
+            transition: transform 0.3s;
+        }
+
+        .accordion.active .accordion-icon {
+            transform: rotate(180deg);
+        }
+
+        .accordion-panel {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+            background: white;
+            border-radius: 0 0 12px 12px;
+            margin-bottom: 20px;
+        }
+
+        .accordion-panel.show {
+            padding: 20px;
+            max-height: 2000px;
+            transition: max-height 0.5s ease-in;
+        }
+
         @media (max-width: 768px) {
             header h1 {
                 font-size: 1.8em;
@@ -358,6 +413,11 @@
 
             .unit-grid {
                 grid-template-columns: 1fr;
+            }
+
+            .accordion {
+                font-size: 1em;
+                padding: 15px 20px;
             }
         }
     </style>
@@ -735,10 +795,16 @@
             <div style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white; padding: 30px; border-radius: 15px; margin-top: 50px; margin-bottom: 30px;">
                 <h2 style="margin-bottom: 15px;">📅 Haftalık Oyunlar</h2>
                 <p style="font-size: 1.1em;">Her hafta için özel hazırlanmış eşleştirme oyunları - 67 Oyun</p>
+                <p style="font-size: 0.95em; margin-top: 10px; opacity: 0.9;">💡 İpucu: Hafta gruplarını görmek için tıklayın</p>
             </div>
 
-            <h3 style="margin: 30px 0 20px 0; color: #f5576c;">🎮 5. Sınıf Haftalık Oyunlar (36 Hafta)</h3>
-            <div class="resource-grid">
+            <!-- 5. SINIF OYUNLAR ACCORDION -->
+            <button class="accordion" onclick="toggleAccordion(this)" style="background: linear-gradient(135deg, #f5576c 0%, #f093fb 100%);">
+                <span>🎮 5. Sınıf Haftalık Oyunlar (36 Hafta)</span>
+                <span class="accordion-icon">▼</span>
+            </button>
+            <div class="accordion-panel">
+                <div class="resource-grid">
                 <div class="resource-card" style="border: 2px solid #f5576c;">
                     <div class="resource-icon">🎯</div>
                     <h3>Hafta 1-9: Bilişim Temelleri</h3>
@@ -822,10 +888,16 @@
                         <a href="haftalik-oyunlar/oyun-5sinif-hafta36.html" target="_blank"><button class="download-btn" style="font-size: 0.9em; padding: 8px 15px;">📅 Hafta 36</button></a>
                     </div>
                 </div>
+                </div>
             </div>
 
-            <h3 style="margin: 30px 0 20px 0; color: #00f2fe;">🎮 6. Sınıf Haftalık Oyunlar (31 Hafta)</h3>
-            <div class="resource-grid">
+            <!-- 6. SINIF OYUNLAR ACCORDION -->
+            <button class="accordion" onclick="toggleAccordion(this)" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">
+                <span>🎮 6. Sınıf Haftalık Oyunlar (31 Hafta)</span>
+                <span class="accordion-icon">▼</span>
+            </button>
+            <div class="accordion-panel">
+                <div class="resource-grid">
                 <div class="resource-card" style="border: 2px solid #4facfe;">
                     <div class="resource-icon">💾</div>
                     <h3>Hafta 1-4: Veri Yönetimi</h3>
@@ -896,16 +968,23 @@
                         <a href="haftalik-oyunlar/oyun-6sinif-hafta31.html" target="_blank"><button class="download-btn" style="font-size: 0.9em; padding: 8px 15px;">📅 Hafta 31</button></a>
                     </div>
                 </div>
+                </div>
             </div>
 
             <!-- HAFTALIK ÇALIŞMA SAYFALARI -->
             <div style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); color: white; padding: 30px; border-radius: 15px; margin-top: 50px; margin-bottom: 30px;">
                 <h2 style="margin-bottom: 15px;">📝 Haftalık Çalışma Sayfaları</h2>
                 <p style="font-size: 1.1em;">Her hafta için yazdırılabilir çalışma sayfaları - 67 Sayfa</p>
+                <p style="font-size: 0.95em; margin-top: 10px; opacity: 0.9;">💡 İpucu: Hafta gruplarını görmek için tıklayın</p>
             </div>
 
-            <h3 style="margin: 30px 0 20px 0; color: #f5576c;">📄 5. Sınıf Haftalık Çalışma Sayfaları (36 Hafta)</h3>
-            <div class="resource-grid">
+            <!-- 5. SINIF ÇALIŞMA SAYFALARI ACCORDION -->
+            <button class="accordion" onclick="toggleAccordion(this)" style="background: linear-gradient(135deg, #f5576c 0%, #fa709a 100%);">
+                <span>📄 5. Sınıf Haftalık Çalışma Sayfaları (36 Hafta)</span>
+                <span class="accordion-icon">▼</span>
+            </button>
+            <div class="accordion-panel">
+                <div class="resource-grid">
                 <div class="resource-card" style="border: 2px solid #f5576c;">
                     <div class="resource-icon">📝</div>
                     <h3>Hafta 1-9: Bilişim Temelleri</h3>
@@ -989,10 +1068,16 @@
                         <a href="haftalik-calisma-sayfalari/calisma-5sinif-hafta36.html" target="_blank"><button class="download-btn" style="font-size: 0.9em; padding: 8px 15px;">📄 Hafta 36</button></a>
                     </div>
                 </div>
+                </div>
             </div>
 
-            <h3 style="margin: 30px 0 20px 0; color: #00f2fe;">📄 6. Sınıf Haftalık Çalışma Sayfaları (31 Hafta)</h3>
-            <div class="resource-grid">
+            <!-- 6. SINIF ÇALIŞMA SAYFALARI ACCORDION -->
+            <button class="accordion" onclick="toggleAccordion(this)" style="background: linear-gradient(135deg, #4facfe 0%, #00d2ff 100%);">
+                <span>📄 6. Sınıf Haftalık Çalışma Sayfaları (31 Hafta)</span>
+                <span class="accordion-icon">▼</span>
+            </button>
+            <div class="accordion-panel">
+                <div class="resource-grid">
                 <div class="resource-card" style="border: 2px solid #4facfe;">
                     <div class="resource-icon">💾</div>
                     <h3>Hafta 1-4: Veri Yönetimi</h3>
@@ -1062,6 +1147,7 @@
                         <a href="haftalik-calisma-sayfalari/calisma-6sinif-hafta30.html" target="_blank"><button class="download-btn" style="font-size: 0.9em; padding: 8px 15px;">📄 Hafta 30</button></a>
                         <a href="haftalik-calisma-sayfalari/calisma-6sinif-hafta31.html" target="_blank"><button class="download-btn" style="font-size: 0.9em; padding: 8px 15px;">📄 Hafta 31</button></a>
                     </div>
+                </div>
                 </div>
             </div>
         </div>
@@ -1392,6 +1478,22 @@
                 modal.style.display = 'none';
             }
         }
+
+        // Accordion toggle function
+        function toggleAccordion(element) {
+            element.classList.toggle('active');
+            var panel = element.nextElementSibling;
+            panel.classList.toggle('show');
+        }
+
+        // Open first accordion by default on page load (optional)
+        window.addEventListener('DOMContentLoaded', function() {
+            var firstAccordions = document.querySelectorAll('.accordion');
+            if (firstAccordions.length > 0) {
+                // İsteğe bağlı: ilk accordion'ı otomatik açabilirsiniz
+                // firstAccordions[0].click();
+            }
+        });
     </script>
 </body>
 </html>
