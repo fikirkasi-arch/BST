@@ -68,7 +68,7 @@ export const login = async (req: Request, res: Response): Promise<void> => {
 
     // JWT token oluştur
     const secret = process.env.JWT_SECRET || 'your_jwt_secret';
-    const expiresIn = process.env.JWT_EXPIRES_IN || '7d';
+    const expiresIn: string = process.env.JWT_EXPIRES_IN || '7d';
 
     const token = jwt.sign(
       {
@@ -77,7 +77,7 @@ export const login = async (req: Request, res: Response): Promise<void> => {
         role: user.role,
       },
       secret,
-      { expiresIn: expiresIn as string }
+      { expiresIn }
     );
 
     const response: LoginResponse = {
