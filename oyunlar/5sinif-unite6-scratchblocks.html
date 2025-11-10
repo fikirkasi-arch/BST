@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scratch Blok Sıralama - 5. Sınıf Ünite 6</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        h1 { text-align: center; color: #667eea; margin-bottom: 20px; }
+        .game-area {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin: 30px 0;
+        }
+        .blocks-panel, .target-panel {
+            background: #f5f5f5;
+            padding: 20px;
+            border-radius: 15px;
+            min-height: 400px;
+        }
+        .block {
+            background: white;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 10px;
+            cursor: grab;
+            border-left: 5px solid #667eea;
+            transition: all 0.3s;
+        }
+        .block:hover {
+            transform: translateX(5px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        .block.dragging { opacity: 0.5; }
+        .target-panel {
+            border: 3px dashed #d0d0d0;
+        }
+        .target-panel.drag-over {
+            border-color: #667eea;
+            background: #f5f5ff;
+        }
+        .btn {
+            padding: 15px 30px;
+            font-size: 1.1em;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: bold;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            margin: 5px;
+        }
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+        .instructions {
+            background: #fff9e6;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            border-left: 5px solid #667eea;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧩 Scratch Blok Sıralama</h1>
+        <div class="instructions">
+            <strong>🎯 Görev:</strong> Blokları doğru sıraya koyarak "Kedi 10 adım ileri gitsin ve miyavlasın" programını oluştur!
+        </div>
+        <div class="game-area">
+            <div class="blocks-panel">
+                <h3 style="margin-bottom: 15px;">📦 Bloklar</h3>
+                <div id="blocksArea">
+                    <div class="block" draggable="true" data-id="3">🔊 "Miyav" sesini çal</div>
+                    <div class="block" draggable="true" data-id="1">🚀 10 adım git</div>
+                    <div class="block" draggable="true" data-id="2">⏱️ 1 saniye bekle</div>
+                    <div class="block" draggable="true" data-id="0">🏁 Yeşil bayrak tıklandığında</div>
+                </div>
+            </div>
+            <div class="target-panel" id="targetPanel" ondrop="drop(event)" ondragover="allowDrop(event)" ondragleave="dragLeave(event)">
+                <h3 style="margin-bottom: 15px;">🎯 Program Alanı</h3>
+                <div id="program"></div>
+            </div>
+        </div>
+        <div style="text-align: center;">
+            <button class="btn" onclick="checkOrder()">✅ Kontrol Et</button>
+            <button class="btn" onclick="reset()">🔄 Sıfırla</button>
+        </div>
+    </div>
+    <script>
+        const correctOrder = [0, 1, 2, 3];
+        let currentOrder = [];
+        
+        document.querySelectorAll('.block').forEach(block => {
+            block.addEventListener('dragstart', e => {
+                e.dataTransfer.setData('id', e.target.dataset.id);
+                e.target.classList.add('dragging');
+            });
+            block.addEventListener('dragend', e => {
+                e.target.classList.remove('dragging');
+            });
+        });
+        
+        function allowDrop(e) {
+            e.preventDefault();
+            e.currentTarget.classList.add('drag-over');
+        }
+        
+        function dragLeave(e) {
+            e.currentTarget.classList.remove('drag-over');
+        }
+        
+        function drop(e) {
+            e.preventDefault();
+            e.currentTarget.classList.remove('drag-over');
+            const id = e.dataTransfer.getData('id');
+            const dragging = document.querySelector('.dragging');
+            if (dragging) {
+                document.getElementById('program').appendChild(dragging.cloneNode(true));
+                dragging.remove();
+                updateOrder();
+            }
+        }
+        
+        function updateOrder() {
+            currentOrder = Array.from(document.getElementById('program').children).map(b => parseInt(b.dataset.id));
+        }
+        
+        function checkOrder() {
+            updateOrder();
+            if (JSON.stringify(currentOrder) === JSON.stringify(correctOrder)) {
+                alert('🎉 Tebrikler! Blokları doğru sıraladınız!\n\n✅ Doğru sıra:\n1. Yeşil bayrak tıklandığında\n2. 10 adım git\n3. 1 saniye bekle\n4. "Miyav" sesini çal');
+            } else {
+                alert('❌ Yanlış sıra! Tekrar dene.\n\n💡 İpucu: Önce başlangıç bloğu olmalı!');
+            }
+        }
+        
+        function reset() {
+            const blocksArea = document.getElementById('blocksArea');
+            const program = document.getElementById('program');
+            while (program.firstChild) {
+                blocksArea.appendChild(program.firstChild);
+            }
+            currentOrder = [];
+        }
+    </script>
+</body>
+</html>

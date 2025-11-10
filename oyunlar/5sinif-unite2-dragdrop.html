@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Office Dosya Eşleştirme - 5. Sınıf Ünite 2</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #fccb90 0%, #d57eeb 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        h1 {
+            text-align: center;
+            color: #d57eeb;
+            margin-bottom: 10px;
+        }
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+        }
+        .instructions {
+            background: #fff9e6;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            border-left: 5px solid #fccb90;
+        }
+        .game-area {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 30px;
+            margin-bottom: 20px;
+        }
+        .files-area {
+            background: #f5f5f5;
+            padding: 20px;
+            border-radius: 15px;
+            min-height: 400px;
+        }
+        .files-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+        .file {
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            cursor: grab;
+            border: 2px solid #e0e0e0;
+            transition: all 0.3s;
+        }
+        .file:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        .file.dragging {
+            opacity: 0.5;
+            cursor: grabbing;
+        }
+        .file-icon {
+            font-size: 3em;
+            margin-bottom: 10px;
+        }
+        .file-name {
+            font-size: 0.85em;
+            color: #666;
+            word-break: break-word;
+        }
+        .programs-area {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        .program-drop {
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            border: 3px dashed #d0d0d0;
+            min-height: 100px;
+            transition: all 0.3s;
+        }
+        .program-drop.drag-over {
+            border-color: #d57eeb;
+            background: #fff0f8;
+            transform: scale(1.02);
+        }
+        .program-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 15px;
+            font-weight: bold;
+            color: #333;
+        }
+        .program-icon {
+            font-size: 2em;
+        }
+        .dropped-files {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .dropped-file {
+            background: #e8f5e9;
+            padding: 8px 15px;
+            border-radius: 8px;
+            font-size: 0.9em;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .dropped-file.wrong {
+            background: #ffebee;
+            color: #c62828;
+        }
+        .stats {
+            display: flex;
+            justify-content: space-around;
+            background: #f5f5f5;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+        .stat {
+            text-align: center;
+        }
+        .stat-value {
+            font-size: 2em;
+            font-weight: bold;
+            color: #d57eeb;
+        }
+        .stat-label {
+            color: #666;
+            font-size: 0.9em;
+        }
+        .buttons {
+            text-align: center;
+            margin-top: 20px;
+        }
+        .btn {
+            padding: 15px 30px;
+            font-size: 1.1em;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            margin: 5px;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #fccb90 0%, #d57eeb 100%);
+            color: white;
+        }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(213, 126, 235, 0.4);
+        }
+        @media (max-width: 768px) {
+            .game-area {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📂 Office Dosya Eşleştirme</h1>
+        <p class="subtitle">5. Sınıf - Ünite 2: Dijital Ürün Tasarımı</p>
+
+        <div class="instructions">
+            <strong>🎯 Nasıl Oynanır:</strong> Dosyaları sürükleyip doğru Office programına bırakın!
+            <br>📝 Word → Metin belgeleri | 📊 Excel → Tablolar | 🎨 PowerPoint → Sunumlar | 🖼️ Paint → Resimler
+        </div>
+
+        <div class="stats">
+            <div class="stat">
+                <div class="stat-value" id="correct">0</div>
+                <div class="stat-label">Doğru</div>
+            </div>
+            <div class="stat">
+                <div class="stat-value" id="wrong">0</div>
+                <div class="stat-label">Yanlış</div>
+            </div>
+            <div class="stat">
+                <div class="stat-value" id="remaining">12</div>
+                <div class="stat-label">Kalan</div>
+            </div>
+        </div>
+
+        <div class="game-area">
+            <div class="files-area">
+                <h3>📁 Dosyalar</h3>
+                <div class="files-grid" id="filesGrid"></div>
+            </div>
+
+            <div class="programs-area">
+                <div class="program-drop" data-program="word" ondrop="drop(event)" ondragover="allowDrop(event)" ondragleave="dragLeave(event)">
+                    <div class="program-header">
+                        <span class="program-icon">📝</span>
+                        <span>Microsoft Word</span>
+                    </div>
+                    <div class="dropped-files" id="word-files"></div>
+                </div>
+
+                <div class="program-drop" data-program="excel" ondrop="drop(event)" ondragover="allowDrop(event)" ondragleave="dragLeave(event)">
+                    <div class="program-header">
+                        <span class="program-icon">📊</span>
+                        <span>Microsoft Excel</span>
+                    </div>
+                    <div class="dropped-files" id="excel-files"></div>
+                </div>
+
+                <div class="program-drop" data-program="powerpoint" ondrop="drop(event)" ondragover="allowDrop(event)" ondragleave="dragLeave(event)">
+                    <div class="program-header">
+                        <span class="program-icon">🎨</span>
+                        <span>PowerPoint</span>
+                    </div>
+                    <div class="dropped-files" id="powerpoint-files"></div>
+                </div>
+
+                <div class="program-drop" data-program="paint" ondrop="drop(event)" ondragover="allowDrop(event)" ondragleave="dragLeave(event)">
+                    <div class="program-header">
+                        <span class="program-icon">🖼️</span>
+                        <span>Paint</span>
+                    </div>
+                    <div class="dropped-files" id="paint-files"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="buttons">
+            <button class="btn btn-primary" onclick="resetGame()">🔄 Yeni Oyun</button>
+            <button class="btn btn-primary" onclick="checkAnswers()">✅ Kontrol Et</button>
+        </div>
+    </div>
+
+    <script>
+        const files = [
+            { name: 'mektup.docx', icon: '📄', program: 'word' },
+            { name: 'odev.docx', icon: '📄', program: 'word' },
+            { name: 'rapor.docx', icon: '📄', program: 'word' },
+            { name: 'notlar.xlsx', icon: '📊', program: 'excel' },
+            { name: 'butce.xlsx', icon: '📊', program: 'excel' },
+            { name: 'liste.xlsx', icon: '📊', program: 'excel' },
+            { name: 'sunum.pptx', icon: '🎨', program: 'powerpoint' },
+            { name: 'proje.pptx', icon: '🎨', program: 'powerpoint' },
+            { name: 'tanitim.pptx', icon: '🎨', program: 'powerpoint' },
+            { name: 'resim.png', icon: '🖼️', program: 'paint' },
+            { name: 'cizim.png', icon: '🖼️', program: 'paint' },
+            { name: 'logo.png', icon: '🖼️', program: 'paint' }
+        ];
+
+        let stats = { correct: 0, wrong: 0, remaining: 12 };
+
+        function renderFiles() {
+            const grid = document.getElementById('filesGrid');
+            grid.innerHTML = '';
+
+            // Dosyaları karıştır
+            const shuffled = [...files].sort(() => Math.random() - 0.5);
+
+            shuffled.forEach((file, index) => {
+                const fileEl = document.createElement('div');
+                fileEl.className = 'file';
+                fileEl.draggable = true;
+                fileEl.dataset.program = file.program;
+                fileEl.dataset.name = file.name;
+                fileEl.ondragstart = drag;
+                fileEl.innerHTML = `
+                    <div class="file-icon">${file.icon}</div>
+                    <div class="file-name">${file.name}</div>
+                `;
+                grid.appendChild(fileEl);
+            });
+        }
+
+        function drag(ev) {
+            ev.dataTransfer.setData('program', ev.target.dataset.program);
+            ev.dataTransfer.setData('name', ev.target.dataset.name);
+            ev.target.classList.add('dragging');
+        }
+
+        function allowDrop(ev) {
+            ev.preventDefault();
+            ev.currentTarget.classList.add('drag-over');
+        }
+
+        function dragLeave(ev) {
+            ev.currentTarget.classList.remove('drag-over');
+        }
+
+        function drop(ev) {
+            ev.preventDefault();
+            ev.currentTarget.classList.remove('drag-over');
+
+            const program = ev.dataTransfer.getData('program');
+            const fileName = ev.dataTransfer.getData('name');
+            const dropZone = ev.currentTarget;
+
+            // Dosyayı drop zone'a ekle
+            const droppedFile = document.createElement('div');
+            droppedFile.className = 'dropped-file';
+            droppedFile.dataset.program = program;
+            droppedFile.innerHTML = `📄 ${fileName}`;
+
+            const filesContainer = dropZone.querySelector('.dropped-files');
+            filesContainer.appendChild(droppedFile);
+
+            // Dosyayı gridden kaldır
+            const dragging = document.querySelector('.dragging');
+            if (dragging) {
+                dragging.remove();
+                stats.remaining--;
+                updateStats();
+            }
+
+            // Tüm dosyalar yerleştirildiyse otomatik kontrol
+            if (stats.remaining === 0) {
+                setTimeout(checkAnswers, 500);
+            }
+        }
+
+        function checkAnswers() {
+            stats.correct = 0;
+            stats.wrong = 0;
+
+            document.querySelectorAll('.program-drop').forEach(dropZone => {
+                const correctProgram = dropZone.dataset.program;
+                const droppedFiles = dropZone.querySelectorAll('.dropped-file');
+
+                droppedFiles.forEach(file => {
+                    const fileProgram = file.dataset.program;
+                    if (fileProgram === correctProgram) {
+                        file.classList.remove('wrong');
+                        file.style.background = '#e8f5e9';
+                        stats.correct++;
+                    } else {
+                        file.classList.add('wrong');
+                        stats.wrong++;
+                    }
+                });
+            });
+
+            updateStats();
+
+            if (stats.correct === 12) {
+                setTimeout(() => {
+                    alert('🎉 Tebrikler! Tüm dosyaları doğru programlara yerleştirdiniz!');
+                }, 300);
+            } else {
+                alert(`✅ Doğru: ${stats.correct}\n❌ Yanlış: ${stats.wrong}\n\nYanlış olanlar kırmızı renkte gösterildi.`);
+            }
+        }
+
+        function updateStats() {
+            document.getElementById('correct').textContent = stats.correct;
+            document.getElementById('wrong').textContent = stats.wrong;
+            document.getElementById('remaining').textContent = stats.remaining;
+        }
+
+        function resetGame() {
+            stats = { correct: 0, wrong: 0, remaining: 12 };
+            updateStats();
+
+            // Drop zone'ları temizle
+            document.querySelectorAll('.dropped-files').forEach(container => {
+                container.innerHTML = '';
+            });
+
+            // Dosyaları yeniden render et
+            renderFiles();
+        }
+
+        // Oyunu başlat
+        renderFiles();
+    </script>
+</body>
+</html>
