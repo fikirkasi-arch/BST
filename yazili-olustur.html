@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Yazılı Sınavı Oluştur - BST Eğitim Portalı</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+
+        h1 {
+            color: #667eea;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .back-btn {
+            display: inline-block;
+            background: white;
+            color: #667eea;
+            padding: 10px 20px;
+            border-radius: 20px;
+            text-decoration: none;
+            border: 2px solid #667eea;
+            margin-bottom: 20px;
+        }
+
+        .editor-section {
+            background: #f9f9f9;
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 8px;
+        }
+
+        .form-group input, .form-group textarea, .form-group select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1em;
+            font-family: inherit;
+        }
+
+        .form-group input:focus, .form-group textarea:focus, .form-group select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .question-item {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            border: 2px solid #e0e0e0;
+            position: relative;
+        }
+
+        .question-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #4caf50 0%, #8bc34a 100%);
+            color: white;
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #f44336 0%, #e91e63 100%);
+            color: white;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        /* Print Styles for PDF */
+        @media print {
+            body {
+                background: white;
+                padding: 0;
+            }
+
+            .container {
+                max-width: 100%;
+                box-shadow: none;
+                padding: 0;
+                border-radius: 0;
+            }
+
+            .back-btn, .editor-section, .btn-group, .no-print {
+                display: none !important;
+            }
+
+            .print-area {
+                display: block !important;
+            }
+
+            @page {
+                size: A4;
+                margin: 2cm;
+            }
+
+            .page-break {
+                page-break-after: always;
+            }
+        }
+
+        .print-area {
+            display: none;
+        }
+
+        .exam-header {
+            text-align: center;
+            border-bottom: 3px solid #667eea;
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+        }
+
+        .exam-info {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 30px;
+            font-size: 0.95em;
+        }
+
+        .exam-info-item {
+            display: flex;
+            border-bottom: 1px solid #ddd;
+            padding: 8px 0;
+        }
+
+        .exam-info-item strong {
+            min-width: 120px;
+            color: #667eea;
+        }
+
+        .exam-questions {
+            margin-top: 30px;
+        }
+
+        .exam-question {
+            margin-bottom: 40px;
+            page-break-inside: avoid;
+        }
+
+        .exam-question-number {
+            font-weight: bold;
+            color: #667eea;
+            font-size: 1.1em;
+            margin-bottom: 10px;
+        }
+
+        .exam-question-text {
+            line-height: 1.8;
+            margin-bottom: 20px;
+        }
+
+        .answer-space {
+            border: 1px solid #ddd;
+            min-height: 60px;
+            border-radius: 5px;
+            padding: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="index.html" class="back-btn">← Ana Sayfaya Dön</a>
+        
+        <h1>📝 Yazılı Sınavı Oluştur</h1>
+
+        <div class="editor-section no-print">
+            <h2 style="color: #667eea; margin-bottom: 20px;">Sınav Bilgileri</h2>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                <div class="form-group">
+                    <label>Okul Adı</label>
+                    <input type="text" id="schoolName" value="........... İlkokulu" placeholder="Okul adını girin">
+                </div>
+
+                <div class="form-group">
+                    <label>Ders</label>
+                    <input type="text" id="courseName" value="Bilişim Teknolojileri" placeholder="Ders adı">
+                </div>
+
+                <div class="form-group">
+                    <label>Sınıf</label>
+                    <select id="grade">
+                        <option value="5">5. Sınıf</option>
+                        <option value="6">6. Sınıf</option>
+                        <option value="7">7. Sınıf</option>
+                        <option value="8">8. Sınıf</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Tarih</label>
+                    <input type="date" id="examDate" value="">
+                </div>
+
+                <div class="form-group">
+                    <label>Süre (dakika)</label>
+                    <input type="number" id="duration" value="40" placeholder="Süre">
+                </div>
+
+                <div class="form-group">
+                    <label>Toplam Puan</label>
+                    <input type="number" id="totalPoints" value="100" placeholder="Toplam puan">
+                </div>
+            </div>
+
+            <div class="form-group" style="margin-top: 20px;">
+                <label>Sınav Başlığı</label>
+                <input type="text" id="examTitle" value="1. Dönem 1. Yazılı Sınavı" placeholder="Örn: 1. Dönem 1. Yazılı Sınavı">
+            </div>
+        </div>
+
+        <div class="editor-section no-print">
+            <h2 style="color: #667eea; margin-bottom: 20px;">Sorular</h2>
+            
+            <div id="questionsContainer"></div>
+
+            <div class="btn-group">
+                <button class="btn btn-primary" onclick="addQuestion()">➕ Soru Ekle</button>
+            </div>
+        </div>
+
+        <div class="btn-group no-print" style="margin-top: 30px;">
+            <button class="btn btn-success" onclick="previewExam()">👁️ Önizleme</button>
+            <button class="btn btn-primary" onclick="printExam()">🖨️ PDF Olarak Kaydet</button>
+        </div>
+
+        <!-- Print Area -->
+        <div class="print-area" id="printArea"></div>
+    </div>
+
+    <script>
+        let questionCount = 0;
+        let questions = [];
+
+        // Bugünün tarihini ayarla
+        document.getElementById('examDate').valueAsDate = new Date();
+
+        function addQuestion() {
+            questionCount++;
+            const id = 'q' + questionCount;
+            
+            questions.push({
+                id: id,
+                number: questionCount,
+                text: '',
+                points: 10
+            });
+
+            const container = document.getElementById('questionsContainer');
+            const questionDiv = document.createElement('div');
+            questionDiv.className = 'question-item';
+            questionDiv.id = id;
+            
+            questionDiv.innerHTML = `
+                <div class="question-header">
+                    <strong style="color: #667eea;">Soru ${questionCount}</strong>
+                    <button class="btn btn-danger" style="padding: 8px 15px;" onclick="removeQuestion('${id}')">🗑️ Sil</button>
+                </div>
+                <div class="form-group">
+                    <label>Soru Metni</label>
+                    <textarea id="${id}-text" rows="3" placeholder="Soruyu buraya yazın..." oninput="updateQuestion('${id}')"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Puan</label>
+                    <input type="number" id="${id}-points" value="10" min="1" oninput="updateQuestion('${id}')">
+                </div>
+            `;
+            
+            container.appendChild(questionDiv);
+        }
+
+        function updateQuestion(id) {
+            const question = questions.find(q => q.id === id);
+            if (question) {
+                question.text = document.getElementById(id + '-text').value;
+                question.points = parseInt(document.getElementById(id + '-points').value) || 0;
+            }
+        }
+
+        function removeQuestion(id) {
+            const index = questions.findIndex(q => q.id === id);
+            if (index > -1) {
+                questions.splice(index, 1);
+            }
+            document.getElementById(id).remove();
+            renumberQuestions();
+        }
+
+        function renumberQuestions() {
+            questions.forEach((q, index) => {
+                q.number = index + 1;
+                const elem = document.getElementById(q.id);
+                if (elem) {
+                    elem.querySelector('.question-header strong').textContent = 'Soru ' + (index + 1);
+                }
+            });
+        }
+
+        function previewExam() {
+            generateExamHTML();
+            document.querySelector('.print-area').style.display = 'block';
+            document.querySelector('.print-area').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function generateExamHTML() {
+            const schoolName = document.getElementById('schoolName').value;
+            const courseName = document.getElementById('courseName').value;
+            const grade = document.getElementById('grade').value;
+            const examDate = document.getElementById('examDate').value;
+            const duration = document.getElementById('duration').value;
+            const totalPoints = document.getElementById('totalPoints').value;
+            const examTitle = document.getElementById('examTitle').value;
+
+            const formattedDate = new Date(examDate).toLocaleDateString('tr-TR', {
+                day: '2-digit',
+                month: 'long',
+                year: 'numeric'
+            });
+
+            let html = `
+                <div class="exam-header">
+                    <h2 style="margin-bottom: 10px; color: #333;">${schoolName}</h2>
+                    <h3 style="color: #667eea;">${courseName} - ${examTitle}</h3>
+                </div>
+
+                <div class="exam-info">
+                    <div class="exam-info-item">
+                        <strong>Adı Soyadı:</strong>
+                        <span>...................................................</span>
+                    </div>
+                    <div class="exam-info-item">
+                        <strong>Sınıfı:</strong>
+                        <span>${grade}. Sınıf / ......</span>
+                    </div>
+                    <div class="exam-info-item">
+                        <strong>Numarası:</strong>
+                        <span>......</span>
+                    </div>
+                    <div class="exam-info-item">
+                        <strong>Tarih:</strong>
+                        <span>${formattedDate}</span>
+                    </div>
+                    <div class="exam-info-item">
+                        <strong>Süre:</strong>
+                        <span>${duration} Dakika</span>
+                    </div>
+                    <div class="exam-info-item">
+                        <strong>Toplam Puan:</strong>
+                        <span>${totalPoints}</span>
+                    </div>
+                </div>
+
+                <div style="background: #f9f9f9; padding: 15px; border-radius: 8px; border-left: 4px solid #667eea; margin-bottom: 30px;">
+                    <strong style="color: #667eea;">📌 Açıklama:</strong> 
+                    Tüm soruları dikkatlice okuyarak cevaplayınız. Başarılar dilerim!
+                </div>
+
+                <div class="exam-questions">
+            `;
+
+            questions.forEach((q, index) => {
+                html += `
+                    <div class="exam-question">
+                        <div class="exam-question-number">
+                            ${q.number}. Soru (${q.points} Puan)
+                        </div>
+                        <div class="exam-question-text">
+                            ${q.text || '<em style="color: #999;">Soru metni girilmemiş</em>'}
+                        </div>
+                        <div class="answer-space">
+                            <em style="color: #999;">Cevap:</em>
+                        </div>
+                    </div>
+                `;
+
+                // Her 4 soruda bir sayfa sonu
+                if ((index + 1) % 4 === 0 && index < questions.length - 1) {
+                    html += '<div class="page-break"></div>';
+                }
+            });
+
+            html += '</div>';
+
+            document.getElementById('printArea').innerHTML = html;
+        }
+
+        function printExam() {
+            if (questions.length === 0) {
+                alert('❌ Lütfen en az bir soru ekleyin!');
+                return;
+            }
+
+            // Boş soru kontrolü
+            const emptyQuestions = questions.filter(q => !q.text.trim());
+            if (emptyQuestions.length > 0) {
+                if (!confirm(`⚠️ ${emptyQuestions.length} adet boş soru var. Yazdırmaya devam etmek istiyor musunuz?`)) {
+                    return;
+                }
+            }
+
+            generateExamHTML();
+            document.querySelector('.print-area').style.display = 'block';
+            
+            setTimeout(() => {
+                window.print();
+                // Print sonrası preview'ı gizle
+                setTimeout(() => {
+                    document.querySelector('.print-area').style.display = 'none';
+                }, 500);
+            }, 100);
+        }
+
+        // Başlangıçta 5 soru ekle
+        for (let i = 0; i < 5; i++) {
+            addQuestion();
+        }
+    </script>
+</body>
+</html>
