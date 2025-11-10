@@ -1,0 +1,651 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bilgisayar Montaj Simülasyonu - BST</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        h1 {
+            text-align: center;
+            color: #f5576c;
+            margin-bottom: 10px;
+            font-size: 2.5em;
+        }
+        .subtitle { text-align: center; color: #666; margin-bottom: 20px; }
+
+        .progress-bar {
+            background: #e0e0e0;
+            border-radius: 15px;
+            height: 30px;
+            margin: 20px 0;
+            overflow: hidden;
+            position: relative;
+        }
+        .progress-fill {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            height: 100%;
+            width: 0%;
+            transition: width 0.5s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+
+        .game-layout {
+            display: grid;
+            grid-template-columns: 250px 1fr;
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .parts-panel {
+            background: #f5f5f5;
+            border-radius: 15px;
+            padding: 20px;
+            height: fit-content;
+        }
+
+        .parts-title {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .part-item {
+            background: white;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 10px;
+            border: 3px solid #e0e0e0;
+            cursor: grab;
+            transition: all 0.3s;
+            text-align: center;
+        }
+
+        .part-item:hover {
+            border-color: #f5576c;
+            transform: translateX(5px);
+            box-shadow: 0 5px 15px rgba(245, 87, 108, 0.3);
+        }
+
+        .part-item.placed {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+
+        .part-icon {
+            font-size: 2em;
+            margin-bottom: 5px;
+        }
+
+        .part-name {
+            font-weight: bold;
+            font-size: 0.9em;
+            color: #333;
+        }
+
+        .assembly-area {
+            background: linear-gradient(135deg, #e0e0e0 0%, #f5f5f5 100%);
+            border-radius: 15px;
+            padding: 30px;
+            min-height: 600px;
+            position: relative;
+            border: 3px dashed #ccc;
+        }
+
+        .case-frame {
+            position: relative;
+            width: 100%;
+            max-width: 700px;
+            height: 550px;
+            margin: 0 auto;
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: inset 0 5px 20px rgba(0,0,0,0.3);
+        }
+
+        .motherboard {
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #27ae60 0%, #229954 100%);
+            border-radius: 10px;
+            position: relative;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+
+        .slot {
+            position: absolute;
+            border: 3px dashed rgba(255,255,255,0.5);
+            border-radius: 8px;
+            background: rgba(255,255,255,0.1);
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 0.9em;
+            text-align: center;
+        }
+
+        .slot.active {
+            border-color: #f5576c;
+            background: rgba(245, 87, 108, 0.2);
+            animation: pulse 1s infinite;
+        }
+
+        .slot.filled {
+            border-color: #28a745;
+            background: rgba(40, 167, 69, 0.3);
+            border-style: solid;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        /* Slot pozisyonları */
+        #slot-cpu {
+            top: 15%;
+            left: 25%;
+            width: 120px;
+            height: 120px;
+        }
+
+        #slot-ram {
+            top: 15%;
+            right: 15%;
+            width: 100px;
+            height: 180px;
+        }
+
+        #slot-gpu {
+            bottom: 25%;
+            left: 20%;
+            width: 250px;
+            height: 80px;
+        }
+
+        #slot-storage {
+            bottom: 15%;
+            right: 15%;
+            width: 150px;
+            height: 100px;
+        }
+
+        #slot-psu {
+            top: 50%;
+            left: 5%;
+            width: 100px;
+            height: 120px;
+        }
+
+        #slot-cooling {
+            top: 10%;
+            left: 25%;
+            width: 130px;
+            height: 130px;
+        }
+
+        .placed-part {
+            position: absolute;
+            padding: 10px;
+            border-radius: 8px;
+            background: rgba(255,255,255,0.95);
+            box-shadow: 0 3px 10px rgba(0,0,0,0.3);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            pointer-events: none;
+        }
+
+        .placed-part-icon {
+            font-size: 2.5em;
+        }
+
+        .placed-part-name {
+            font-size: 0.8em;
+            color: #333;
+            margin-top: 5px;
+        }
+
+        .instructions {
+            background: #e7f3ff;
+            border-left: 5px solid #4facfe;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .current-step {
+            background: #fff3cd;
+            border-left: 5px solid #ffc107;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 1.1em;
+            font-weight: bold;
+        }
+
+        .stats {
+            display: flex;
+            justify-content: space-around;
+            background: #f5f5f5;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 2em;
+            font-weight: bold;
+            color: #f5576c;
+        }
+
+        .stat-label {
+            font-size: 0.9em;
+            color: #666;
+        }
+
+        .btn {
+            padding: 15px 30px;
+            font-size: 1.1em;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(245, 87, 108, 0.4);
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #5a6268;
+        }
+
+        .buttons {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .completion-message {
+            background: #d4edda;
+            border: 3px solid #28a745;
+            color: #155724;
+            padding: 30px;
+            border-radius: 15px;
+            text-align: center;
+            margin: 20px 0;
+            font-size: 1.3em;
+        }
+
+        .completion-icon {
+            font-size: 5em;
+            margin-bottom: 15px;
+        }
+
+        .tooltip {
+            position: absolute;
+            background: rgba(0,0,0,0.8);
+            color: white;
+            padding: 10px;
+            border-radius: 5px;
+            font-size: 0.9em;
+            pointer-events: none;
+            z-index: 1000;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🖥️ Bilgisayar Montaj Simülasyonu</h1>
+        <p class="subtitle">Parçaları Doğru Yerlere Yerleştirerek Bilgisayar Topla!</p>
+
+        <div class="stats">
+            <div class="stat-item">
+                <div class="stat-value" id="placedParts">0</div>
+                <div class="stat-label">Takılan Parça</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value" id="totalParts">6</div>
+                <div class="stat-label">Toplam Parça</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value" id="progressPercent">0%</div>
+                <div class="stat-label">İlerleme</div>
+            </div>
+        </div>
+
+        <div class="progress-bar">
+            <div class="progress-fill" id="progressBar">0%</div>
+        </div>
+
+        <div class="instructions">
+            <strong>📖 Talimatlar:</strong> Sol panelden parçaları sürükleyerek anakart üzerindeki doğru yuvalara yerleştirin. Her parçanın doğru yeri işaretlenmiştir. Sıra önemlidir!
+        </div>
+
+        <div class="current-step" id="currentStep">
+            1️⃣ Adım 1: İşlemciyi (CPU) anakarta yerleştirin
+        </div>
+
+        <div class="game-layout">
+            <div class="parts-panel">
+                <div class="parts-title">🔧 Bilgisayar Parçaları</div>
+                <div id="partsList"></div>
+            </div>
+
+            <div class="assembly-area">
+                <div class="case-frame">
+                    <div class="motherboard" id="motherboard">
+                        <div class="slot" id="slot-cpu" data-part="cpu">
+                            <span>🔲<br>CPU</span>
+                        </div>
+                        <div class="slot" id="slot-cooling" data-part="cooling" style="display: none;">
+                            <span>❄️<br>SOĞUTUCU</span>
+                        </div>
+                        <div class="slot" id="slot-ram" data-part="ram" style="display: none;">
+                            <span>🔲<br>RAM</span>
+                        </div>
+                        <div class="slot" id="slot-gpu" data-part="gpu" style="display: none;">
+                            <span>🔲<br>GPU</span>
+                        </div>
+                        <div class="slot" id="slot-storage" data-part="storage" style="display: none;">
+                            <span>🔲<br>DEPOLAMA</span>
+                        </div>
+                        <div class="slot" id="slot-psu" data-part="psu" style="display: none;">
+                            <span>🔲<br>GÜÇ KAYNAĞI</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="buttons">
+            <button class="btn btn-primary" onclick="showHint()">💡 İpucu</button>
+            <button class="btn btn-primary" onclick="checkAssembly()">✅ Montajı Kontrol Et</button>
+            <button class="btn btn-secondary" onclick="resetAssembly()">🔄 Yeniden Başla</button>
+            <button class="btn btn-secondary" onclick="window.location.href='../index.html'">🏠 Ana Sayfa</button>
+        </div>
+    </div>
+
+    <div class="tooltip" id="tooltip"></div>
+
+    <script>
+        const parts = [
+            { id: 'cpu', name: 'İşlemci (CPU)', icon: '🧠', description: 'Bilgisayarın beyni', order: 1 },
+            { id: 'cooling', name: 'Soğutucu', icon: '❄️', description: 'İşlemciyi soğutur', order: 2 },
+            { id: 'ram', name: 'RAM Bellek', icon: '💾', description: 'Geçici bellek', order: 3 },
+            { id: 'gpu', name: 'Ekran Kartı (GPU)', icon: '🎮', description: 'Grafik işlemcisi', order: 4 },
+            { id: 'storage', name: 'Depolama (SSD)', icon: '💿', description: 'Veri depolama', order: 5 },
+            { id: 'psu', name: 'Güç Kaynağı (PSU)', icon: '⚡', description: 'Elektrik sağlar', order: 6 }
+        ];
+
+        let placedParts = [];
+        let currentStep = 1;
+        let draggedPart = null;
+
+        function initGame() {
+            renderParts();
+            updateProgress();
+            highlightCurrentSlot();
+        }
+
+        function renderParts() {
+            const partsList = document.getElementById('partsList');
+            partsList.innerHTML = '';
+
+            parts.forEach(part => {
+                const isPlaced = placedParts.includes(part.id);
+                const partDiv = document.createElement('div');
+                partDiv.className = `part-item ${isPlaced ? 'placed' : ''}`;
+                partDiv.draggable = !isPlaced;
+                partDiv.dataset.partId = part.id;
+                partDiv.innerHTML = `
+                    <div class="part-icon">${part.icon}</div>
+                    <div class="part-name">${part.name}</div>
+                `;
+
+                if (!isPlaced) {
+                    partDiv.addEventListener('dragstart', handleDragStart);
+                    partDiv.addEventListener('mouseenter', (e) => showTooltip(e, part.description));
+                    partDiv.addEventListener('mouseleave', hideTooltip);
+                }
+
+                partsList.appendChild(partDiv);
+            });
+        }
+
+        function handleDragStart(e) {
+            draggedPart = e.currentTarget.dataset.partId;
+            e.currentTarget.style.opacity = '0.5';
+        }
+
+        document.addEventListener('dragend', (e) => {
+            if (e.target.classList.contains('part-item')) {
+                e.target.style.opacity = '1';
+            }
+        });
+
+        const slots = document.querySelectorAll('.slot');
+        slots.forEach(slot => {
+            slot.addEventListener('dragover', handleDragOver);
+            slot.addEventListener('drop', handleDrop);
+            slot.addEventListener('dragleave', handleDragLeave);
+        });
+
+        function handleDragOver(e) {
+            e.preventDefault();
+            e.currentTarget.classList.add('active');
+        }
+
+        function handleDragLeave(e) {
+            e.currentTarget.classList.remove('active');
+        }
+
+        function handleDrop(e) {
+            e.preventDefault();
+            const slot = e.currentTarget;
+            slot.classList.remove('active');
+
+            const expectedPart = slot.dataset.part;
+
+            if (draggedPart === expectedPart) {
+                const part = parts.find(p => p.id === draggedPart);
+
+                if (part.order === currentStep) {
+                    placePart(draggedPart, slot);
+                    currentStep++;
+                    updateProgress();
+                    updateStepDisplay();
+                    highlightCurrentSlot();
+
+                    if (placedParts.length === parts.length) {
+                        setTimeout(showCompletion, 500);
+                    }
+                } else {
+                    alert(`❌ Yanlış sıra! Önce "${parts.find(p => p.order === currentStep).name}" parçasını takmalısın.`);
+                }
+            } else {
+                alert('❌ Yanlış yuva! Bu parça buraya takılamaz.');
+            }
+
+            draggedPart = null;
+        }
+
+        function placePart(partId, slot) {
+            placedParts.push(partId);
+            slot.classList.add('filled');
+
+            const part = parts.find(p => p.id === partId);
+            const placedDiv = document.createElement('div');
+            placedDiv.className = 'placed-part';
+            placedDiv.style.width = slot.offsetWidth + 'px';
+            placedDiv.style.height = slot.offsetHeight + 'px';
+            placedDiv.innerHTML = `
+                <div class="placed-part-icon">${part.icon}</div>
+                <div class="placed-part-name">${part.name}</div>
+            `;
+
+            slot.innerHTML = '';
+            slot.appendChild(placedDiv);
+
+            renderParts();
+        }
+
+        function highlightCurrentSlot() {
+            slots.forEach(slot => {
+                slot.style.display = 'none';
+                slot.classList.remove('active');
+            });
+
+            if (currentStep <= parts.length) {
+                const nextPart = parts.find(p => p.order === currentStep);
+                const nextSlot = document.getElementById(`slot-${nextPart.id}`);
+                nextSlot.style.display = 'flex';
+            }
+        }
+
+        function updateProgress() {
+            const progress = Math.round((placedParts.length / parts.length) * 100);
+            document.getElementById('placedParts').textContent = placedParts.length;
+            document.getElementById('progressPercent').textContent = progress + '%';
+            document.getElementById('progressBar').style.width = progress + '%';
+            document.getElementById('progressBar').textContent = progress + '%';
+        }
+
+        function updateStepDisplay() {
+            const stepDisplay = document.getElementById('currentStep');
+
+            if (currentStep <= parts.length) {
+                const nextPart = parts.find(p => p.order === currentStep);
+                stepDisplay.innerHTML = `${currentStep}️⃣ Adım ${currentStep}: ${nextPart.name} parçasını takın`;
+            } else {
+                stepDisplay.innerHTML = '✅ Tüm parçalar takıldı! Montajı kontrol edebilirsiniz.';
+                stepDisplay.style.background = '#d4edda';
+                stepDisplay.style.borderColor = '#28a745';
+            }
+        }
+
+        function showHint() {
+            const hints = [
+                '💡 İşlemci (CPU) önce takılmalıdır - bilgisayarın beynidir!',
+                '💡 Soğutucu, işlemcinin üzerine gelir ve onu soğuk tutar.',
+                '💡 RAM bellek, anakartın sağ tarafındaki uzun yuvalara takılır.',
+                '💡 Ekran kartı (GPU), oyun ve grafik işlemleri için gereklidir.',
+                '💡 SSD/Hard disk, verilerinizi saklar.',
+                '💡 Güç kaynağı (PSU) en son takılır ve tüm sisteme elektrik sağlar.'
+            ];
+
+            if (currentStep <= parts.length) {
+                alert(hints[currentStep - 1]);
+            } else {
+                alert('💡 Harika! Tüm parçaları doğru sırayla taktınız. Montajı kontrol edebilirsiniz.');
+            }
+        }
+
+        function checkAssembly() {
+            if (placedParts.length === parts.length) {
+                showCompletion();
+            } else {
+                alert(`⚠️ Montaj henüz tamamlanmadı!\n\nTakılan parça: ${placedParts.length}/${parts.length}\n\nKalan parçaları takın.`);
+            }
+        }
+
+        function showCompletion() {
+            const message = document.createElement('div');
+            message.className = 'completion-message';
+            message.innerHTML = `
+                <div class="completion-icon">🎉</div>
+                <h2>Tebrikler! Bilgisayarı Başarıyla Topladın!</h2>
+                <p style="margin: 20px 0;">Tüm parçaları doğru sırayla ve doğru yerlere yerleştirdin.</p>
+                <div style="background: white; padding: 20px; border-radius: 10px; margin-top: 20px; color: #333; text-align: left;">
+                    <h3 style="color: #f5576c; margin-bottom: 15px;">🎓 Öğrendiklerin:</h3>
+                    <ul style="line-height: 2;">
+                        <li>✅ Bilgisayar parçalarını tanıma</li>
+                        <li>✅ Doğru montaj sırası (CPU → Soğutucu → RAM → GPU → SSD → PSU)</li>
+                        <li>✅ Anakart yuvaları ve bağlantı noktaları</li>
+                        <li>✅ Her parçanın işlevi</li>
+                        <li>✅ Bilgisayar donanımı temelleri</li>
+                    </ul>
+                </div>
+                <div style="margin-top: 20px; font-size: 1.1em;">
+                    <p>🏆 <strong>Başarı Kazandın:</strong> "Donanım Ustası" rozeti!</p>
+                </div>
+            `;
+
+            document.querySelector('.game-layout').replaceWith(message);
+        }
+
+        function resetAssembly() {
+            if (confirm('Montajı sıfırlamak istediğinden emin misin?')) {
+                location.reload();
+            }
+        }
+
+        function showTooltip(e, text) {
+            const tooltip = document.getElementById('tooltip');
+            tooltip.textContent = text;
+            tooltip.style.display = 'block';
+            tooltip.style.left = e.clientX + 10 + 'px';
+            tooltip.style.top = e.clientY + 10 + 'px';
+        }
+
+        function hideTooltip() {
+            document.getElementById('tooltip').style.display = 'none';
+        }
+
+        document.addEventListener('mousemove', (e) => {
+            const tooltip = document.getElementById('tooltip');
+            if (tooltip.style.display === 'block') {
+                tooltip.style.left = e.clientX + 10 + 'px';
+                tooltip.style.top = e.clientY + 10 + 'px';
+            }
+        });
+
+        // Oyunu başlat
+        initGame();
+    </script>
+</body>
+</html>
