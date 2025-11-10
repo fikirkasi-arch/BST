@@ -77,7 +77,7 @@ export const login = async (req: Request, res: Response): Promise<void> => {
         role: user.role,
       },
       secret,
-      { expiresIn }
+      { expiresIn: expiresIn as string }
     );
 
     const response: LoginResponse = {
