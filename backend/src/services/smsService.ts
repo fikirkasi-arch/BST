@@ -1,6 +1,5 @@
 import axios from 'axios';
 import twilio from 'twilio';
-import { ProviderSettings } from '../types';
 
 export interface SMSResult {
   success: boolean;
