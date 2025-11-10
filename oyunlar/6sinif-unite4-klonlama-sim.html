@@ -3,114 +3,442 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Klonlama Simülasyonu</title>
+    <title>Scratch Klonlama Simülasyonu - 6. Sınıf Ünite 4</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #fccb90 0%, #d57eeb 100%);
             min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
             padding: 20px;
         }
         .container {
+            max-width: 1200px;
+            margin: 0 auto;
             background: white;
             border-radius: 20px;
-            padding: 40px;
-            max-width: 700px;
-            width: 100%;
+            padding: 30px;
             box-shadow: 0 20px 60px rgba(0,0,0,0.3);
         }
-        h1 {
-            color: #667eea;
-            text-align: center;
-            margin-bottom: 10px;
-        }
-        .subtitle {
-            text-align: center;
-            color: #666;
-            margin-bottom: 30px;
-        }
-        .question {
-            font-size: 1.3em;
-            color: #333;
-            margin-bottom: 20px;
-            font-weight: bold;
-        }
-        .options {
-            margin: 20px 0;
-        }
-        .option {
-            background: linear-gradient(135deg, #667eea15 0%, #764ba215 100%);
-            padding: 15px 20px;
-            margin: 10px 0;
+        h1 { text-align: center; color: #d57eeb; margin-bottom: 20px; }
+        .tutorial {
+            background: #fff9e6;
+            padding: 20px;
             border-radius: 10px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            border: 2px solid transparent;
-        }
-        .option:hover {
-            transform: translateX(5px);
-            border-color: #667eea;
-        }
-        .option.correct {
-            background: linear-gradient(135deg, #4caf5030 0%, #8bc34a30 100%);
-            border-color: #4caf50;
-        }
-        .option.wrong {
-            background: linear-gradient(135deg, #f4433630 0%, #e9173030 100%);
-            border-color: #f44336;
-        }
-        .score {
-            text-align: center;
-            font-size: 1.5em;
-            color: #764ba2;
-            margin: 20px 0;
-            font-weight: bold;
-        }
-        .btn {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border: none;
-            padding: 15px 30px;
-            border-radius: 25px;
-            font-size: 1.1em;
-            cursor: pointer;
-            display: block;
-            margin: 20px auto;
-            transition: all 0.3s ease;
-        }
-        .btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
-        }
-        .back-btn {
-            display: inline-block;
-            background: white;
-            color: #667eea;
-            padding: 10px 20px;
-            border-radius: 20px;
-            text-decoration: none;
-            border: 2px solid #667eea;
             margin-bottom: 20px;
+            border-left: 5px solid #ffc107;
+        }
+        .stage {
+            background: #ffffff;
+            border: 3px solid #d57eeb;
+            border-radius: 15px;
+            height: 400px;
+            position: relative;
+            overflow: hidden;
+            margin: 20px 0;
+        }
+        .sprite {
+            position: absolute;
+            width: 60px;
+            height: 60px;
+            background: #ff6b6b;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2em;
+            cursor: move;
+            transition: all 0.3s;
+            border: 3px solid #fff;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        .sprite.clone {
+            background: #4ecdc4;
+        }
+        .sprite:hover {
+            transform: scale(1.1);
+        }
+        .controls {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        .control-btn {
+            padding: 15px 20px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            color: white;
+        }
+        .control-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+        .btn-create { background: linear-gradient(135deg, #4ecdc4 0%, #44a08d 100%); }
+        .btn-move { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+        .btn-delete { background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); }
+        .btn-reset { background: linear-gradient(135deg, #fa709a 0%, #fee140 100%); }
+        .stats {
+            display: flex;
+            justify-content: space-around;
+            background: #f5f5f5;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+        .stat-item {
+            text-align: center;
+        }
+        .stat-value {
+            font-size: 2.5em;
+            font-weight: bold;
+            color: #d57eeb;
+        }
+        .stat-label {
+            color: #666;
+            margin-top: 5px;
+        }
+        .code-block {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 20px;
+            border-radius: 10px;
+            font-family: 'Courier New', monospace;
+            margin: 20px 0;
+            line-height: 1.8;
+        }
+        .keyword { color: #569cd6; }
+        .event { color: #4ec9b0; }
+        .string { color: #ce9178; }
+        .number { color: #b5cea8; }
+        .quiz-section {
+            background: #e7f3ff;
+            padding: 25px;
+            border-radius: 15px;
+            margin: 25px 0;
+        }
+        .quiz-option {
+            background: white;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 8px;
+            cursor: pointer;
+            border: 2px solid #e0e0e0;
+            transition: all 0.3s;
+        }
+        .quiz-option:hover {
+            border-color: #d57eeb;
+            transform: translateX(5px);
+        }
+        .quiz-option.correct {
+            border-color: #28a745;
+            background: #d4edda;
+        }
+        .quiz-option.wrong {
+            border-color: #dc3545;
+            background: #f8d7da;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <a href="../index.html" class="back-btn">← Ana Sayfaya Dön</a>
-        <h1>Klonlama Simülasyonu</h1>
-        <p class="subtitle">6. Sınıf - Ünite 4</p>
-        <div class="score">Puan: <span id="score">0</span></div>
-        <div id="quiz">
-            <div class="question" id="question"></div>
-            <div class="options" id="options"></div>
+        <h1>🎬 Scratch Klonlama Simülasyonu</h1>
+
+        <div class="tutorial">
+            <h3 style="color: #333; margin-bottom: 10px;">📚 Klonlama Nedir?</h3>
+            <p style="line-height: 1.8; color: #666;">
+                <strong>Klonlama</strong>, Scratch'te bir sprite'ın (karakter) kopyalarını oluşturma işlemidir.
+                Aynı sprite'tan birçok kopya yaratarak oyunlar, animasyonlar ve simülasyonlar yapabilirsiniz!
+            </p>
         </div>
-        <button class="btn" onclick="nextQuestion()" id="nextBtn" style="display:none;">Sonraki Soru →</button>
-        <button class="btn" onclick="resetQuiz()" id="resetBtn" style="display:none;">🔄 Yeniden Başlat</button>
+
+        <div class="stats">
+            <div class="stat-item">
+                <div class="stat-value" id="spriteCount">1</div>
+                <div class="stat-label">Toplam Sprite</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value" id="cloneCount">0</div>
+                <div class="stat-label">Klonlar</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value" id="moveCount">0</div>
+                <div class="stat-label">Hareket</div>
+            </div>
+        </div>
+
+        <div class="stage" id="stage">
+            <div class="sprite" id="original" style="left: 50px; top: 50px;">🐱</div>
+        </div>
+
+        <div class="controls">
+            <button class="control-btn btn-create" onclick="createClone()">➕ Klon Oluştur</button>
+            <button class="control-btn btn-move" onclick="moveAllSprites()">🎯 Hepsini Hareket Ettir</button>
+            <button class="control-btn btn-delete" onclick="deleteAllClones()">🗑️ Klonları Sil</button>
+            <button class="control-btn btn-reset" onclick="reset()">🔄 Sıfırla</button>
+        </div>
+
+        <div style="background: #fff3cd; padding: 20px; border-radius: 10px; margin: 20px 0; border-left: 5px solid #ffc107;">
+            <h3 style="color: #856404; margin-bottom: 10px;">💡 Nasıl Kullanılır?</h3>
+            <ul style="line-height: 2; color: #856404;">
+                <li>➕ <strong>Klon Oluştur:</strong> Orijinal sprite'tan yeni bir kopya oluşturur</li>
+                <li>🎯 <strong>Hepsini Hareket Ettir:</strong> Tüm sprite'ları rastgele yönlere hareket ettirir</li>
+                <li>🗑️ <strong>Klonları Sil:</strong> Sadece klonları siler, orijinal kalır</li>
+                <li>🖱️ <strong>Sürükle:</strong> Sprite'ları fareyle taşıyabilirsiniz</li>
+            </ul>
+        </div>
+
+        <div class="code-block">
+            <div><span class="event">Yeşil bayrak tıklandığında</span></div>
+            <div style="margin-left: 20px;"><span class="keyword">sürekli</span></div>
+            <div style="margin-left: 40px;"><span class="keyword">eğer</span> <span class="string">&lt;fare tıklandı&gt;</span> <span class="keyword">ise</span></div>
+            <div style="margin-left: 60px;"><span class="event">kendimin klonunu oluştur</span></div>
+            <div style="margin-left: 40px;"><span class="keyword">son</span></div>
+            <div style="margin-left: 20px;"><span class="keyword">son</span></div>
+            <div><br></div>
+            <div><span class="event">Klon olarak başladığımda</span></div>
+            <div style="margin-left: 20px;"><span class="number">10</span> <span class="keyword">kere tekrarla</span></div>
+            <div style="margin-left: 40px;"><span class="number">10</span> <span class="keyword">adım ilerle</span></div>
+            <div style="margin-left: 40px;"><span class="number">15</span> <span class="keyword">derece döndür</span></div>
+            <div style="margin-left: 20px;"><span class="keyword">son</span></div>
+            <div style="margin-left: 20px;"><span class="keyword">bu klonu sil</span></div>
+        </div>
+
+        <div class="quiz-section">
+            <h3 style="color: #333; margin-bottom: 20px;">❓ Klonlama Quiz</h3>
+            <div id="quizContent"></div>
+            <button class="control-btn btn-move" id="nextQuizBtn" onclick="nextQuestion()" style="display: none; margin-top: 15px;">➡️ Sonraki Soru</button>
+        </div>
+
+        <div style="background: linear-gradient(135deg, #fccb9015 0%, #d57eeb15 100%); padding: 25px; border-radius: 15px; border-left: 5px solid #d57eeb;">
+            <h3 style="color: #d57eeb; margin-bottom: 15px;">🎯 Klonlama Kullanım Alanları</h3>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px;">
+                <div style="background: white; padding: 15px; border-radius: 10px;">
+                    <div style="font-size: 2em; margin-bottom: 10px;">🎮</div>
+                    <strong>Oyunlar:</strong> Düşman karakterler, mermiler, puanlar
+                </div>
+                <div style="background: white; padding: 15px; border-radius: 10px;">
+                    <div style="font-size: 2em; margin-bottom: 10px;">⭐</div>
+                    <strong>Animasyonlar:</strong> Yıldızlar, kar taneleri, konfetiler
+                </div>
+                <div style="background: white; padding: 15px; border-radius: 10px;">
+                    <div style="font-size: 2em; margin-bottom: 10px;">🔬</div>
+                    <strong>Simülasyonlar:</strong> Parçacıklar, hücreler, objeler
+                </div>
+                <div style="background: white; padding: 15px; border-radius: 10px;">
+                    <div style="font-size: 2em; margin-bottom: 10px;">🎨</div>
+                    <strong>Sanat:</strong> Desenler, fraktallar, patternler
+                </div>
+            </div>
+        </div>
     </div>
-    <script src="6sinif-unite4-klonlama-sim.js"></script>
+
+    <script>
+        let cloneCount = 0;
+        let moveCount = 0;
+        let currentQuestion = 0;
+        let isDragging = false;
+        let currentSprite = null;
+        let offsetX = 0;
+        let offsetY = 0;
+
+        const quizQuestions = [
+            {
+                question: 'Klonlama bloğunun adı nedir?',
+                options: [
+                    'Kendimin klonunu oluştur',
+                    'Sprite oluştur',
+                    'Kopya yap',
+                    'Yeni sprite'
+                ],
+                correct: 0
+            },
+            {
+                question: 'Bir klon oluşturulduğunda hangi blok çalışır?',
+                options: [
+                    'Yeşil bayrak tıklandığında',
+                    'Klon olarak başladığımda',
+                    'Sprite tıklandığında',
+                    'Sürekli'
+                ],
+                correct: 1
+            },
+            {
+                question: 'Klonları silmek için hangi blok kullanılır?',
+                options: [
+                    'Sprite\'ı gizle',
+                    'Sprite\'ı sil',
+                    'Bu klonu sil',
+                    'Hepsini temizle'
+                ],
+                correct: 2
+            },
+            {
+                question: 'Klonlama hangi durumlarda kullanılır?',
+                options: [
+                    'Sadece oyunlarda',
+                    'Birçok kopya gerektiğinde',
+                    'Asla kullanılmaz',
+                    'Sadece animasyonlarda'
+                ],
+                correct: 1
+            },
+            {
+                question: 'Klonlar orijinal sprite\'tan hangi özellikleri alır?',
+                options: [
+                    'Hiçbir özellik',
+                    'Sadece görünüm',
+                    'Tüm özellikler (konum, kostüm, değişkenler)',
+                    'Sadece konum'
+                ],
+                correct: 2
+            }
+        ];
+
+        function createClone() {
+            cloneCount++;
+            const stage = document.getElementById('stage');
+            const clone = document.createElement('div');
+            clone.className = 'sprite clone';
+            clone.textContent = '🐱';
+            clone.style.left = (Math.random() * (stage.clientWidth - 60)) + 'px';
+            clone.style.top = (Math.random() * (stage.clientHeight - 60)) + 'px';
+            
+            setupDragAndDrop(clone);
+            stage.appendChild(clone);
+            
+            document.getElementById('cloneCount').textContent = cloneCount;
+            document.getElementById('spriteCount').textContent = document.querySelectorAll('.sprite').length;
+        }
+
+        function moveAllSprites() {
+            const sprites = document.querySelectorAll('.sprite');
+            const stage = document.getElementById('stage');
+            
+            sprites.forEach(sprite => {
+                const currentLeft = parseFloat(sprite.style.left);
+                const currentTop = parseFloat(sprite.style.top);
+                const angle = Math.random() * Math.PI * 2;
+                const distance = 50;
+                
+                let newLeft = currentLeft + Math.cos(angle) * distance;
+                let newTop = currentTop + Math.sin(angle) * distance;
+                
+                newLeft = Math.max(0, Math.min(stage.clientWidth - 60, newLeft));
+                newTop = Math.max(0, Math.min(stage.clientHeight - 60, newTop));
+                
+                sprite.style.left = newLeft + 'px';
+                sprite.style.top = newTop + 'px';
+            });
+            
+            moveCount++;
+            document.getElementById('moveCount').textContent = moveCount;
+        }
+
+        function deleteAllClones() {
+            const clones = document.querySelectorAll('.sprite.clone');
+            clones.forEach(clone => clone.remove());
+            cloneCount = 0;
+            document.getElementById('cloneCount').textContent = cloneCount;
+            document.getElementById('spriteCount').textContent = 1;
+        }
+
+        function reset() {
+            deleteAllClones();
+            const original = document.getElementById('original');
+            original.style.left = '50px';
+            original.style.top = '50px';
+            moveCount = 0;
+            document.getElementById('moveCount').textContent = moveCount;
+        }
+
+        function setupDragAndDrop(sprite) {
+            sprite.addEventListener('mousedown', function(e) {
+                isDragging = true;
+                currentSprite = sprite;
+                offsetX = e.clientX - sprite.offsetLeft;
+                offsetY = e.clientY - sprite.offsetTop;
+                sprite.style.cursor = 'grabbing';
+            });
+        }
+
+        document.addEventListener('mousemove', function(e) {
+            if (isDragging && currentSprite) {
+                const stage = document.getElementById('stage');
+                const stageRect = stage.getBoundingClientRect();
+                
+                let newLeft = e.clientX - stageRect.left - offsetX;
+                let newTop = e.clientY - stageRect.top - offsetY;
+                
+                newLeft = Math.max(0, Math.min(stage.clientWidth - 60, newLeft));
+                newTop = Math.max(0, Math.min(stage.clientHeight - 60, newTop));
+                
+                currentSprite.style.left = newLeft + 'px';
+                currentSprite.style.top = newTop + 'px';
+            }
+        });
+
+        document.addEventListener('mouseup', function() {
+            if (currentSprite) {
+                currentSprite.style.cursor = 'move';
+            }
+            isDragging = false;
+            currentSprite = null;
+        });
+
+        function loadQuestion() {
+            if (currentQuestion >= quizQuestions.length) {
+                document.getElementById('quizContent').innerHTML = `
+                    <div style="text-align: center; padding: 30px;">
+                        <div style="font-size: 4em; margin-bottom: 15px;">🏆</div>
+                        <h2 style="color: #28a745; margin-bottom: 10px;">Tebrikler!</h2>
+                        <p style="font-size: 1.2em; color: #666;">Klonlama konusunu başarıyla tamamladınız!</p>
+                    </div>
+                `;
+                document.getElementById('nextQuizBtn').style.display = 'none';
+                return;
+            }
+
+            const q = quizQuestions[currentQuestion];
+            let html = `
+                <h4 style="color: #333; margin-bottom: 15px;">Soru ${currentQuestion + 1}: ${q.question}</h4>
+            `;
+
+            q.options.forEach((option, i) => {
+                html += `<div class="quiz-option" onclick="checkAnswer(${i})">${option}</div>`;
+            });
+
+            document.getElementById('quizContent').innerHTML = html;
+            document.getElementById('nextQuizBtn').style.display = 'none';
+        }
+
+        function checkAnswer(selected) {
+            const q = quizQuestions[currentQuestion];
+            const options = document.querySelectorAll('.quiz-option');
+            
+            options.forEach((opt, i) => {
+                opt.style.pointerEvents = 'none';
+                if (i === q.correct) {
+                    opt.classList.add('correct');
+                } else if (i === selected) {
+                    opt.classList.add('wrong');
+                }
+            });
+
+            document.getElementById('nextQuizBtn').style.display = 'inline-block';
+        }
+
+        function nextQuestion() {
+            currentQuestion++;
+            loadQuestion();
+        }
+
+        setupDragAndDrop(document.getElementById('original'));
+        loadQuestion();
+    </script>
 </body>
 </html>
