@@ -2,83 +2,124 @@
 <html lang="tr">
 <head>
     <meta charset="UTF-8">
-    <title>6. Sınıf Ünite 2 - Etik ve Güvenlik Quiz</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>6. Sınıf Ünite 2 Quiz - Etik ve Güvenlik</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Segoe UI', sans-serif; background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); min-height: 100vh; padding: 20px; }
-        .quiz-container { max-width: 800px; margin: 0 auto; background: white; border-radius: 20px; padding: 40px; box-shadow: 0 10px 40px rgba(0,0,0,0.2); }
-        h1 { text-align: center; color: #f5576c; font-size: 2.5em; margin-bottom: 10px; }
-        .subtitle { text-align: center; color: #666; margin-bottom: 30px; font-size: 1.2em; }
-        .progress-bar { width: 100%; height: 30px; background: #e0e0e0; border-radius: 15px; overflow: hidden; margin-bottom: 30px; }
-        .progress-fill { height: 100%; background: linear-gradient(90deg, #f093fb 0%, #f5576c 100%); width: 0%; transition: width 0.3s; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; }
-        .question-number { color: #f5576c; font-weight: bold; font-size: 1.2em; margin-bottom: 10px; }
-        .question-text { font-size: 1.3em; color: #333; margin-bottom: 20px; line-height: 1.6; }
-        .options { display: flex; flex-direction: column; gap: 15px; }
-        .option { padding: 20px; border: 3px solid #e0e0e0; border-radius: 15px; cursor: pointer; transition: all 0.3s; font-size: 1.1em; }
-        .option:hover { border-color: #f5576c; background: #fff0f5; transform: translateX(10px); }
-        .option.selected { border-color: #f5576c; background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white; }
-        .buttons { display: flex; gap: 20px; justify-content: center; margin-top: 30px; }
-        .btn { padding: 15px 40px; font-size: 1.1em; border: none; border-radius: 10px; cursor: pointer; font-weight: bold; transition: all 0.3s; }
-        .btn-primary { background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white; }
-        .btn-secondary { background: #e0e0e0; color: #333; }
-        .btn:disabled { opacity: 0.5; cursor: not-allowed; }
-        .result-container { text-align: center; display: none; }
-        .score-display { font-size: 5em; color: #f5576c; font-weight: bold; margin: 30px 0; }
-        .emoji-celebration { font-size: 4em; margin: 20px 0; }
-        .score-details { background: #fff0f5; padding: 30px; border-radius: 15px; margin-bottom: 30px; }
-        .score-item { font-size: 1.2em; margin: 10px 0; color: #555; }
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .quiz-container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+        }
+        h1 {
+            text-align: center;
+            color: #38f9d7;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 1.2em;
+        }
     </style>
 </head>
 <body>
-    <div class="quiz-container">
-        <h1>🔐 Etik ve Güvenlik Quiz</h1>
+    <div class="quiz-container" style="text-align: center; padding: 60px 40px;">
+        <h1>🛡️ Etik ve Güvenlik Quiz</h1>
         <p class="subtitle">6. Sınıf - Ünite 2 | 10 Soru</p>
-        <div class="progress-bar"><div class="progress-fill" id="progressBar">0/10</div></div>
-        <div id="quizContent">
-            <div><div class="question-number" id="questionNumber"></div>
-            <div class="question-text" id="questionText"></div>
-            <div class="options" id="optionsContainer"></div></div>
-            <div class="buttons">
-                <button class="btn btn-secondary" id="prevBtn" onclick="previousQuestion()" disabled>⬅️ Önceki</button>
-                <button class="btn btn-primary" id="nextBtn" onclick="nextQuestion()" disabled>Sonraki ➡️</button>
-                <button class="btn btn-primary" id="finishBtn" onclick="finishQuiz()" style="display:none;">✅ Bitir</button>
-            </div>
-        </div>
-        <div class="result-container" id="resultContainer">
-            <div class="emoji-celebration" id="celebrationEmoji"></div>
-            <div class="score-display" id="scoreDisplay"></div>
-            <div class="score-details">
-                <div class="score-item">✅ Doğru: <strong id="correctCount">0</strong></div>
-                <div class="score-item">❌ Yanlış: <strong id="incorrectCount">0</strong></div>
-                <div class="score-item">📊 Başarı: <strong id="successRate">0%</strong></div>
-            </div>
-            <button class="btn btn-primary" onclick="restartQuiz()">🔄 Tekrar Dene</button>
-            <br><a href="index.html" style="display:inline-block; margin-top:20px; color:#f5576c; text-decoration:none; font-size:1.1em;">⬅️ Ana Sayfaya Dön</a>
+
+        <div id="quiz-container" style="margin-top: 40px;">
+            <p style="color: #999; font-style: italic;">Quiz yükleniyor...</p>
         </div>
     </div>
+
+    <!-- JavaScript modülleri -->
+    <script src="scripts/storage.js"></script>
+    <script src="scripts/analytics.js"></script>
+    <script src="scripts/badge-system.js"></script>
+    <script src="scripts/quiz-engine.js"></script>
+
     <script>
-        const questions = [
-            { question: "KVKK'nın açılımı nedir?", options: ["Kişisel Verilerin Korunması Kanunu", "Kamu Verileri Kullanım Kanunu", "Kişisel Veri Koruma Komitesi", "Kullanıcı Verileri Koruma Kanunu"], correct: 0 },
-            { question: "Kişisel veri örneği hangisidir?", options: ["Hava durumu", "TC Kimlik numarası", "Okul adı", "Ülke nüfusu"], correct: 1 },
-            { question: "İki faktörlü doğrulama (2FA) nedir?", options: ["Sadece şifre kullanma", "Şifre + doğrulama kodu ile giriş", "Parmak izi okuma", "Kullanıcı adı belirleme"], correct: 1 },
-            { question: "Phishing saldırısı nedir?", options: ["Virüs taraması", "Sahte e-posta ile bilgi çalma", "Güvenlik duvarı kurma", "Dosya yedekleme"], correct: 1 },
-            { question: "Güçlü şifre özellikleri nelerdir?", options: ["Sadece harf içermeli", "Sadece rakam içermeli", "Büyük harf, küçük harf, rakam ve sembol içermeli", "İsim veya doğum tarihi olmalı"], correct: 2 },
-            { question: "Ransomware ne yapar?", options: ["Dosyalarını şifreler ve fidye ister", "Bilgisayarı hızlandırır", "Ücretsiz oyun sunar", "Antivirüs programıdır"], correct: 0 },
-            { question: "VPN ne işe yarar?", options: ["Oyun oynamak", "İnternet trafiğini şifreleyip anonimlik sağlar", "Müzik dinlemek", "Fotoğraf düzenlemek"], correct: 1 },
-            { question: "Dijital ayak izi nedir?", options: ["Parmak izi", "İnternette bıraktığın izler ve veriler", "Ayakkabı numarası", "E-posta adresi"], correct: 1 },
-            { question: "Telif hakkı nedir?", options: ["Bedava yazılım", "Fikri mülkiyet haklarını koruma", "Oyun oynama hakkı", "İnternet kullanma hakkı"], correct: 1 },
-            { question: "Siber zorbalık örneği hangisidir?", options: ["Arkadaşına mesaj atmak", "Ödeve yardım etmek", "Sosyal medyada birini sürekli rahatsız etmek", "Video oyunu oynamak"], correct: 2 }
-        ];
-        let currentQuestion = 0, userAnswers = [], selectedOption = null;
-        function loadQuestion() { const q = questions[currentQuestion]; document.getElementById('questionNumber').textContent = `Soru ${currentQuestion + 1}/${questions.length}`; document.getElementById('questionText').textContent = q.question; const container = document.getElementById('optionsContainer'); container.innerHTML = ''; q.options.forEach((opt, idx) => { const div = document.createElement('div'); div.className = 'option'; div.textContent = opt; div.onclick = () => selectOption(idx); if (userAnswers[currentQuestion] === idx) { div.classList.add('selected'); selectedOption = idx; } container.appendChild(div); }); updateProgress(); updateButtons(); }
-        function selectOption(idx) { selectedOption = idx; userAnswers[currentQuestion] = idx; document.querySelectorAll('.option').forEach((o, i) => { o.classList.remove('selected'); if (i === idx) o.classList.add('selected'); }); updateButtons(); }
-        function nextQuestion() { if (currentQuestion < questions.length - 1) { currentQuestion++; selectedOption = null; loadQuestion(); } }
-        function previousQuestion() { if (currentQuestion > 0) { currentQuestion--; selectedOption = userAnswers[currentQuestion]; loadQuestion(); } }
-        function updateButtons() { document.getElementById('prevBtn').disabled = currentQuestion === 0; document.getElementById('nextBtn').disabled = selectedOption === null; if (currentQuestion === questions.length - 1) { document.getElementById('nextBtn').style.display = 'none'; document.getElementById('finishBtn').style.display = 'inline-block'; document.getElementById('finishBtn').disabled = userAnswers.filter(a => a !== undefined).length !== questions.length; } else { document.getElementById('nextBtn').style.display = 'inline-block'; document.getElementById('finishBtn').style.display = 'none'; } }
-        function updateProgress() { const answered = userAnswers.filter(a => a !== undefined).length; document.getElementById('progressBar').style.width = ((answered / questions.length) * 100) + '%'; document.getElementById('progressBar').textContent = `${answered}/${questions.length}`; }
-        function finishQuiz() { let correct = 0; questions.forEach((q, idx) => { if (userAnswers[idx] === q.correct) correct++; }); const pct = Math.round((correct / questions.length) * 100); document.getElementById('quizContent').style.display = 'none'; document.getElementById('resultContainer').style.display = 'block'; document.getElementById('scoreDisplay').textContent = `${correct}/${questions.length}`; document.getElementById('correctCount').textContent = correct; document.getElementById('incorrectCount').textContent = questions.length - correct; document.getElementById('successRate').textContent = pct + '%'; document.getElementById('celebrationEmoji').textContent = pct >= 90 ? '🏆' : pct >= 70 ? '🎉' : pct >= 50 ? '😊' : '📚'; }
-        function restartQuiz() { currentQuestion = 0; userAnswers = []; selectedOption = null; document.getElementById('quizContent').style.display = 'block'; document.getElementById('resultContainer').style.display = 'none'; loadQuestion(); }
-        loadQuestion();
+        // Quiz verisi
+        const quizData = {
+            title: "6. Sınıf Ünite 2 - Etik ve Güvenlik",
+            shuffle: false,
+            timerEnabled: false,
+            pointsPerQuestion: 10,
+            questions: [
+                {
+                    question: "KVKK'nın açılımı nedir?",
+                    options: ["Kişisel Verilerin Korunması Kanunu", "Kamu Verileri Kullanım Kanunu", "Kişisel Veri Koruma Komitesi", "Kullanıcı Verileri Koruma Kanunu"],
+                    correct: 0
+                },
+                {
+                    question: "Kişisel veri örneği hangisidir?",
+                    options: ["Hava durumu", "TC Kimlik numarası", "Okul adı", "Ülke nüfusu"],
+                    correct: 1
+                },
+                {
+                    question: "İki faktörlü doğrulama (2FA) nedir?",
+                    options: ["Sadece şifre kullanma", "Şifre + doğrulama kodu ile giriş", "Parmak izi okuma", "Kullanıcı adı belirleme"],
+                    correct: 1
+                },
+                {
+                    question: "Phishing saldırısı nedir?",
+                    options: ["Virüs taraması", "Sahte e-posta ile bilgi çalma", "Güvenlik duvarı kurma", "Dosya yedekleme"],
+                    correct: 1
+                },
+                {
+                    question: "Güçlü şifre özellikleri nelerdir?",
+                    options: ["Sadece harf içermeli", "Sadece rakam içermeli", "Büyük harf, küçük harf, rakam ve sembol içermeli", "İsim veya doğum tarihi olmalı"],
+                    correct: 2
+                },
+                {
+                    question: "Ransomware ne yapar?",
+                    options: ["Dosyalarını şifreler ve fidye ister", "Bilgisayarı hızlandırır", "Ücretsiz oyun sunar", "Antivirüs programıdır"],
+                    correct: 0
+                },
+                {
+                    question: "VPN ne işe yarar?",
+                    options: ["Oyun oynamak", "İnternet trafiğini şifreleyip anonimlik sağlar", "Müzik dinlemek", "Fotoğraf düzenlemek"],
+                    correct: 1
+                },
+                {
+                    question: "Dijital ayak izi nedir?",
+                    options: ["Parmak izi", "İnternette bıraktığın izler ve veriler", "Ayakkabı numarası", "E-posta adresi"],
+                    correct: 1
+                },
+                {
+                    question: "Telif hakkı nedir?",
+                    options: ["Bedava yazılım", "Fikri mülkiyet haklarını koruma", "Oyun oynama hakkı", "İnternet kullanma hakkı"],
+                    correct: 1
+                },
+                {
+                    question: "Siber zorbalık örneği hangisidir?",
+                    options: ["Arkadaşına mesaj atmak", "Ödeve yardım etmek", "Sosyal medyada birini sürekli rahatsız etmek", "Video oyunu oynamak"],
+                    correct: 2
+                }
+            ]
+        };
+
+        // Quiz'i başlat
+        document.addEventListener('DOMContentLoaded', () => {
+            if (typeof QuizEngine !== 'undefined' && QuizEngine.validateQuizData(quizData)) {
+                QuizEngine.initQuiz(quizData);
+            } else {
+                document.getElementById('quiz-container').innerHTML =
+                    '<p style="color: #e74c3c;">Quiz yüklenirken hata oluştu. Lütfen sayfayı yenileyin.</p>';
+            }
+        });
     </script>
 </body>
 </html>

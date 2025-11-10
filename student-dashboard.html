@@ -133,6 +133,24 @@
             </div>
         </div>
 
+        <!-- Günlük Görevler Widget -->
+        <div id="daily-challenges-widget" style="margin: 30px 0;"></div>
+
+        <!-- İstatistik Grafikleri -->
+        <div style="margin: 30px 0;">
+            <h2 style="color: #667eea; margin-bottom: 20px;">📈 İstatistikler</h2>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 30px; margin-bottom: 30px;">
+                <div style="background: white; padding: 25px; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.1);">
+                    <h3 style="color: #667eea; margin-bottom: 15px; text-align: center;">Son 7 Günlük Aktivite</h3>
+                    <canvas id="weeklyActivityChart" style="max-height: 250px;"></canvas>
+                </div>
+                <div style="background: white; padding: 25px; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.1);">
+                    <h3 style="color: #667eea; margin-bottom: 15px; text-align: center;">Quiz Performansı</h3>
+                    <canvas id="quizPerformanceChart" style="max-height: 250px;"></canvas>
+                </div>
+            </div>
+        </div>
+
         <div class="badges-section">
             <h2>🏆 Rozetlerim</h2>
             <div class="badges-grid">
@@ -182,8 +200,12 @@
         </div>
     </div>
 
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+
     <script src="scripts/storage.js"></script>
     <script src="scripts/analytics.js"></script>
+    <script src="scripts/daily-challenges.js"></script>
     <script>
         // Load user data from localStorage
         function loadUserData() {
@@ -198,6 +220,161 @@
         }
 
         loadUserData();
+
+        // Render daily challenges widget
+        document.addEventListener('DOMContentLoaded', () => {
+            if (typeof DailyChallenges !== 'undefined') {
+                DailyChallenges.renderWidget('daily-challenges-widget');
+            }
+        });
+
+        // Create charts
+        function createCharts() {
+            // Weekly Activity Chart
+            const weeklyCtx = document.getElementById('weeklyActivityChart');
+            if (weeklyCtx && typeof Chart !== 'undefined') {
+                // Get last 7 days data
+                const weeklyActivity = typeof BSTAnalytics !== 'undefined' ?
+                    BSTAnalytics.getWeeklyActivity() : [];
+
+                // Generate last 7 days labels
+                const days = [];
+                const activityCounts = [];
+                for (let i = 6; i >= 0; i--) {
+                    const date = new Date();
+                    date.setDate(date.getDate() - i);
+                    const dayName = date.toLocaleDateString('tr-TR', { weekday: 'short' });
+                    days.push(dayName);
+
+                    // Count activities for this day
+                    const dateStr = date.toDateString();
+                    const dayActivities = weeklyActivity.filter(a =>
+                        new Date(a.timestamp).toDateString() === dateStr
+                    );
+                    activityCounts.push(dayActivities.length);
+                }
+
+                new Chart(weeklyCtx, {
+                    type: 'line',
+                    data: {
+                        labels: days,
+                        datasets: [{
+                            label: 'Aktivite Sayısı',
+                            data: activityCounts,
+                            borderColor: 'rgb(102, 126, 234)',
+                            backgroundColor: 'rgba(102, 126, 234, 0.1)',
+                            tension: 0.4,
+                            fill: true,
+                            pointRadius: 5,
+                            pointHoverRadius: 7
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: true,
+                        plugins: {
+                            legend: {
+                                display: false
+                            },
+                            tooltip: {
+                                backgroundColor: 'rgba(102, 126, 234, 0.9)',
+                                padding: 12,
+                                titleFont: { size: 14 },
+                                bodyFont: { size: 13 }
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                ticks: {
+                                    stepSize: 1
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+
+            // Quiz Performance Chart
+            const quizCtx = document.getElementById('quizPerformanceChart');
+            if (quizCtx && typeof Chart !== 'undefined') {
+                const userData = JSON.parse(localStorage.getItem('bstUserData') || '{}');
+                const quizScores = userData.quizScores || [];
+
+                // Get last 5 quiz scores
+                const lastQuizzes = quizScores.slice(-5);
+                const quizLabels = lastQuizzes.map((_, i) => `Quiz ${i + 1}`);
+                const quizPercentages = lastQuizzes.map(q =>
+                    Math.round((q.score / q.total) * 100)
+                );
+
+                // Add default data if empty
+                if (quizPercentages.length === 0) {
+                    quizLabels.push('Quiz 1', 'Quiz 2', 'Quiz 3');
+                    quizPercentages.push(0, 0, 0);
+                }
+
+                new Chart(quizCtx, {
+                    type: 'bar',
+                    data: {
+                        labels: quizLabels,
+                        datasets: [{
+                            label: 'Başarı Oranı (%)',
+                            data: quizPercentages,
+                            backgroundColor: [
+                                'rgba(102, 126, 234, 0.8)',
+                                'rgba(118, 75, 162, 0.8)',
+                                'rgba(250, 112, 154, 0.8)',
+                                'rgba(67, 233, 123, 0.8)',
+                                'rgba(79, 172, 254, 0.8)'
+                            ],
+                            borderColor: [
+                                'rgb(102, 126, 234)',
+                                'rgb(118, 75, 162)',
+                                'rgb(250, 112, 154)',
+                                'rgb(67, 233, 123)',
+                                'rgb(79, 172, 254)'
+                            ],
+                            borderWidth: 2,
+                            borderRadius: 8
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: true,
+                        plugins: {
+                            legend: {
+                                display: false
+                            },
+                            tooltip: {
+                                backgroundColor: 'rgba(102, 126, 234, 0.9)',
+                                padding: 12,
+                                titleFont: { size: 14 },
+                                bodyFont: { size: 13 }
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                max: 100,
+                                ticks: {
+                                    callback: function(value) {
+                                        return value + '%';
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+        }
+
+        // Create charts after page loads
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', createCharts);
+        } else {
+            createCharts();
+        }
     </script>
 </body>
 </html>

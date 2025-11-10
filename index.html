@@ -45,6 +45,46 @@
             opacity: 0.95;
         }
 
+        .header-nav {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 25px;
+        }
+
+        .header-nav-btn {
+            padding: 10px 20px;
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 0.95em;
+            font-weight: 600;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .header-nav-btn:hover {
+            background: rgba(255,255,255,0.3);
+            border-color: rgba(255,255,255,0.5);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .header-nav-btn.search-btn {
+            background: rgba(255,215,0,0.3);
+            border-color: rgba(255,215,0,0.5);
+        }
+
+        .header-nav-btn.search-btn:hover {
+            background: rgba(255,215,0,0.4);
+        }
+
         .tabs {
             display: flex;
             background: #f8f9fa;
@@ -368,6 +408,27 @@
             <h1>🎓 Bilişim Teknolojileri Eğitim Portalı</h1>
             <p>5. ve 6. Sınıf - Kapsamlı Eğitim Materyalleri</p>
             <p style="font-size: 0.9em; margin-top: 10px;">2025-2026 Eğitim Yılı</p>
+
+            <div class="header-nav">
+                <a href="student-dashboard.html" class="header-nav-btn">
+                    📊 Dashboard
+                </a>
+                <button onclick="BSTSearch.showSearchModal()" class="header-nav-btn search-btn">
+                    🔍 Ara <span style="opacity: 0.7; font-size: 0.85em;">(Ctrl+K)</span>
+                </button>
+                <a href="badges.html" class="header-nav-btn">
+                    🏆 Rozetler
+                </a>
+                <a href="leaderboard.html" class="header-nav-btn">
+                    👑 Lider Tablosu
+                </a>
+                <a href="games-hub.html" class="header-nav-btn">
+                    🎮 Oyun Merkezi
+                </a>
+                <button id="darkModeToggle" class="header-nav-btn">
+                    🌙 Dark Mode
+                </button>
+            </div>
         </header>
 
         <div class="tabs">
@@ -1517,5 +1578,13 @@
             }
         }
     </script>
+
+    <!-- JavaScript modülleri -->
+    <script src="scripts/storage.js"></script>
+    <script src="scripts/analytics.js"></script>
+    <script src="scripts/badge-system.js"></script>
+    <script src="scripts/search.js"></script>
+    <script src="scripts/dark-mode.js"></script>
+    <script src="scripts/daily-challenges.js"></script>
 </body>
 </html>
