@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <title>Rozet Koleksiyonu - BST</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', sans-serif; background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); min-height: 100vh; padding: 20px; }
+        .container { max-width: 1200px; margin: 0 auto; }
+        h1 { text-align: center; color: white; font-size: 3em; margin-bottom: 15px; text-shadow: 2px 2px 4px rgba(0,0,0,0.3); }
+        .subtitle { text-align: center; color: white; font-size: 1.2em; margin-bottom: 40px; opacity: 0.95; }
+        .stats { background: white; padding: 25px; border-radius: 20px; margin-bottom: 40px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.2); }
+        .stats-grid { display: flex; gap: 30px; justify-content: center; margin-top: 20px; }
+        .stat { font-size: 2em; font-weight: bold; color: #f5576c; }
+        .stat-label { color: #666; margin-top: 5px; }
+        .badges-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 25px; }
+        .badge-card { background: white; padding: 30px; border-radius: 20px; text-align: center; box-shadow: 0 5px 20px rgba(0,0,0,0.2); transition: all 0.3s; border: 4px solid #e0e0e0; }
+        .badge-card:hover { transform: translateY(-8px); box-shadow: 0 15px 40px rgba(0,0,0,0.3); }
+        .badge-card.earned { border-color: #ffd700; background: linear-gradient(135deg, #fffdf0 0%, #fff9e6 100%); }
+        .badge-card.locked { opacity: 0.6; }
+        .badge-icon { font-size: 5em; margin-bottom: 15px; }
+        .badge-name { font-size: 1.3em; font-weight: bold; color: #333; margin-bottom: 10px; }
+        .badge-desc { color: #666; font-size: 0.95em; line-height: 1.5; }
+        .badge-progress { margin-top: 15px; font-size: 0.9em; color: #f5576c; font-weight: 600; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🏆 Rozet Koleksiyonu</h1>
+        <p class="subtitle">Rozetlerini topla, başarılarını sergile!</p>
+
+        <div class="stats">
+            <h2 style="color:#f5576c; margin-bottom:20px;">İstatistikler</h2>
+            <div class="stats-grid">
+                <div>
+                    <div class="stat">12/25</div>
+                    <div class="stat-label">Kazanılan Rozet</div>
+                </div>
+                <div>
+                    <div class="stat">48%</div>
+                    <div class="stat-label">Tamamlanma</div>
+                </div>
+                <div>
+                    <div class="stat">13</div>
+                    <div class="stat-label">Kalan Rozet</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="badges-grid">
+            <div class="badge-card earned">
+                <div class="badge-icon">🌟</div>
+                <div class="badge-name">İlk Adım</div>
+                <div class="badge-desc">İlk quiz'ini tamamladın!</div>
+                <div class="badge-progress">✅ Kazanıldı</div>
+            </div>
+            <div class="badge-card earned">
+                <div class="badge-icon">💯</div>
+                <div class="badge-name">Mükemmel</div>
+                <div class="badge-desc">Bir quiz'den %100 aldın!</div>
+                <div class="badge-progress">✅ Kazanıldı</div>
+            </div>
+            <div class="badge-card earned">
+                <div class="badge-icon">🔥</div>
+                <div class="badge-name">Ateşli</div>
+                <div class="badge-desc">7 gün üst üste çalıştın!</div>
+                <div class="badge-progress">✅ Kazanıldı</div>
+            </div>
+            <div class="badge-card earned">
+                <div class="badge-icon">🎮</div>
+                <div class="badge-name">Oyun Ustası</div>
+                <div class="badge-desc">10 farklı oyun oynadın!</div>
+                <div class="badge-progress">✅ Kazanıldı</div>
+            </div>
+            <div class="badge-card earned">
+                <div class="badge-icon">📚</div>
+                <div class="badge-name">Ünite Şampiyonu</div>
+                <div class="badge-desc">Bir üniteyi tamamen bitirdin!</div>
+                <div class="badge-progress">✅ Kazanıldı</div>
+            </div>
+            <div class="badge-card earned">
+                <div class="badge-icon">🎯</div>
+                <div class="badge-name">Quiz Tutkunu</div>
+                <div class="badge-desc">10 quiz tamamladın!</div>
+                <div class="badge-progress">✅ Kazanıldı</div>
+            </div>
+            <div class="badge-card locked">
+                <div class="badge-icon">🏆</div>
+                <div class="badge-name">Tüm Üniteler</div>
+                <div class="badge-desc">Tüm üniteleri tamamla!</div>
+                <div class="badge-progress">⏳ 4/6 ünite</div>
+            </div>
+            <div class="badge-card locked">
+                <div class="badge-icon">⚡</div>
+                <div class="badge-name">Hız Rekoru</div>
+                <div class="badge-desc">Quiz'i 2 dakikada bitir!</div>
+                <div class="badge-progress">⏳ Kilittli</div>
+            </div>
+            <div class="badge-card locked">
+                <div class="badge-icon">🌈</div>
+                <div class="badge-name">Renkli Öğrenci</div>
+                <div class="badge-desc">Her ünite türünden quiz çöz!</div>
+                <div class="badge-progress">⏳ 3/6 tür</div>
+            </div>
+            <div class="badge-card locked">
+                <div class="badge-icon">🎓</div>
+                <div class="badge-name">Mezuniyet</div>
+                <div class="badge-desc">Tüm rozetleri topla!</div>
+                <div class="badge-progress">⏳ 12/25 rozet</div>
+            </div>
+        </div>
+
+        <div style="text-align:center; margin-top:40px;">
+            <a href="student-dashboard.html" style="display:inline-block; padding:15px 40px; background:white; color:#f5576c; text-decoration:none; border-radius:12px; font-weight:bold; box-shadow:0 5px 15px rgba(0,0,0,0.2);">⬅️ Panele Dön</a>
+        </div>
+    </div>
+    <script src="scripts/badge-system.js"></script>
+</body>
+</html>
