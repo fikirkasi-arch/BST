@@ -102,9 +102,6 @@ TURKIYE | Başkenti neresi? (ANKARA)"></textarea>
                 <option value="akrostis">Akrostiş / Kripto Akrani</option>
                 <option value="cryptogram">Şifreli Alfabe</option>
                 <option value="ladder">Söz Zinciri</option>
-                <option value="baglanti">Bağlantı Avı</option>
-                <option value="mozaik">Sayısal Mozaik</option>
-                <option value="rebus">Rebus / Görsel Şifre</option>
                 <option value="cengel">Çengel Bulmaca</option>
               </select>
             </label>
@@ -170,16 +167,7 @@ TURKIYE | Başkenti neresi? (ANKARA)"></textarea>
           <li><strong>Akrostiş / Kripto Akrani:</strong> İpuçlarını cevaplayın, her kelimenin ilk harfini mesaj kutularına taşıyarak final cümlesini elde edin.</li>
           <li><strong>Şifreli Alfabe:</strong> Harfler rastgele eşleşmiş bir alfabe ile kodlandı. Tabloyu kullanarak her kodu Türkçe karşılığına çevirin ve paragrafı çözün.</li>
           <li><strong>Söz Zinciri / Kelime Merdiveni:</strong> Başlangıç ve bitiş sözcükleri aynı uzunluktadır; arada her adımda tek harf değiştirerek hedefe ulaşın.</li>
-          <li><strong>Bağlantı Avı:</strong> 4×4 tabloda gizlenen kelimeleri ortak özelliklerine göre dörtlü gruplara ayırın; her grup aynı kategoriyi paylaşır.</li>
-          <li><strong>Sayısal Mozaik:</strong> Kakuro/KenKen karışımı bu modda kafeslerde verilen işlem sonucunu sağlayacak şekilde satır ve sütunlara 1’den N’e kadar sayıları yerleştirin.</li>
-          <li><strong>Rebus / Görsel Şifre:</strong> Şekil ve sembollerin anlattığı kelimeyi çözün; daireler seslileri, kareler sessizleri, farklı dizilimler ipucu verir.</li>
           <li><strong>Çengel Bulmaca:</strong> Okların gösterdiği yönde verilen ipucuna göre kelimeyi yazın; farklı yönlerde ilerleyen cevaplar birbirini keser.</li>
-        </ul>
-        <h4 style="margin-bottom:6px">Yeni oyun önerileri</h4>
-        <ul class="guide-list">
-          <li><strong>Bağlantı Avı:</strong> Dörtlü kelime gruplarını aynı kategoriye göre eşleştirip satırlar halinde renklendirebileceğiniz bir "Connections" uyarlaması.</li>
-          <li><strong>Sayısal Mozaik (Kakuro/KenKen):</strong> Karelerin toplamlarına göre rakam yerleştirdiğiniz, matematik odaklı bir sayı bulmacası.</li>
-          <li><strong>Rebus / Görsel Şifre:</strong> Küçük ikon ve harf kombinasyonlarını okuyarak deyim veya film adlarını tahmin etmeye dayalı görsel bir oyun.</li>
         </ul>
       </section>
     </div>
@@ -828,227 +816,6 @@ function buildWordLadder(entries){
   return {blank: draw(false), solved: draw(true), steps:uniq, start:start.answer, end:end.answer};
 }
 
-function makeConnectionsGame(entries, seed){
-  const rng = rnd(seed||0);
-  const usable = entries.filter(e=>e.answer);
-  if(!usable.length){
-    return {blank:'', solved:'', groups:[], words:[]};
-  }
-  const groupCount = Math.max(1, Math.floor(usable.length/4));
-  const used = usable.slice(0, groupCount*4);
-  const groups=[];
-  for(let i=0;i<groupCount;i++){
-    const slice = used.slice(i*4, i*4+4);
-    if(slice.length<4) break;
-    groups.push({title: slice[0].clue || `Kategori ${i+1}`, words: slice.map(x=>x.answer)});
-  }
-  if(!groups.length){
-    groups.push({title: usable[0].clue || 'Kategori 1', words: usable.slice(0, Math.min(4, usable.length)).map(x=>x.answer)});
-  }
-  const boardWords = groups.flatMap(g=>g.words);
-  const shuffled = shuffleArray(boardWords.slice(), rng);
-  const cols=4;
-  const palette=['#f6b93b','#60a3bc','#78e08f','#e55039','#b8e994','#6c5ce7','#fd79a8','#00cec9'];
-  function draw(showSolved){
-    const rows = showSolved ? groups.length : Math.max(1, Math.ceil(shuffled.length/cols));
-    const cellW=220, cellH=70, pad=28;
-    const W = cols*cellW + pad*2;
-    const H = rows*cellH + pad*3;
-    const canvas=document.createElement('canvas'); canvas.width=W; canvas.height=H; const ctx=canvas.getContext('2d');
-    ctx.fillStyle='#fff'; ctx.fillRect(0,0,W,H);
-    ctx.fillStyle='#000'; ctx.font=`bold 26px ${TURKISH_FONT_STACK}`; ctx.fillText('BAĞLANTI AVI', pad, pad);
-    ctx.font=`16px ${TURKISH_FONT_STACK}`; ctx.fillStyle='#4d4d4d';
-    ctx.fillText('4 kelimeyi aynı kategoriyle eşleştir.', pad, pad+22);
-    for(let r=0;r<rows;r++){
-      if(showSolved){
-        ctx.fillStyle='#1d2d44'; ctx.font=`15px ${TURKISH_FONT_STACK}`;
-        ctx.fillText(groups[r]?.title||'', pad, pad+50 + r*cellH - 8);
-      }
-      for(let c=0;c<cols;c++){
-        const idx = r*cols+c;
-        const word = showSolved ? (groups[r]?.words[c]||'') : (shuffled[idx]||'');
-        if(!word) continue;
-        const x = pad + c*cellW;
-        const y = pad+40 + r*cellH;
-        const rectW = cellW-14;
-        const rectH = cellH-14;
-        ctx.fillStyle = showSolved ? palette[r % palette.length] : '#ecf0f1';
-        ctx.strokeStyle = '#1e272e'; ctx.lineWidth = 2;
-        ctx.fillRect(x, y, rectW, rectH);
-        ctx.strokeRect(x, y, rectW, rectH);
-        ctx.fillStyle = showSolved ? '#102027' : '#2f3640';
-        ctx.font=`20px ${TURKISH_FONT_STACK}`;
-        ctx.textAlign='center'; ctx.textBaseline='middle';
-        ctx.fillText(word, x+rectW/2, y+rectH/2);
-        ctx.textAlign='start'; ctx.textBaseline='alphabetic';
-      }
-    }
-    return canvas.toDataURL('image/png');
-  }
-  return {blank: draw(false), solved: draw(true), groups, words: shuffled};
-}
-
-function buildNumericMosaic(entries, seed){
-  const rng = rnd(seed||0);
-  const size = Math.min(6, Math.max(3, Math.ceil(Math.sqrt(Math.max(entries.length,4)))));
-  const baseRow = Array.from({length:size}, (_,i)=>i+1);
-  let grid = Array.from({length:size}, (_,r)=> baseRow.map((_,c)=>((r+c)%size)+1));
-  const perm = shuffleArray(baseRow.slice(), rng);
-  grid = grid.map(row=>row.map(val=>perm[val-1]));
-  const rowOrder = shuffleArray(baseRow.slice(), rng);
-  grid = rowOrder.map(idx=>grid[idx-1]);
-  const colOrder = shuffleArray(baseRow.slice(), rng);
-  grid = grid.map(row=>colOrder.map(idx=>row[idx-1]));
-  const assigned = Array.from({length:size},()=>Array(size).fill(null));
-  const cages=[]; let entryIdx=0;
-  const dirs=[[1,0],[-1,0],[0,1],[0,-1]];
-  const neighborPool=(cells)=>{
-    const list=[];
-    cells.forEach(([rr,cc])=>{
-      dirs.forEach(([dr,dc])=>{
-        const nr=rr+dr, nc=cc+dc;
-        if(nr>=0&&nc>=0&&nr<size&&nc<size && assigned[nr][nc]===null && !list.some(([er,ec])=>er===nr&&ec===nc)){
-          list.push([nr,nc]);
-        }
-      });
-    });
-    return list;
-  };
-  for(let r=0;r<size;r++) for(let c=0;c<size;c++){
-    if(assigned[r][c]!==null) continue;
-    const idx=cages.length;
-    const entry=entries[entryIdx % entries.length]; entryIdx++;
-    const cage={cells:[], clue: entry?.clue || `Kafes ${idx+1}`, label: entry?.answer || '', id:idx};
-    const desired = Math.max(1, Math.min(3, Math.round(rng()*3)));
-    assigned[r][c]=idx; cage.cells.push([r,c]);
-    while(cage.cells.length<desired){
-      const pool = neighborPool(cage.cells);
-      if(!pool.length) break;
-      const pick = pool[Math.floor(rng()*pool.length)];
-      assigned[pick[0]][pick[1]]=idx;
-      cage.cells.push(pick);
-    }
-    const values=cage.cells.map(([rr,cc])=>grid[rr][cc]);
-    let symbol='+'; let target=values.reduce((a,b)=>a+b,0);
-    if(cage.cells.length===1){ symbol='='; target=values[0]; }
-    else if(cage.cells.length===2){
-      const ops=['+','×','-','÷'];
-      symbol = ops[Math.floor(rng()*ops.length)];
-      if(symbol==='-'){
-        const sorted=values.slice().sort((a,b)=>b-a); target=sorted[0]-sorted[1];
-      }else if(symbol==='÷'){
-        const sorted=values.slice().sort((a,b)=>b-a);
-        if(sorted[0]%sorted[1]!==0){ symbol='+'; target=sorted[0]+sorted[1]; }
-        else target=sorted[0]/sorted[1];
-      }else if(symbol==='×'){
-        target=values.reduce((a,b)=>a*b,1);
-      }
-    }else{
-      symbol = rng()>0.5?'×':'+';
-      target = symbol==='×' ? values.reduce((a,b)=>a*b,1) : values.reduce((a,b)=>a+b,0);
-    }
-    cage.symbol=symbol;
-    cage.target=Number.isInteger(target)?target:Number(target.toFixed(2));
-    cages.push(cage);
-  }
-  const labelCells=cages.map(c=>c.cells.slice().sort((a,b)=> (a[0]-b[0]) || (a[1]-b[1]))[0]);
-  const boardTop = 70; const pad=28; const cell=70;
-  function draw(showSolved){
-    const W = size*cell + pad*2;
-    const H = boardTop + size*cell + pad;
-    const canvas=document.createElement('canvas'); canvas.width=W; canvas.height=H; const ctx=canvas.getContext('2d');
-    ctx.fillStyle='#fff'; ctx.fillRect(0,0,W,H);
-    ctx.fillStyle='#000'; ctx.font=`bold 26px ${TURKISH_FONT_STACK}`;
-    ctx.fillText('SAYISAL MOZAİK', pad, 36);
-    for(let r=0;r<size;r++) for(let c=0;c<size;c++){
-      const x=pad + c*cell;
-      const y=boardTop + r*cell;
-      ctx.fillStyle='#fff'; ctx.fillRect(x, y, cell, cell);
-      ctx.strokeStyle='#aab7c4'; ctx.lineWidth=1;
-      ctx.strokeRect(x+0.5, y+0.5, cell-1, cell-1);
-      if(showSolved){
-        ctx.fillStyle='#000'; ctx.font=`${Math.floor(cell*0.5)}px ${TURKISH_FONT_STACK}`;
-        ctx.textAlign='center'; ctx.textBaseline='middle';
-        ctx.fillText(String(grid[r][c]), x+cell/2, y+cell/2);
-        ctx.textAlign='start'; ctx.textBaseline='alphabetic';
-      }
-    }
-    ctx.strokeStyle='#000'; ctx.lineWidth=3;
-    for(let r=0;r<size;r++) for(let c=0;c<size;c++){
-      const id=assigned[r][c];
-      const x=pad + c*cell;
-      const y=boardTop + r*cell;
-      if(r===0 || assigned[r-1][c]!==id){ ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(x+cell, y); ctx.stroke(); }
-      if(c===0 || assigned[r][c-1]!==id){ ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(x, y+cell); ctx.stroke(); }
-      if(r===size-1 || assigned[r+1][c]!==id){ ctx.beginPath(); ctx.moveTo(x, y+cell); ctx.lineTo(x+cell, y+cell); ctx.stroke(); }
-      if(c===size-1 || assigned[r][c+1]!==id){ ctx.beginPath(); ctx.moveTo(x+cell, y); ctx.lineTo(x+cell, y+cell); ctx.stroke(); }
-    }
-    cages.forEach((c,idx)=>{
-      const anchor=labelCells[idx];
-      if(!anchor) return;
-      const x=pad + anchor[1]*cell + 6;
-      const y=boardTop + anchor[0]*cell + 18;
-      ctx.fillStyle='#0b3055'; ctx.font=`bold 16px ${TURKISH_FONT_STACK}`;
-      ctx.textAlign='left'; ctx.textBaseline='alphabetic';
-      ctx.fillText(`${c.target}${c.symbol}`, x, y);
-      ctx.fillStyle='#556070'; ctx.font=`11px ${TURKISH_FONT_STACK}`;
-      ctx.fillText(`#${idx+1}`, x, y+12);
-    });
-    return canvas.toDataURL('image/png');
-  }
-  const cageList = cages.map((c,i)=>({no:i+1, clue:`${c.clue} — hedef ${c.target}${c.symbol}`, answer: c.cells.map(([r,c2])=>grid[r][c2]).join(' ')}));
-  return {blank: draw(false), solved: draw(true), cages, grid, size, cageList};
-}
-
-function makeRebusImages(entries){
-  const pad=28, rowH=80, box=40;
-  function draw(showSolved){
-    const W=1100; const H = pad*2 + entries.length*rowH + 120;
-    const canvas=document.createElement('canvas'); canvas.width=W; canvas.height=H; const ctx=canvas.getContext('2d');
-    ctx.fillStyle='#fff'; ctx.fillRect(0,0,W,H);
-    ctx.fillStyle='#000'; ctx.font=`bold 26px ${TURKISH_FONT_STACK}`;
-    ctx.fillText('REBUS / GÖRSEL ŞİFRE', pad, pad+4);
-    ctx.font=`16px ${TURKISH_FONT_STACK}`; ctx.fillStyle='#4d4d4d';
-    ctx.fillText('Daire=sesli • Kare=sessiz • Üçgen=Ğ — Şekilleri harfe çevirin.', pad, pad+26);
-    entries.forEach((entry,idx)=>{
-      let baseY = pad+60 + idx*rowH;
-      ctx.fillStyle='#2d3436'; ctx.font=`17px ${TURKISH_FONT_STACK}`;
-      ctx.fillText(`${idx+1}. ${entry.clue}`, pad, baseY-14);
-      let x=pad;
-      const letters=entry.answer.split('');
-      letters.forEach((ch)=>{
-        const y=baseY;
-        if(showSolved){
-          ctx.strokeStyle='#1e272e'; ctx.lineWidth=2; ctx.strokeRect(x, y-30, box, box);
-          ctx.font=`22px ${TURKISH_FONT_STACK}`; ctx.fillStyle='#000';
-          ctx.textAlign='center'; ctx.textBaseline='middle';
-          ctx.fillText(ch, x+box/2, y-30+box/2);
-          ctx.textAlign='start'; ctx.textBaseline='alphabetic';
-        }else{
-          ctx.lineWidth=3; ctx.strokeStyle='#1e272e';
-          if(ch==='Ğ'){
-            ctx.beginPath();
-            ctx.moveTo(x+box/2, y-30+4);
-            ctx.lineTo(x+4, y-30+box-4);
-            ctx.lineTo(x+box-4, y-30+box-4);
-            ctx.closePath(); ctx.stroke();
-          }else if(VOWELS.has(ch)){
-            ctx.beginPath(); ctx.arc(x+box/2, y-30+box/2, box/2-6, 0, Math.PI*2); ctx.stroke();
-          }else{
-            ctx.strokeRect(x, y-30, box, box);
-          }
-        }
-        x += box+6;
-        if(x+box > W-pad){ x=pad; baseY += box+10; }
-      });
-    });
-    ctx.fillStyle='#3a3f58'; ctx.font=`14px ${TURKISH_FONT_STACK}`;
-    ctx.fillText('Rebusları çözmek için şekilleri sesli/sessiz harflere çevirin, ipuçlarıyla eşleştirin.', pad, H-pad);
-    return canvas.toDataURL('image/png');
-  }
-  return {blank: draw(false), solved: draw(true)};
-}
-
 function renderByMode(mode, entries){
   const titleMap={
     kare:'Kare Bulmaca',
@@ -1059,10 +826,7 @@ function renderByMode(mode, entries){
     cengel:'Çengel Bulmaca',
     akrostis:'Akrostiş / Kripto Akrani',
     cryptogram:'Şifreli Alfabe',
-    ladder:'Söz Zinciri',
-    baglanti:'Bağlantı Avı',
-    mozaik:'Sayısal Mozaik',
-    rebus:'Rebus / Görsel Şifre'
+    ladder:'Söz Zinciri'
   };
   document.getElementById('modeTitle').textContent = titleMap[mode]||'—';
   const playCard=document.getElementById('playCard');
@@ -1137,46 +901,6 @@ function renderByMode(mode, entries){
     fillList('acrossSolved', list, true); fillList('downSolved', []);
     const cb=document.getElementById('imgCipherBlank'); const cs=document.getElementById('imgCipherSolved'); if(cb) cb.src=''; if(cs) cs.src='';
     document.getElementById('stats').textContent = `Söz Zinciri: adım=${out.steps.length} • ${out.start||''}→${out.end||''}`;
-    return;
-  }
-  if(mode==='baglanti'){
-    const out = makeConnectionsGame(entries, Number(document.getElementById('seed').value||0));
-    const prev = document.getElementById('grid'); prev.innerHTML='';
-    if(out.blank){ const im=document.createElement('img'); im.src=out.blank; im.style.maxWidth='520px'; prev.appendChild(im); }
-    document.getElementById('imgBlank').src = out.blank || '';
-    document.getElementById('imgSolved').src = out.solved || '';
-    const wordsList = out.words.map((w,i)=>({no:i+1, clue:w}));
-    const groupList = out.groups.map((g,i)=>({no:i+1, clue:g.title, answer:g.words.join(', ')}));
-    fillList('across', wordsList); fillList('down', []);
-    fillList('acrossBlank', wordsList); fillList('downBlank', []);
-    fillList('acrossSolved', groupList, true); fillList('downSolved', []);
-    const cb=document.getElementById('imgCipherBlank'); const cs=document.getElementById('imgCipherSolved'); if(cb) cb.src=''; if(cs) cs.src='';
-    document.getElementById('stats').textContent = `Bağlantı Avı: grup=${out.groups.length} • kelime=${out.words.length}`;
-    return;
-  }
-  if(mode==='mozaik'){
-    const out = buildNumericMosaic(entries, Number(document.getElementById('seed').value||0));
-    const prev = document.getElementById('grid'); prev.innerHTML='';
-    const im=document.createElement('img'); im.src = out.blank; im.style.maxWidth='520px'; prev.appendChild(im);
-    document.getElementById('imgBlank').src = out.blank; document.getElementById('imgSolved').src = out.solved;
-    fillList('across', out.cageList); fillList('down', []);
-    fillList('acrossBlank', out.cageList); fillList('downBlank', []);
-    fillList('acrossSolved', out.cageList, true); fillList('downSolved', []);
-    const cb=document.getElementById('imgCipherBlank'); const cs=document.getElementById('imgCipherSolved'); if(cb) cb.src=''; if(cs) cs.src='';
-    document.getElementById('stats').textContent = `Sayısal Mozaik: ${out.size}×${out.size} • Kafes=${out.cages.length}`;
-    return;
-  }
-  if(mode==='rebus'){
-    const out = makeRebusImages(entries);
-    const prev = document.getElementById('grid'); prev.innerHTML='';
-    const im=document.createElement('img'); im.src = out.blank; im.style.maxWidth='560px'; prev.appendChild(im);
-    document.getElementById('imgBlank').src = out.blank; document.getElementById('imgSolved').src = out.solved;
-    const clueList = entries.map((e,i)=>({no:i+1, clue:e.clue, answer:e.answer}));
-    fillList('across', clueList); fillList('down', []);
-    fillList('acrossBlank', clueList); fillList('downBlank', []);
-    fillList('acrossSolved', clueList, true); fillList('downSolved', []);
-    const cb=document.getElementById('imgCipherBlank'); const cs=document.getElementById('imgCipherSolved'); if(cb) cb.src=''; if(cs) cs.src='';
-    document.getElementById('stats').textContent = `Rebus: ipucu=${entries.length}`;
     return;
   }
   if(mode==='cengel'){
@@ -1380,12 +1104,6 @@ function runTests(){
     assert('Cryptogram görseli', /^data:image\/png;base64,/.test(cry.blank));
     const ladder = buildWordLadder(e1);
     assert('Söz zinciri adım', ladder.steps.length>=2);
-    const conn = makeConnectionsGame([...e1, ...e1, ...e1], 3);
-    assert('Bağlantı görseli', !conn.blank || /^data:image\/png;base64,/.test(conn.blank));
-    const mozaik = buildNumericMosaic(e1, 4);
-    assert('Mozaik görseli', /^data:image\/png;base64,/.test(mozaik.blank));
-    const rebus = makeRebusImages(e1);
-    assert('Rebus görseli', /^data:image\/png;base64,/.test(rebus.blank));
 
     status.textContent = 'Test: ✓ Başarılı ('+results.length+' adım)';
     status.style.background = '#1f6f43';
