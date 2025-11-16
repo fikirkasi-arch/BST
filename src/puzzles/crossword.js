@@ -20,6 +20,7 @@ function canPlace(grid, word, row, col, dir) {
   const dr = dir === 'across' ? 0 : 1;
   const dc = dir === 'across' ? 1 : 0;
   const len = word.length;
+  if (row < 0 || col < 0) return false;
   if (row + dr * (len - 1) >= size || col + dc * (len - 1) >= size) return false;
   if (row - dr >= 0 && col - dc >= 0 && grid[row - dr][col - dc]) return false;
   if (
@@ -52,12 +53,16 @@ function placeWord(grid, word, row, col, dir) {
   return { row, col, dir };
 }
 
-function annotate(grid) {
+function annotate(grid, placed) {
   const size = grid.length;
   const numbers = Array.from({ length: size }, () => Array(size).fill(null));
   let counter = 0;
   const across = [];
   const down = [];
+  const clueMap = new Map();
+  placed.forEach((entry) => {
+    clueMap.set(`${entry.row}:${entry.col}:${entry.dir}`, entry);
+  });
   for (let r = 0; r < size; r += 1) {
     for (let c = 0; c < size; c += 1) {
       if (!grid[r][c]) continue;
@@ -73,7 +78,8 @@ function annotate(grid) {
           word += grid[r][k];
           k += 1;
         }
-        across.push({ number: counter, answer: word });
+        const clueEntry = clueMap.get(`${r}:${c}:across`);
+        across.push({ number: counter, answer: word, clue: clueEntry?.clue || '' });
       }
       if (startDown) {
         let word = '';
@@ -82,7 +88,8 @@ function annotate(grid) {
           word += grid[k][c];
           k += 1;
         }
-        down.push({ number: counter, answer: word });
+        const clueEntry = clueMap.get(`${r}:${c}:down`);
+        down.push({ number: counter, answer: word, clue: clueEntry?.clue || '' });
       }
     }
   }
@@ -106,25 +113,40 @@ export function buildCrossword(entries, desiredSize, seed = 0) {
     for (let r = 0; r < size; r += 1) {
       for (let c = 0; c < size; c += 1) {
         if (!grid[r][c]) continue;
-        const idx = entry.answer.indexOf(grid[r][c]);
-        if (idx === -1) continue;
-        const col = c - idx;
-        if (canPlace(grid, entry.answer, r, col, 'across')) {
-          matches.push({ row: r, col, dir: 'across' });
-        }
-        const row = r - idx;
-        if (canPlace(grid, entry.answer, row, c, 'down')) {
-          matches.push({ row, col: c, dir: 'down' });
+        for (let idx = 0; idx < entry.answer.length; idx += 1) {
+          if (entry.answer[idx] !== grid[r][c]) continue;
+          const col = c - idx;
+          if (canPlace(grid, entry.answer, r, col, 'across')) {
+            matches.push({ row: r, col, dir: 'across' });
+          }
+          const row = r - idx;
+          if (canPlace(grid, entry.answer, row, c, 'down')) {
+            matches.push({ row, col: c, dir: 'down' });
+          }
         }
       }
     }
-    const pick = matches[Math.floor(rng() * matches.length)] || null;
+    let pick = matches[Math.floor(rng() * matches.length)] || null;
+    if (!pick) {
+      outer: for (let r = 0; r < size; r += 1) {
+        for (let c = 0; c < size; c += 1) {
+          if (canPlace(grid, entry.answer, r, c, 'across')) {
+            pick = { row: r, col: c, dir: 'across' };
+            break outer;
+          }
+          if (canPlace(grid, entry.answer, r, c, 'down')) {
+            pick = { row: r, col: c, dir: 'down' };
+            break outer;
+          }
+        }
+      }
+    }
     if (pick) {
       placeWord(grid, entry.answer, pick.row, pick.col, pick.dir);
       placed.push({ ...entry, ...pick });
     }
   }
-  const meta = annotate(grid);
+  const meta = annotate(grid, placed);
   return { grid, ...meta, placed };
 }
 
@@ -172,7 +194,7 @@ export function renderCrossword(result, container, legendContainer) {
   const acrossList = document.createElement('ol');
   across.forEach((item) => {
     const li = document.createElement('li');
-    li.textContent = `${item.number}. (${item.answer.length})`;
+    li.innerHTML = `<strong>${item.number}.</strong> ${item.clue || '—'} <em>(${item.answer.length})</em>`;
     acrossList.appendChild(li);
   });
   acrossBox.appendChild(acrossList);
@@ -183,7 +205,7 @@ export function renderCrossword(result, container, legendContainer) {
   const downList = document.createElement('ol');
   down.forEach((item) => {
     const li = document.createElement('li');
-    li.textContent = `${item.number}. (${item.answer.length})`;
+    li.innerHTML = `<strong>${item.number}.</strong> ${item.clue || '—'} <em>(${item.answer.length})</em>`;
     downList.appendChild(li);
   });
   downBox.appendChild(downList);
@@ -195,7 +217,34 @@ export function createCrosswordPdf(result) {
   if (!result) return null;
   const blank = gridToDataUrl(result.grid, result.numbers, { showLetters: false });
   const solved = gridToDataUrl(result.grid, result.numbers, { showLetters: true });
+  const cluesWrapper = document.createElement('div');
+  const acrossSection = document.createElement('section');
+  acrossSection.innerHTML = '<h3>Yatay</h3>';
+  const acrossList = document.createElement('ol');
+  result.across.forEach((item) => {
+    const li = document.createElement('li');
+    li.textContent = `${item.number}. ${item.clue || '—'} (${item.answer.length})`;
+    acrossList.appendChild(li);
+  });
+  acrossSection.appendChild(acrossList);
+  const downSection = document.createElement('section');
+  downSection.innerHTML = '<h3>Dikey</h3>';
+  const downList = document.createElement('ol');
+  result.down.forEach((item) => {
+    const li = document.createElement('li');
+    li.textContent = `${item.number}. ${item.clue || '—'} (${item.answer.length})`;
+    downList.appendChild(li);
+  });
+  downSection.appendChild(downList);
+  cluesWrapper.append(acrossSection, downSection);
   return [
-    { title: 'Kare Bulmaca', images: [{ src: blank, alt: 'Boş bulmaca' }, { src: solved, alt: 'Cevaplı bulmaca' }] },
+    {
+      title: 'Kare Bulmaca',
+      images: [
+        { src: blank, alt: 'Boş bulmaca' },
+        { src: solved, alt: 'Cevaplı bulmaca' },
+      ],
+      html: cluesWrapper.outerHTML,
+    },
   ];
 }

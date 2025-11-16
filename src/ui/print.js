@@ -1,7 +1,8 @@
 export function renderPrintable(sections = []) {
   const root = document.getElementById('printRoot');
   root.innerHTML = '';
-  sections.forEach((section) => {
+  const list = Array.isArray(sections) ? sections : [];
+  list.forEach((section) => {
     const block = document.createElement('article');
     block.innerHTML = `<h2>${section.title}</h2>`;
     if (section.images) {
