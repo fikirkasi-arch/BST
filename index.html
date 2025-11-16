@@ -59,6 +59,9 @@
   .play-grid input:focus{outline:2px solid #2c6efd; border-color:#2c6efd}
   .play-grid .cell.black{background:#000; border-radius:6px}
   .extra-note{margin-top:10px; font-size:13px; opacity:.8}
+  .guide-list{list-style:none; margin:10px 0 0 0; padding:0}
+  .guide-list li{margin:6px 0; line-height:1.4}
+  .guide-list li strong{color:#8fb0ff}
 </style>
 </head>
 <body>
@@ -150,6 +153,31 @@ TURKIYE | Başkenti neresi? (ANKARA)"></textarea>
       </section>
     </div>
 
+    <!-- Oyun açıklamaları ve öneriler -->
+    <div class="card no-print">
+      <header>Oyun Özeti & İpuçları</header>
+      <section>
+        <p style="margin-top:0">Her oyun tipi kısacık kurallarla oynanır. Aşağıdaki özetler hangi modda ne yapmanız gerektiğini hatırlatır:</p>
+        <ul class="guide-list">
+          <li><strong>Kare Bulmaca:</strong> Standart kare şablonda cevaplar yatay ve dikey yerleşir. Soruları listeden okuyup aynı numaralı hücrelere harfleri yazın.</li>
+          <li><strong>Güncellenmiş Kare Bulmaca:</strong> Ekrandaki interaktif kareyi kullanarak yazı yazar, yön düğmesiyle yatay/dikey geçiş yapar, hücre doldukça otomatik ilerlersiniz.</li>
+          <li><strong>Şifreli Sarmal:</strong> Tüm cevaplar tek bir spiral pistte birleşir. Merkezden dışa doğru sıralanan harfleri çözerek gizli mesajı bulun.</li>
+          <li><strong>Sözlük Avı:</strong> Kelimeler sağa, sola, çapraz tüm yönlerde saklıdır. İşaretlenen kelimeleri listeden seçip bulduğunuzda renklendirilmiş çözüm görselini kullanabilirsiniz.</li>
+          <li><strong>Anagram Şifre:</strong> Her satırda harfleri karıştırılmış bir cevap bulunur; doğru sıralayıp ilk harfleri birleştirerek alt kısımdaki gizli anahtarı çıkarın.</li>
+          <li><strong>Akrostiş / Kripto Akrani:</strong> İpuçlarını cevaplayın, her kelimenin ilk harfini mesaj kutularına taşıyarak final cümlesini elde edin.</li>
+          <li><strong>Şifreli Alfabe:</strong> Harfler rastgele eşleşmiş bir alfabe ile kodlandı. Tabloyu kullanarak her kodu Türkçe karşılığına çevirin ve paragrafı çözün.</li>
+          <li><strong>Söz Zinciri / Kelime Merdiveni:</strong> Başlangıç ve bitiş sözcükleri aynı uzunluktadır; arada her adımda tek harf değiştirerek hedefe ulaşın.</li>
+          <li><strong>Çengel Bulmaca:</strong> Okların gösterdiği yönde verilen ipucuna göre kelimeyi yazın; farklı yönlerde ilerleyen cevaplar birbirini keser.</li>
+        </ul>
+        <h4 style="margin-bottom:6px">Yeni oyun önerileri</h4>
+        <ul class="guide-list">
+          <li><strong>Bağlantı Avı:</strong> Dörtlü kelime gruplarını aynı kategoriye göre eşleştirip satırlar halinde renklendirebileceğiniz bir "Connections" uyarlaması.</li>
+          <li><strong>Sayısal Mozaik (Kakuro/KenKen):</strong> Karelerin toplamlarına göre rakam yerleştirdiğiniz, matematik odaklı bir sayı bulmacası.</li>
+          <li><strong>Rebus / Görsel Şifre:</strong> Küçük ikon ve harf kombinasyonlarını okuyarak deyim veya film adlarını tahmin etmeye dayalı görsel bir oyun.</li>
+        </ul>
+      </section>
+    </div>
+
     <!-- YAZDIR / PDF İÇERİĞİ: 1. Sayfa boş bulmaca, 2. Sayfa çözümler -->
     <div class="print-only">
       <section class="print-wrap" id="print-blank">
@@ -198,10 +226,12 @@ TURKIYE | Başkenti neresi? (ANKARA)"></textarea>
 
 <script>
 // --- Yardımcılar ---
-const normalize = (s)=> s
-  .toUpperCase()
-  .replace(/[Ç]/g,'C').replace(/[Ğ]/g,'G').replace(/[İI]/g,'I').replace(/[Ö]/g,'O').replace(/[Ş]/g,'S').replace(/[Ü]/g,'U')
-  .replace(/[^A-Z0-9]/g,'');
+const TURKISH_ALPHABET = 'ABCÇDEFGĞHIİJKLMNOÖPRSŞTUÜVYZ';
+const LETTERS_ONLY_REGEX = new RegExp(`[^${TURKISH_ALPHABET}0-9]`, 'g');
+const LETTERS_WITH_PUNCT_REGEX = new RegExp(`[^${TURKISH_ALPHABET}0-9\\s\\.,;:!?\\'\\-]`, 'g');
+const normalize = (s='')=> s
+  .toLocaleUpperCase('tr-TR')
+  .replace(LETTERS_ONLY_REGEX,'');
 const rnd = (seed)=>()=> (seed = (seed*9301 + 49297) % 233280)/233280;
 
 function parseInput(text){
@@ -578,7 +608,7 @@ function genWordSearch(entries){
   function can(w,r,c,d){ if(r+d.dr*(w.length-1)<0||c+d.dc*(w.length-1)<0||r+d.dr*(w.length-1)>=n||c+d.dc*(w.length-1)>=n) return false; for(let i=0;i<w.length;i++){ const ch=grid[r+d.dr*i][c+d.dc*i]; if(ch && ch!==w[i]) return false; } return true; }
   function place(w){ for(let t=0;t<400;t++){ const r=(Math.random()*n)|0, c=(Math.random()*n)|0, d=dirs[(Math.random()*dirs.length)|0]; if(can(w,r,c,d)){ const path=[]; for(let i=0;i<w.length;i++){ grid[r+d.dr*i][c+d.dc*i]=w[i]; path.push({r:r+d.dr*i,c:c+d.dc*i}); } paths.push(path); return true; } } return false; }
   words.sort((a,b)=>b.length-a.length).forEach(w=>place(w));
-  const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+  const letters = TURKISH_ALPHABET;
   for(let r=0;r<n;r++) for(let c=0;c<n;c++){ if(!grid[r][c]) grid[r][c] = letters[(Math.random()*letters.length)|0]; }
   const numbers = Array.from({length:n},()=>Array(n).fill(null));
   const list = entries.map((e,i)=>({no:i+1, clue:e.answer, answer:e.answer}));
@@ -677,7 +707,7 @@ function makeAcrosticGame(entries){
 }
 
 function makeCryptogram(entries, seed){
-  const alphabet='ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
+  const alphabet=TURKISH_ALPHABET.split('');
   const rng=rnd(seed||0);
   let shuffled=alphabet.slice();
   for(let i=shuffled.length-1;i>0;i--){ const j=Math.floor(rng()*(i+1)); [shuffled[i],shuffled[j]]=[shuffled[j],shuffled[i]]; }
@@ -690,10 +720,10 @@ function makeCryptogram(entries, seed){
   const cipherMap={}; const decodeMap={};
   alphabet.forEach((ch,idx)=>{ cipherMap[ch]=shuffled[idx]; decodeMap[shuffled[idx]]=ch; });
   const plain = entries.map((e,i)=> `${i+1}. ${e.clue}`).join(' ');
-  const normalized = plain.toUpperCase().replace(/[^A-Z0-9ÇĞİÖŞÜ\s\.,;:!?'-]/g,'');
-  const repl = normalized.replace(/[ÇĞİÖŞÜ]/g, ch=>({'Ç':'C','Ğ':'G','İ':'I','Ö':'O','Ş':'S','Ü':'U'}[ch]));
-  const encode = (txt)=> txt.replace(/[A-Z]/g, ch=>cipherMap[ch]||ch);
-  const cipher = encode(repl);
+  const normalized = plain.toLocaleUpperCase('tr-TR').replace(LETTERS_WITH_PUNCT_REGEX,'');
+  const encodeRegex = new RegExp(`[${TURKISH_ALPHABET}]`, 'g');
+  const encode = (txt)=> txt.replace(encodeRegex, ch=>cipherMap[ch]||ch);
+  const cipher = encode(normalized);
   function wrap(text, max){
     const words=text.split(/\s+/); const lines=[]; let cur='';
     words.forEach(w=>{
@@ -705,7 +735,7 @@ function makeCryptogram(entries, seed){
   }
   const box=28, pad=24, lineH=32, maxChars=42;
   function draw(showSolved){
-    const text=showSolved? repl : cipher;
+    const text=showSolved? normalized : cipher;
     const lines=wrap(text, maxChars);
     const rows=2; const tableH = rows*(box+10)+30;
     const H = pad*2 + lines.length*lineH + tableH;
@@ -1030,8 +1060,8 @@ function runTests(){
     const t1 = `  TÜRKİYE | Soru A  \n\n  çiçek | Soru B  \n  A | kısa`;
     const e1 = parseInput(t1);
     assert('Satıra bölme', e1.length===2);
-    assert('Normalize 1', e1.some(e=>e.answer==='TURKIYE'));
-    assert('Normalize 2', e1.some(e=>e.answer==='CICEK'));
+    assert('Normalize 1', e1.some(e=>e.answer==='TÜRKİYE'));
+    assert('Normalize 2', e1.some(e=>e.answer==='ÇİÇEK'));
 
     const res = build(e1, 'auto', 0);
     assert('Izgara boyutu', res.grid.length>=11);
@@ -1045,7 +1075,8 @@ function runTests(){
 
     const wz = genWordSearch(e1);
     assert('Sözlük grid', wz.grid.length>=12);
-    const A=65,Z=90; let allLetters=true; outer: for(let r=0;r<wz.grid.length;r++){ for(let c=0;c<wz.grid.length;c++){ const ch=wz.grid[r][c]; if(!(typeof ch==='string' && ch.length===1 && ch.charCodeAt(0)>=A && ch.charCodeAt(0)<=Z)){ allLetters=false; break outer; } } }
+    const validLetter = new RegExp(`^[${TURKISH_ALPHABET}]$`);
+    let allLetters=true; outer: for(let r=0;r<wz.grid.length;r++){ for(let c=0;c<wz.grid.length;c++){ const ch=wz.grid[r][c]; if(!(typeof ch==='string' && ch.length===1 && validLetter.test(ch))){ allLetters=false; break outer; } } }
     assert('Sözlük harf dolgusu', allLetters);
 
     const cg = genCengel(e1);
