@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Dinamik Bulmaca Atölyesi</title>
+  <link rel="stylesheet" href="src/style.css" />
+</head>
+<body>
+  <header class="app-header" aria-live="polite">
+    <div>
+      <p class="eyebrow">Öğretmen ve öğrenciler için</p>
+      <h1>Dinamik Bulmaca Atölyesi</h1>
+      <p class="lede">Sorularınızı girin, erişilebilir ve oynanabilir bulmacalar üretin. Her modu PDF olarak dışa aktarabilirsiniz.</p>
+    </div>
+    <div class="header-actions">
+      <button type="button" id="printAll" class="button ghost" aria-label="Tüm bulmacaları PDF olarak indir">PDF İndir</button>
+    </div>
+  </header>
+
+  <main class="layout" aria-live="polite">
+    <section class="panel input-panel" aria-labelledby="dataPanelTitle">
+      <header>
+        <h2 id="dataPanelTitle">Veri Girişi</h2>
+        <p>Satır başına <strong>CEVAP | SORU</strong> formatı kullanın.</p>
+      </header>
+      <label class="field">
+        <span>İçerik</span>
+        <textarea id="bulkInput" rows="12" spellcheck="false" aria-describedby="inputHelp"></textarea>
+        <small id="inputHelp">Türkçe karakterler otomatik normalize edilir.</small>
+      </label>
+      <div class="field-grid">
+        <label class="field" for="gridSize">
+          <span>Izgara Boyutu</span>
+          <select id="gridSize">
+            <option value="auto">Otomatik</option>
+            <option value="13">13</option>
+            <option value="15">15</option>
+            <option value="17">17</option>
+            <option value="19">19</option>
+            <option value="21">21</option>
+          </select>
+        </label>
+        <label class="field" for="seedValue">
+          <span>Rastgelelik Tohumu</span>
+          <input type="number" id="seedValue" min="0" max="9999" value="0" />
+        </label>
+        <label class="field" for="modeSelect">
+          <span>Bulmaca Tipi</span>
+          <select id="modeSelect">
+            <option value="crossword">Kare Bulmaca</option>
+            <option value="akrostis">Akrostiş</option>
+            <option value="cryptogram">Şifreli Alfabe</option>
+            <option value="ladder">Söz Zinciri</option>
+          </select>
+        </label>
+      </div>
+      <div class="actions">
+        <button type="button" id="generate" class="button primary">Bulmaca Oluştur</button>
+        <button type="button" id="sampleData" class="button secondary">Örnek Doldur</button>
+        <button type="button" id="clearData" class="button ghost">Temizle</button>
+      </div>
+      <div class="status" role="status" aria-live="polite" id="statusMessage">Hazır</div>
+    </section>
+
+    <section class="panel output-panel" aria-labelledby="previewTitle">
+      <header>
+        <div>
+          <h2 id="previewTitle">Önizleme</h2>
+          <p id="modeTitle">Kare Bulmaca</p>
+        </div>
+        <div class="inline-actions">
+          <button type="button" class="button secondary" id="printMode">PDF</button>
+          <button type="button" class="button ghost" id="resetProgress">İlerlemeyi Sil</button>
+        </div>
+      </header>
+      <div id="interactiveArea" class="interactive" role="region"></div>
+      <div class="legend" id="legendArea"></div>
+    </section>
+  </main>
+
+  <section class="panel" aria-labelledby="accessTitle">
+    <header>
+      <h2 id="accessTitle">Erişilebilirlik & Yardım</h2>
+    </header>
+    <ul class="help-list">
+      <li>Klavye navigasyonu: Yön tuşları ile hücreler arasında gezinebilir, <kbd>Boşluk</kbd> ile yön değiştirebilirsiniz.</li>
+      <li>Çalışmanız tarayıcıda saklanır; “İlerlemeyi Sil” ile temizleyebilirsiniz.</li>
+      <li>“PDF” butonları yazdırma penceresi açar; PDF yazıcısı seçerek çıktı alabilirsiniz.</li>
+    </ul>
+  </section>
+
+  <section id="printRoot" class="print-root" aria-hidden="true"></section>
+
+  <script type="module" src="src/main.js"></script>
+</body>
+</html>
