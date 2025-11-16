@@ -400,9 +400,142 @@
                 grid-template-columns: 1fr;
             }
         }
+
+        /* Rol Seçimi Modal Stilleri */
+        .role-selection-modal {
+            display: none;
+            position: fixed;
+            z-index: 2000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.9);
+            animation: fadeIn 0.3s;
+        }
+
+        .role-selection-content {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            margin: 10% auto;
+            padding: 60px;
+            width: 90%;
+            max-width: 600px;
+            border-radius: 30px;
+            text-align: center;
+            animation: slideUp 0.5s;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+        }
+
+        .role-selection-content h1 {
+            color: white;
+            font-size: 2.5em;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .role-selection-content p {
+            color: rgba(255,255,255,0.9);
+            font-size: 1.3em;
+            margin-bottom: 40px;
+        }
+
+        .role-buttons {
+            display: flex;
+            gap: 30px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .role-btn {
+            padding: 40px 50px;
+            font-size: 1.5em;
+            font-weight: bold;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+            min-width: 200px;
+        }
+
+        .role-btn.student {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+        }
+
+        .role-btn.teacher {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+        }
+
+        .role-btn:hover {
+            transform: translateY(-8px) scale(1.05);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.4);
+        }
+
+        /* Rol Switcher Butonu */
+        .role-switcher {
+            padding: 10px 20px;
+            background: rgba(255,255,255,0.25);
+            color: white;
+            border: 2px solid rgba(255,255,255,0.4);
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 0.95em;
+            font-weight: 600;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .role-switcher:hover {
+            background: rgba(255,255,255,0.35);
+            transform: translateY(-2px);
+        }
+
+        /* İçerik Filtreleme */
+        .teacher-only {
+            display: none;
+        }
+
+        body.role-teacher .teacher-only {
+            display: inline-flex;
+        }
+
+        body.role-teacher .tab.teacher-only {
+            display: block;
+        }
+
+        body.role-teacher .tab-content.teacher-only {
+            display: none;
+        }
+
+        body.role-teacher .tab-content.teacher-only.active {
+            display: block;
+        }
     </style>
 </head>
 <body>
+    <!-- Rol Seçim Modalı -->
+    <div id="roleSelectionModal" class="role-selection-modal">
+        <div class="role-selection-content">
+            <h1>🎓 Hoş Geldiniz!</h1>
+            <p>Portalı kullanmaya başlamak için lütfen rolünüzü seçin</p>
+            <div class="role-buttons">
+                <button class="role-btn student" onclick="selectRole('student')">
+                    👨‍🎓<br>ÖĞRENCİYİM
+                </button>
+                <button class="role-btn teacher" onclick="selectRole('teacher')">
+                    👨‍🏫<br>ÖĞRETMENIM
+                </button>
+            </div>
+            <p style="font-size: 0.9em; margin-top: 30px; opacity: 0.8;">
+                Seçiminizi istediğiniz zaman üst menüden değiştirebilirsiniz
+            </p>
+        </div>
+    </div>
+
     <div class="container">
         <header>
             <h1>🎓 Bilişim Teknolojileri Eğitim Portalı</h1>
@@ -428,18 +561,23 @@
                 <a href="konular-haritasi.html" class="header-nav-btn">
                     🗺️ Konu Haritası
                 </a>
-                <a href="ogretmen-ototest.html" class="header-nav-btn">
+                <a href="ogretmen-ototest.html" class="header-nav-btn teacher-only">
                     📝 Test Oluştur
                 </a>
-                <a href="ogretmen-soru-bankasi.html" class="header-nav-btn">
+                <a href="ogretmen-soru-bankasi.html" class="header-nav-btn teacher-only">
                     📚 Soru Bankası
                 </a>
-                <a href="ogretmen-performans-takip.html" class="header-nav-btn">
+                <a href="ogretmen-performans-takip.html" class="header-nav-btn teacher-only">
                     📊 Performans Takip
                 </a>
-                <a href="ogretmen-etkinlik-olusturucu.html" class="header-nav-btn">
+                <a href="ogretmen-etkinlik-olusturucu.html" class="header-nav-btn teacher-only">
                     🎨 Etkinlik Oluştur
                 </a>
+                <button id="roleSwitcher" class="header-nav-btn role-switcher" onclick="toggleRole()">
+                    <span id="roleIcon">👨‍🎓</span>
+                    <span id="roleText">Öğrenci Modu</span>
+                    ⟳
+                </button>
                 <button id="darkModeToggle" class="header-nav-btn">
                     🌙 Dark Mode
                 </button>
@@ -448,7 +586,7 @@
 
         <div class="tabs">
             <button class="tab active" onclick="openTab('anasayfa')">🏠 Ana Sayfa</button>
-            <button class="tab" onclick="openTab('ogretmen')">👨‍🏫 Öğretmen Hazırlık</button>
+            <button class="tab teacher-only" onclick="openTab('ogretmen')">👨‍🏫 Öğretmen Hazırlık</button>
             <button class="tab" onclick="openTab('dersler')">📚 Ders Anlatımı</button>
             <button class="tab" onclick="openTab('calisma')">📝 Çalışma Sayfaları</button>
             <button class="tab" onclick="openTab('sozluk')">📖 Sözlük</button>
@@ -553,7 +691,7 @@
         </div>
 
         <!-- ÖĞRETMEN HAZIRLLIK -->
-        <div id="ogretmen" class="tab-content">
+        <div id="ogretmen" class="tab-content teacher-only">
             <div class="teacher-tools">
                 <h2>👨‍🏫 Öğretmen Araç Kutusu</h2>
                 <p style="margin-bottom: 20px;">Derslerinizi hazırlamak için ihtiyacınız olan her şey</p>
@@ -1717,5 +1855,83 @@
     <script src="scripts/search.js"></script>
     <script src="scripts/dark-mode.js"></script>
     <script src="scripts/daily-challenges.js"></script>
+
+    <!-- Rol Yönetimi -->
+    <script>
+        // Rol yönetimi için değişkenler
+        const ROLE_KEY = 'bst_user_role';
+
+        // Sayfa yüklendiğinde rol kontrolü
+        window.addEventListener('DOMContentLoaded', function() {
+            const savedRole = localStorage.getItem(ROLE_KEY);
+
+            if (savedRole) {
+                // Kaydedilmiş rol varsa uygula
+                applyRole(savedRole);
+            } else {
+                // Rol seçilmemişse modalı göster
+                showRoleSelectionModal();
+            }
+        });
+
+        // Rol seçim modalını göster
+        function showRoleSelectionModal() {
+            document.getElementById('roleSelectionModal').style.display = 'block';
+        }
+
+        // Rol seçim modalını gizle
+        function hideRoleSelectionModal() {
+            document.getElementById('roleSelectionModal').style.display = 'none';
+        }
+
+        // Rol seçimi
+        function selectRole(role) {
+            localStorage.setItem(ROLE_KEY, role);
+            applyRole(role);
+            hideRoleSelectionModal();
+        }
+
+        // Rolü değiştir
+        function toggleRole() {
+            const currentRole = localStorage.getItem(ROLE_KEY) || 'student';
+            const newRole = currentRole === 'student' ? 'teacher' : 'student';
+            selectRole(newRole);
+        }
+
+        // Rolü uygula
+        function applyRole(role) {
+            const body = document.body;
+            const roleIcon = document.getElementById('roleIcon');
+            const roleText = document.getElementById('roleText');
+
+            // Body'den tüm rol class'larını kaldır
+            body.classList.remove('role-student', 'role-teacher');
+
+            // Yeni rolü ekle
+            body.classList.add('role-' + role);
+
+            // Rol switcher butonunu güncelle
+            if (role === 'student') {
+                roleIcon.textContent = '👨‍🎓';
+                roleText.textContent = 'Öğrenci Modu';
+            } else {
+                roleIcon.textContent = '👨‍🏫';
+                roleText.textContent = 'Öğretmen Modu';
+            }
+
+            // Eğer öğretmen sekmesi açıksa ve öğrenci moduna geçilmişse ana sayfaya dön
+            if (role === 'student') {
+                const ogretmenTab = document.getElementById('ogretmen');
+                if (ogretmenTab && ogretmenTab.classList.contains('active')) {
+                    openTab('anasayfa');
+                    // Ana sayfa tab butonunu aktif yap
+                    document.querySelectorAll('.tab').forEach(tab => {
+                        tab.classList.remove('active');
+                    });
+                    document.querySelector('.tab[onclick*="anasayfa"]').classList.add('active');
+                }
+            }
+        }
+    </script>
 </body>
 </html>
