@@ -185,6 +185,24 @@
             color: #E91E63;
         }
 
+        .presentation-card {
+            border-color: #667eea;
+            background: linear-gradient(135deg, #f5f7ff 0%, #e8ebff 100%);
+        }
+
+        .presentation-card h3 {
+            color: #667eea;
+        }
+
+        .presentation-viewer {
+            margin-top: 15px;
+        }
+
+        .presentation-controls button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+
         .task-list {
             list-style: none;
             padding: 0;
@@ -2945,6 +2963,40 @@
                             <p style="line-height: 1.8;">${data.fun.joke}</p>
                         </div>
                     </div>
+
+                    <!-- DERS SUNUMU -->
+                    ${getPresentationFile(data.grade, data.week) ? `
+                    <div class="content-card presentation-card" style="grid-column: 1 / -1;">
+                        <h3><span class="icon">📊</span> Haftalık Ders Sunumu</h3>
+                        <p style="color: #666; margin-bottom: 15px;">Bu haftanın konularını içeren ders sunumu</p>
+
+                        <div class="presentation-viewer" id="presentation-viewer-${data.week}">
+                            <div class="presentation-controls" style="display: flex; gap: 10px; margin-bottom: 15px; flex-wrap: wrap;">
+                                <a href="${getPresentationFile(data.grade, data.week)}" download style="text-decoration: none; flex: 1; min-width: 200px;">
+                                    <button style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 12px 25px; border: none; border-radius: 10px; font-size: 1em; font-weight: bold; cursor: pointer; transition: all 0.3s; width: 100%;">
+                                        💾 Sunumu İndir
+                                    </button>
+                                </a>
+                                <button onclick="openPresentationFullscreen('${getPresentationFile(data.grade, data.week)}')" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white; padding: 12px 25px; border: none; border-radius: 10px; font-size: 1em; font-weight: bold; cursor: pointer; transition: all 0.3s; flex: 1; min-width: 200px;">
+                                    🖥️ Tam Ekranda Aç
+                                </button>
+                            </div>
+
+                            <div class="presentation-frame-container" style="position: relative; width: 100%; background: #f5f5f5; border-radius: 10px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
+                                <iframe
+                                    src="https://view.officeapps.live.com/op/embed.aspx?src=${encodeURIComponent(window.location.origin + window.location.pathname.substring(0, window.location.pathname.lastIndexOf('/') + 1) + getPresentationFile(data.grade, data.week))}"
+                                    style="width: 100%; height: 600px; border: none;"
+                                    frameborder="0">
+                                </iframe>
+                                <div style="text-align: center; padding: 15px; background: #fff; border-top: 2px solid #667eea;">
+                                    <p style="color: #666; font-size: 0.9em; margin: 0;">
+                                        💡 <strong>İpucu:</strong> Sunumu daha iyi görüntülemek için "Tam Ekranda Aç" butonunu kullanabilir veya indirebilirsiniz.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    ` : ''}
                 </div>
             `;
 
@@ -2964,6 +3016,50 @@
                 'sorting': 'Sıralama Oyunu'
             };
             return types[type] || 'Eğitsel Oyun';
+        }
+
+        function getPresentationFile(grade, week) {
+            // Hafta numarasına göre ünite belirleme ve sunum dosyası eşleştirme
+            let presentationFile = '';
+
+            if (grade === 5) {
+                if (week >= 1 && week <= 6) {
+                    presentationFile = 'sunumlar/5-sinif-unite1-bilisim-temelleri.pptx';
+                } else if (week >= 7 && week <= 12) {
+                    presentationFile = 'sunumlar/5-sinif-unite2-dijital-urun.pptx';
+                } else if (week >= 13 && week <= 18) {
+                    presentationFile = 'sunumlar/5-sinif-unite3-aglar-iletisim.pptx';
+                } else if (week >= 19 && week <= 24) {
+                    presentationFile = 'sunumlar/5-sinif-unite4-etik-guvenlik.pptx';
+                } else if (week >= 25 && week <= 30) {
+                    presentationFile = 'sunumlar/5-sinif-unite5-yapay-zeka.pptx';
+                } else if (week >= 31 && week <= 36) {
+                    presentationFile = 'sunumlar/5-sinif-unite6-scratch.pptx';
+                }
+            } else if (grade === 6) {
+                if (week >= 1 && week <= 7) {
+                    presentationFile = 'sunumlar/6-sinif-unite1-bilisim.pptx';
+                } else if (week >= 8 && week <= 14) {
+                    presentationFile = 'sunumlar/6-sinif-unite2-etik-guvenlik.pptx';
+                } else if (week >= 15 && week <= 21) {
+                    presentationFile = 'sunumlar/6-sinif-unite3-iletisim.pptx';
+                } else if (week >= 22 && week <= 28) {
+                    presentationFile = 'sunumlar/6-sinif-unite4-urun-olusturma.pptx';
+                } else if (week >= 29 && week <= 36) {
+                    presentationFile = 'sunumlar/6-sinif-unite5-problem-cozme.pptx';
+                }
+            }
+
+            return presentationFile;
+        }
+
+        function openPresentationFullscreen(filePath) {
+            // Tam ekran sunum görüntüleyici
+            const fullUrl = window.location.origin + window.location.pathname.substring(0, window.location.pathname.lastIndexOf('/') + 1) + filePath;
+            const viewerUrl = `https://view.officeapps.live.com/op/view.aspx?src=${encodeURIComponent(fullUrl)}`;
+
+            // Yeni pencerede aç
+            window.open(viewerUrl, '_blank', 'width=1200,height=800,menubar=no,toolbar=no,location=no,status=no');
         }
 
         function clearContent() {
