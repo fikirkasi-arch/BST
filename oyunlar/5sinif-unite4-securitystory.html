@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Güvenlik Hikayesi - 5. Sınıf Ünite 4</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .container {
+            max-width: 800px;
+            width: 100%;
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        h1 { text-align: center; color: #667eea; margin-bottom: 30px; }
+        .story-box {
+            background: #f5f5f5;
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            border-left: 5px solid #667eea;
+        }
+        .character {
+            font-size: 4em;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .story-text {
+            font-size: 1.2em;
+            line-height: 1.8;
+            color: #333;
+            margin-bottom: 20px;
+        }
+        .question {
+            background: #fff9e6;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+        .question h3 {
+            color: #764ba2;
+            margin-bottom: 15px;
+        }
+        .choices {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .choice {
+            padding: 15px;
+            background: white;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .choice:hover {
+            border-color: #667eea;
+            background: #f5f5ff;
+            transform: translateX(5px);
+        }
+        .choice.correct {
+            border-color: #43e97b;
+            background: #e8f5e9;
+        }
+        .choice.wrong {
+            border-color: #f5576c;
+            background: #ffebee;
+        }
+        .feedback {
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+            display: none;
+        }
+        .feedback.show {
+            display: block;
+        }
+        .feedback.correct {
+            background: #e8f5e9;
+            border-left: 5px solid #43e97b;
+            color: #2e7d32;
+        }
+        .feedback.wrong {
+            background: #ffebee;
+            border-left: 5px solid #f5576c;
+            color: #c62828;
+        }
+        .btn {
+            padding: 15px 30px;
+            font-size: 1.1em;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: bold;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            width: 100%;
+            margin-top: 20px;
+        }
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+        .score {
+            text-align: center;
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #667eea;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔐 Güvenlik Hikayesi</h1>
+        <div id="storyContent"></div>
+        <div class="score" id="score">Puan: 0/5</div>
+    </div>
+
+    <script>
+        const scenarios = [
+            {
+                character: '👦',
+                story: 'Ahmet, sosyal medyada tanımadığı birinden arkadaşlık isteği aldı. Mesajda "Seni tanıyorum, aynı okulda mıyız?" yazıyor.',
+                question: 'Ahmet ne yapmalı?',
+                choices: [
+                    { text: 'Hemen kabul etmeli, belki gerçekten tanıyordur', correct: false },
+                    { text: 'Ailesine danışmalı ve tanımadığı kişileri eklemem eli', correct: true },
+                    { text: 'Kişisel bilgilerini paylaşarak kim olduğunu öğrenmeli', correct: false }
+                ],
+                correctFeedback: '✅ Doğru! Tanımadığın kişileri sosyal medyada eklememek önemlidir.',
+                wrongFeedback: '❌ Yanlış! Tanımadığın kişilerden gelen istekleri kabul etmemelisin.'
+            },
+            {
+                character: '👧',
+                story: 'Zeynep, e-postasına "Hesabınız kapatılacak! Hemen şifrenizi güncelleyin" yazan bir mesaj geldi. Linke tıklayınca şifre isteyen bir sayfa açıldı.',
+                question: 'Zeynep ne yapmalı?',
+                choices: [
+                    { text: 'Hemen şifresini girip hesabını kurtarmalı', correct: false },
+                    { text: 'Linke tıklamamalı, bu bir phishing saldırısı olabilir', correct: true },
+                    { text: 'Arkadaşlarına linki göndermeli', correct: false }
+                ],
+                correctFeedback: '✅ Doğru! Bu bir phishing (kimlik avı) saldırısıdır. Şüpheli linklere tıklama!',
+                wrongFeedback: '❌ Yanlış! Bu bir phishing saldırısı. Asla şifreni böyle sitelere girme!'
+            },
+            {
+                character: '👦',
+                story: 'Can, yeni bir oyun için kayıt olurken şifre oluşturuyor. "12345678" şifresini seçmek üzere.',
+                question: 'Bu şifre güvenli mi?',
+                choices: [
+                    { text: 'Evet, 8 karakter olduğu için güvenli', correct: false },
+                    { text: 'Hayır, çok basit! Büyük/küçük harf, rakam ve sembol kullanmalı', correct: true },
+                    { text: 'Evet, rakamlardan oluştuğu için güvenli', correct: false }
+                ],
+                correctFeedback: '✅ Doğru! Güçlü şifre: büyük/küçük harf + rakam + sembol içermeli.',
+                wrongFeedback: '❌ Yanlış! "12345678" çok basit bir şifre. Kolayca tahmin edilebilir!'
+            },
+            {
+                character: '👧',
+                story: 'Ayşe, okulda arkadaşının bilgisayarını kullanıyor. Arkadaşı "Şifremi söyleyeyim, istediğin zaman kullan" diyor.',
+                question: 'Ayşe ne yapmalı?',
+                choices: [
+                    { text: 'Şifreyi alıp saklamalı, işine yarayabilir', correct: false },
+                    { text: 'Teşekkür etmeli ama şifrelerin paylaşılmaması gerektiğini söylemeli', correct: true },
+                    { text: 'Şifreyi alıp başkalarıyla paylaşmalı', correct: false }
+                ],
+                correctFeedback: '✅ Doğru! Şifreler kişiseldir ve paylaşılmamalıdır.',
+                wrongFeedback: '❌ Yanlış! Şifreler asla paylaşılmamalı, kişiye özeldir!'
+            },
+            {
+                character: '👦',
+                story: 'Mehmet, internette gezinirken "ÜCRETSİZ iPhone kazan! Hemen tıkla!" reklamı gördü.',
+                question: 'Mehmet ne yapmalı?',
+                choices: [
+                    { text: 'Hemen tıklamalı, bedava telefon kazanabilir', correct: false },
+                    { text: 'Tıklamamalı, bu tip reklamlar genelde aldatmacadır', correct: true },
+                    { text: 'Tüm bilgilerini vererek denemelidir', correct: false }
+                ],
+                correctFeedback: '✅ Doğru! "Çok iyi" görünen tekliflere dikkat et. Genelde aldatmacadır.',
+                wrongFeedback: '❌ Yanlış! Bu tür "bedava" teklifler genelde dolandırıcılıktır!'
+            }
+        ];
+
+        let currentScenario = 0;
+        let score = 0;
+
+        function loadScenario() {
+            const scenario = scenarios[currentScenario];
+            const content = document.getElementById('storyContent');
+
+            content.innerHTML = `
+                <div class="story-box">
+                    <div class="character">${scenario.character}</div>
+                    <div class="story-text">${scenario.story}</div>
+                </div>
+                <div class="question">
+                    <h3>❓ ${scenario.question}</h3>
+                    <div class="choices" id="choices"></div>
+                    <div class="feedback" id="feedback"></div>
+                </div>
+                ${currentScenario < scenarios.length - 1 ?
+                    '<button class="btn" id="nextBtn" style="display:none;" onclick="nextScenario()">➡️ Sonraki Senaryo</button>' :
+                    '<button class="btn" id="nextBtn" style="display:none;" onclick="showResults()">🏆 Sonuçları Gör</button>'
+                }
+            `;
+
+            const choicesDiv = document.getElementById('choices');
+            scenario.choices.forEach((choice, index) => {
+                const choiceEl = document.createElement('div');
+                choiceEl.className = 'choice';
+                choiceEl.textContent = choice.text;
+                choiceEl.onclick = () => selectChoice(index, choice.correct);
+                choicesDiv.appendChild(choiceEl);
+            });
+        }
+
+        function selectChoice(index, isCorrect) {
+            const choices = document.querySelectorAll('.choice');
+            const feedback = document.getElementById('feedback');
+            const scenario = scenarios[currentScenario];
+
+            // Tüm seçenekleri devre dışı bırak
+            choices.forEach((choice, i) => {
+                choice.style.pointerEvents = 'none';
+                if (i === index) {
+                    choice.classList.add(isCorrect ? 'correct' : 'wrong');
+                }
+            });
+
+            // Feedback göster
+            feedback.className = 'feedback show ' + (isCorrect ? 'correct' : 'wrong');
+            feedback.innerHTML = isCorrect ? scenario.correctFeedback : scenario.wrongFeedback;
+
+            if (isCorrect) {
+                score++;
+                updateScore();
+            }
+
+            // Sonraki butonu göster
+            document.getElementById('nextBtn').style.display = 'block';
+        }
+
+        function nextScenario() {
+            currentScenario++;
+            loadScenario();
+        }
+
+        function showResults() {
+            const content = document.getElementById('storyContent');
+            const percentage = (score / scenarios.length) * 100;
+            let emoji = '🏆';
+            let message = 'Mükemmel!';
+
+            if (percentage < 60) {
+                emoji = '📚';
+                message = 'Biraz daha çalışmalısın';
+            } else if (percentage < 80) {
+                emoji = '👍';
+                message = 'İyi iş çıkardın!';
+            }
+
+            content.innerHTML = `
+                <div style="text-align: center; padding: 40px;">
+                    <div style="font-size: 6em; margin-bottom: 20px;">${emoji}</div>
+                    <h2 style="color: #667eea; margin-bottom: 20px;">${message}</h2>
+                    <div style="font-size: 3em; font-weight: bold; color: #667eea; margin: 20px 0;">${score}/${scenarios.length}</div>
+                    <div style="font-size: 1.5em; color: #666; margin-bottom: 30px;">%${percentage.toFixed(0)} Başarı</div>
+                    <button class="btn" onclick="location.reload()">🔄 Tekrar Oyna</button>
+                    <button class="btn" style="background: #e0e0e0; color: #333; margin-top: 10px;" onclick="window.location.href='../games-hub.html'">🎮 Oyun Merkezi</button>
+                </div>
+            `;
+        }
+
+        function updateScore() {
+            document.getElementById('score').textContent = `Puan: ${score}/5`;
+        }
+
+        loadScenario();
+    </script>
+</body>
+</html>

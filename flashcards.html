@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bilişim Sözlüğü - Çalışma Kartları (Flashcards)</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', sans-serif; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; padding: 20px; }
+        .container { max-width: 1000px; margin: 0 auto; }
+        h1 { text-align: center; color: white; font-size: 3em; margin-bottom: 10px; text-shadow: 2px 2px 4px rgba(0,0,0,0.3); }
+        .subtitle { text-align: center; color: white; font-size: 1.3em; margin-bottom: 30px; opacity: 0.95; }
+        .controls { background: white; padding: 30px; border-radius: 20px; box-shadow: 0 10px 40px rgba(0,0,0,0.2); margin-bottom: 30px; }
+        .filter-section { margin-bottom: 20px; }
+        .filter-section label { font-weight: bold; color: #333; margin-right: 15px; }
+        select { padding: 10px 20px; border-radius: 10px; border: 2px solid #e0e0e0; font-size: 1em; margin-right: 15px; cursor: pointer; }
+        .btn { padding: 12px 30px; border: none; border-radius: 10px; font-size: 1.1em; font-weight: bold; cursor: pointer; transition: all 0.3s; margin: 5px; }
+        .btn-primary { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4); }
+        .btn-secondary { background: #e0e0e0; color: #333; }
+        .card-container { perspective: 1000px; margin-bottom: 30px; }
+        .card { width: 100%; height: 400px; position: relative; transform-style: preserve-3d; transition: transform 0.6s; cursor: pointer; }
+        .card.flipped { transform: rotateY(180deg); }
+        .card-face { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; display: flex; align-items: center; justify-content: center; flex-direction: column; padding: 40px; border-radius: 20px; box-shadow: 0 10px 40px rgba(0,0,0,0.2); }
+        .card-front { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; }
+        .card-back { background: white; color: #333; transform: rotateY(180deg); border: 3px solid #667eea; }
+        .term { font-size: 3em; font-weight: bold; margin-bottom: 20px; text-align: center; }
+        .definition { font-size: 1.5em; line-height: 1.6; text-align: center; margin-bottom: 20px; }
+        .info { font-size: 1.1em; opacity: 0.9; margin-top: 20px; }
+        .progress { background: white; padding: 20px; border-radius: 15px; text-align: center; margin-bottom: 30px; }
+        .progress-text { font-size: 1.3em; color: #333; font-weight: bold; }
+        .stats { display: flex; gap: 20px; justify-content: center; margin-top: 15px; }
+        .stat-item { background: #f5f5ff; padding: 15px 25px; border-radius: 10px; }
+        .stat-label { font-size: 0.9em; color: #666; }
+        .stat-value { font-size: 1.5em; color: #667eea; font-weight: bold; }
+        .card-actions { display: flex; gap: 15px; justify-content: center; margin-top: 30px; }
+        .action-btn { padding: 15px 30px; border-radius: 10px; border: none; font-size: 1.1em; font-weight: bold; cursor: pointer; transition: all 0.3s; }
+        .btn-know { background: #4caf50; color: white; }
+        .btn-not-know { background: #f44336; color: white; }
+        .btn-know:hover, .btn-not-know:hover { transform: scale(1.05); }
+        .completed { text-align: center; padding: 60px; background: white; border-radius: 20px; display: none; }
+        .completed h2 { color: #667eea; font-size: 3em; margin-bottom: 20px; }
+        .completed .emoji { font-size: 6em; margin: 20px 0; }
+        .links { text-align: center; margin-top: 30px; }
+        .links a { display: inline-block; margin: 0 10px; color: white; text-decoration: none; font-size: 1.2em; padding: 10px 20px; background: rgba(255,255,255,0.2); border-radius: 10px; transition: all 0.3s; }
+        .links a:hover { background: rgba(255,255,255,0.3); transform: translateY(-2px); }
+        @media (max-width: 768px) { .term { font-size: 2em; } .definition { font-size: 1.2em; } .card-face { padding: 20px; } }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎴 Çalışma Kartları</h1>
+        <p class="subtitle">Terimleri ezberle, bilgini pekiştir!</p>
+
+        <div class="controls">
+            <div class="filter-section">
+                <label>📚 Sınıf:</label>
+                <select id="gradeFilter">
+                    <option value="all">Tüm Sınıflar</option>
+                    <option value="5-sinif">5. Sınıf</option>
+                    <option value="6-sinif">6. Sınıf</option>
+                </select>
+                <label>📖 Ünite:</label>
+                <select id="unitFilter">
+                    <option value="all">Tüm Üniteler</option>
+                    <option value="U1">Ünite 1</option>
+                    <option value="U2">Ünite 2</option>
+                    <option value="U3">Ünite 3</option>
+                    <option value="U4">Ünite 4</option>
+                    <option value="U5">Ünite 5</option>
+                    <option value="U6">Ünite 6</option>
+                </select>
+                <button class="btn btn-primary" onclick="startStudy()">🚀 Çalışmaya Başla</button>
+                <button class="btn btn-secondary" onclick="window.location.href='sozluk.html'">📖 Sözlüğe Dön</button>
+            </div>
+        </div>
+
+        <div class="progress" id="progressSection" style="display:none;">
+            <div class="progress-text" id="progressText">Kart 1 / 10</div>
+            <div class="stats">
+                <div class="stat-item">
+                    <div class="stat-label">✓ Biliyorum</div>
+                    <div class="stat-value" id="knownCount">0</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-label">❌ Bilmiyorum</div>
+                    <div class="stat-value" id="unknownCount">0</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card-container" id="cardContainer" style="display:none;">
+            <div class="card" id="flashcard" onclick="flipCard()">
+                <div class="card-face card-front">
+                    <div class="term" id="termText">Bilişim</div>
+                    <div class="info">🔄 Kartı çevirmek için tıkla</div>
+                </div>
+                <div class="card-face card-back">
+                    <div class="definition" id="definitionText">Bilgi işleme ve iletişim teknolojilerinin bilimi.</div>
+                    <div class="info" id="relatedInfo"></div>
+                </div>
+            </div>
+            <div class="card-actions">
+                <button class="action-btn btn-not-know" onclick="markCard(false)">❌ Bilmiyorum</button>
+                <button class="action-btn btn-know" onclick="markCard(true)">✅ Biliyorum</button>
+            </div>
+        </div>
+
+        <div class="completed" id="completedSection">
+            <div class="emoji">🎉</div>
+            <h2>Tebrikler!</h2>
+            <p style="font-size:1.3em; margin:20px 0;">Tüm kartları tamamladın!</p>
+            <div class="stats">
+                <div class="stat-item">
+                    <div class="stat-label">Toplam Kart</div>
+                    <div class="stat-value" id="totalCards">0</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-label">Bildiğim</div>
+                    <div class="stat-value" id="finalKnown">0</div>
+                </div>
+                <div class="stat-label">Başarı</div>
+                    <div class="stat-value" id="successRate">0%</div>
+                </div>
+            </div>
+            <button class="btn btn-primary" onclick="location.reload()" style="margin-top:30px;">🔄 Tekrar Çalış</button>
+        </div>
+
+        <div class="links">
+            <a href="index.html">🏠 Ana Sayfa</a>
+            <a href="sozluk.html">📖 Sözlük</a>
+        </div>
+    </div>
+
+    <script>
+        // Glossary Data - Sozluk.html'den alınan terimler
+        const glossaryData = [
+            { tr: "Bilişim", en: "Information Technology", def: "Bilgi işleme ve iletişim teknolojilerinin bilimi.", grade: "5-sinif", unit: "U1", related: ["Teknoloji", "Bilgisayar"] },
+            { tr: "Bilgisayar", en: "Computer", def: "Veri işleyen, saklayan ve sonuç üreten elektronik cihaz.", grade: "5-sinif", unit: "U1", related: ["Donanım", "Yazılım"] },
+            { tr: "Donanım", en: "Hardware", def: "Bilgisayarın fiziksel parçaları; görebildiğimiz, dokunabildiğimiz kısımlar.", grade: "5-sinif", unit: "U1", related: ["Klavye", "Mouse"] },
+            { tr: "Yazılım", en: "Software", def: "Bilgisayarı çalıştıran programlar; fiziksel olmayan dijital komutlar.", grade: "5-sinif", unit: "U1", related: ["Program", "İşletim Sistemi"] },
+            { tr: "İşletim Sistemi", en: "Operating System", def: "Bilgisayarı kontrol eden ve diğer programları çalıştıran temel yazılım.", grade: "5-sinif", unit: "U1", related: ["Windows", "macOS", "Linux"] },
+            { tr: "İşlemci (CPU)", en: "CPU", def: "Bilgisayarın beyni; tüm hesaplamaları yapan ve komutları işleyen parça.", grade: "5-sinif", unit: "U1", related: ["GHz", "Çekirdek"] },
+            { tr: "RAM", en: "RAM", def: "Kısa süreli hafıza; çalışma esnasında veri tutar, kapanınca silinir.", grade: "5-sinif", unit: "U1", related: ["GB", "Bellek"] },
+            { tr: "SSD", en: "Solid State Drive", def: "Elektronik depolama; HDD'den çok daha hızlı ama pahalı.", grade: "5-sinif", unit: "U1", related: ["Depolama", "HDD"] },
+            { tr: "Byte", en: "Byte", def: "8 bit = 1 byte. Bir karakteri temsil eder.", grade: "5-sinif", unit: "U1", related: ["Bit", "KB", "MB"] },
+            { tr: "USB", en: "Universal Serial Bus", def: "Evrensel bağlantı standardı. Flash bellek, klavye, mouse için.", grade: "5-sinif", unit: "U1", related: ["Port", "Depolama"] },
+            { tr: "Microsoft Word", en: "Word", def: "Metin belgesi oluşturmak için kelime işlemci.", grade: "5-sinif", unit: "U2", related: ["Belge", "Ofis"] },
+            { tr: "PowerPoint", en: "PowerPoint", def: "Slayt sunumu hazırlama ve sunma programı.", grade: "5-sinif", unit: "U2", related: ["Sunum", "Slayt"] },
+            { tr: "Paint", en: "Paint", def: "Dijital resim çizme ve düzenleme programı.", grade: "5-sinif", unit: "U2", related: ["Grafik", "Tasarım"] },
+            { tr: "İnternet", en: "Internet", def: "Dünya çapında milyonlarca bilgisayarı birbirine bağlayan ağ.", grade: "5-sinif", unit: "U3", related: ["Web", "WWW"] },
+            { tr: "E-posta", en: "Email", def: "Elektronik posta; dijital olarak mesaj göndermek ve almak.", grade: "5-sinif", unit: "U3", related: ["İletişim", "Gmail"] },
+            { tr: "Siber Güvenlik", en: "Cybersecurity", def: "Dijital dünyada kendini ve verilerini koruma.", grade: "5-sinif", unit: "U4", related: ["Virüs", "Şifre"] },
+            { tr: "Güçlü Şifre", en: "Strong Password", def: "En az 8 karakter, büyük-küçük harf, sayı, sembol içeren şifre.", grade: "5-sinif", unit: "U4", related: ["Güvenlik"] },
+            { tr: "Yapay Zeka", en: "Artificial Intelligence", def: "Makinelerin insan gibi düşünmesi, öğrenmesi ve karar vermesi.", grade: "5-sinif", unit: "U5", related: ["Makine Öğrenmesi"] },
+            { tr: "Scratch", en: "Scratch", def: "Çocuklar için blok tabanlı programlama dili.", grade: "5-sinif", unit: "U6", related: ["Programlama", "Blok"] },
+            { tr: "Algoritma", en: "Algorithm", def: "Bir işi yapmak için adım adım talimatlar dizisi.", grade: "5-sinif", unit: "U6", related: ["Lojik", "Program"] },
+            { tr: "KVKK", en: "Personal Data Protection Law", def: "Kişisel Verilerin Korunması Kanunu.", grade: "6-sinif", unit: "U2", related: ["Gizlilik"] },
+            { tr: "HTML", en: "HTML", def: "Web sayfalarının yapısını oluşturan işaretleme dili.", grade: "6-sinif", unit: "U4", related: ["Web", "CSS"] },
+            { tr: "Python", en: "Python", def: "Öğrenmesi kolay, güçlü programlama dili.", grade: "6-sinif", unit: "U5", related: ["Programlama"] }
+        ];
+
+        let currentCards = [];
+        let currentIndex = 0;
+        let knownCards = 0;
+        let unknownCards = 0;
+        let isFlipped = false;
+
+        function startStudy() {
+            const grade = document.getElementById('gradeFilter').value;
+            const unit = document.getElementById('unitFilter').value;
+
+            currentCards = glossaryData.filter(term => {
+                return (grade === 'all' || term.grade === grade) &&
+                       (unit === 'all' || term.unit === unit);
+            });
+
+            if (currentCards.length === 0) {
+                alert('Bu filtrelere uygun terim bulunamadı!');
+                return;
+            }
+
+            // Shuffle cards
+            currentCards = currentCards.sort(() => Math.random() - 0.5);
+
+            currentIndex = 0;
+            knownCards = 0;
+            unknownCards = 0;
+
+            document.querySelector('.controls').style.display = 'none';
+            document.getElementById('progressSection').style.display = 'block';
+            document.getElementById('cardContainer').style.display = 'block';
+            document.getElementById('completedSection').style.display = 'none';
+
+            loadCard();
+        }
+
+        function loadCard() {
+            if (currentIndex >= currentCards.length) {
+                showCompletion();
+                return;
+            }
+
+            const card = currentCards[currentIndex];
+            document.getElementById('termText').textContent = card.tr + ' (' + card.en + ')';
+            document.getElementById('definitionText').textContent = card.def;
+            document.getElementById('relatedInfo').textContent = '📌 İlgili: ' + card.related.join(', ');
+            document.getElementById('progressText').textContent = `Kart ${currentIndex + 1} / ${currentCards.length}`;
+
+            // Reset flip
+            document.getElementById('flashcard').classList.remove('flipped');
+            isFlipped = false;
+        }
+
+        function flipCard() {
+            const card = document.getElementById('flashcard');
+            card.classList.toggle('flipped');
+            isFlipped = !isFlipped;
+        }
+
+        function markCard(known) {
+            if (known) {
+                knownCards++;
+                document.getElementById('knownCount').textContent = knownCards;
+            } else {
+                unknownCards++;
+                document.getElementById('unknownCount').textContent = unknownCards;
+            }
+
+            currentIndex++;
+            loadCard();
+        }
+
+        function showCompletion() {
+            document.getElementById('cardContainer').style.display = 'none';
+            document.getElementById('progressSection').style.display = 'none';
+            document.getElementById('completedSection').style.display = 'block';
+
+            const total = currentCards.length;
+            const successPct = total > 0 ? Math.round((knownCards / total) * 100) : 0;
+
+            document.getElementById('totalCards').textContent = total;
+            document.getElementById('finalKnown').textContent = knownCards;
+            document.getElementById('successRate').textContent = successPct + '%';
+        }
+    </script>
+</body>
+</html>

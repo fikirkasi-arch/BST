@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bilişim Tarihi - 6. Sınıf Ünite 1</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        h1 { text-align: center; color: #4facfe; margin-bottom: 30px; }
+        .events {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 30px 0;
+        }
+        .event {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            border: 2px solid #e0e0e0;
+            cursor: grab;
+            text-align: center;
+            transition: all 0.3s;
+        }
+        .event:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        .event-year {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #4facfe;
+            margin-bottom: 10px;
+        }
+        .event-desc {
+            color: #666;
+            font-size: 0.95em;
+        }
+        .timeline {
+            background: #f5f5f5;
+            padding: 20px;
+            border-radius: 15px;
+            min-height: 200px;
+            border: 3px dashed #d0d0d0;
+            margin: 20px 0;
+        }
+        .timeline.drag-over {
+            border-color: #4facfe;
+            background: #e0f7ff;
+        }
+        .btn {
+            padding: 15px 30px;
+            font-size: 1.1em;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: bold;
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            margin: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📅 Bilişim Tarihi Zaman Çizelgesi</h1>
+        <div style="background: #fff9e6; padding: 20px; border-radius: 10px; margin-bottom: 20px;">
+            <strong>🎯 Görev:</strong> Olayları kronolojik sıraya (eskiden yeniye) göre dizin!
+        </div>
+        <div class="events" id="events"></div>
+        <h3 style="margin: 20px 0; color: #333;">📍 Zaman Çizelgesi (Eskiden Yeniye)</h3>
+        <div class="timeline" id="timeline" ondrop="drop(event)" ondragover="allowDrop(event)" ondragleave="dragLeave(event)"></div>
+        <div style="text-align: center;">
+            <button class="btn" onclick="check()">✅ Kontrol Et</button>
+            <button class="btn" onclick="reset()">🔄 Sıfırla</button>
+        </div>
+    </div>
+    <script>
+        const events = [
+            {year: 1946, desc: 'İlk elektronik bilgisayar (ENIAC)'},
+            {year: 1971, desc: 'İlk mikroişlemci (Intel 4004)'},
+            {year: 1981, desc: 'İlk kişisel bilgisayar (IBM PC)'},
+            {year: 1991, desc: 'World Wide Web (WWW) halka açıldı'},
+            {year: 2007, desc: 'İlk iPhone çıktı'},
+            {year: 2016, desc: 'Yapay zeka AlphaGo insanı yendi'}
+        ];
+        
+        const shuffled = [...events].sort(() => Math.random() - 0.5);
+        const eventsDiv = document.getElementById('events');
+        
+        shuffled.forEach((e, i) => {
+            const el = document.createElement('div');
+            el.className = 'event';
+            el.draggable = true;
+            el.dataset.year = e.year;
+            el.innerHTML = `<div class="event-year">${e.year}</div><div class="event-desc">${e.desc}</div>`;
+            el.ondragstart = (ev) => {
+                ev.dataTransfer.setData('year', e.year);
+                ev.dataTransfer.setData('html', el.outerHTML);
+                el.style.opacity = '0.5';
+            };
+            el.ondragend = () => el.style.opacity = '1';
+            eventsDiv.appendChild(el);
+        });
+        
+        function allowDrop(e) {
+            e.preventDefault();
+            e.currentTarget.classList.add('drag-over');
+        }
+        
+        function dragLeave(e) {
+            e.currentTarget.classList.remove('drag-over');
+        }
+        
+        function drop(e) {
+            e.preventDefault();
+            e.currentTarget.classList.remove('drag-over');
+            const html = e.dataTransfer.getData('html');
+            const temp = document.createElement('div');
+            temp.innerHTML = html;
+            const el = temp.firstChild;
+            el.draggable = false;
+            el.style.cursor = 'default';
+            document.getElementById('timeline').appendChild(el);
+            const original = Array.from(eventsDiv.children).find(child => child.dataset.year === el.dataset.year);
+            if (original) original.remove();
+        }
+        
+        function check() {
+            const timeline = document.getElementById('timeline');
+            const placed = Array.from(timeline.children).map(e => parseInt(e.dataset.year));
+            const correct = events.map(e => e.year).sort((a,b) => a-b);
+            if (JSON.stringify(placed) === JSON.stringify(correct)) {
+                alert('🎉 Tebrikler! Tüm olayları doğru sıraya dizdiksiniz!');
+            } else {
+                alert('❌ Yanlış sıralama! Yıllara dikkat ederek tekrar dene.');
+            }
+        }
+        
+        function reset() {
+            location.reload();
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>5. Sınıf 2. Dönem 1. Yazılı - Açık Uçlu</title>
+    <style>
+        @media print {
+            .no-print { display: none !important; }
+            body { background: white; padding: 20px; }
+            .exam-container { box-shadow: none; padding: 0; }
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .exam-container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+        }
+
+        .exam-header {
+            text-align: center;
+            border-bottom: 3px solid #667eea;
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+        }
+
+        .exam-header h1 {
+            color: #667eea;
+            font-size: 2em;
+            margin-bottom: 10px;
+        }
+
+        .open-ended-badge {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            padding: 12px 30px;
+            border-radius: 25px;
+            display: inline-block;
+            margin: 15px 0;
+            font-weight: bold;
+            font-size: 1.1em;
+        }
+
+        .exam-info {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin: 20px 0;
+            padding: 15px;
+            background: #f5f7fa;
+            border-radius: 8px;
+        }
+
+        .exam-info div {
+            text-align: center;
+            padding: 10px;
+        }
+
+        .exam-info strong {
+            color: #667eea;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .student-info {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+
+        .student-info div {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .student-info strong {
+            color: #555;
+        }
+
+        .student-info input {
+            flex: 1;
+            border: none;
+            border-bottom: 2px solid #667eea;
+            padding: 8px;
+            background: transparent;
+            font-size: 1em;
+        }
+
+        .question {
+            margin: 30px 0;
+            padding: 25px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            border-left: 5px solid #f5576c;
+        }
+
+        .question-header {
+            font-weight: bold;
+            color: #f5576c;
+            margin-bottom: 15px;
+            font-size: 1.2em;
+        }
+
+        .question-text {
+            color: #333;
+            line-height: 1.8;
+            margin-bottom: 20px;
+            font-size: 1.05em;
+        }
+
+        .answer-space {
+            background: white;
+            border: 2px dashed #667eea;
+            border-radius: 8px;
+            min-height: 200px;
+            padding: 15px;
+            margin-top: 15px;
+        }
+
+        .answer-space em {
+            color: #999;
+            font-size: 0.9em;
+        }
+
+        .buttons {
+            display: flex;
+            gap: 15px;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 25px;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-print {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-home {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+        }
+
+        .btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+
+        .instructions {
+            background: #fff3cd;
+            border-left: 5px solid #ffc107;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 25px 0;
+        }
+
+        .instructions h3 {
+            color: #856404;
+            margin-bottom: 10px;
+        }
+
+        .instructions p {
+            color: #856404;
+            line-height: 1.7;
+        }
+
+        .grading-info {
+            background: #e7f3ff;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 30px 0;
+            border: 2px solid #0066cc;
+        }
+
+        .grading-info h3 {
+            color: #0066cc;
+            margin-bottom: 15px;
+        }
+
+        .grading-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .grading-table th, .grading-table td {
+            padding: 12px;
+            text-align: center;
+            border: 1px solid #ddd;
+        }
+
+        .grading-table th {
+            background: #667eea;
+            color: white;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="exam-container">
+        <div class="exam-header">
+            <h1>📝 BİLİŞİM TEKNOLOJİLERİ VE YAZILIM DERSİ</h1>
+            <h2 style="color: #764ba2; margin-top: 10px;">5. SINIF - 2. DÖNEM 1. YAZILI SINAVI</h2>
+            <div class="open-ended-badge">✍️ AÇIK UÇLU SORULAR</div>
+            <div class="exam-info">
+                <div>
+                    <strong>📅 Dönem</strong>
+                    <span>2. Dönem</span>
+                </div>
+                <div>
+                    <strong>⏰ Süre</strong>
+                    <span>40 Dakika</span>
+                </div>
+                <div>
+                    <strong>💯 Toplam Puan</strong>
+                    <span>100 Puan</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="student-info no-print">
+            <div>
+                <strong>Adı Soyadı:</strong>
+                <input type="text" placeholder="Adınızı yazınız">
+            </div>
+            <div>
+                <strong>Sınıf/No:</strong>
+                <input type="text" placeholder="Örn: 5-A / 12">
+            </div>
+            <div>
+                <strong>Tarih:</strong>
+                <input type="date">
+            </div>
+        </div>
+
+        <div class="instructions">
+            <h3>📌 Yönerge:</h3>
+            <p>
+                • Aşağıdaki soruları dikkatlice okuyun ve detaylı bir şekilde cevaplayın.<br>
+                • Cevaplarınızı düzgün ve okunaklı bir şekilde yazın.<br>
+                • Her sorunun puanı sorunun yanında belirtilmiştir.<br>
+                • Cevaplarınızı verilen boşluklara yazın.
+            </p>
+        </div>
+
+        <div class="buttons no-print">
+            <button class="btn btn-print" onclick="window.print()">🖨️ Sınavı Yazdır (PDF)</button>
+            <button class="btn btn-home" onclick="window.location.href='../sinav-sorulari.html'">🏠 Sınav Listesine Dön</button>
+        </div>
+
+        <!-- SORULAR -->
+
+        <div class="question">
+            <div class="question-header">SORU 1: (20 Puan)</div>
+            <div class="question-text">
+                <strong>Yapay zeka okuryazarlığı nedir? Yapay zekanın günlük hayattaki kullanım alanlarını en az 5 örnek vererek detaylı açıklayınız.</strong>
+            </div>
+            <div class="answer-space">
+                <em>Cevabınızı buraya yazınız...</em>
+            </div>
+        </div>
+
+        <div class="question">
+            <div class="question-header">SORU 2: (20 Puan)</div>
+            <div class="question-text">
+                <strong>Algoritma ve problem çözme ilişkisini açıklayınız. Günlük hayattan bir örnek vererek o problemi çözmek için adım adım algoritma yazınız.</strong>
+            </div>
+            <div class="answer-space">
+                <em>Cevabınızı buraya yazınız...</em>
+            </div>
+        </div>
+
+        <div class="question">
+            <div class="question-header">SORU 3: (15 Puan)</div>
+            <div class="question-text">
+                <strong>Scratch programlama dili nedir? Scratch'in özellikleri ve kullanım alanları nelerdir? Açıklayınız.</strong>
+            </div>
+            <div class="answer-space">
+                <em>Cevabınızı buraya yazınız...</em>
+            </div>
+        </div>
+
+        <div class="question">
+            <div class="question-header">SORU 4: (15 Puan)</div>
+            <div class="question-text">
+                <strong>Programlamada döngü kavramını açıklayınız. Scratch'te hangi döngü blokları vardır ve ne işe yararlar? Örneklerle açıklayınız.</strong>
+            </div>
+            <div class="answer-space">
+                <em>Cevabınızı buraya yazınız...</em>
+            </div>
+        </div>
+
+        <div class="question">
+            <div class="question-header">SORU 5: (15 Puan)</div>
+            <div class="question-text">
+                <strong>Koşul ifadeleri (karar yapıları) ne işe yarar? Scratch'te "Eğer-O zaman" ve "Eğer-O zaman-Değilse" bloklarının kullanım farkını örneklerle açıklayınız.</strong>
+            </div>
+            <div class="answer-space">
+                <em>Cevabınızı buraya yazınız...</em>
+            </div>
+        </div>
+
+        <div class="question">
+            <div class="question-header">SORU 6: (15 Puan)</div>
+            <div class="question-text">
+                <strong>Bir Scratch projesi geliştirirken hangi adımları izlersiniz? Proje planlama sürecini detaylı olarak açıklayınız.</strong>
+            </div>
+            <div class="answer-space">
+                <em>Cevabınızı buraya yazınız...</em>
+            </div>
+        </div>
+
+        <div class="grading-info">
+            <h3>💯 Değerlendirme Kriterleri</h3>
+            <table class="grading-table">
+                <tr>
+                    <th>Soru No</th>
+                    <th>Puan</th>
+                    <th>Değerlendirme Kriterleri</th>
+                </tr>
+                <tr>
+                    <td>1</td>
+                    <td>20</td>
+                    <td>Tanım (5p) + 5 kullanım alanı ve detaylı açıklamalar (15p)</td>
+                </tr>
+                <tr>
+                    <td>2</td>
+                    <td>20</td>
+                    <td>İlişki açıklaması (5p) + Günlük örnek (5p) + Algoritma adımları (10p)</td>
+                </tr>
+                <tr>
+                    <td>3</td>
+                    <td>15</td>
+                    <td>Tanım (5p) + Özellikler (5p) + Kullanım alanları (5p)</td>
+                </tr>
+                <tr>
+                    <td>4</td>
+                    <td>15</td>
+                    <td>Döngü kavramı (5p) + Döngü blokları (5p) + Örnekler (5p)</td>
+                </tr>
+                <tr>
+                    <td>5</td>
+                    <td>15</td>
+                    <td>Koşul ifadesi tanımı (5p) + İki blok arasındaki fark (5p) + Örnekler (5p)</td>
+                </tr>
+                <tr>
+                    <td>6</td>
+                    <td>15</td>
+                    <td>Planlama adımlarının detaylı ve sıralı açıklaması (15p)</td>
+                </tr>
+            </table>
+        </div>
+
+        <div style="margin-top: 40px; padding: 20px; background: #f8f9fa; border-radius: 10px; text-align: center;">
+            <p style="color: #667eea; font-weight: bold; font-size: 1.2em;">BAŞARILAR DİLERİZ! 🎉</p>
+            <p style="color: #666; margin-top: 10px;">Sorularınız için öğretmeninize danışabilirsiniz.</p>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const today = new Date().toISOString().split('T')[0];
+            const dateInputs = document.querySelectorAll('input[type="date"]');
+            dateInputs.forEach(input => input.value = today);
+        });
+    </script>
+</body>
+</html>

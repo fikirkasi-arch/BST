@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <title>Bilişim Terimleri - Kelime Bulma Bulmacası</title>
+    <style>
+        @media print {
+            .no-print { display: none; }
+            body { background: white; }
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: #f5f5f5;
+            padding: 20px;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 10px;
+            border-bottom: 3px solid #667eea;
+            padding-bottom: 10px;
+        }
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(12, 40px);
+            gap: 2px;
+            margin: 30px auto;
+            justify-content: center;
+        }
+        .cell {
+            width: 40px;
+            height: 40px;
+            border: 2px solid #ddd;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 16px;
+            background: white;
+        }
+        .words-list {
+            margin-top: 30px;
+            padding: 20px;
+            background: #f9f9f9;
+            border-radius: 10px;
+        }
+        .words-list h3 {
+            color: #667eea;
+            margin-bottom: 15px;
+        }
+        .words {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+        }
+        .word-item {
+            padding: 8px;
+            background: white;
+            border-left: 3px solid #667eea;
+        }
+        .btn {
+            display: block;
+            margin: 20px auto;
+            padding: 15px 40px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+        }
+        .btn:hover { background: #5568d3; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔍 Bilişim Terimleri - Kelime Bulma Bulmacası</h1>
+        <p class="subtitle">Aşağıdaki bulmacada bilişim terimlerini bulun! (→ ↓ ↘)</p>
+        
+        <div class="grid" id="grid"></div>
+        
+        <div class="words-list">
+            <h3>📝 Bulmanız Gereken Kelimeler (10 Kelime):</h3>
+            <div class="words">
+                <div class="word-item">✓ İŞLEMCİ</div>
+                <div class="word-item">✓ RAM</div>
+                <div class="word-item">✓ ANAKART</div>
+                <div class="word-item">✓ WINDOWS</div>
+                <div class="word-item">✓ PYTHON</div>
+                <div class="word-item">✓ SCRATCH</div>
+                <div class="word-item">✓ ALGORİTMA</div>
+                <div class="word-item">✓ YAPAY ZEKA</div>
+                <div class="word-item">✓ İNTERNET</div>
+                <div class="word-item">✓ GÜVENLİK</div>
+            </div>
+        </div>
+        
+        <button class="btn no-print" onclick="window.print()">🖨️ Yazdır</button>
+        <button class="btn no-print" onclick="window.location.href='index.html'">🏠 Ana Sayfa</button>
+    </div>
+    
+    <script>
+        const grid = [
+            ['İ', 'Ş', 'L', 'E', 'M', 'C', 'İ', 'K', 'T', 'Y', 'A', 'P'],
+            ['N', 'A', 'L', 'G', 'O', 'R', 'İ', 'T', 'M', 'A', 'Y', 'A'],
+            ['T', 'N', 'K', 'Ü', 'V', 'E', 'N', 'L', 'İ', 'K', 'Z', 'Y'],
+            ['E', 'A', 'R', 'A', 'M', 'T', 'W', 'İ', 'S', 'C', 'E', 'Z'],
+            ['R', 'K', 'P', 'Y', 'T', 'H', 'O', 'N', 'C', 'R', 'K', 'E'],
+            ['N', 'A', 'W', 'İ', 'N', 'D', 'O', 'W', 'S', 'A', 'A', 'K'],
+            ['E', 'R', 'İ', 'N', 'T', 'E', 'R', 'N', 'E', 'T', 'T', 'A'],
+            ['T', 'T', 'S', 'C', 'R', 'A', 'T', 'C', 'H', 'C', 'U', 'M']
+        ];
+        
+        const gridElement = document.getElementById('grid');
+        grid.forEach(row => {
+            row.forEach(letter => {
+                const cell = document.createElement('div');
+                cell.className = 'cell';
+                cell.textContent = letter;
+                gridElement.appendChild(cell);
+            });
+        });
+    </script>
+</body>
+</html>

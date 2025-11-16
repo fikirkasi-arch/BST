@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ders Planları - BTY</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            color: white;
+            padding: 40px 20px;
+            margin-bottom: 30px;
+        }
+
+        header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .grade-section {
+            background: white;
+            border-radius: 15px;
+            padding: 40px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .grade-title {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            padding: 20px 30px;
+            border-radius: 12px;
+            font-size: 1.8em;
+            margin-bottom: 30px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .plan-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+        }
+
+        .plan-card {
+            border: 3px solid #667eea;
+            border-radius: 15px;
+            padding: 25px;
+            transition: all 0.3s;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        }
+
+        .plan-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 15px 35px rgba(102, 126, 234, 0.4);
+        }
+
+        .plan-icon {
+            font-size: 3em;
+            text-align: center;
+            margin-bottom: 15px;
+        }
+
+        .plan-title {
+            font-size: 1.4em;
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .plan-info {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 10px 0;
+        }
+
+        .plan-info strong {
+            color: #667eea;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .view-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 25px;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            width: 100%;
+            margin-top: 15px;
+        }
+
+        .view-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .info-box {
+            background: #e7f3ff;
+            border-left: 5px solid #0066cc;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+        }
+
+        .info-box h3 {
+            color: #0066cc;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>📚 Tüm Ders Planları</h1>
+            <p>2025-2026 Eğitim-Öğretim Yılı - 67 Haftalık Detaylı Planlar</p>
+        </header>
+
+        <div class="info-box">
+            <h3>📋 Ders Planları Hakkında</h3>
+            <p style="line-height: 1.8; color: #333;">
+                Bu bölümde 5. ve 6. sınıf Bilişim Teknolojileri ve Yazılım dersi için hafta hafta hazırlanmış
+                detaylı ders planlarını bulabilirsiniz. Her plan MEB müfredatına uygun olarak hazırlanmıştır ve
+                şunları içerir:<br><br>
+                ✓ Haftalık konu başlıkları<br>
+                ✓ Öğrenme kazanımları<br>
+                ✓ Etkinlik önerileri<br>
+                ✓ Değerlendirme yöntemleri<br>
+                ✓ Değerler eğitimi vurguları<br>
+                ✓ Özel gün ve haftalar
+            </p>
+        </div>
+
+        <!-- 5. SINIF -->
+        <div class="grade-section">
+            <div class="grade-title">
+                🎯 5. Sınıf Ders Planları
+            </div>
+
+            <div class="plan-grid">
+                <div class="plan-card">
+                    <div class="plan-icon">📖</div>
+                    <div class="plan-title">5. Sınıf Yıllık Plan</div>
+                    <div class="plan-info">
+                        <strong>📅 Toplam Süre:</strong> 38 Hafta<br>
+                        <strong>📚 Ünite Sayısı:</strong> 6 Ünite<br>
+                        <strong>⏰ Haftalık Ders:</strong> 2 Saat
+                    </div>
+                    <div class="plan-info">
+                        <strong>🎯 Üniteler:</strong>
+                        • Bilişim Teknolojilerinin Temelleri<br>
+                        • Dijital Ürün Tasarım ve Geliştirme<br>
+                        • Bilgisayar Ağları ve İletişim<br>
+                        • Bilişim Etiği ve Siber Güvenlik<br>
+                        • Yapay Zeka Okuryazarlığı<br>
+                        • Yazılım Tasarımı ve Programlama (Scratch)
+                    </div>
+                    <a href="../5-sinif/README.md" target="_blank">
+                        <button class="view-btn">📄 Detaylı Planı Görüntüle</button>
+                    </a>
+                </div>
+
+                <div class="plan-card">
+                    <div class="plan-icon">📁</div>
+                    <div class="plan-title">5. Sınıf Ünite Bazlı Kaynaklar</div>
+                    <div class="plan-info">
+                        <strong>📂 İçerik:</strong>
+                        Her ünite için ayrı klasör ve detaylı içerikler
+                    </div>
+                    <div class="plan-info">
+                        <strong>📋 Ünite Klasörleri:</strong>
+                        • Ünite 1: Bilişim Temelleri<br>
+                        • Ünite 2: Dijital Ürün<br>
+                        • Ünite 3: Ağlar ve İletişim<br>
+                        • Ünite 4: Etik ve Güvenlik<br>
+                        • Ünite 5: Yapay Zeka<br>
+                        • Ünite 6: Programlama
+                    </div>
+                    <a href="../5-sinif/" target="_blank">
+                        <button class="view-btn">📂 Klasörleri Görüntüle</button>
+                    </a>
+                </div>
+
+                <div class="plan-card">
+                    <div class="plan-icon">📊</div>
+                    <div class="plan-title">5. Sınıf Excel Planı</div>
+                    <div class="plan-info">
+                        <strong>📥 Dosya Formatı:</strong> Excel (.xlsx)<br>
+                        <strong>💾 Boyut:</strong> ~77 KB
+                    </div>
+                    <div class="plan-info">
+                        <strong>📋 İçerik:</strong>
+                        • Haftalık takvim<br>
+                        • Konu dağılımı<br>
+                        • Kazanımlar<br>
+                        • Ders saatleri<br>
+                        • Değerlendirme planı
+                    </div>
+                    <a href="../5-sinif-plan.xlsx" download>
+                        <button class="view-btn">💾 Excel Planını İndir</button>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- 6. SINIF -->
+        <div class="grade-section">
+            <div class="grade-title">
+                🎯 6. Sınıf Ders Planları
+            </div>
+
+            <div class="plan-grid">
+                <div class="plan-card">
+                    <div class="plan-icon">📖</div>
+                    <div class="plan-title">6. Sınıf Yıllık Plan</div>
+                    <div class="plan-info">
+                        <strong>📅 Toplam Süre:</strong> 40 Hafta<br>
+                        <strong>📚 Ünite Sayısı:</strong> 5 Ünite<br>
+                        <strong>⏰ Haftalık Ders:</strong> 2 Saat
+                    </div>
+                    <div class="plan-info">
+                        <strong>🎯 Üniteler:</strong>
+                        • Bilişim Teknolojileri<br>
+                        • Etik ve Güvenlik<br>
+                        • İletişim, Araştırma ve İşbirliği<br>
+                        • Ürün Oluşturma (Tablolama, Video)<br>
+                        • Problem Çözme ve Programlama (Scratch İleri)
+                    </div>
+                    <a href="../6-sinif/README.md" target="_blank">
+                        <button class="view-btn">📄 Detaylı Planı Görüntüle</button>
+                    </a>
+                </div>
+
+                <div class="plan-card">
+                    <div class="plan-icon">📁</div>
+                    <div class="plan-title">6. Sınıf Ünite Bazlı Kaynaklar</div>
+                    <div class="plan-info">
+                        <strong>📂 İçerik:</strong>
+                        Her ünite için ayrı klasör ve detaylı içerikler
+                    </div>
+                    <div class="plan-info">
+                        <strong>📋 Ünite Klasörleri:</strong>
+                        • Ünite 1: Bilişim Teknolojileri<br>
+                        • Ünite 2: Etik ve Güvenlik<br>
+                        • Ünite 3: İletişim ve İşbirliği<br>
+                        • Ünite 4: Ürün Oluşturma<br>
+                        • Ünite 5: Problem Çözme
+                    </div>
+                    <a href="../6-sinif/" target="_blank">
+                        <button class="view-btn">📂 Klasörleri Görüntüle</button>
+                    </a>
+                </div>
+
+                <div class="plan-card">
+                    <div class="plan-icon">📊</div>
+                    <div class="plan-title">6. Sınıf Excel Planı</div>
+                    <div class="plan-info">
+                        <strong>📥 Dosya Formatı:</strong> Excel (.xlsx)<br>
+                        <strong>💾 Boyut:</strong> ~43 KB
+                    </div>
+                    <div class="plan-info">
+                        <strong>📋 İçerik:</strong>
+                        • Haftalık takvim<br>
+                        • Konu dağılımı<br>
+                        • Kazanımlar<br>
+                        • Ders saatleri<br>
+                        • Değerlendirme planı
+                    </div>
+                    <a href="../6-sinif-plan.xlsx" download>
+                        <button class="view-btn">💾 Excel Planını İndir</button>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="info-box" style="background: #fff3cd; border-left-color: #ffc107;">
+            <h3 style="color: #856404;">💡 Kullanım Önerileri</h3>
+            <p style="color: #856404; line-height: 1.8;">
+                • Planlar esnek bir şekilde uygulanabilir<br>
+                • Sınıfın öğrenme hızına göre ayarlamalar yapılabilir<br>
+                • Her hafta için alternatif etkinlikler mevcuttur<br>
+                • Tatil ve özel günler dikkate alınmıştır<br>
+                • Excel planları düzenlenebilir ve kişiselleştirilebilir
+            </p>
+        </div>
+    </div>
+</body>
+</html>

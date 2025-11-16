@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Siber Güvenlik Quiz - 6. Sınıf</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .quiz-container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+        }
+
+        h1 {
+            text-align: center;
+            color: #f5576c;
+            margin-bottom: 10px;
+            font-size: 2.5em;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 1.2em;
+        }
+
+        .scenario-container {
+            background: linear-gradient(135deg, #fff5f5 0%, #ffe5e5 100%);
+            padding: 30px;
+            border-radius: 15px;
+            border-left: 5px solid #f5576c;
+            margin-bottom: 30px;
+        }
+
+        .scenario-title {
+            font-size: 1.3em;
+            color: #f5576c;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+
+        .scenario-text {
+            font-size: 1.1em;
+            color: #333;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+
+        .question-text {
+            font-size: 1.2em;
+            color: #f5576c;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .option {
+            padding: 20px;
+            border: 3px solid #e0e0e0;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1.1em;
+            display: flex;
+            align-items: center;
+        }
+
+        .option:hover {
+            border-color: #f5576c;
+            background: #fff5f5;
+            transform: translateX(10px);
+        }
+
+        .option.selected {
+            border-color: #f5576c;
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+        }
+
+        .option.correct {
+            border-color: #4caf50;
+            background: #4caf50;
+            color: white;
+        }
+
+        .option.incorrect {
+            border-color: #ff5252;
+            background: #ff5252;
+            color: white;
+        }
+
+        .feedback {
+            margin-top: 20px;
+            padding: 20px;
+            border-radius: 10px;
+            display: none;
+        }
+
+        .feedback.correct {
+            background: #e8f5e9;
+            border-left: 5px solid #4caf50;
+            color: #2e7d32;
+        }
+
+        .feedback.incorrect {
+            background: #ffebee;
+            border-left: 5px solid #f44336;
+            color: #c62828;
+        }
+
+        .feedback-title {
+            font-size: 1.2em;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .feedback-text {
+            font-size: 1.05em;
+            line-height: 1.6;
+        }
+
+        .buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            margin-top: 30px;
+        }
+
+        .btn {
+            padding: 15px 40px;
+            font-size: 1.1em;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(245, 87, 108, 0.4);
+        }
+
+        .btn-secondary {
+            background: #e0e0e0;
+            color: #333;
+        }
+
+        .btn-secondary:hover {
+            background: #d0d0d0;
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .progress {
+            text-align: center;
+            font-size: 1.2em;
+            color: #666;
+            margin-bottom: 30px;
+        }
+
+        .score-display {
+            text-align: center;
+            font-size: 2em;
+            color: #f5576c;
+            font-weight: bold;
+            margin: 30px 0;
+        }
+
+        .score-summary {
+            background: #fff5f5;
+            padding: 30px;
+            border-radius: 15px;
+            margin: 20px 0;
+        }
+
+        .score-item {
+            font-size: 1.2em;
+            margin: 15px 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 10px 20px;
+            border-radius: 20px;
+            font-weight: bold;
+            margin-top: 20px;
+        }
+
+        .badge-gold {
+            background: #ffd700;
+            color: #333;
+        }
+
+        .badge-silver {
+            background: #c0c0c0;
+            color: #333;
+        }
+
+        .badge-bronze {
+            background: #cd7f32;
+            color: white;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        @media (max-width: 768px) {
+            .quiz-container {
+                padding: 20px;
+            }
+
+            h1 {
+                font-size: 2em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="quiz-container">
+        <h1>🛡️ Siber Güvenlik Quiz</h1>
+        <p class="subtitle">6. Sınıf - Senaryo Tabanlı Güvenlik Testleri</p>
+
+        <div class="progress" id="progress">Senaryo 1 / 5</div>
+
+        <div id="quizContent">
+            <div class="scenario-container">
+                <div class="scenario-title">📧 Senaryo:</div>
+                <div class="scenario-text" id="scenarioText"></div>
+                <div class="question-text" id="questionText"></div>
+            </div>
+
+            <div class="options" id="optionsContainer"></div>
+
+            <div class="feedback" id="feedback">
+                <div class="feedback-title" id="feedbackTitle"></div>
+                <div class="feedback-text" id="feedbackText"></div>
+            </div>
+
+            <div class="buttons">
+                <button class="btn btn-primary" id="checkBtn" onclick="checkAnswer()" disabled>✓ Cevabı Kontrol Et</button>
+                <button class="btn btn-secondary hidden" id="nextBtn" onclick="nextScenario()">Sonraki Senaryo →</button>
+            </div>
+        </div>
+
+        <div id="resultContainer" class="hidden">
+            <div class="score-display">
+                <div style="font-size: 3em;">🏆</div>
+                <div id="finalScore">0/5</div>
+                <div id="badgeContainer"></div>
+            </div>
+
+            <div class="score-summary">
+                <div class="score-item">
+                    <span>✅ Doğru Cevaplar:</span>
+                    <strong id="correctAnswers">0</strong>
+                </div>
+                <div class="score-item">
+                    <span>❌ Yanlış Cevaplar:</span>
+                    <strong id="incorrectAnswers">0</strong>
+                </div>
+                <div class="score-item">
+                    <span>📊 Başarı Oranı:</span>
+                    <strong id="successRate">0%</strong>
+                </div>
+                <div class="score-item">
+                    <span>🎯 Seviye:</span>
+                    <strong id="levelText">-</strong>
+                </div>
+            </div>
+
+            <div class="buttons">
+                <button class="btn btn-primary" onclick="restartQuiz()">🔄 Tekrar Dene</button>
+                <button class="btn btn-secondary" onclick="window.location.href='index.html'">🏠 Ana Sayfa</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const scenarios = [
+            {
+                scenario: 'E-posta kutunuza "ACİL! Hesabınız askıya alındı. Lütfen şifrenizi güncellemek için bu linke HEMEN tıklayın: www.bankagibi.com/sifreyenile" başlıklı bir e-posta geldi. E-posta gönderenin adresi "destek@bnk-garanti.tk" olarak görünüyor.',
+                question: "Bu durumda ne yapmalısınız?",
+                options: [
+                    "Hemen linke tıklayıp şifremi güncellerim",
+                    "E-postayı siler, bankamı arayıp doğrulatırım",
+                    "Linke tıklayıp şifremi yazarım, ACİL yazdığı için",
+                    "E-postayı arkadaşlarıma iletir, onlar da dikkatli olsun diye"
+                ],
+                correct: 1,
+                correctFeedback: "🎯 Doğru! Bu klasik bir phishing (kimlik avı) saldırısıdır. Şüpheli e-postaları silmeli ve kurumu resmi kanallardan aramalısınız. '.tk' uzantısı ve 'ACİL' gibi kelimeler uyarı işaretleridir.",
+                incorrectFeedback: "❌ Yanlış! Bu bir phishing saldırısıdır. ASLA şüpheli linklere tıklamayın. Gerçek bankalar asla e-posta ile şifre değiştirmenizi istemez. '.tk' uzantısı ve yazım hataları (bnk) tehlike işaretidir."
+            },
+            {
+                scenario: 'Instagram hesabınızda "Tebrikler! 1000. takipçimizsiniz! Hediyenizi almak için kullanıcı adınız ve şifrenizi göndermeniz yeterli" yazan bir mesaj aldınız.',
+                question: "Ne yapmalısınız?",
+                options: [
+                    "Kullanıcı adımı ve şifremi hemen gönderirim, hediye istiyorum",
+                    "Mesajı görmezden gelir ve bildiririm. ASLA şifremi paylaşmam",
+                    "Önce kullanıcı adımı gönderirim, şifremi sonra veririm",
+                    "Arkadaşlarıma sorarım, onlar gönderirse ben de gönderirim"
+                ],
+                correct: 1,
+                correctFeedback: "🎯 Doğru! Hiç kimseyle, hiçbir koşulda şifrenizi paylaşmamalısınız. Bu bir sosyal mühendislik saldırısıdır. Gerçek şirketler ASLA şifrenizi istemez.",
+                incorrectFeedback: "❌ Yanlış! ŞİFRE ASLA PAYLAŞILMAZ! Instagram hiçbir zaman şifrenizi istemez. Bu mesaj bir dolandırıcılık girişimidir. Hemen bildirin ve engelleyin."
+            },
+            {
+                scenario: 'Arkadaşınızın WhatsApp hesabından "Abi param kalmadı, 50 TL atabilir misin?" mesajı geldi. Ancak arkadaşınız normalde sizi "abi" diye çağırmaz.',
+                question: "Ne yaparsınız?",
+                options: [
+                    "Hemen parayı gönderirim, arkadaşım ihtiyacı var",
+                    "Telefon ile ararım, gerçekten o mu diye kontrol ederim",
+                    "Mesaja 100 TL gönderirim, fazlasıyla yardım edeyim",
+                    "Banka hesap numarasını isterim ve gönderirim"
+                ],
+                correct: 1,
+                correctFeedback: "🎯 Doğru! Hesap ele geçirilmiş olabilir. Para istekleri geldiğinde MUTLAKA telefon ile arayıp doğrulamalısınız. Dolandırıcılar sıklıkla WhatsApp hesaplarını çalar.",
+                incorrectFeedback: "❌ Yanlış! Bu hesap ele geçirilmiş olabilir! Para istekleri geldiğinde MUTLAKA farklı bir kanaldan (telefon araması) doğrulama yapmalısınız. 'Abi' kelimesi ve tarzı farklı olması şüphe uyandırmalı."
+            },
+            {
+                scenario: 'Bilgisayarınızda "VİRÜS ALGILANDI! Bilgisayarınız tehlikede! Bu programı hemen indirin!" yazan, kırmızı ışıklar yanıp sönen bir pencere açıldı.',
+                question: "Ne yapmalısınız?",
+                options: [
+                    "Hemen gösterilen programı indirip çalıştırırım",
+                    "Pencereyi kapatır, bilgisayarın kendi antivirüsünü çalıştırırım",
+                    "Panik yapar, tüm dosyalarımı silerim",
+                    "Penceredeki butona tıklayarak virüsü temizlerim"
+                ],
+                correct: 1,
+                correctFeedback: "🎯 Doğru! Bu bir 'scareware' (korkutma yazılımı) saldırısıdır. Sahte uyarılardır. Pencereyi kapatın ve Windows Defender gibi güvenilir bir antivirüs kullanın. Gösterilen programları ASLA indirmeyin!",
+                incorrectFeedback: "❌ Yanlış! Bu SAHTE bir virüs uyarısıdır (scareware). Asıl virüs, indirmenizi istedikleri programdır! Pencereyi kapatın ve bilgisayarınızın kendi güvenlik yazılımını kullanın."
+            },
+            {
+                scenario: 'Kafede ücretsiz Wi-Fi\'ye bağlandınız. Wi-Fi adı "KafeWiFi_Ücretsiz". Banka uygulamanıza girmek istiyorsunuz.',
+                question: "Güvenli olmak için ne yapmalısınız?",
+                options: [
+                    "Direkt banka uygulamasına girer, işlemlerimi yaparım",
+                    "Açık Wi-Fi\'de hassas işlem yapmam, mobil veri kullanırım veya VPN açarım",
+                    "Şifremi kaydeder, bir daha girmek zorunda kalmam",
+                    "Tüm bilgilerimi girip para transferi yaparım"
+                ],
+                correct: 1,
+                correctFeedback: "🎯 Doğru! Açık Wi-Fi ağları güvenli değildir. Banka, e-posta gibi hassas işlemler için mobil veri kullanmalı veya VPN ile bağlantınızı şifrelemelisiniz. Hackerlar açık Wi-Fi\'lerde verilerinizi görebilir!",
+                incorrectFeedback: "❌ Yanlış! Açık/ücretsiz Wi-Fi\'ler çok TEHLİKELİDİR! Verileriniz görülebilir (man-in-the-middle saldırısı). Banka işlemleri için MUTLAKA mobil veri kullanın veya VPN açın. Şifre kaydetmeyin!"
+            }
+        ];
+
+        let currentScenario = 0;
+        let selectedOption = null;
+        let score = 0;
+        let answered = false;
+
+        function loadScenario() {
+            answered = false;
+            selectedOption = null;
+            const s = scenarios[currentScenario];
+
+            document.getElementById('progress').textContent = `Senaryo ${currentScenario + 1} / ${scenarios.length}`;
+            document.getElementById('scenarioText').textContent = s.scenario;
+            document.getElementById('questionText').textContent = s.question;
+
+            const optionsContainer = document.getElementById('optionsContainer');
+            optionsContainer.innerHTML = '';
+
+            s.options.forEach((option, index) => {
+                const div = document.createElement('div');
+                div.className = 'option';
+                div.textContent = option;
+                div.onclick = () => selectOption(index);
+                optionsContainer.appendChild(div);
+            });
+
+            document.getElementById('feedback').style.display = 'none';
+            document.getElementById('feedback').className = 'feedback';
+            document.getElementById('checkBtn').disabled = true;
+            document.getElementById('checkBtn').classList.remove('hidden');
+            document.getElementById('nextBtn').classList.add('hidden');
+        }
+
+        function selectOption(index) {
+            if (answered) return;
+
+            selectedOption = index;
+            const options = document.querySelectorAll('.option');
+            options.forEach((opt, i) => {
+                opt.classList.remove('selected');
+                if (i === index) {
+                    opt.classList.add('selected');
+                }
+            });
+
+            document.getElementById('checkBtn').disabled = false;
+        }
+
+        function checkAnswer() {
+            if (answered || selectedOption === null) return;
+
+            answered = true;
+            const s = scenarios[currentScenario];
+            const isCorrect = selectedOption === s.correct;
+
+            if (isCorrect) {
+                score++;
+            }
+
+            const options = document.querySelectorAll('.option');
+            options.forEach((opt, i) => {
+                opt.onclick = null; // Disable clicking
+                if (i === s.correct) {
+                    opt.classList.add('correct');
+                } else if (i === selectedOption && !isCorrect) {
+                    opt.classList.add('incorrect');
+                }
+            });
+
+            const feedback = document.getElementById('feedback');
+            feedback.style.display = 'block';
+            feedback.className = 'feedback ' + (isCorrect ? 'correct' : 'incorrect');
+            document.getElementById('feedbackTitle').textContent = isCorrect ? '✅ Doğru!' : '❌ Yanlış!';
+            document.getElementById('feedbackText').textContent = isCorrect ? s.correctFeedback : s.incorrectFeedback;
+
+            document.getElementById('checkBtn').classList.add('hidden');
+            document.getElementById('nextBtn').classList.remove('hidden');
+        }
+
+        function nextScenario() {
+            if (currentScenario < scenarios.length - 1) {
+                currentScenario++;
+                loadScenario();
+            } else {
+                showResults();
+            }
+        }
+
+        function showResults() {
+            document.getElementById('quizContent').classList.add('hidden');
+            document.getElementById('resultContainer').classList.remove('hidden');
+
+            const percentage = Math.round((score / scenarios.length) * 100);
+
+            document.getElementById('finalScore').textContent = `${score}/${scenarios.length} Doğru`;
+            document.getElementById('correctAnswers').textContent = score;
+            document.getElementById('incorrectAnswers').textContent = scenarios.length - score;
+            document.getElementById('successRate').textContent = percentage + '%';
+
+            let badge = '';
+            let level = '';
+            if (percentage >= 80) {
+                badge = '<span class="badge badge-gold">🥇 Siber Güvenlik Uzmanı</span>';
+                level = 'Uzman';
+            } else if (percentage >= 60) {
+                badge = '<span class="badge badge-silver">🥈 Güvenlik Bilinçli</span>';
+                level = 'İyi';
+            } else if (percentage >= 40) {
+                badge = '<span class="badge badge-bronze">🥉 Dikkatli Kullanıcı</span>';
+                level = 'Orta';
+            } else {
+                badge = '<span class="badge" style="background: #e0e0e0;">📚 Daha Fazla Çalışmalı</span>';
+                level = 'Başlangıç';
+            }
+
+            document.getElementById('badgeContainer').innerHTML = badge;
+            document.getElementById('levelText').textContent = level;
+        }
+
+        function restartQuiz() {
+            currentScenario = 0;
+            score = 0;
+            document.getElementById('quizContent').classList.remove('hidden');
+            document.getElementById('resultContainer').classList.add('hidden');
+            loadScenario();
+        }
+
+        // İlk senaryoyu yükle
+        loadScenario();
+    </script>
+</body>
+</html>

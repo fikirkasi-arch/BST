@@ -1,0 +1,679 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Siber Güvenlik Escape Room - BST</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        h1 {
+            text-align: center;
+            color: #667eea;
+            margin-bottom: 10px;
+            font-size: 2.5em;
+        }
+        .subtitle { text-align: center; color: #666; margin-bottom: 20px; }
+
+        .game-stats {
+            display: flex;
+            justify-content: space-around;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+        }
+        .stat-item {
+            text-align: center;
+        }
+        .stat-value {
+            font-size: 2em;
+            font-weight: bold;
+        }
+        .stat-label {
+            font-size: 0.9em;
+            opacity: 0.9;
+        }
+
+        .room-container {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            border-radius: 15px;
+            padding: 30px;
+            margin: 20px 0;
+            color: white;
+            min-height: 400px;
+            position: relative;
+        }
+
+        .room-title {
+            text-align: center;
+            font-size: 1.8em;
+            margin-bottom: 20px;
+            padding: 15px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 10px;
+        }
+
+        .puzzle {
+            background: rgba(255,255,255,0.95);
+            color: #333;
+            padding: 25px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+
+        .puzzle-question {
+            font-size: 1.2em;
+            margin-bottom: 20px;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .password-input {
+            display: flex;
+            gap: 10px;
+            margin: 20px 0;
+            align-items: center;
+        }
+
+        .password-box {
+            flex: 1;
+            padding: 15px;
+            font-size: 1.2em;
+            border: 3px solid #667eea;
+            border-radius: 10px;
+            outline: none;
+        }
+
+        .choice-buttons {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .choice-btn {
+            padding: 20px;
+            font-size: 1.1em;
+            border: 3px solid #667eea;
+            background: white;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .choice-btn:hover {
+            background: #667eea;
+            color: white;
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .choice-btn.correct {
+            background: #28a745;
+            color: white;
+            border-color: #28a745;
+        }
+
+        .choice-btn.wrong {
+            background: #dc3545;
+            color: white;
+            border-color: #dc3545;
+        }
+
+        .draggable-items {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            padding: 15px;
+            background: #f5f5f5;
+            border-radius: 10px;
+            margin: 15px 0;
+            min-height: 80px;
+        }
+
+        .drag-item {
+            padding: 12px 20px;
+            background: #667eea;
+            color: white;
+            border-radius: 8px;
+            cursor: move;
+            user-select: none;
+            transition: all 0.3s;
+        }
+
+        .drag-item:hover {
+            transform: scale(1.05);
+            box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+        }
+
+        .drop-zone {
+            min-height: 80px;
+            border: 3px dashed #667eea;
+            border-radius: 10px;
+            padding: 15px;
+            margin: 15px 0;
+            background: #f9f9f9;
+        }
+
+        .drop-zone.active {
+            background: #e7f3ff;
+            border-color: #28a745;
+        }
+
+        .btn {
+            padding: 15px 30px;
+            font-size: 1.1em;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #5a6268;
+        }
+
+        .buttons {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .hint-box {
+            background: #fff3cd;
+            border-left: 5px solid #ffc107;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 15px 0;
+            color: #856404;
+        }
+
+        .success-message {
+            background: #d4edda;
+            border-left: 5px solid #28a745;
+            padding: 20px;
+            border-radius: 10px;
+            color: #155724;
+            margin: 20px 0;
+            text-align: center;
+            font-size: 1.2em;
+        }
+
+        .timer-warning {
+            background: #f8d7da;
+            border: 3px solid #dc3545;
+            animation: pulse 1s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        .completion-screen {
+            text-align: center;
+            padding: 40px;
+        }
+
+        .completion-icon {
+            font-size: 8em;
+            margin: 20px 0;
+            animation: bounce 1s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+
+        .network-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            margin: 20px 0;
+        }
+
+        .network-node {
+            padding: 15px;
+            background: white;
+            border: 3px solid #ddd;
+            border-radius: 10px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .network-node:hover {
+            border-color: #667eea;
+            transform: scale(1.05);
+        }
+
+        .network-node.selected {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+
+        .network-node.correct {
+            background: #28a745;
+            color: white;
+            border-color: #28a745;
+        }
+
+        .network-node.wrong {
+            background: #dc3545;
+            color: white;
+            border-color: #dc3545;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔒 Siber Güvenlik Escape Room</h1>
+        <p class="subtitle">5 Odadan Kaçarak Siber Güvenlik Uzmanı Ol!</p>
+
+        <div class="game-stats">
+            <div class="stat-item">
+                <div class="stat-value" id="currentRoom">1</div>
+                <div class="stat-label">Oda</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value" id="timer">10:00</div>
+                <div class="stat-label">Kalan Süre</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value" id="hintsUsed">0</div>
+                <div class="stat-label">Kullanılan İpucu</div>
+            </div>
+        </div>
+
+        <div id="gameArea"></div>
+
+        <div class="buttons">
+            <button class="btn btn-primary" id="hintBtn" onclick="showHint()">💡 İpucu Al (Süre -30sn)</button>
+            <button class="btn btn-secondary" onclick="window.location.href='../index.html'">🏠 Ana Sayfa</button>
+        </div>
+    </div>
+
+    <script>
+        let currentRoom = 0;
+        let timeRemaining = 600; // 10 dakika
+        let timerInterval;
+        let hintsUsed = 0;
+        let startTime;
+
+        const rooms = [
+            {
+                title: "🔐 ODA 1: Şifre Kırma Laboratuvarı",
+                description: "Güvenli bir şifre oluştur ve odanın kapısını aç!",
+                type: "password",
+                hint: "Güçlü şifre: En az 8 karakter, büyük-küçük harf, sayı ve özel karakter içermeli!",
+                check: (answer) => {
+                    const hasUpper = /[A-Z]/.test(answer);
+                    const hasLower = /[a-z]/.test(answer);
+                    const hasNumber = /[0-9]/.test(answer);
+                    const hasSpecial = /[!@#$%^&*(),.?":{}|<>]/.test(answer);
+                    const isLongEnough = answer.length >= 8;
+
+                    return hasUpper && hasLower && hasNumber && hasSpecial && isLongEnough;
+                },
+                explanation: "Güçlü bir şifre en az 8 karakter uzunluğunda olmalı, büyük-küçük harf, sayı ve özel karakter içermelidir."
+            },
+            {
+                title: "🎣 ODA 2: Phishing Tuzağı",
+                description: "Aşağıdaki e-postalardan hangisi phishing saldırısıdır?",
+                type: "choice",
+                hint: "Phishing e-postalar genellikle aciliyet yaratır, şüpheli linkler içerir ve kişisel bilgi ister.",
+                options: [
+                    { text: "Banka: 'Hesabınız kilitlendi, hemen şifrenizi sıfırlayın: bit.ly/xyz'", correct: true },
+                    { text: "Okul: 'Yarınki toplantı saat 14:00'de başlayacak'", correct: false },
+                    { text: "Arkadaş: 'Bu akşam sinemaya gidelim mi?'", correct: false },
+                    { text: "MEB: 'E-okul notları sistemde görüntülenebilir'", correct: false }
+                ],
+                explanation: "Banka e-postası phishing! Aciliyet yaratıyor, şüpheli link içeriyor ve kişisel bilgi (şifre) istiyor."
+            },
+            {
+                title: "🛡️ ODA 3: Güvenlik Duvarı Yapılandırması",
+                description: "Zararlı trafiği engellemek için doğru güvenlik kurallarını sırala!",
+                type: "drag",
+                hint: "Güvenlik duvarı kuralları: 1) Bilinmeyen kaynaklardan gelen trafiği engelle, 2) Güvenilir IP'lere izin ver, 3) Zararlı portları kapat, 4) İzleme ve loglama yap",
+                items: ["Bilinmeyen IP'leri Engelle", "Güvenilir IP'lere İzin Ver", "Portları Kapat", "Loglama Yap"],
+                correctOrder: ["Bilinmeyen IP'leri Engelle", "Güvenilir IP'lere İzin Ver", "Portları Kapat", "Loglama Yap"]
+            },
+            {
+                title: "🔍 ODA 4: Ağ Güvenliği Analizi",
+                description: "Ağdaki güvenlik açıklarını bul ve işaretle!",
+                type: "network",
+                hint: "Güvenlik açıkları: Şifresiz WiFi, eski yazılım, açık portlar, güvenlik duvarı yok",
+                nodes: [
+                    { id: 1, label: "🔓 Şifresiz WiFi", vulnerable: true },
+                    { id: 2, label: "🔒 Şifreli WiFi", vulnerable: false },
+                    { id: 3, label: "⚠️ Eski Yazılım", vulnerable: true },
+                    { id: 4, label: "✅ Güncel Sistem", vulnerable: false },
+                    { id: 5, label: "🚪 Açık Portlar", vulnerable: true },
+                    { id: 6, label: "🛡️ Güvenlik Duvarı", vulnerable: false },
+                    { id: 7, label: "🔐 SSL Şifreleme", vulnerable: false },
+                    { id: 8, label: "❌ Şifresiz Bağlantı", vulnerable: true }
+                ],
+                explanation: "Şifresiz WiFi, eski yazılım, açık portlar ve şifresiz bağlantılar güvenlik açığıdır!"
+            },
+            {
+                title: "🎯 ODA 5: Siber Saldırı Simülasyonu",
+                description: "Bir siber saldırıya karşı doğru savunma adımlarını seç!",
+                type: "choice",
+                hint: "Saldırı anında: Sistemi izole et → Yedeği kurtar → Güvenlik yaması yap → İzleme başlat",
+                options: [
+                    { text: "1. Sistemi kapat ve ağdan ayır\n2. Virüs taraması yap\n3. Güvenlik yamalarını yükle\n4. Sistemi tekrar başlat", correct: true },
+                    { text: "1. Parolayı değiştir\n2. İnternet bağlantısını kes\n3. Hiçbir şey yapma", correct: false },
+                    { text: "1. Bilgisayarı yeniden başlat\n2. Antivirüs güncelle\n3. Devam et", correct: false },
+                    { text: "1. Saldırıyı görmezden gel\n2. Normal çalışmaya devam et", correct: false }
+                ],
+                explanation: "Saldırı anında sistemi izole etmek, tarama yapmak ve güvenlik yamalarını yüklemek kritiktir!"
+            }
+        ];
+
+        function startGame() {
+            startTime = Date.now();
+            timerInterval = setInterval(updateTimer, 1000);
+            loadRoom();
+        }
+
+        function updateTimer() {
+            timeRemaining--;
+            const minutes = Math.floor(timeRemaining / 60);
+            const seconds = timeRemaining % 60;
+            const timerEl = document.getElementById('timer');
+            timerEl.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+
+            if (timeRemaining <= 60) {
+                timerEl.parentElement.classList.add('timer-warning');
+            }
+
+            if (timeRemaining <= 0) {
+                clearInterval(timerInterval);
+                gameOver(false);
+            }
+        }
+
+        function loadRoom() {
+            const room = rooms[currentRoom];
+            document.getElementById('currentRoom').textContent = currentRoom + 1;
+
+            let html = `
+                <div class="room-container">
+                    <div class="room-title">${room.title}</div>
+                    <div class="puzzle">
+                        <div class="puzzle-question">${room.description}</div>
+            `;
+
+            if (room.type === 'password') {
+                html += `
+                    <div class="password-input">
+                        <input type="text" id="answerInput" class="password-box" placeholder="Güçlü şifrenizi girin...">
+                        <button class="btn btn-primary" onclick="checkPassword()">🔓 Kilidi Aç</button>
+                    </div>
+                    <div style="font-size: 0.9em; color: #666; margin-top: 10px;">
+                        ✓ En az 8 karakter<br>
+                        ✓ Büyük ve küçük harf<br>
+                        ✓ Sayı<br>
+                        ✓ Özel karakter (!@#$%^&*)
+                    </div>
+                `;
+            } else if (room.type === 'choice') {
+                html += '<div class="choice-buttons">';
+                room.options.forEach((option, index) => {
+                    html += `<button class="choice-btn" onclick="checkChoice(${index})">${option.text}</button>`;
+                });
+                html += '</div>';
+            } else if (room.type === 'drag') {
+                html += `
+                    <div class="draggable-items" id="dragItems">
+                        ${room.items.map((item, i) => `<div class="drag-item" draggable="true" data-index="${i}">${item}</div>`).join('')}
+                    </div>
+                    <div class="drop-zone" id="dropZone" ondrop="drop(event)" ondragover="allowDrop(event)">
+                        <p style="text-align: center; color: #999;">Öğeleri buraya doğru sırayla sürükleyin</p>
+                    </div>
+                    <button class="btn btn-primary" onclick="checkDragOrder()" style="margin-top: 15px;">✅ Sıralamayı Kontrol Et</button>
+                `;
+            } else if (room.type === 'network') {
+                html += '<div class="network-grid">';
+                room.nodes.forEach((node, index) => {
+                    html += `<div class="network-node" onclick="toggleNode(${index})">${node.label}</div>`;
+                });
+                html += '</div>';
+                html += '<button class="btn btn-primary" onclick="checkNetwork()" style="margin-top: 15px;">✅ Güvenlik Analizi Yap</button>';
+            }
+
+            html += '</div></div>';
+            document.getElementById('gameArea').innerHTML = html;
+
+            if (room.type === 'drag') {
+                initDragAndDrop();
+            }
+        }
+
+        function checkPassword() {
+            const input = document.getElementById('answerInput').value;
+            const room = rooms[currentRoom];
+
+            if (room.check(input)) {
+                showSuccess(room.explanation);
+                setTimeout(nextRoom, 2000);
+            } else {
+                alert('❌ Şifre yeterince güçlü değil! Tüm kriterleri sağladığından emin ol.');
+            }
+        }
+
+        function checkChoice(index) {
+            const room = rooms[currentRoom];
+            const buttons = document.querySelectorAll('.choice-btn');
+
+            if (room.options[index].correct) {
+                buttons[index].classList.add('correct');
+                showSuccess(room.explanation);
+                setTimeout(nextRoom, 2000);
+            } else {
+                buttons[index].classList.add('wrong');
+                setTimeout(() => buttons[index].classList.remove('wrong'), 1000);
+                alert('❌ Yanlış seçim! Tekrar dene.');
+            }
+        }
+
+        let droppedItems = [];
+
+        function initDragAndDrop() {
+            const items = document.querySelectorAll('.drag-item');
+            items.forEach(item => {
+                item.addEventListener('dragstart', drag);
+            });
+        }
+
+        function drag(e) {
+            e.dataTransfer.setData('text', e.target.textContent);
+            e.dataTransfer.setData('index', e.target.dataset.index);
+        }
+
+        function allowDrop(e) {
+            e.preventDefault();
+            e.target.classList.add('active');
+        }
+
+        function drop(e) {
+            e.preventDefault();
+            const text = e.dataTransfer.getData('text');
+            const dropZone = document.getElementById('dropZone');
+
+            if (!droppedItems.includes(text)) {
+                const newItem = document.createElement('div');
+                newItem.className = 'drag-item';
+                newItem.textContent = text;
+                newItem.style.margin = '5px';
+                dropZone.appendChild(newItem);
+                droppedItems.push(text);
+            }
+
+            dropZone.classList.remove('active');
+        }
+
+        function checkDragOrder() {
+            const room = rooms[currentRoom];
+            const isCorrect = JSON.stringify(droppedItems) === JSON.stringify(room.correctOrder);
+
+            if (isCorrect) {
+                showSuccess(room.explanation);
+                setTimeout(nextRoom, 2000);
+            } else {
+                alert('❌ Sıralama yanlış! Tekrar dene.');
+                droppedItems = [];
+                document.getElementById('dropZone').innerHTML = '<p style="text-align: center; color: #999;">Öğeleri buraya doğru sırayla sürükleyin</p>';
+            }
+        }
+
+        let selectedNodes = [];
+
+        function toggleNode(index) {
+            const room = rooms[currentRoom];
+            const nodes = document.querySelectorAll('.network-node');
+            const nodeId = room.nodes[index].id;
+
+            if (selectedNodes.includes(nodeId)) {
+                selectedNodes = selectedNodes.filter(id => id !== nodeId);
+                nodes[index].classList.remove('selected');
+            } else {
+                selectedNodes.push(nodeId);
+                nodes[index].classList.add('selected');
+            }
+        }
+
+        function checkNetwork() {
+            const room = rooms[currentRoom];
+            const vulnerableIds = room.nodes.filter(n => n.vulnerable).map(n => n.id);
+            const isCorrect = JSON.stringify(selectedNodes.sort()) === JSON.stringify(vulnerableIds.sort());
+
+            if (isCorrect) {
+                showSuccess(room.explanation);
+                setTimeout(nextRoom, 2000);
+            } else {
+                alert('❌ Tüm güvenlik açıklarını bulmadın! Tekrar dene.');
+            }
+        }
+
+        function showSuccess(explanation) {
+            const puzzle = document.querySelector('.puzzle');
+            puzzle.innerHTML += `<div class="success-message">✅ Tebrikler! Odayı geçtin!<br><small>${explanation}</small></div>`;
+        }
+
+        function nextRoom() {
+            currentRoom++;
+            droppedItems = [];
+            selectedNodes = [];
+
+            if (currentRoom >= rooms.length) {
+                gameOver(true);
+            } else {
+                loadRoom();
+            }
+        }
+
+        function showHint() {
+            const room = rooms[currentRoom];
+            const hintCost = 30;
+
+            if (timeRemaining > hintCost) {
+                timeRemaining -= hintCost;
+                hintsUsed++;
+                document.getElementById('hintsUsed').textContent = hintsUsed;
+                alert(`💡 İpucu:\n\n${room.hint}`);
+            } else {
+                alert('⚠️ İpucu almak için yeterli süren yok!');
+            }
+        }
+
+        function gameOver(success) {
+            clearInterval(timerInterval);
+            const elapsed = Math.floor((Date.now() - startTime) / 1000);
+            const minutes = Math.floor(elapsed / 60);
+            const seconds = elapsed % 60;
+
+            let html = '<div class="completion-screen">';
+
+            if (success) {
+                const score = Math.max(0, 1000 - (hintsUsed * 100) - (elapsed * 2));
+                html += `
+                    <div class="completion-icon">🏆</div>
+                    <h2 style="color: #28a745; font-size: 2em;">Tebrikler! Tüm Odalardan Kaçtın!</h2>
+                    <div style="font-size: 1.5em; margin: 30px 0;">
+                        <p>⏱️ Süre: ${minutes}:${seconds.toString().padStart(2, '0')}</p>
+                        <p>💡 Kullanılan İpucu: ${hintsUsed}</p>
+                        <p style="color: #667eea; font-weight: bold; font-size: 1.5em;">🌟 Puan: ${score}</p>
+                    </div>
+                    <div style="background: #e7f3ff; padding: 20px; border-radius: 10px; margin-top: 20px; text-align: left;">
+                        <h3 style="color: #667eea;">🎓 Öğrendikleriniz:</h3>
+                        <ul style="line-height: 2;">
+                            <li>✅ Güçlü şifre oluşturma</li>
+                            <li>✅ Phishing saldırılarını tanıma</li>
+                            <li>✅ Güvenlik duvarı yapılandırması</li>
+                            <li>✅ Ağ güvenlik açıklarını tespit etme</li>
+                            <li>✅ Siber saldırılara müdahale</li>
+                        </ul>
+                    </div>
+                `;
+            } else {
+                html += `
+                    <div class="completion-icon">⏰</div>
+                    <h2 style="color: #dc3545; font-size: 2em;">Süre Doldu!</h2>
+                    <p style="font-size: 1.2em; margin: 20px 0;">Maalesef tüm odalardan kaçamadın. Tekrar dene!</p>
+                    <p style="font-size: 1.5em; color: #667eea;">Tamamlanan Oda: ${currentRoom}/5</p>
+                `;
+            }
+
+            html += `
+                <div class="buttons" style="margin-top: 30px;">
+                    <button class="btn btn-primary" onclick="location.reload()">🔄 Tekrar Oyna</button>
+                    <button class="btn btn-secondary" onclick="window.location.href='../index.html'">🏠 Ana Sayfa</button>
+                </div>
+            </div>`;
+
+            document.getElementById('gameArea').innerHTML = html;
+            document.getElementById('hintBtn').style.display = 'none';
+        }
+
+        // Oyunu başlat
+        startGame();
+    </script>
+</body>
+</html>

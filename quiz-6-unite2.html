@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>6. Sınıf Ünite 2 Quiz - Etik ve Güvenlik</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .quiz-container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+        }
+        h1 {
+            text-align: center;
+            color: #38f9d7;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 1.2em;
+        }
+    </style>
+</head>
+<body>
+    <div class="quiz-container" style="text-align: center; padding: 60px 40px;">
+        <h1>🛡️ Etik ve Güvenlik Quiz</h1>
+        <p class="subtitle">6. Sınıf - Ünite 2 | 10 Soru</p>
+
+        <div id="quiz-container" style="margin-top: 40px;">
+            <p style="color: #999; font-style: italic;">Quiz yükleniyor...</p>
+        </div>
+    </div>
+
+    <!-- JavaScript modülleri -->
+    <script src="scripts/storage.js"></script>
+    <script src="scripts/analytics.js"></script>
+    <script src="scripts/badge-system.js"></script>
+    <script src="scripts/quiz-engine.js"></script>
+
+    <script>
+        // Quiz verisi
+        const quizData = {
+            title: "6. Sınıf Ünite 2 - Etik ve Güvenlik",
+            shuffle: false,
+            timerEnabled: false,
+            pointsPerQuestion: 10,
+            questions: [
+                {
+                    question: "KVKK'nın açılımı nedir?",
+                    options: ["Kişisel Verilerin Korunması Kanunu", "Kamu Verileri Kullanım Kanunu", "Kişisel Veri Koruma Komitesi", "Kullanıcı Verileri Koruma Kanunu"],
+                    correct: 0
+                },
+                {
+                    question: "Kişisel veri örneği hangisidir?",
+                    options: ["Hava durumu", "TC Kimlik numarası", "Okul adı", "Ülke nüfusu"],
+                    correct: 1
+                },
+                {
+                    question: "İki faktörlü doğrulama (2FA) nedir?",
+                    options: ["Sadece şifre kullanma", "Şifre + doğrulama kodu ile giriş", "Parmak izi okuma", "Kullanıcı adı belirleme"],
+                    correct: 1
+                },
+                {
+                    question: "Phishing saldırısı nedir?",
+                    options: ["Virüs taraması", "Sahte e-posta ile bilgi çalma", "Güvenlik duvarı kurma", "Dosya yedekleme"],
+                    correct: 1
+                },
+                {
+                    question: "Güçlü şifre özellikleri nelerdir?",
+                    options: ["Sadece harf içermeli", "Sadece rakam içermeli", "Büyük harf, küçük harf, rakam ve sembol içermeli", "İsim veya doğum tarihi olmalı"],
+                    correct: 2
+                },
+                {
+                    question: "Ransomware ne yapar?",
+                    options: ["Dosyalarını şifreler ve fidye ister", "Bilgisayarı hızlandırır", "Ücretsiz oyun sunar", "Antivirüs programıdır"],
+                    correct: 0
+                },
+                {
+                    question: "VPN ne işe yarar?",
+                    options: ["Oyun oynamak", "İnternet trafiğini şifreleyip anonimlik sağlar", "Müzik dinlemek", "Fotoğraf düzenlemek"],
+                    correct: 1
+                },
+                {
+                    question: "Dijital ayak izi nedir?",
+                    options: ["Parmak izi", "İnternette bıraktığın izler ve veriler", "Ayakkabı numarası", "E-posta adresi"],
+                    correct: 1
+                },
+                {
+                    question: "Telif hakkı nedir?",
+                    options: ["Bedava yazılım", "Fikri mülkiyet haklarını koruma", "Oyun oynama hakkı", "İnternet kullanma hakkı"],
+                    correct: 1
+                },
+                {
+                    question: "Siber zorbalık örneği hangisidir?",
+                    options: ["Arkadaşına mesaj atmak", "Ödeve yardım etmek", "Sosyal medyada birini sürekli rahatsız etmek", "Video oyunu oynamak"],
+                    correct: 2
+                }
+            ]
+        };
+
+        // Quiz'i başlat
+        document.addEventListener('DOMContentLoaded', () => {
+            if (typeof QuizEngine !== 'undefined' && QuizEngine.validateQuizData(quizData)) {
+                QuizEngine.initQuiz(quizData);
+            } else {
+                document.getElementById('quiz-container').innerHTML =
+                    '<p style="color: #e74c3c;">Quiz yüklenirken hata oluştu. Lütfen sayfayı yenileyin.</p>';
+            }
+        });
+    </script>
+</body>
+</html>

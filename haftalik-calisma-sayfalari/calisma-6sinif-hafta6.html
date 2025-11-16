@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <title>6. Sınıf - Hafta 6 - Menü Eşleştirme</title>
+    <style>
+        @media print { body { margin: 0; padding: 20px; } .no-print { display: none !important; } }
+        body { font-family: 'Segoe UI', sans-serif; max-width: 800px; margin: 0 auto; padding: 30px; }
+        .header { text-align: center; margin-bottom: 30px; padding-bottom: 20px; border-bottom: 3px solid #00d2ff; }
+        .header h1 { color: #00d2ff; }
+        .badges { display: flex; gap: 10px; justify-content: center; margin: 15px 0; }
+        .badge { background: linear-gradient(135deg, #00d2ff 0%, #3a7bd5 100%); color: white; padding: 8px 20px; border-radius: 20px; font-size: 0.9em; font-weight: bold; }
+        .matching-container { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin: 30px 0; }
+        .item { padding: 12px; margin-bottom: 10px; border: 2px solid #ddd; border-radius: 8px; }
+        .item-number { display: inline-block; width: 30px; height: 30px; background: #00d2ff; color: white; text-align: center; line-height: 30px; border-radius: 50%; margin-right: 10px; font-weight: bold; }
+        .answer-box { display: inline-block; width: 30px; height: 30px; border: 2px solid #00d2ff; border-radius: 5px; margin-left: 10px; }
+        button { background: linear-gradient(135deg, #00d2ff 0%, #3a7bd5 100%); color: white; padding: 15px 40px; border: none; border-radius: 10px; font-size: 1.1em; cursor: pointer; margin: 0 10px; font-weight: bold; }
+        .controls { text-align: center; margin: 30px 0; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>📝 Word Menü Eşleştirme</h1>
+        <div class="badges">
+            <span class="badge">6. SINIF</span>
+            <span class="badge">HAFTA 6</span>
+            <span class="badge">EŞLEŞTİRME</span>
+        </div>
+        <p style="color: #666;">Word Menüleri ve İşlevleri</p>
+    </div>
+
+    <div style="margin: 30px 0; padding: 20px; border: 2px dashed #00d2ff; border-radius: 10px;">
+        <div style="margin: 10px 0; display: flex;"><span style="font-weight: bold; margin-right: 10px; min-width: 80px;">Adı Soyadı:</span><span style="flex: 1; border-bottom: 1px solid #333; height: 1px; margin-left: 10px;"></span></div>
+        <div style="margin: 10px 0; display: flex;"><span style="font-weight: bold; margin-right: 10px; min-width: 80px;">Sınıfı:</span><span style="flex: 1; border-bottom: 1px solid #333; height: 1px; margin-left: 10px;"></span></div>
+    </div>
+
+    <div style="background: #f0f0f0; padding: 15px; border-radius: 10px; margin-bottom: 30px; border-left: 4px solid #00d2ff;">
+        <strong>📌 Yönerge:</strong> Word menülerini ve işlevlerini eşleştirin.
+    </div>
+
+    <div class="matching-container">
+        <div>
+            <h3 style="color: #00d2ff;">Menü/Komut</h3>
+            <div class="item"><span class="item-number">1</span>Ctrl+C</div>
+            <div class="item"><span class="item-number">2</span>Ctrl+V</div>
+            <div class="item"><span class="item-number">3</span>Ctrl+X</div>
+            <div class="item"><span class="item-number">4</span>Ctrl+A</div>
+            <div class="item"><span class="item-number">5</span>Ctrl+F</div>
+            <div class="item"><span class="item-number">6</span>Ctrl+H</div>
+            <div class="item"><span class="item-number">7</span>Ctrl+P</div>
+            <div class="item"><span class="item-number">8</span>Ctrl+Z</div>
+        </div>
+        <div>
+            <h3 style="color: #00d2ff;">İşlev</h3>
+            <div class="item">Yazdır<span class="answer-box"></span></div>
+            <div class="item">Bul ve Değiştir<span class="answer-box"></span></div>
+            <div class="item">Kes<span class="answer-box"></span></div>
+            <div class="item">Geri Al<span class="answer-box"></span></div>
+            <div class="item">Yapıştır<span class="answer-box"></span></div>
+            <div class="item">Tümünü Seç<span class="answer-box"></span></div>
+            <div class="item">Kopyala<span class="answer-box"></span></div>
+            <div class="item">Bul<span class="answer-box"></span></div>
+        </div>
+    </div>
+
+    <div class="controls no-print">
+        <button onclick="window.print()">🖨️ Yazdır</button>
+        <button onclick="window.location.href='../index.html'">🏠 Ana Sayfa</button>
+    </div>
+
+    <div style="margin-top: 40px; padding: 15px; background: #f0f0f0; border-radius: 8px;">
+        <strong>💯 Notlandırma:</strong> Doğru: _____ / 8 &nbsp; Not: _____
+    </div>
+</body>
+</html>

@@ -1,0 +1,3078 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Haftalık İçerikler - BTY Dersi</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            color: white;
+            padding: 40px 20px;
+            margin-bottom: 30px;
+        }
+
+        header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        header p {
+            font-size: 1.2em;
+            opacity: 0.95;
+        }
+
+        .selector-container {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .selector-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .selector-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .selector-group label {
+            font-weight: 600;
+            color: #667eea;
+            margin-bottom: 8px;
+            font-size: 1.1em;
+        }
+
+        select {
+            padding: 12px;
+            border: 2px solid #667eea;
+            border-radius: 8px;
+            font-size: 1em;
+            background: white;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        select:hover {
+            border-color: #764ba2;
+            box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+        }
+
+        select:focus {
+            outline: none;
+            border-color: #764ba2;
+            box-shadow: 0 0 0 3px rgba(118, 75, 162, 0.1);
+        }
+
+        .content-section {
+            display: none;
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .content-section.active {
+            display: block;
+            animation: fadeIn 0.5s;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .week-info {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+        }
+
+        .week-info h2 {
+            font-size: 2em;
+            margin-bottom: 10px;
+        }
+
+        .week-info p {
+            font-size: 1.1em;
+            opacity: 0.95;
+            margin: 5px 0;
+        }
+
+        .content-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin-top: 25px;
+        }
+
+        .content-card {
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            padding: 25px;
+            transition: all 0.3s;
+            background: #fafafa;
+        }
+
+        .content-card:hover {
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+            transform: translateY(-5px);
+            border-color: #667eea;
+        }
+
+        .content-card h3 {
+            color: #667eea;
+            font-size: 1.5em;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .content-card .icon {
+            font-size: 1.8em;
+        }
+
+        .game-card {
+            border-color: #4CAF50;
+        }
+
+        .game-card h3 {
+            color: #4CAF50;
+        }
+
+        .homework-card {
+            border-color: #FF9800;
+        }
+
+        .homework-card h3 {
+            color: #FF9800;
+        }
+
+        .fun-card {
+            border-color: #E91E63;
+        }
+
+        .fun-card h3 {
+            color: #E91E63;
+        }
+
+        .presentation-card {
+            border-color: #667eea;
+            background: linear-gradient(135deg, #f5f7ff 0%, #e8ebff 100%);
+        }
+
+        .presentation-card h3 {
+            color: #667eea;
+        }
+
+        .presentation-viewer {
+            margin-top: 15px;
+        }
+
+        .presentation-controls button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+
+        .task-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .task-list li {
+            padding: 10px 0;
+            border-bottom: 1px solid #e0e0e0;
+            padding-left: 25px;
+            position: relative;
+        }
+
+        .task-list li:before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: #4CAF50;
+            font-weight: bold;
+        }
+
+        .task-list li:last-child {
+            border-bottom: none;
+        }
+
+        .game-type-badge {
+            display: inline-block;
+            padding: 5px 15px;
+            background: #4CAF50;
+            color: white;
+            border-radius: 20px;
+            font-size: 0.85em;
+            margin-top: 10px;
+        }
+
+        .riddle-box {
+            background: linear-gradient(135deg, #FFE5EC 0%, #FFC3D5 100%);
+            padding: 20px;
+            border-radius: 10px;
+            margin: 15px 0;
+        }
+
+        .riddle-box h4 {
+            color: #E91E63;
+            margin-bottom: 10px;
+        }
+
+        .riddle-answer {
+            background: white;
+            padding: 10px;
+            border-radius: 5px;
+            margin-top: 10px;
+            cursor: pointer;
+            text-align: center;
+            font-weight: bold;
+            color: #E91E63;
+        }
+
+        .riddle-answer:hover {
+            background: #f0f0f0;
+        }
+
+        .riddle-answer.hidden {
+            background: #E91E63;
+            color: white;
+        }
+
+        .joke-box {
+            background: linear-gradient(135deg, #FFF8E1 0%, #FFE082 100%);
+            padding: 20px;
+            border-radius: 10px;
+            margin: 15px 0;
+            white-space: pre-line;
+        }
+
+        .joke-box h4 {
+            color: #F57C00;
+            margin-bottom: 10px;
+        }
+
+        .fact-box {
+            background: linear-gradient(135deg, #E3F2FD 0%, #90CAF9 100%);
+            padding: 20px;
+            border-radius: 10px;
+            margin: 15px 0;
+        }
+
+        .fact-box h4 {
+            color: #1976D2;
+            margin-bottom: 10px;
+        }
+
+        .no-selection {
+            text-align: center;
+            padding: 60px 20px;
+            color: #666;
+        }
+
+        .no-selection .emoji {
+            font-size: 4em;
+            margin-bottom: 20px;
+        }
+
+        .no-selection h3 {
+            font-size: 1.8em;
+            margin-bottom: 10px;
+            color: #667eea;
+        }
+
+        @media (max-width: 768px) {
+            .content-grid {
+                grid-template-columns: 1fr;
+            }
+
+            header h1 {
+                font-size: 2em;
+            }
+
+            .week-info h2 {
+                font-size: 1.5em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>📅 Haftalık İçerikler</h1>
+            <p>Her hafta için özel hazırlanmış oyun, ödev ve meraklısına bölümü</p>
+        </header>
+
+        <div class="selector-container">
+            <h2 style="color: #667eea; margin-bottom: 15px;">🎯 Hafta Seçin</h2>
+            <div class="selector-grid">
+                <div class="selector-group">
+                    <label for="grade-select">Sınıf Seçin:</label>
+                    <select id="grade-select" onchange="onGradeChange()">
+                        <option value="">Sınıf Seçin</option>
+                        <option value="5">5. Sınıf</option>
+                        <option value="6">6. Sınıf</option>
+                    </select>
+                </div>
+                <div class="selector-group">
+                    <label for="week-select">Hafta Seçin:</label>
+                    <select id="week-select" onchange="onWeekChange()" disabled>
+                        <option value="">Önce sınıf seçin</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <div id="content-container" class="content-section">
+            <div class="no-selection">
+                <div class="emoji">🎓</div>
+                <h3>Hafta Seçin</h3>
+                <p>Yukarıdan sınıf ve hafta seçerek içerikleri görüntüleyebilirsiniz.</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Haftalık içerik verisi (direkt gömülü)
+        let weeklyData = {
+  "grade5": [
+    {
+      "week": 1,
+      "grade": 5,
+      "week_text": "1. Hafta:\n 8-12 Eylül",
+      "unit": "Bilişim Teknolojilerinin Hayatımızdaki Yeri",
+      "topic": "Bilişim Teknolojilerinin Sınıflandırılması",
+      "outcome": "BTY.5.1.1 Günlük yaşamda kullanılan bilişim teknolojilerini sınıflandırabilme",
+      "game": {
+        "type": "quiz",
+        "title": "Bilişim Teknolojilerinin Sınıflandırılması - Eğlenceli Oyun",
+        "description": "Bu haftanın konusu 'Bilişim Teknolojilerinin Sınıflandırılması' ile ilgili eğlenceli bir quiz oyunu!",
+        "topic": "Bilişim Teknolojilerinin Sınıflandırılması",
+        "unit": "Bilişim Teknolojilerinin Hayatımızdaki Yeri"
+      },
+      "homework": {
+        "type": "creative",
+        "title": "Bilişim Teknolojilerinin Sınıflandırılması Yaratıcı Proje",
+        "tasks": [
+          "'Bilişim Teknolojilerinin Sınıflandırılması' konusu ile ilgili yaratıcı bir proje hazırlayın.",
+          "Poster, sunum veya video hazırlayabilirsiniz.",
+          "Konuyu arkadaşlarınıza anlatabileceğiniz şekilde anlatın.",
+          "Renkli ve görsel öğeler kullanın.",
+          "Hazırladığınız materyali sınıfta sunmaya hazır olun."
+        ],
+        "duration": "1 hafta",
+        "topic": "Bilişim Teknolojilerinin Sınıflandırılması"
+      },
+      "fun": {
+        "fun_fact": "Google Translate günde 100 milyardan fazla kelime çeviriyor!",
+        "riddle": {
+          "soru": "Internette gezinmek için kullandığımız programa ne denir?",
+          "cevap": "Tarayıcı (Browser)"
+        },
+        "joke": "İki bilgisayar sokakta karşılaşır.\nBiri diğerine: 'Nasılsın?'\nÖteki: 'Güncelleme yapıyorum, sonra kapanacağım!'",
+        "category": "yapay_zeka"
+      }
+    },
+    {
+      "week": 2,
+      "grade": 5,
+      "week_text": "2. Hafta:\n 15-19 Eylül",
+      "unit": "",
+      "topic": "Bilişim Teknolojilerinin Etkileri ve Dijital Sağlık",
+      "outcome": "BTY.5.1.2 Bilişim teknolojilerinin birey ve toplum üzerindeki etkilerini özetleyebilme",
+      "game": {
+        "type": "matching",
+        "title": "Bilişim Teknolojilerinin Etkileri ve Dijital Sağlık - Eğlenceli Oyun",
+        "description": "Bu haftanın konusu 'Bilişim Teknolojilerinin Etkileri ve Dijital Sağlık' ile ilgili eğlenceli bir matching oyunu!",
+        "topic": "Bilişim Teknolojilerinin Etkileri ve Dijital Sağlık",
+        "unit": ""
+      },
+      "homework": {
+        "type": "practical",
+        "title": "Bilişim Teknolojilerinin Etkileri ve Dijital Sağlık Uygulaması",
+        "tasks": [
+          "Bu hafta öğrendiğiniz 'Bilişim Teknolojilerinin Etkileri ve Dijital Sağlık' konusunu uygulayın.",
+          "Pratik bir çalışma yapın.",
+          "Yaptığınız çalışmayı fotoğraflayın veya ekran görüntüsü alın.",
+          "Çalışmanızda karşılaştığınız zorlukları not edin.",
+          "Öğrendiklerinizi 5-10 cümle ile özetleyin."
+        ],
+        "duration": "1 hafta",
+        "topic": "Bilişim Teknolojilerinin Etkileri ve Dijital Sağlık"
+      },
+      "fun": {
+        "fun_fact": "YouTube'a her dakika 500 saatten fazla video yükleniyor!",
+        "riddle": {
+          "soru": "1 GB kaç MB'dir?",
+          "cevap": "1024 MB"
+        },
+        "joke": "Neden bilgisayarlar üşümez?\nÇünkü pencereleri (Windows) var!",
+        "category": "internet"
+      }
+    },
+    {
+      "week": 3,
+      "grade": 5,
+      "week_text": "3. Hafta:\n 22-26 Eylül",
+      "unit": "",
+      "topic": "Dijital Vatandaşlık Uygulamaları",
+      "outcome": "BTY.5.1.3 Dijital vatandaşlık uygulamalarını sınıflandırabilme",
+      "game": {
+        "type": "matching",
+        "title": "Dijital Vatandaşlık Uygulamaları - Eğlenceli Oyun",
+        "description": "Bu haftanın konusu 'Dijital Vatandaşlık Uygulamaları' ile ilgili eğlenceli bir matching oyunu!",
+        "topic": "Dijital Vatandaşlık Uygulamaları",
+        "unit": ""
+      },
+      "homework": {
+        "type": "practical",
+        "title": "Dijital Vatandaşlık Uygulamaları Uygulaması",
+        "tasks": [
+          "Bu hafta öğrendiğiniz 'Dijital Vatandaşlık Uygulamaları' konusunu uygulayın.",
+          "Pratik bir çalışma yapın.",
+          "Yaptığınız çalışmayı fotoğraflayın veya ekran görüntüsü alın.",
+          "Çalışmanızda karşılaştığınız zorlukları not edin.",
+          "Öğrendiklerinizi 5-10 cümle ile özetleyin."
+        ],
+        "duration": "1 hafta",
+        "topic": "Dijital Vatandaşlık Uygulamaları"
+      },
+      "fun": {
+        "fun_fact": "İlk hard disk 1956'da yapıldı ve sadece 5 MB veri saklayabiliyordu ama buzdolabı boyutundaydı!",
+        "riddle": {
+          "soru": "HTML açılımı nedir?",
+          "cevap": "HyperText Markup Language"
+        },
+        "joke": "Robot öğretmene ne denir?\nCTRL + ALT + DELETE yapamayan öğretmen!",
+        "category": "bilgisayar"
+      }
+    },
+    {
+      "week": 4,
+      "grade": 5,
+      "week_text": "4. Hafta:\n 29 Eylül-3 Ekim",
+      "unit": "",
+      "topic": "Yapay Zekâda Temel Kavram ve Özellikler",
+      "outcome": "BTY.5.1.4 Yapay zekâ ile ilgili temel kavramları ve özellikleri sorgulayabilme",
+      "game": {
+        "type": "memory",
+        "title": "Yapay Zekâda Temel Kavram ve Özellikler - Eğlenceli Oyun",
+        "description": "Bu haftanın konusu 'Yapay Zekâda Temel Kavram ve Özellikler' ile ilgili eğlenceli bir memory oyunu!",
+        "topic": "Yapay Zekâda Temel Kavram ve Özellikler",
+        "unit": ""
+      },
+      "homework": {
+        "type": "practical",
+        "title": "Yapay Zekâda Temel Kavram ve Özellikler Uygulaması",
+        "tasks": [
+          "Bu hafta öğrendiğiniz 'Yapay Zekâda Temel Kavram ve Özellikler' konusunu uygulayın.",
+          "Pratik bir çalışma yapın.",
+          "Yaptığınız çalışmayı fotoğraflayın veya ekran görüntüsü alın.",
+          "Çalışmanızda karşılaştığınız zorlukları not edin.",
+          "Öğrendiklerinizi 5-10 cümle ile özetleyin."
+        ],
+        "duration": "1 hafta",
+        "topic": "Yapay Zekâda Temel Kavram ve Özellikler"
+      },
+      "fun": {
+        "fun_fact": "İlk bilgisayar virüsü 1983'te yazıldı ve ismiydi 'Elk Cloner'.",
+        "riddle": {
+          "soru": "Bilgisayarın geçici hafızasına ne denir?",
+          "cevap": "RAM"
+        },
+        "joke": "Bilgisayar virüsü hastaneye gitse doktor ne der?\n'Antivirüs alın, hemen geçer!'",
+        "category": "yazilim"
+      }
+    },
+    {
+      "week": 5,
+      "grade": 5,
+      "week_text": "5. Hafta:\n 6-10 Ekim",
+      "unit": "",
+      "topic": "Yapay Zekâda Temel Kavram ve Özellikler",
+      "outcome": "BTY.5.1.4 Yapay zekâ ile ilgili temel kavramları ve özellikleri sorgulayabilme",
+      "game": {
+        "type": "sorting",
+        "title": "Yapay Zekâda Temel Kavram ve Özellikler - Eğlenceli Oyun",
+        "description": "Bu haftanın konusu 'Yapay Zekâda Temel Kavram ve Özellikler' ile ilgili eğlenceli bir sorting oyunu!",
+        "topic": "Yapay Zekâda Temel Kavram ve Özellikler",
+        "unit": ""
+      },
+      "homework": {
+        "type": "research",
+        "title": "Yapay Zekâda Temel Kavram ve Özellikler Araştırması",
+        "tasks": [
+          "'Yapay Zekâda Temel Kavram ve Özellikler' konusu hakkında araştırma yapın.",
+          "En az 3 kaynak kullanın (kitap, internet, dergi).",
+          "Bulgularınızı 1 sayfalık bir rapor halinde yazın.",
+          "Görseller ekleyin.",
+          "Kaynakçanızı belirtin."
+        ],
+        "duration": "1 hafta",
+        "topic": "Yapay Zekâda Temel Kavram ve Özellikler"
+      },
+      "fun": {
+        "fun_fact": "İki faktörlü doğrulama kullanmak hesap güvenliğini %99 artırıyor.",
+        "riddle": {
+          "soru": "Mouse'u Türkçe'ye çevirelim. Ne olur?",
+          "cevap": "Fare"
+        },
+        "joke": "Öğretmen: 'Bilgisayarın kalbi var mı?'\nÖğrenci: 'Hayır ama faresi var!'",
+        "category": "guvenlik"
+      }
+    },
+    {
+      "week": 6,
+      "grade": 5,
+      "week_text": "6. Hafta:\n 13-17 Ekim",
+      "unit": "",
+      "topic": "Bilgisayar Sistemlerinin Kullanımı",
+      "outcome": "BTY.5.1.5 Bilgisayar sistemlerini çözümleyebilme",
+      "game": {
+        "type": "sorting",
+        "title": "Bilgisayar Sistemlerinin Kullanımı - Eğlenceli Oyun",
+        "description": "Bu haftanın konusu 'Bilgisayar Sistemlerinin Kullanımı' ile ilgili eğlenceli bir sorting oyunu!",
+        "topic": "Bilgisayar Sistemlerinin Kullanımı",
+        "unit": ""
+      },
+      "homework": {
+        "type": "practical",
+        "title": "Bilgisayar Sistemlerinin Kullanımı Uygulaması",
+        "tasks": [
+          "Bu hafta öğrendiğiniz 'Bilgisayar Sistemlerinin Kullanımı' konusunu uygulayın.",
+          "Pratik bir çalışma yapın.",
+          "Yaptığınız çalışmayı fotoğraflayın veya ekran görüntüsü alın.",
+          "Çalışmanızda karşılaştığınız zorlukları not edin.",
+          "Öğrendiklerinizi 5-10 cümle ile özetleyin."
+        ],
+        "duration": "1 hafta",
+        "topic": "Bilgisayar Sistemlerinin Kullanımı"
+      },
+      "fun": {
+        "fun_fact": "İlk bilgisayar ENIAC 1946'da yapıldı ve tam 30 ton ağırlığındaydı!",
+        "riddle": {
+          "soru": "Siber zorbalığa İngilizce ne denir?",
+          "cevap": "Cyberbullying"
+        },
+        "joke": "İki bilgisayar sokakta karşılaşır.\nBiri diğerine: 'Nasılsın?'\nÖteki: 'Güncelleme yapıyorum, sonra kapanacağım!'",
+        "category": "bilgisayar"
+      }
+    },
+    {
+      "week": 7,
+      "grade": 5,
+      "week_text": "7. Hafta:\n 20-24 Ekim",
+      "unit": "",
+      "topic": "Dosya ve Klasör Yönetimi",
+      "outcome": "BTY.5.1.6 Dosya ve klasör yönetimi ile ilgili temel işlemlerle çalışabilme",
+      "game": {
+        "type": "sorting",
+        "title": "Dosya ve Klasör Yönetimi - Eğlenceli Oyun",
+        "description": "Bu haftanın konusu 'Dosya ve Klasör Yönetimi' ile ilgili eğlenceli bir sorting oyunu!",
+        "topic": "Dosya ve Klasör Yönetimi",
+        "unit": ""
+      },
+      "homework": {
+        "type": "practical",
+        "title": "Dosya ve Klasör Yönetimi Uygulaması",
+        "tasks": [
+          "Bu hafta öğrendiğiniz 'Dosya ve Klasör Yönetimi' konusunu uygulayın.",
+          "Pratik bir çalışma yapın.",
+          "Yaptığınız çalışmayı fotoğraflayın veya ekran görüntüsü alın.",
+          "Çalışmanızda karşılaştığınız zorlukları not edin.",
+          "Öğrendiklerinizi 5-10 cümle ile özetleyin."
+        ],
+        "duration": "1 hafta",
+        "topic": "Dosya ve Klasör Yönetimi"
+      },
+      "fun": {
+        "fun_fact": "Google'ın adı aslında 'Googol' kelimesinden geliyor (10^100 sayısı).",
+        "riddle": {
+          "soru": "Scratch'te kullandığımız renkli komutlara ne denir?",
+          "cevap": "Blok"
+        },
+        "joke": "Neden bilgisayarlar üşümez?\nÇünkü pencereleri (Windows) var!",
+        "category": "yazilim"
+      }
+    },
+    {
+      "week": 8,
+      "grade": 5,
+      "week_text": "8. Hafta:\n 27-31 Ekim",
+      "unit": "Dijital Ürün Tasarımı ve Geliştirme",
+      "topic": "Görsel Düzenleme Programlarına Giriş",
+      "outcome": "BTY.5.2.1 Görsel düzenleme programlarından yararlanabilme",
+      "game": {
+        "type": "quiz",
+        "title": "Görsel Düzenleme Programlarına Giriş - Eğlenceli Oyun",
+        "description": "Bu haftanın konusu 'Görsel Düzenleme Programlarına Giriş' ile ilgili eğlenceli bir quiz oyunu!",
+        "topic": "Görsel Düzenleme Programlarına Giriş",
+        "unit": "Dijital Ürün Tasarımı ve Geliştirme"
+      },
+      "homework": {
+        "type": "research",
+        "title": "Görsel Düzenleme Programlarına Giriş Araştırması",
+        "tasks": [
+          "'Görsel Düzenleme Programlarına Giriş' konusu hakkında araştırma yapın.",
+          "En az 3 kaynak kullanın (kitap, internet, dergi).",
+          "Bulgularınızı 1 sayfalık bir rapor halinde yazın.",
+          "Görseller ekleyin.",
+          "Kaynakçanızı belirtin."
+        ],
+        "duration": "1 hafta",
+        "topic": "Görsel Düzenleme Programlarına Giriş"
+      },
+      "fun": {
+        "fun_fact": "İlk video oyunu 'Pong' 1972'de çıktı ve sadece bir top ve iki raket vardı!",
+        "riddle": {
+          "soru": "Hangi bilgisayar parçası 'bilgisayarın beyni' olarak bilinir?",
+          "cevap": "İşlemci (CPU)"
+        },
+        "joke": "Robot öğretmene ne denir?\nCTRL + ALT + DELETE yapamayan öğretmen!",
+        "category": "yazilim"
+      }
+    },
+    {
+      "week": 9,
+      "grade": 5,
+      "week_text": "9. Hafta:\n 3-7 Kasım",
+      "unit": "",
+      "topic": "Görsel Tasarıma Yönelik Kurgu Oluşturma\n\nGörsel Ürün Geliştirme",
+      "outcome": "BTY.5.2.2 Görsel için kurgu oluşturabilme\n\nBTY.5.2.3 Görsel dosyası geliştirebilme",
+      "game": {
+        "type": "sorting",
+        "title": "Görsel Tasarıma Yönelik Kurgu Oluşturma\n\nGörsel Ürün Geliştirme - Eğlenceli Oyun",
+        "description": "Bu haftanın konusu 'Görsel Tasarıma Yönelik Kurgu Oluşturma\n\nGörsel Ürün Geliştirme' ile ilgili eğlenceli bir sorting oyunu!",
+        "topic": "Görsel Tasarıma Yönelik Kurgu Oluşturma\n\nGörsel Ürün Geliştirme",
+        "unit": ""
+      },
+      "homework": {
+        "type": "research",
+        "title": "Görsel Tasarıma Yönelik Kurgu Oluşturma\n\nGörsel Ürün Geliştirme Araştırması",
+        "tasks": [
+          "'Görsel Tasarıma Yönelik Kurgu Oluşturma\n\nGörsel Ürün Geliştirme' konusu hakkında araştırma yapın.",
+          "En az 3 kaynak kullanın (kitap, internet, dergi).",
+          "Bulgularınızı 1 sayfalık bir rapor halinde yazın.",
+          "Görseller ekleyin.",
+          "Kaynakçanızı belirtin."
+        ],
+        "duration": "1 hafta",
+        "topic": "Görsel Tasarıma Yönelik Kurgu Oluşturma\n\nGörsel Ürün Geliştirme"
+      },
+      "fun": {
+        "fun_fact": "İlk fare 1964'te Douglas Engelbart tarafından ahşaptan yapılmıştır.",
+        "riddle": {
+          "soru": "Internette gezinmek için kullandığımız programa ne denir?",
+          "cevap": "Tarayıcı (Browser)"
+        },
+        "joke": "Bilgisayar virüsü hastaneye gitse doktor ne der?\n'Antivirüs alın, hemen geçer!'",
+        "category": "bilgisayar"
+      }
+    },
+    {
+      "week": 10,
+      "grade": 5,
+      "week_text": "10. Hafta:\n 17-21 Kasım",
+      "unit": "Dijital Ürün Tasarımı ve Geliştirme",
+      "topic": "Kelime İşlemci Programlarına Giriş",
+      "outcome": "BTY.5.2.4 Kelime işlemci programlarından yararlanabilme",
+      "game": {
+        "type": "sorting",
+        "title": "Kelime İşlemci Programlarına Giriş - Eğlenceli Oyun",
+        "description": "Bu haftanın konusu 'Kelime İşlemci Programlarına Giriş' ile ilgili eğlenceli bir sorting oyunu!",
+        "topic": "Kelime İşlemci Programlarına Giriş",
+        "unit": "Dijital Ürün Tasarımı ve Geliştirme"
+      },
+      "homework": {
+        "type": "creative",
+        "title": "Kelime İşlemci Programlarına Giriş Yaratıcı Proje",
+        "tasks": [
+          "'Kelime İşlemci Programlarına Giriş' konusu ile ilgili yaratıcı bir proje hazırlayın.",
+          "Poster, sunum veya video hazırlayabilirsiniz.",
+          "Konuyu arkadaşlarınıza anlatabileceğiniz şekilde anlatın.",
+          "Renkli ve görsel öğeler kullanın.",
+          "Hazırladığınız materyali sınıfta sunmaya hazır olun."
+        ],
+        "duration": "1 hafta",
+        "topic": "Kelime İşlemci Programlarına Giriş"
+      },
+      "fun": {
+        "fun_fact": "İlk bilgisayar virüsü 1983'te yazıldı ve ismiydi 'Elk Cloner'.",
+        "riddle": {
+          "soru": "1 GB kaç MB'dir?",
+          "cevap": "1024 MB"
+        },
+        "joke": "Öğretmen: 'Bilgisayarın kalbi var mı?'\nÖğrenci: 'Hayır ama faresi var!'",
+        "category": "yazilim"
+      }
+    },
+    {
+      "week": 11,
+      "grade": 5,
+      "week_text": "11. Hafta:\n 24-28 Kasım",
+      "unit": "",
+      "topic": "Kelime İşlemci Dosyası Geliştirme",
+      "outcome": "BTY.5.2.5 Kelime işlemci dosyası geliştirebilme",
+      "game": {
+        "type": "memory",
+        "title": "Kelime İşlemci Dosyası Geliştirme - Eğlenceli Oyun",
+        "description": "Bu haftanın konusu 'Kelime İşlemci Dosyası Geliştirme' ile ilgili eğlenceli bir memory oyunu!",
+        "topic": "Kelime İşlemci Dosyası Geliştirme",
+        "unit": ""
+      },
+      "homework": {
+        "type": "research",
+        "title": "Kelime İşlemci Dosyası Geliştirme Araştırması",
+        "tasks": [
+          "'Kelime İşlemci Dosyası Geliştirme' konusu hakkında araştırma yapın.",
+          "En az 3 kaynak kullanın (kitap, internet, dergi).",
+          "Bulgularınızı 1 sayfalık bir rapor halinde yazın.",
+          "Görseller ekleyin.",
+          "Kaynakçanızı belirtin."
+        ],
+        "duration": "1 hafta",
+        "topic": "Kelime İşlemci Dosyası Geliştirme"
+      },
+      "fun": {
+        "fun_fact": "İlk bilgisayar virüsü 1983'te yazıldı ve ismiydi 'Elk Cloner'.",
+        "riddle": {
+          "soru": "HTML açılımı nedir?",
+          "cevap": "HyperText Markup Language"
+        },
+        "joke": "İki bilgisayar sokakta karşılaşır.\nBiri diğerine: 'Nasılsın?'\nÖteki: 'Güncelleme yapıyorum, sonra kapanacağım!'",
+        "category": "yazilim"
+      }
+    },
+    {
+      "week": 12,
+      "grade": 5,
+      "week_text": "12. Hafta:\n 1-5 Aralık",
+      "unit": "",
+      "topic": "Sunum Programlarına Giriş",
+      "outcome": "BTY.5.2.6 Sunum programlarından yararlanabilme",
+      "game": {
+        "type": "sorting",
+        "title": "Sunum Programlarına Giriş - Eğlenceli Oyun",
+        "description": "Bu haftanın konusu 'Sunum Programlarına Giriş' ile ilgili eğlenceli bir sorting oyunu!",
+        "topic": "Sunum Programlarına Giriş",
+        "unit": ""
+      },
+      "homework": {
+        "type": "practical",
+        "title": "Sunum Programlarına Giriş Uygulaması",
+        "tasks": [
+          "Bu hafta öğrendiğiniz 'Sunum Programlarına Giriş' konusunu uygulayın.",
+          "Pratik bir çalışma yapın.",
+          "Yaptığınız çalışmayı fotoğraflayın veya ekran görüntüsü alın.",
+          "Çalışmanızda karşılaştığınız zorlukları not edin.",
+          "Öğrendiklerinizi 5-10 cümle ile özetleyin."
+        ],
+        "duration": "1 hafta",
+        "topic": "Sunum Programlarına Giriş"
+      },
+      "fun": {
+        "fun_fact": "Scratch programı 2007'de MIT'de geliştirildi ve 60 milyondan fazla proje yapıldı.",
+        "riddle": {
+          "soru": "Bilgisayarın geçici hafızasına ne denir?",
+          "cevap": "RAM"
+        },
+        "joke": "Neden bilgisayarlar üşümez?\nÇünkü pencereleri (Windows) var!",
+        "category": "yazilim"
+      }
+    },
+    {
+      "week": 13,
+      "grade": 5,
+      "week_text": "13. Hafta:\n 8-12 Aralık",
+      "unit": "",
+      "topic": "Sunum Dosyası Oluşturma",
+      "outcome": "BTY.5.2.7 Sunum dosyası geliştirebilme",
+      "game": {
+        "type": "quiz",
+        "title": "Sunum Dosyası Oluşturma - Eğlenceli Oyun",
+        "description": "Bu haftanın konusu 'Sunum Dosyası Oluşturma' ile ilgili eğlenceli bir quiz oyunu!",
+        "topic": "Sunum Dosyası Oluşturma",
+        "unit": ""
+      },
+      "homework": {
+        "type": "creative",
+        "title": "Sunum Dosyası Oluşturma Yaratıcı Proje",
+        "tasks": [
+          "'Sunum Dosyası Oluşturma' konusu ile ilgili yaratıcı bir proje hazırlayın.",
+          "Poster, sunum veya video hazırlayabilirsiniz.",
+          "Konuyu arkadaşlarınıza anlatabileceğiniz şekilde anlatın.",
+          "Renkli ve görsel öğeler kullanın.",
+          "Hazırladığınız materyali sınıfta sunmaya hazır olun."
+        ],
+        "duration": "1 hafta",
+        "topic": "Sunum Dosyası Oluşturma"
+      },
+      "fun": {
+        "fun_fact": "Siri, Alexa gibi sesli asistanlar doğal dil işleme teknolojisi kullanıyor.",
+        "riddle": {
+          "soru": "Mouse'u Türkçe'ye çevirelim. Ne olur?",
+          "cevap": "Fare"
+        },
+        "joke": "Robot öğretmene ne denir?\nCTRL + ALT + DELETE yapamayan öğretmen!",
+        "category": "yapay_zeka"
+      }
+    },
+    {
+      "week": 14,
+      "grade": 5,
+      "week_text": "14. Hafta:\n 15-19 Aralık",
+      "unit": "Bilgisayar Ağları ve İletişim",
+      "topic": "Bilgisayar Ağları ve Ağ Bileşenleri",
+      "outcome": "BTY.5.3.1 Bilgisayar ağları ve bileşenlerini sorgulayabilme",
+      "game": {
+        "type": "sorting",
+        "title": "Bilgisayar Ağları ve Ağ Bileşenleri - Eğlenceli Oyun",
+        "description": "Bu haftanın konusu 'Bilgisayar Ağları ve Ağ Bileşenleri' ile ilgili eğlenceli bir sorting oyunu!",
+        "topic": "Bilgisayar Ağları ve Ağ Bileşenleri",
+        "unit": "Bilgisayar Ağları ve İletişim"
+      },
+      "homework": {
+        "type": "creative",
+        "title": "Bilgisayar Ağları ve Ağ Bileşenleri Yaratıcı Proje",
+        "tasks": [
+          "'Bilgisayar Ağları ve Ağ Bileşenleri' konusu ile ilgili yaratıcı bir proje hazırlayın.",
+          "Poster, sunum veya video hazırlayabilirsiniz.",
+          "Konuyu arkadaşlarınıza anlatabileceğiniz şekilde anlatın.",
+          "Renkli ve görsel öğeler kullanın.",
+          "Hazırladığınız materyali sınıfta sunmaya hazır olun."
+        ],
+        "duration": "1 hafta",
+        "topic": "Bilgisayar Ağları ve Ağ Bileşenleri"
+      },
+      "fun": {
+        "fun_fact": "İlk fare 1964'te Douglas Engelbart tarafından ahşaptan yapılmıştır.",
+        "riddle": {
+          "soru": "Siber zorbalığa İngilizce ne denir?",
+          "cevap": "Cyberbullying"
+        },
+        "joke": "Bilgisayar virüsü hastaneye gitse doktor ne der?\n'Antivirüs alın, hemen geçer!'",
+        "category": "bilgisayar"
+      }
+    },
+    {
+      "week": 15,
+      "grade": 5,
+      "week_text": "15. Hafta:\n 22-26 Aralık",
+      "unit": "",
+      "topic": "Bilgisayar Ağ Türleri ve Bağlanma Yöntemleri",
+      "outcome": "BTY.5.3.2 Bilgisayar ağları ve bağlanma yöntemlerini sınıflandırabilme",
+      "game": {
+        "type": "quiz",
+        "title": "Bilgisayar Ağ Türleri ve Bağlanma Yöntemleri - Eğlenceli Oyun",
+        "description": "Bu haftanın konusu 'Bilgisayar Ağ Türleri ve Bağlanma Yöntemleri' ile ilgili eğlenceli bir quiz oyunu!",
+        "topic": "Bilgisayar Ağ Türleri ve Bağlanma Yöntemleri",
+        "unit": ""
+      },
+      "homework": {
+        "type": "research",
+        "title": "Bilgisayar Ağ Türleri ve Bağlanma Yöntemleri Araştırması",
+        "tasks": [
+          "'Bilgisayar Ağ Türleri ve Bağlanma Yöntemleri' konusu hakkında araştırma yapın.",
+          "En az 3 kaynak kullanın (kitap, internet, dergi).",
+          "Bulgularınızı 1 sayfalık bir rapor halinde yazın.",
+          "Görseller ekleyin.",
+          "Kaynakçanızı belirtin."
+        ],
+        "duration": "1 hafta",
+        "topic": "Bilgisayar Ağ Türleri ve Bağlanma Yöntemleri"
+      },
+      "fun": {
+        "fun_fact": "QWERTY klavye düzeni 1873'te tasarlandı ve bugün hala kullanılıyor!",
+        "riddle": {
+          "soru": "Scratch'te kullandığımız renkli komutlara ne denir?",
+          "cevap": "Blok"
+        },
+        "joke": "Öğretmen: 'Bilgisayarın kalbi var mı?'\nÖğrenci: 'Hayır ama faresi var!'",
+        "category": "bilgisayar"
+      }
+    },
+    {
+      "week": 16,
+      "grade": 5,
+      "week_text": "16. Hafta:\n 29 Aralık-2 Ocak",
+      "unit": "",
+      "topic": "İnternette Bilgi Kaynakları ve Arama Yöntemleri",
+      "outcome": "BTY.5.3.3 İnternet ile amacına uygun olarak çalışabilme",
+      "game": {
+        "type": "sorting",
+        "title": "İnternette Bilgi Kaynakları ve Arama Yöntemleri - Eğlenceli Oyun",
+        "description": "Bu haftanın konusu 'İnternette Bilgi Kaynakları ve Arama Yöntemleri' ile ilgili eğlenceli bir sorting oyunu!",
+        "topic": "İnternette Bilgi Kaynakları ve Arama Yöntemleri",
+        "unit": ""
+      },
+      "homework": {
+        "type": "research",
+        "title": "İnternette Bilgi Kaynakları ve Arama Yöntemleri Araştırması",
+        "tasks": [
+          "'İnternette Bilgi Kaynakları ve Arama Yöntemleri' konusu hakkında araştırma yapın.",
+          "En az 3 kaynak kullanın (kitap, internet, dergi).",
+          "Bulgularınızı 1 sayfalık bir rapor halinde yazın.",
+          "Görseller ekleyin.",
+          "Kaynakçanızı belirtin."
+        ],
+        "duration": "1 hafta",
+        "topic": "İnternette Bilgi Kaynakları ve Arama Yöntemleri"
+      },
+      "fun": {
+        "fun_fact": "İlk siber saldırı 1988'de yapıldı ve 6000 bilgisayarı etkiledi.",
+        "riddle": {
+          "soru": "Hangi bilgisayar parçası 'bilgisayarın beyni' olarak bilinir?",
+          "cevap": "İşlemci (CPU)"
+        },
+        "joke": "İki bilgisayar sokakta karşılaşır.\nBiri diğerine: 'Nasılsın?'\nÖteki: 'Güncelleme yapıyorum, sonra kapanacağım!'",
+        "category": "guvenlik"
+      }
+    },
+    {
+      "week": 17,
+      "grade": 5,
+      "week_text": "17. Hafta:\n 5-9 Ocak",
+      "unit": "Bilişim Etiği ve Siber Güvenlik",
+      "topic": "Bilişim Etiği ve İlkeleri",
+      "outcome": "BTY.5.4.1 Bilişim etiği kural ve ilkelerini yorumlayabilme",
+      "game": {
+        "type": "memory",
+        "title": "Bilişim Etiği ve İlkeleri - Eğlenceli Oyun",
+        "description": "Bu haftanın konusu 'Bilişim Etiği ve İlkeleri' ile ilgili eğlenceli bir memory oyunu!",
+        "topic": "Bilişim Etiği ve İlkeleri",
+        "unit": "Bilişim Etiği ve Siber Güvenlik"
+      },
+      "homework": {
+        "type": "creative",
+        "title": "Bilişim Etiği ve İlkeleri Yaratıcı Proje",
+        "tasks": [
+          "'Bilişim Etiği ve İlkeleri' konusu ile ilgili yaratıcı bir proje hazırlayın.",
+          "Poster, sunum veya video hazırlayabilirsiniz.",
+          "Konuyu arkadaşlarınıza anlatabileceğiniz şekilde anlatın.",
+          "Renkli ve görsel öğeler kullanın.",
+          "Hazırladığınız materyali sınıfta sunmaya hazır olun."
+        ],
+        "duration": "1 hafta",
+        "topic": "Bilişim Etiği ve İlkeleri"
+      },
+      "fun": {
+        "fun_fact": "Bir hacker, 8 karakterlik bir şifreyi ortalama 8 saatte kırabilir!",
+        "riddle": {
+          "soru": "Internette gezinmek için kullandığımız programa ne denir?",
+          "cevap": "Tarayıcı (Browser)"
+        },
+        "joke": "Neden bilgisayarlar üşümez?\nÇünkü pencereleri (Windows) var!",
+        "category": "guvenlik"
+      }
+    },
+    {
+      "week": 18,
+      "grade": 5,
+      "week_text": "18. Hafta:\n 12-16 Ocak",
+      "unit": "",
+      "topic": "Dijital Ortamlarda Gizlilik ve Güvenlik",
+      "outcome": "BTY.5.4.2 Dijital ortamlarda gizlilik ve güvenlik önlemlerini yönetebilme",
+      "game": {
+        "type": "sorting",
+        "title": "Dijital Ortamlarda Gizlilik ve Güvenlik - Eğlenceli Oyun",
+        "description": "Bu haftanın konusu 'Dijital Ortamlarda Gizlilik ve Güvenlik' ile ilgili eğlenceli bir sorting oyunu!",
+        "topic": "Dijital Ortamlarda Gizlilik ve Güvenlik",
+        "unit": ""
+      },
+      "homework": {
+        "type": "research",
+        "title": "Dijital Ortamlarda Gizlilik ve Güvenlik Araştırması",
+        "tasks": [
+          "'Dijital Ortamlarda Gizlilik ve Güvenlik' konusu hakkında araştırma yapın.",
+          "En az 3 kaynak kullanın (kitap, internet, dergi).",
+          "Bulgularınızı 1 sayfalık bir rapor halinde yazın.",
+          "Görseller ekleyin.",
+          "Kaynakçanızı belirtin."
+        ],
+        "duration": "1 hafta",
+        "topic": "Dijital Ortamlarda Gizlilik ve Güvenlik"
+      },
+      "fun": {
+        "fun_fact": "Her gün 300 milyardan fazla e-posta gönderiliyor ve %85'i spam!",
+        "riddle": {
+          "soru": "1 GB kaç MB'dir?",
+          "cevap": "1024 MB"
+        },
+        "joke": "Robot öğretmene ne denir?\nCTRL + ALT + DELETE yapamayan öğretmen!",
+        "category": "guvenlik"
+      }
+    },
+    {
+      "week": 19,
+      "grade": 5,
+      "week_text": "19. Hafta:\n 2-6 Şubat",
+      "unit": "Yapay Zeka",
+      "topic": "Yapay Zekâ Kullanım Alanları ve Alt Dalları",
+      "outcome": "BTY.5.5.1 Yapay zekâ uygulamalarını sınıflandırabilme",
+      "game": {
+        "type": "matching",
+        "title": "Yapay Zekâ Kullanım Alanları ve Alt Dalları - Eğlenceli Oyun",
+        "description": "Bu haftanın konusu 'Yapay Zekâ Kullanım Alanları ve Alt Dalları' ile ilgili eğlenceli bir matching oyunu!",
+        "topic": "Yapay Zekâ Kullanım Alanları ve Alt Dalları",
+        "unit": "Yapay Zeka"
+      },
+      "homework": {
+        "type": "research",
+        "title": "Yapay Zekâ Kullanım Alanları ve Alt Dalları Araştırması",
+        "tasks": [
+          "'Yapay Zekâ Kullanım Alanları ve Alt Dalları' konusu hakkında araştırma yapın.",
+          "En az 3 kaynak kullanın (kitap, internet, dergi).",
+          "Bulgularınızı 1 sayfalık bir rapor halinde yazın.",
+          "Görseller ekleyin.",
+          "Kaynakçanızı belirtin."
+        ],
+        "duration": "1 hafta",
+        "topic": "Yapay Zekâ Kullanım Alanları ve Alt Dalları"
+      },
+      "fun": {
+        "fun_fact": "YouTube'a her dakika 500 saatten fazla video yükleniyor!",
+        "riddle": {
+          "soru": "HTML açılımı nedir?",
+          "cevap": "HyperText Markup Language"
+        },
+        "joke": "Bilgisayar virüsü hastaneye gitse doktor ne der?\n'Antivirüs alın, hemen geçer!'",
+        "category": "internet"
+      }
+    },
+    {
+      "week": 20,
+      "grade": 5,
+      "week_text": "20. Hafta:\n 9-13 Şubat",
+      "unit": "",
+      "topic": "Yapay Zekâ Kullanım Alanları ve Alt Dalları",
+      "outcome": "BTY.5.5.1 Yapay zekâ uygulamalarını sınıflandırabilme",
+      "game": {
+        "type": "sorting",
+        "title": "Yapay Zekâ Kullanım Alanları ve Alt Dalları - Eğlenceli Oyun",
+        "description": "Bu haftanın konusu 'Yapay Zekâ Kullanım Alanları ve Alt Dalları' ile ilgili eğlenceli bir sorting oyunu!",
+        "topic": "Yapay Zekâ Kullanım Alanları ve Alt Dalları",
+        "unit": ""
+      },
+      "homework": {
+        "type": "creative",
+        "title": "Yapay Zekâ Kullanım Alanları ve Alt Dalları Yaratıcı Proje",
+        "tasks": [
+          "'Yapay Zekâ Kullanım Alanları ve Alt Dalları' konusu ile ilgili yaratıcı bir proje hazırlayın.",
+          "Poster, sunum veya video hazırlayabilirsiniz.",
+          "Konuyu arkadaşlarınıza anlatabileceğiniz şekilde anlatın.",
+          "Renkli ve görsel öğeler kullanın.",
+          "Hazırladığınız materyali sınıfta sunmaya hazır olun."
+        ],
+        "duration": "1 hafta",
+        "topic": "Yapay Zekâ Kullanım Alanları ve Alt Dalları"
+      },
+      "fun": {
+        "fun_fact": "Python programlama dili adını 'Monty Python' komedi grubundan alıyor!",
+        "riddle": {
+          "soru": "Bilgisayarın geçici hafızasına ne denir?",
+          "cevap": "RAM"
+        },
+        "joke": "Öğretmen: 'Bilgisayarın kalbi var mı?'\nÖğrenci: 'Hayır ama faresi var!'",
+        "category": "yazilim"
+      }
+    },
+    {
+      "week": 21,
+      "grade": 5,
+      "week_text": "21. Hafta:\n 16-20 Şubat",
+      "unit": "",
+      "topic": "Yapay Zekâda Güvenlik",
+      "outcome": "BTY.5.5.2 Yapay zekâya ilişkin etik ve güvenlik/gizlilik önlemlerini yönetebilme",
+      "game": {
+        "type": "matching",
+        "title": "Yapay Zekâda Güvenlik - Eğlenceli Oyun",
+        "description": "Bu haftanın konusu 'Yapay Zekâda Güvenlik' ile ilgili eğlenceli bir matching oyunu!",
+        "topic": "Yapay Zekâda Güvenlik",
+        "unit": ""
+      },
+      "homework": {
+        "type": "creative",
+        "title": "Yapay Zekâda Güvenlik Yaratıcı Proje",
+        "tasks": [
+          "'Yapay Zekâda Güvenlik' konusu ile ilgili yaratıcı bir proje hazırlayın.",
+          "Poster, sunum veya video hazırlayabilirsiniz.",
+          "Konuyu arkadaşlarınıza anlatabileceğiniz şekilde anlatın.",
+          "Renkli ve görsel öğeler kullanın.",
+          "Hazırladığınız materyali sınıfta sunmaya hazır olun."
+        ],
+        "duration": "1 hafta",
+        "topic": "Yapay Zekâda Güvenlik"
+      },
+      "fun": {
+        "fun_fact": "İlk siber saldırı 1988'de yapıldı ve 6000 bilgisayarı etkiledi.",
+        "riddle": {
+          "soru": "Mouse'u Türkçe'ye çevirelim. Ne olur?",
+          "cevap": "Fare"
+        },
+        "joke": "İki bilgisayar sokakta karşılaşır.\nBiri diğerine: 'Nasılsın?'\nÖteki: 'Güncelleme yapıyorum, sonra kapanacağım!'",
+        "category": "guvenlik"
+      }
+    },
+    {
+      "week": 22,
+      "grade": 5,
+      "week_text": "22. Hafta:\n 23-27 Şubat",
+      "unit": "",
+      "topic": "Yapay Zekâda Güvenlik",
+      "outcome": "BTY.5.5.2 Yapay zekâya ilişkin etik ve güvenlik/gizlilik önlemlerini yönetebilme",
+      "game": {
+        "type": "quiz",
+        "title": "Yapay Zekâda Güvenlik - Eğlenceli Oyun",
+        "description": "Bu haftanın konusu 'Yapay Zekâda Güvenlik' ile ilgili eğlenceli bir quiz oyunu!",
+        "topic": "Yapay Zekâda Güvenlik",
+        "unit": ""
+      },
+      "homework": {
+        "type": "research",
+        "title": "Yapay Zekâda Güvenlik Araştırması",
+        "tasks": [
+          "'Yapay Zekâda Güvenlik' konusu hakkında araştırma yapın.",
+          "En az 3 kaynak kullanın (kitap, internet, dergi).",
+          "Bulgularınızı 1 sayfalık bir rapor halinde yazın.",
+          "Görseller ekleyin.",
+          "Kaynakçanızı belirtin."
+        ],
+        "duration": "1 hafta",
+        "topic": "Yapay Zekâda Güvenlik"
+      },
+      "fun": {
+        "fun_fact": "Her gün 300 milyardan fazla e-posta gönderiliyor ve %85'i spam!",
+        "riddle": {
+          "soru": "Siber zorbalığa İngilizce ne denir?",
+          "cevap": "Cyberbullying"
+        },
+        "joke": "Neden bilgisayarlar üşümez?\nÇünkü pencereleri (Windows) var!",
+        "category": "guvenlik"
+      }
+    },
+    {
+      "week": 23,
+      "grade": 5,
+      "week_text": "23. Hafta:\n 2-6 Mart",
+      "unit": "Yazılım Tasarımı ve Programlama",
+      "topic": "Problem Belirleme ve Algoritma Oluşturma",
+      "outcome": "BTY.5.6.1 Problem çözümü için algoritmik düşünebilme",
+      "game": {
+        "type": "memory",
+        "title": "Problem Belirleme ve Algoritma Oluşturma - Eğlenceli Oyun",
+        "description": "Bu haftanın konusu 'Problem Belirleme ve Algoritma Oluşturma' ile ilgili eğlenceli bir memory oyunu!",
+        "topic": "Problem Belirleme ve Algoritma Oluşturma",
+        "unit": "Yazılım Tasarımı ve Programlama"
+      },
+      "homework": {
+        "type": "creative",
+        "title": "Problem Belirleme ve Algoritma Oluşturma Yaratıcı Proje",
+        "tasks": [
+          "'Problem Belirleme ve Algoritma Oluşturma' konusu ile ilgili yaratıcı bir proje hazırlayın.",
+          "Poster, sunum veya video hazırlayabilirsiniz.",
+          "Konuyu arkadaşlarınıza anlatabileceğiniz şekilde anlatın.",
+          "Renkli ve görsel öğeler kullanın.",
+          "Hazırladığınız materyali sınıfta sunmaya hazır olun."
+        ],
+        "duration": "1 hafta",
+        "topic": "Problem Belirleme ve Algoritma Oluşturma"
+      },
+      "fun": {
+        "fun_fact": "İlk video oyunu 'Pong' 1972'de çıktı ve sadece bir top ve iki raket vardı!",
+        "riddle": {
+          "soru": "Scratch'te kullandığımız renkli komutlara ne denir?",
+          "cevap": "Blok"
+        },
+        "joke": "Robot öğretmene ne denir?\nCTRL + ALT + DELETE yapamayan öğretmen!",
+        "category": "yazilim"
+      }
+    },
+    {
+      "week": 24,
+      "grade": 5,
+      "week_text": "24. Hafta:\n 9-13 Mart",
+      "unit": "",
+      "topic": "Problem Belirleme ve Algoritma Oluşturma",
+      "outcome": "BTY.5.6.1 Problem çözümü için algoritmik düşünebilme",
+      "game": {
+        "type": "matching",
+        "title": "Problem Belirleme ve Algoritma Oluşturma - Eğlenceli Oyun",
+        "description": "Bu haftanın konusu 'Problem Belirleme ve Algoritma Oluşturma' ile ilgili eğlenceli bir matching oyunu!",
+        "topic": "Problem Belirleme ve Algoritma Oluşturma",
+        "unit": ""
+      },
+      "homework": {
+        "type": "creative",
+        "title": "Problem Belirleme ve Algoritma Oluşturma Yaratıcı Proje",
+        "tasks": [
+          "'Problem Belirleme ve Algoritma Oluşturma' konusu ile ilgili yaratıcı bir proje hazırlayın.",
+          "Poster, sunum veya video hazırlayabilirsiniz.",
+          "Konuyu arkadaşlarınıza anlatabileceğiniz şekilde anlatın.",
+          "Renkli ve görsel öğeler kullanın.",
+          "Hazırladığınız materyali sınıfta sunmaya hazır olun."
+        ],
+        "duration": "1 hafta",
+        "topic": "Problem Belirleme ve Algoritma Oluşturma"
+      },
+      "fun": {
+        "fun_fact": "İlk bilgisayar virüsü 1983'te yazıldı ve ismiydi 'Elk Cloner'.",
+        "riddle": {
+          "soru": "Hangi bilgisayar parçası 'bilgisayarın beyni' olarak bilinir?",
+          "cevap": "İşlemci (CPU)"
+        },
+        "joke": "Bilgisayar virüsü hastaneye gitse doktor ne der?\n'Antivirüs alın, hemen geçer!'",
+        "category": "yazilim"
+      }
+    },
+    {
+      "week": 25,
+      "grade": 5,
+      "week_text": "25. Hafta:\n 23-27 Mart",
+      "unit": "Yazılım Tasarımı ve Programlama",
+      "topic": "Algoritma Test Etme ve Geri Bildirim Alma",
+      "outcome": "BTY.5.6.2 Algoritma oluşturmada test edebilme-hata ayıklayabilme",
+      "game": {
+        "type": "sorting",
+        "title": "Algoritma Test Etme ve Geri Bildirim Alma - Eğlenceli Oyun",
+        "description": "Bu haftanın konusu 'Algoritma Test Etme ve Geri Bildirim Alma' ile ilgili eğlenceli bir sorting oyunu!",
+        "topic": "Algoritma Test Etme ve Geri Bildirim Alma",
+        "unit": "Yazılım Tasarımı ve Programlama"
+      },
+      "homework": {
+        "type": "practical",
+        "title": "Algoritma Test Etme ve Geri Bildirim Alma Uygulaması",
+        "tasks": [
+          "Bu hafta öğrendiğiniz 'Algoritma Test Etme ve Geri Bildirim Alma' konusunu uygulayın.",
+          "Pratik bir çalışma yapın.",
+          "Yaptığınız çalışmayı fotoğraflayın veya ekran görüntüsü alın.",
+          "Çalışmanızda karşılaştığınız zorlukları not edin.",
+          "Öğrendiklerinizi 5-10 cümle ile özetleyin."
+        ],
+        "duration": "1 hafta",
+        "topic": "Algoritma Test Etme ve Geri Bildirim Alma"
+      },
+      "fun": {
+        "fun_fact": "Python programlama dili adını 'Monty Python' komedi grubundan alıyor!",
+        "riddle": {
+          "soru": "Internette gezinmek için kullandığımız programa ne denir?",
+          "cevap": "Tarayıcı (Browser)"
+        },
+        "joke": "Öğretmen: 'Bilgisayarın kalbi var mı?'\nÖğrenci: 'Hayır ama faresi var!'",
+        "category": "yazilim"
+      }
+    },
+    {
+      "week": 26,
+      "grade": 5,
+      "week_text": "26. Hafta:\n 30 Mart-3 Nisan",
+      "unit": "",
+      "topic": "Algoritma Test Etme ve Geri Bildirim Alma",
+      "outcome": "BTY.5.6.2 Algoritma oluşturmada test edebilme-hata ayıklayabilme",
+      "game": {
+        "type": "quiz",
+        "title": "Algoritma Test Etme ve Geri Bildirim Alma - Eğlenceli Oyun",
+        "description": "Bu haftanın konusu 'Algoritma Test Etme ve Geri Bildirim Alma' ile ilgili eğlenceli bir quiz oyunu!",
+        "topic": "Algoritma Test Etme ve Geri Bildirim Alma",
+        "unit": ""
+      },
+      "homework": {
+        "type": "research",
+        "title": "Algoritma Test Etme ve Geri Bildirim Alma Araştırması",
+        "tasks": [
+          "'Algoritma Test Etme ve Geri Bildirim Alma' konusu hakkında araştırma yapın.",
+          "En az 3 kaynak kullanın (kitap, internet, dergi).",
+          "Bulgularınızı 1 sayfalık bir rapor halinde yazın.",
+          "Görseller ekleyin.",
+          "Kaynakçanızı belirtin."
+        ],
+        "duration": "1 hafta",
+        "topic": "Algoritma Test Etme ve Geri Bildirim Alma"
+      },
+      "fun": {
+        "fun_fact": "Scratch programı 2007'de MIT'de geliştirildi ve 60 milyondan fazla proje yapıldı.",
+        "riddle": {
+          "soru": "1 GB kaç MB'dir?",
+          "cevap": "1024 MB"
+        },
+        "joke": "İki bilgisayar sokakta karşılaşır.\nBiri diğerine: 'Nasılsın?'\nÖteki: 'Güncelleme yapıyorum, sonra kapanacağım!'",
+        "category": "yazilim"
+      }
+    },
+    {
+      "week": 27,
+      "grade": 5,
+      "week_text": "27. Hafta:\n 6-10 Nisan",
+      "unit": "OKUL TEMELLİ PLANLAMA*",
+      "topic": "",
+      "outcome": "",
+      "game": {
+        "type": "memory",
+        "title": " - Eğlenceli Oyun",
+        "description": "Bu haftanın konusu '' ile ilgili eğlenceli bir memory oyunu!",
+        "topic": "",
+        "unit": "OKUL TEMELLİ PLANLAMA*"
+      },
+      "homework": {
+        "type": "practical",
+        "title": " Uygulaması",
+        "tasks": [
+          "Bu hafta öğrendiğiniz '' konusunu uygulayın.",
+          "Pratik bir çalışma yapın.",
+          "Yaptığınız çalışmayı fotoğraflayın veya ekran görüntüsü alın.",
+          "Çalışmanızda karşılaştığınız zorlukları not edin.",
+          "Öğrendiklerinizi 5-10 cümle ile özetleyin."
+        ],
+        "duration": "1 hafta",
+        "topic": ""
+      },
+      "fun": {
+        "fun_fact": "Scratch programı 2007'de MIT'de geliştirildi ve 60 milyondan fazla proje yapıldı.",
+        "riddle": {
+          "soru": "HTML açılımı nedir?",
+          "cevap": "HyperText Markup Language"
+        },
+        "joke": "Neden bilgisayarlar üşümez?\nÇünkü pencereleri (Windows) var!",
+        "category": "yazilim"
+      }
+    },
+    {
+      "week": 28,
+      "grade": 5,
+      "week_text": "28. Hafta:\n 13-17 Nisan",
+      "unit": "Yazılım Tasarımı ve Programlama",
+      "topic": "Yazılımda Kullanılan Bileşenler",
+      "outcome": "BTY.5.6.3 Yazılım geliştirme sürecinde kullanılan bileşenlerden yararlanabilme",
+      "game": {
+        "type": "memory",
+        "title": "Yazılımda Kullanılan Bileşenler - Eğlenceli Oyun",
+        "description": "Bu haftanın konusu 'Yazılımda Kullanılan Bileşenler' ile ilgili eğlenceli bir memory oyunu!",
+        "topic": "Yazılımda Kullanılan Bileşenler",
+        "unit": "Yazılım Tasarımı ve Programlama"
+      },
+      "homework": {
+        "type": "practical",
+        "title": "Yazılımda Kullanılan Bileşenler Uygulaması",
+        "tasks": [
+          "Bu hafta öğrendiğiniz 'Yazılımda Kullanılan Bileşenler' konusunu uygulayın.",
+          "Pratik bir çalışma yapın.",
+          "Yaptığınız çalışmayı fotoğraflayın veya ekran görüntüsü alın.",
+          "Çalışmanızda karşılaştığınız zorlukları not edin.",
+          "Öğrendiklerinizi 5-10 cümle ile özetleyin."
+        ],
+        "duration": "1 hafta",
+        "topic": "Yazılımda Kullanılan Bileşenler"
+      },
+      "fun": {
+        "fun_fact": "İlk fare 1964'te Douglas Engelbart tarafından ahşaptan yapılmıştır.",
+        "riddle": {
+          "soru": "Bilgisayarın geçici hafızasına ne denir?",
+          "cevap": "RAM"
+        },
+        "joke": "Robot öğretmene ne denir?\nCTRL + ALT + DELETE yapamayan öğretmen!",
+        "category": "bilgisayar"
+      }
+    },
+    {
+      "week": 29,
+      "grade": 5,
+      "week_text": "29. Hafta:\n 20-24 Nisan",
+      "unit": "",
+      "topic": "Yazılımda Kullanılan Bileşenler",
+      "outcome": "BTY.5.6.3 Yazılım geliştirme sürecinde kullanılan bileşenlerden yararlanabilme",
+      "game": {
+        "type": "matching",
+        "title": "Yazılımda Kullanılan Bileşenler - Eğlenceli Oyun",
+        "description": "Bu haftanın konusu 'Yazılımda Kullanılan Bileşenler' ile ilgili eğlenceli bir matching oyunu!",
+        "topic": "Yazılımda Kullanılan Bileşenler",
+        "unit": ""
+      },
+      "homework": {
+        "type": "creative",
+        "title": "Yazılımda Kullanılan Bileşenler Yaratıcı Proje",
+        "tasks": [
+          "'Yazılımda Kullanılan Bileşenler' konusu ile ilgili yaratıcı bir proje hazırlayın.",
+          "Poster, sunum veya video hazırlayabilirsiniz.",
+          "Konuyu arkadaşlarınıza anlatabileceğiniz şekilde anlatın.",
+          "Renkli ve görsel öğeler kullanın.",
+          "Hazırladığınız materyali sınıfta sunmaya hazır olun."
+        ],
+        "duration": "1 hafta",
+        "topic": "Yazılımda Kullanılan Bileşenler"
+      },
+      "fun": {
+        "fun_fact": "İlk bilgisayar ENIAC 1946'da yapıldı ve tam 30 ton ağırlığındaydı!",
+        "riddle": {
+          "soru": "Mouse'u Türkçe'ye çevirelim. Ne olur?",
+          "cevap": "Fare"
+        },
+        "joke": "Bilgisayar virüsü hastaneye gitse doktor ne der?\n'Antivirüs alın, hemen geçer!'",
+        "category": "bilgisayar"
+      }
+    },
+    {
+      "week": 30,
+      "grade": 5,
+      "week_text": "30. Hafta:\n 27 Nisan-1 Mayıs",
+      "unit": "",
+      "topic": "Blok Tabanlı Ortamda Yazılım Geliştirme",
+      "outcome": "BTY.5.6.4 Blok tabanlı ortamda yazılım geliştirme sürecini yönetebilme",
+      "game": {
+        "type": "sorting",
+        "title": "Blok Tabanlı Ortamda Yazılım Geliştirme - Eğlenceli Oyun",
+        "description": "Bu haftanın konusu 'Blok Tabanlı Ortamda Yazılım Geliştirme' ile ilgili eğlenceli bir sorting oyunu!",
+        "topic": "Blok Tabanlı Ortamda Yazılım Geliştirme",
+        "unit": ""
+      },
+      "homework": {
+        "type": "research",
+        "title": "Blok Tabanlı Ortamda Yazılım Geliştirme Araştırması",
+        "tasks": [
+          "'Blok Tabanlı Ortamda Yazılım Geliştirme' konusu hakkında araştırma yapın.",
+          "En az 3 kaynak kullanın (kitap, internet, dergi).",
+          "Bulgularınızı 1 sayfalık bir rapor halinde yazın.",
+          "Görseller ekleyin.",
+          "Kaynakçanızı belirtin."
+        ],
+        "duration": "1 hafta",
+        "topic": "Blok Tabanlı Ortamda Yazılım Geliştirme"
+      },
+      "fun": {
+        "fun_fact": "Dünyanın ilk bilgisayar programcısı Ada Lovelace adında bir kadındır (1843).",
+        "riddle": {
+          "soru": "Siber zorbalığa İngilizce ne denir?",
+          "cevap": "Cyberbullying"
+        },
+        "joke": "Öğretmen: 'Bilgisayarın kalbi var mı?'\nÖğrenci: 'Hayır ama faresi var!'",
+        "category": "bilgisayar"
+      }
+    },
+    {
+      "week": 31,
+      "grade": 5,
+      "week_text": "31. Hafta:\n 4-8 Mayıs",
+      "unit": "",
+      "topic": "Blok Tabanlı Ortamda Yazılım Geliştirme",
+      "outcome": "BTY.5.6.4 Blok tabanlı ortamda yazılım geliştirme sürecini yönetebilme",
+      "game": {
+        "type": "sorting",
+        "title": "Blok Tabanlı Ortamda Yazılım Geliştirme - Eğlenceli Oyun",
+        "description": "Bu haftanın konusu 'Blok Tabanlı Ortamda Yazılım Geliştirme' ile ilgili eğlenceli bir sorting oyunu!",
+        "topic": "Blok Tabanlı Ortamda Yazılım Geliştirme",
+        "unit": ""
+      },
+      "homework": {
+        "type": "creative",
+        "title": "Blok Tabanlı Ortamda Yazılım Geliştirme Yaratıcı Proje",
+        "tasks": [
+          "'Blok Tabanlı Ortamda Yazılım Geliştirme' konusu ile ilgili yaratıcı bir proje hazırlayın.",
+          "Poster, sunum veya video hazırlayabilirsiniz.",
+          "Konuyu arkadaşlarınıza anlatabileceğiniz şekilde anlatın.",
+          "Renkli ve görsel öğeler kullanın.",
+          "Hazırladığınız materyali sınıfta sunmaya hazır olun."
+        ],
+        "duration": "1 hafta",
+        "topic": "Blok Tabanlı Ortamda Yazılım Geliştirme"
+      },
+      "fun": {
+        "fun_fact": "QWERTY klavye düzeni 1873'te tasarlandı ve bugün hala kullanılıyor!",
+        "riddle": {
+          "soru": "Scratch'te kullandığımız renkli komutlara ne denir?",
+          "cevap": "Blok"
+        },
+        "joke": "İki bilgisayar sokakta karşılaşır.\nBiri diğerine: 'Nasılsın?'\nÖteki: 'Güncelleme yapıyorum, sonra kapanacağım!'",
+        "category": "bilgisayar"
+      }
+    },
+    {
+      "week": 32,
+      "grade": 5,
+      "week_text": "32. Hafta:\n 11-15 Mayıs",
+      "unit": "",
+      "topic": "Blok Tabanlı Ortamda Yazılım Geliştirme",
+      "outcome": "BTY.5.6.4 Blok tabanlı ortamda yazılım geliştirme sürecini yönetebilme",
+      "game": {
+        "type": "matching",
+        "title": "Blok Tabanlı Ortamda Yazılım Geliştirme - Eğlenceli Oyun",
+        "description": "Bu haftanın konusu 'Blok Tabanlı Ortamda Yazılım Geliştirme' ile ilgili eğlenceli bir matching oyunu!",
+        "topic": "Blok Tabanlı Ortamda Yazılım Geliştirme",
+        "unit": ""
+      },
+      "homework": {
+        "type": "practical",
+        "title": "Blok Tabanlı Ortamda Yazılım Geliştirme Uygulaması",
+        "tasks": [
+          "Bu hafta öğrendiğiniz 'Blok Tabanlı Ortamda Yazılım Geliştirme' konusunu uygulayın.",
+          "Pratik bir çalışma yapın.",
+          "Yaptığınız çalışmayı fotoğraflayın veya ekran görüntüsü alın.",
+          "Çalışmanızda karşılaştığınız zorlukları not edin.",
+          "Öğrendiklerinizi 5-10 cümle ile özetleyin."
+        ],
+        "duration": "1 hafta",
+        "topic": "Blok Tabanlı Ortamda Yazılım Geliştirme"
+      },
+      "fun": {
+        "fun_fact": "İlk hard disk 1956'da yapıldı ve sadece 5 MB veri saklayabiliyordu ama buzdolabı boyutundaydı!",
+        "riddle": {
+          "soru": "Hangi bilgisayar parçası 'bilgisayarın beyni' olarak bilinir?",
+          "cevap": "İşlemci (CPU)"
+        },
+        "joke": "Neden bilgisayarlar üşümez?\nÇünkü pencereleri (Windows) var!",
+        "category": "bilgisayar"
+      }
+    },
+    {
+      "week": 33,
+      "grade": 5,
+      "week_text": "33. Hafta:\n 18-22 Mayıs",
+      "unit": "",
+      "topic": "Blok Tabanlı Ortamda Yazılım Geliştirme",
+      "outcome": "BTY.5.6.4 Blok tabanlı ortamda yazılım geliştirme sürecini yönetebilme",
+      "game": {
+        "type": "matching",
+        "title": "Blok Tabanlı Ortamda Yazılım Geliştirme - Eğlenceli Oyun",
+        "description": "Bu haftanın konusu 'Blok Tabanlı Ortamda Yazılım Geliştirme' ile ilgili eğlenceli bir matching oyunu!",
+        "topic": "Blok Tabanlı Ortamda Yazılım Geliştirme",
+        "unit": ""
+      },
+      "homework": {
+        "type": "creative",
+        "title": "Blok Tabanlı Ortamda Yazılım Geliştirme Yaratıcı Proje",
+        "tasks": [
+          "'Blok Tabanlı Ortamda Yazılım Geliştirme' konusu ile ilgili yaratıcı bir proje hazırlayın.",
+          "Poster, sunum veya video hazırlayabilirsiniz.",
+          "Konuyu arkadaşlarınıza anlatabileceğiniz şekilde anlatın.",
+          "Renkli ve görsel öğeler kullanın.",
+          "Hazırladığınız materyali sınıfta sunmaya hazır olun."
+        ],
+        "duration": "1 hafta",
+        "topic": "Blok Tabanlı Ortamda Yazılım Geliştirme"
+      },
+      "fun": {
+        "fun_fact": "QWERTY klavye düzeni 1873'te tasarlandı ve bugün hala kullanılıyor!",
+        "riddle": {
+          "soru": "Internette gezinmek için kullandığımız programa ne denir?",
+          "cevap": "Tarayıcı (Browser)"
+        },
+        "joke": "Robot öğretmene ne denir?\nCTRL + ALT + DELETE yapamayan öğretmen!",
+        "category": "bilgisayar"
+      }
+    },
+    {
+      "week": 34,
+      "grade": 5,
+      "week_text": "34. Hafta:\n 25-29 Mayıs",
+      "unit": "OKUL TEMELLİ PLANLAMA*",
+      "topic": "",
+      "outcome": "",
+      "game": {
+        "type": "matching",
+        "title": " - Eğlenceli Oyun",
+        "description": "Bu haftanın konusu '' ile ilgili eğlenceli bir matching oyunu!",
+        "topic": "",
+        "unit": "OKUL TEMELLİ PLANLAMA*"
+      },
+      "homework": {
+        "type": "practical",
+        "title": " Uygulaması",
+        "tasks": [
+          "Bu hafta öğrendiğiniz '' konusunu uygulayın.",
+          "Pratik bir çalışma yapın.",
+          "Yaptığınız çalışmayı fotoğraflayın veya ekran görüntüsü alın.",
+          "Çalışmanızda karşılaştığınız zorlukları not edin.",
+          "Öğrendiklerinizi 5-10 cümle ile özetleyin."
+        ],
+        "duration": "1 hafta",
+        "topic": ""
+      },
+      "fun": {
+        "fun_fact": "İki faktörlü doğrulama kullanmak hesap güvenliğini %99 artırıyor.",
+        "riddle": {
+          "soru": "1 GB kaç MB'dir?",
+          "cevap": "1024 MB"
+        },
+        "joke": "Bilgisayar virüsü hastaneye gitse doktor ne der?\n'Antivirüs alın, hemen geçer!'",
+        "category": "guvenlik"
+      }
+    },
+    {
+      "week": 35,
+      "grade": 5,
+      "week_text": "35. Hafta:\n 1-5 Haziran",
+      "unit": "Yazılım Tasarımı ve Programlama",
+      "topic": "Blok Tabanlı Ortamda Yazılım Geliştirme",
+      "outcome": "BTY.5.6.4 Blok tabanlı ortamda yazılım geliştirme sürecini yönetebilme",
+      "game": {
+        "type": "quiz",
+        "title": "Blok Tabanlı Ortamda Yazılım Geliştirme - Eğlenceli Oyun",
+        "description": "Bu haftanın konusu 'Blok Tabanlı Ortamda Yazılım Geliştirme' ile ilgili eğlenceli bir quiz oyunu!",
+        "topic": "Blok Tabanlı Ortamda Yazılım Geliştirme",
+        "unit": "Yazılım Tasarımı ve Programlama"
+      },
+      "homework": {
+        "type": "creative",
+        "title": "Blok Tabanlı Ortamda Yazılım Geliştirme Yaratıcı Proje",
+        "tasks": [
+          "'Blok Tabanlı Ortamda Yazılım Geliştirme' konusu ile ilgili yaratıcı bir proje hazırlayın.",
+          "Poster, sunum veya video hazırlayabilirsiniz.",
+          "Konuyu arkadaşlarınıza anlatabileceğiniz şekilde anlatın.",
+          "Renkli ve görsel öğeler kullanın.",
+          "Hazırladığınız materyali sınıfta sunmaya hazır olun."
+        ],
+        "duration": "1 hafta",
+        "topic": "Blok Tabanlı Ortamda Yazılım Geliştirme"
+      },
+      "fun": {
+        "fun_fact": "İlk bilgisayar ENIAC 1946'da yapıldı ve tam 30 ton ağırlığındaydı!",
+        "riddle": {
+          "soru": "HTML açılımı nedir?",
+          "cevap": "HyperText Markup Language"
+        },
+        "joke": "Öğretmen: 'Bilgisayarın kalbi var mı?'\nÖğrenci: 'Hayır ama faresi var!'",
+        "category": "bilgisayar"
+      }
+    },
+    {
+      "week": 36,
+      "grade": 5,
+      "week_text": "36. Hafta:\n 8-12 Haziran",
+      "unit": "",
+      "topic": "Blok Tabanlı Ortamda Yazılım Geliştirme",
+      "outcome": "BTY.5.6.4 Blok tabanlı ortamda yazılım geliştirme sürecini yönetebilme",
+      "game": {
+        "type": "quiz",
+        "title": "Blok Tabanlı Ortamda Yazılım Geliştirme - Eğlenceli Oyun",
+        "description": "Bu haftanın konusu 'Blok Tabanlı Ortamda Yazılım Geliştirme' ile ilgili eğlenceli bir quiz oyunu!",
+        "topic": "Blok Tabanlı Ortamda Yazılım Geliştirme",
+        "unit": ""
+      },
+      "homework": {
+        "type": "creative",
+        "title": "Blok Tabanlı Ortamda Yazılım Geliştirme Yaratıcı Proje",
+        "tasks": [
+          "'Blok Tabanlı Ortamda Yazılım Geliştirme' konusu ile ilgili yaratıcı bir proje hazırlayın.",
+          "Poster, sunum veya video hazırlayabilirsiniz.",
+          "Konuyu arkadaşlarınıza anlatabileceğiniz şekilde anlatın.",
+          "Renkli ve görsel öğeler kullanın.",
+          "Hazırladığınız materyali sınıfta sunmaya hazır olun."
+        ],
+        "duration": "1 hafta",
+        "topic": "Blok Tabanlı Ortamda Yazılım Geliştirme"
+      },
+      "fun": {
+        "fun_fact": "İlk hard disk 1956'da yapıldı ve sadece 5 MB veri saklayabiliyordu ama buzdolabı boyutundaydı!",
+        "riddle": {
+          "soru": "Bilgisayarın geçici hafızasına ne denir?",
+          "cevap": "RAM"
+        },
+        "joke": "İki bilgisayar sokakta karşılaşır.\nBiri diğerine: 'Nasılsın?'\nÖteki: 'Güncelleme yapıyorum, sonra kapanacağım!'",
+        "category": "bilgisayar"
+      }
+    }
+  ],
+  "grade6": [
+    {
+      "week": 1,
+      "grade": 6,
+      "week_text": "2. Hafta:\n 15-19 Eylül",
+      "unit": "BT.6.1. BİLİŞİM TEKNOLOJİLERİ",
+      "topic": "BT.6.1.2 - İŞLETİM SİSTEMİNİ TANIYORUM",
+      "outcome": "BT.6.1.2.1. İşletim sistemi kavramını açıklar.\nBT.6.1.2.2. İşletim sistemlerinin bileşenlerinin görevlerini kavrar.\nBT.6.1.2.3. Farklı işletim sistemlerini karşılaştırır.",
+      "game": {
+        "type": "memory",
+        "title": "BT.6.1.2 - İŞLETİM SİSTEMİNİ TANIYORUM - Eğlenceli Oyun",
+        "description": "Bu haftanın konusu 'BT.6.1.2 - İŞLETİM SİSTEMİNİ TANIYORUM' ile ilgili eğlenceli bir memory oyunu!",
+        "topic": "BT.6.1.2 - İŞLETİM SİSTEMİNİ TANIYORUM",
+        "unit": "BT.6.1. BİLİŞİM TEKNOLOJİLERİ"
+      },
+      "homework": {
+        "type": "creative",
+        "title": "BT.6.1.2 - İŞLETİM SİSTEMİNİ TANIYORUM Yaratıcı Proje",
+        "tasks": [
+          "'BT.6.1.2 - İŞLETİM SİSTEMİNİ TANIYORUM' konusu ile ilgili yaratıcı bir proje hazırlayın.",
+          "Poster, sunum veya video hazırlayabilirsiniz.",
+          "Konuyu arkadaşlarınıza anlatabileceğiniz şekilde anlatın.",
+          "Renkli ve görsel öğeler kullanın.",
+          "Hazırladığınız materyali sınıfta sunmaya hazır olun."
+        ],
+        "duration": "1 hafta",
+        "topic": "BT.6.1.2 - İŞLETİM SİSTEMİNİ TANIYORUM"
+      },
+      "fun": {
+        "fun_fact": "YouTube'a her dakika 500 saatten fazla video yükleniyor!",
+        "riddle": {
+          "soru": "Internette gezinmek için kullandığımız programa ne denir?",
+          "cevap": "Tarayıcı (Browser)"
+        },
+        "joke": "İki bilgisayar sokakta karşılaşır.\nBiri diğerine: 'Nasılsın?'\nÖteki: 'Güncelleme yapıyorum, sonra kapanacağım!'",
+        "category": "internet"
+      }
+    },
+    {
+      "week": 2,
+      "grade": 6,
+      "week_text": "3. Hafta:\n 22-26 Eylül",
+      "unit": "BT.6.1. BİLİŞİM TEKNOLOJİLERİ",
+      "topic": "BT.6.1.3 - DOSYALARIM NEREDE?",
+      "outcome": "BT.6.1.3.1. Dosya uzantılarına göre dosyaların temel özelliklerini açıklar.\nBT.6.1.3.2. Basılı ortamdaki verileri elektronik ortama aktarır.\nBT.6.1.3.3. Elektronik ortamdaki verilerin sınıflanması ve saklanması için doğru yaklaşımları uygular.\nBT.6.1.3.4. Dosya ve klasör sıkıştırma işlemlerini yapar.\nBT.6.1.3.5. Dosyaların saklanması ve dosyalara erişilmesi konusunda strateji geliştirir.",
+      "game": {
+        "type": "memory",
+        "title": "BT.6.1.3 - DOSYALARIM NEREDE? - Eğlenceli Oyun",
+        "description": "Bu haftanın konusu 'BT.6.1.3 - DOSYALARIM NEREDE?' ile ilgili eğlenceli bir memory oyunu!",
+        "topic": "BT.6.1.3 - DOSYALARIM NEREDE?",
+        "unit": "BT.6.1. BİLİŞİM TEKNOLOJİLERİ"
+      },
+      "homework": {
+        "type": "creative",
+        "title": "BT.6.1.3 - DOSYALARIM NEREDE? Yaratıcı Proje",
+        "tasks": [
+          "'BT.6.1.3 - DOSYALARIM NEREDE?' konusu ile ilgili yaratıcı bir proje hazırlayın.",
+          "Poster, sunum veya video hazırlayabilirsiniz.",
+          "Konuyu arkadaşlarınıza anlatabileceğiniz şekilde anlatın.",
+          "Renkli ve görsel öğeler kullanın.",
+          "Hazırladığınız materyali sınıfta sunmaya hazır olun."
+        ],
+        "duration": "1 hafta",
+        "topic": "BT.6.1.3 - DOSYALARIM NEREDE?"
+      },
+      "fun": {
+        "fun_fact": "Bir hacker, 8 karakterlik bir şifreyi ortalama 8 saatte kırabilir!",
+        "riddle": {
+          "soru": "1 GB kaç MB'dir?",
+          "cevap": "1024 MB"
+        },
+        "joke": "Neden bilgisayarlar üşümez?\nÇünkü pencereleri (Windows) var!",
+        "category": "guvenlik"
+      }
+    },
+    {
+      "week": 3,
+      "grade": 6,
+      "week_text": "4. Hafta:\n 29 Eylül-3 Ekim",
+      "unit": "BT.6.2. ETİK VE GÜVENLİK",
+      "topic": "BT.6.1.4 - ARTIK DAHA BİLİNÇLİYİM",
+      "outcome": "BT.6.2.1.1. İnternet etiğinin önemini ifade eder.\nBT.6.2.1.2. Etik ilkelerin ihlali sonucunda karşılaşılabilecek durumlara örnekler verir.\nBT.6.2.1.3. Siber zorbalık kavramını açıklayarak korunma amacıyla alınabilecek önlemleri tartışır.",
+      "game": {
+        "type": "matching",
+        "title": "BT.6.1.4 - ARTIK DAHA BİLİNÇLİYİM - Eğlenceli Oyun",
+        "description": "Bu haftanın konusu 'BT.6.1.4 - ARTIK DAHA BİLİNÇLİYİM' ile ilgili eğlenceli bir matching oyunu!",
+        "topic": "BT.6.1.4 - ARTIK DAHA BİLİNÇLİYİM",
+        "unit": "BT.6.2. ETİK VE GÜVENLİK"
+      },
+      "homework": {
+        "type": "creative",
+        "title": "BT.6.1.4 - ARTIK DAHA BİLİNÇLİYİM Yaratıcı Proje",
+        "tasks": [
+          "'BT.6.1.4 - ARTIK DAHA BİLİNÇLİYİM' konusu ile ilgili yaratıcı bir proje hazırlayın.",
+          "Poster, sunum veya video hazırlayabilirsiniz.",
+          "Konuyu arkadaşlarınıza anlatabileceğiniz şekilde anlatın.",
+          "Renkli ve görsel öğeler kullanın.",
+          "Hazırladığınız materyali sınıfta sunmaya hazır olun."
+        ],
+        "duration": "1 hafta",
+        "topic": "BT.6.1.4 - ARTIK DAHA BİLİNÇLİYİM"
+      },
+      "fun": {
+        "fun_fact": "Dünyanın ilk bilgisayar programcısı Ada Lovelace adında bir kadındır (1843).",
+        "riddle": {
+          "soru": "HTML açılımı nedir?",
+          "cevap": "HyperText Markup Language"
+        },
+        "joke": "Robot öğretmene ne denir?\nCTRL + ALT + DELETE yapamayan öğretmen!",
+        "category": "bilgisayar"
+      }
+    },
+    {
+      "week": 4,
+      "grade": 6,
+      "week_text": "5. Hafta:\n 6-10 Ekim",
+      "unit": "BT.6.2. ETİK VE GÜVENLİK",
+      "topic": "BT.6.1.5 - YARATICI ÜRÜNLERİMİZ NASIL KORUNUYOR?",
+      "outcome": "BT.6.2.1.4. Telif hakkı kavramını ve önemini araştırır.\nBT.6.2.1.5. Kullanım haklarını düzenleyen lisans türlerini açıklar.",
+      "game": {
+        "type": "quiz",
+        "title": "BT.6.1.5 - YARATICI ÜRÜNLERİMİZ NASIL KORUNUYOR? - Eğlenceli Oyun",
+        "description": "Bu haftanın konusu 'BT.6.1.5 - YARATICI ÜRÜNLERİMİZ NASIL KORUNUYOR?' ile ilgili eğlenceli bir quiz oyunu!",
+        "topic": "BT.6.1.5 - YARATICI ÜRÜNLERİMİZ NASIL KORUNUYOR?",
+        "unit": "BT.6.2. ETİK VE GÜVENLİK"
+      },
+      "homework": {
+        "type": "research",
+        "title": "BT.6.1.5 - YARATICI ÜRÜNLERİMİZ NASIL KORUNUYOR? Araştırması",
+        "tasks": [
+          "'BT.6.1.5 - YARATICI ÜRÜNLERİMİZ NASIL KORUNUYOR?' konusu hakkında araştırma yapın.",
+          "En az 3 kaynak kullanın (kitap, internet, dergi).",
+          "Bulgularınızı 1 sayfalık bir rapor halinde yazın.",
+          "Görseller ekleyin.",
+          "Kaynakçanızı belirtin."
+        ],
+        "duration": "1 hafta",
+        "topic": "BT.6.1.5 - YARATICI ÜRÜNLERİMİZ NASIL KORUNUYOR?"
+      },
+      "fun": {
+        "fun_fact": "İlk e-posta 1971'de gönderildi ve mesaj sadece 'QWERTYUIOP' idi.",
+        "riddle": {
+          "soru": "Bilgisayarın geçici hafızasına ne denir?",
+          "cevap": "RAM"
+        },
+        "joke": "Bilgisayar virüsü hastaneye gitse doktor ne der?\n'Antivirüs alın, hemen geçer!'",
+        "category": "internet"
+      }
+    },
+    {
+      "week": 5,
+      "grade": 6,
+      "week_text": "6. Hafta:\n 13-17 Ekim",
+      "unit": "BT.6.2. ETİK VE GÜVENLİK",
+      "topic": "BT.6.1.6 - DİJİTAL DÜNYANIN SUÇLULARI",
+      "outcome": "BT.6.2.1.6. Bilişim suçlarının neler olduğunu açıklayarak ilgili kanunları özetler.\nBT.6.2.1.7. Bilişim suçlarına karşı alınabilecek önlemler ve stratejiler geliştirir.",
+      "game": {
+        "type": "memory",
+        "title": "BT.6.1.6 - DİJİTAL DÜNYANIN SUÇLULARI - Eğlenceli Oyun",
+        "description": "Bu haftanın konusu 'BT.6.1.6 - DİJİTAL DÜNYANIN SUÇLULARI' ile ilgili eğlenceli bir memory oyunu!",
+        "topic": "BT.6.1.6 - DİJİTAL DÜNYANIN SUÇLULARI",
+        "unit": "BT.6.2. ETİK VE GÜVENLİK"
+      },
+      "homework": {
+        "type": "creative",
+        "title": "BT.6.1.6 - DİJİTAL DÜNYANIN SUÇLULARI Yaratıcı Proje",
+        "tasks": [
+          "'BT.6.1.6 - DİJİTAL DÜNYANIN SUÇLULARI' konusu ile ilgili yaratıcı bir proje hazırlayın.",
+          "Poster, sunum veya video hazırlayabilirsiniz.",
+          "Konuyu arkadaşlarınıza anlatabileceğiniz şekilde anlatın.",
+          "Renkli ve görsel öğeler kullanın.",
+          "Hazırladığınız materyali sınıfta sunmaya hazır olun."
+        ],
+        "duration": "1 hafta",
+        "topic": "BT.6.1.6 - DİJİTAL DÜNYANIN SUÇLULARI"
+      },
+      "fun": {
+        "fun_fact": "Dünyanın en çok kullanılan şifresi hala '123456'!",
+        "riddle": {
+          "soru": "Mouse'u Türkçe'ye çevirelim. Ne olur?",
+          "cevap": "Fare"
+        },
+        "joke": "Öğretmen: 'Bilgisayarın kalbi var mı?'\nÖğrenci: 'Hayır ama faresi var!'",
+        "category": "guvenlik"
+      }
+    },
+    {
+      "week": 6,
+      "grade": 6,
+      "week_text": "7. Hafta:\n 20-24 Ekim",
+      "unit": "BT.6.2. ETİK VE GÜVENLİK",
+      "topic": "BT.6.1.7 - DİJİTAL DÜNYA",
+      "outcome": "BT.6.1.1.4. Bilişim teknolojilerinin sosyal ve kültürel hayata katkıları ve riskleri örnekler üzerinden tartışır.\nBT.6.2.2.1. Dijital paylaşımların kendisi ve başkaları üzerindeki etkilerini fark eder.\nBT.6.2.2.2. Öğrenci, bilişsel ve ahlaki gelişimine uygun olan dijital oyun ve içerikleri ayırt eder.",
+      "game": {
+        "type": "memory",
+        "title": "BT.6.1.7 - DİJİTAL DÜNYA - Eğlenceli Oyun",
+        "description": "Bu haftanın konusu 'BT.6.1.7 - DİJİTAL DÜNYA' ile ilgili eğlenceli bir memory oyunu!",
+        "topic": "BT.6.1.7 - DİJİTAL DÜNYA",
+        "unit": "BT.6.2. ETİK VE GÜVENLİK"
+      },
+      "homework": {
+        "type": "practical",
+        "title": "BT.6.1.7 - DİJİTAL DÜNYA Uygulaması",
+        "tasks": [
+          "Bu hafta öğrendiğiniz 'BT.6.1.7 - DİJİTAL DÜNYA' konusunu uygulayın.",
+          "Pratik bir çalışma yapın.",
+          "Yaptığınız çalışmayı fotoğraflayın veya ekran görüntüsü alın.",
+          "Çalışmanızda karşılaştığınız zorlukları not edin.",
+          "Öğrendiklerinizi 5-10 cümle ile özetleyin."
+        ],
+        "duration": "1 hafta",
+        "topic": "BT.6.1.7 - DİJİTAL DÜNYA"
+      },
+      "fun": {
+        "fun_fact": "Dünyanın en çok kullanılan şifresi hala '123456'!",
+        "riddle": {
+          "soru": "Siber zorbalığa İngilizce ne denir?",
+          "cevap": "Cyberbullying"
+        },
+        "joke": "İki bilgisayar sokakta karşılaşır.\nBiri diğerine: 'Nasılsın?'\nÖteki: 'Güncelleme yapıyorum, sonra kapanacağım!'",
+        "category": "guvenlik"
+      }
+    },
+    {
+      "week": 8,
+      "grade": 6,
+      "week_text": "9. Hafta:\n 3-7 Kasım",
+      "unit": "BT.6.2. ETİK VE GÜVENLİK",
+      "topic": "BT.6.1.9 - BİLGİM DEĞERLİ VE ÖNEMLİ",
+      "outcome": "BT.6.2.3.1. Bilişim teknolojilerinin kullanımında gizlilik ve güvenlik boyutlarının önemini tartışır.\nBT.6.2.3.2. Güvenlik açıklarının oluşumu konusunda yorum yapar.\nBT.6.2.3.3. Bilgi koruma yöntemlerini ifade eder.\nBT.6.2.3.4. Bilgi paylaşımı sürecinde olası riskleri değerlendirerek alınabilecek önlemleri tartışır.",
+      "game": {
+        "type": "quiz",
+        "title": "BT.6.1.9 - BİLGİM DEĞERLİ VE ÖNEMLİ - Eğlenceli Oyun",
+        "description": "Bu haftanın konusu 'BT.6.1.9 - BİLGİM DEĞERLİ VE ÖNEMLİ' ile ilgili eğlenceli bir quiz oyunu!",
+        "topic": "BT.6.1.9 - BİLGİM DEĞERLİ VE ÖNEMLİ",
+        "unit": "BT.6.2. ETİK VE GÜVENLİK"
+      },
+      "homework": {
+        "type": "creative",
+        "title": "BT.6.1.9 - BİLGİM DEĞERLİ VE ÖNEMLİ Yaratıcı Proje",
+        "tasks": [
+          "'BT.6.1.9 - BİLGİM DEĞERLİ VE ÖNEMLİ' konusu ile ilgili yaratıcı bir proje hazırlayın.",
+          "Poster, sunum veya video hazırlayabilirsiniz.",
+          "Konuyu arkadaşlarınıza anlatabileceğiniz şekilde anlatın.",
+          "Renkli ve görsel öğeler kullanın.",
+          "Hazırladığınız materyali sınıfta sunmaya hazır olun."
+        ],
+        "duration": "1 hafta",
+        "topic": "BT.6.1.9 - BİLGİM DEĞERLİ VE ÖNEMLİ"
+      },
+      "fun": {
+        "fun_fact": "Google Translate günde 100 milyardan fazla kelime çeviriyor!",
+        "riddle": {
+          "soru": "Hangi bilgisayar parçası 'bilgisayarın beyni' olarak bilinir?",
+          "cevap": "İşlemci (CPU)"
+        },
+        "joke": "Robot öğretmene ne denir?\nCTRL + ALT + DELETE yapamayan öğretmen!",
+        "category": "yapay_zeka"
+      }
+    },
+    {
+      "week": 9,
+      "grade": 6,
+      "week_text": "10. Hafta:\n 17-21 Kasım",
+      "unit": "BT.6.3. İLETİŞİM, ARAŞTIRMA VE İŞ BİRLİĞİ",
+      "topic": "BT.6.1.10 - DİJİTAL TEHLİKELER",
+      "outcome": "BT.6.2.3.5. Zararlı yazılımları kavrar.\nBT.6.2.3.6. Güvenlik yazılımlarının kullanım amaçlarını açıklar.",
+      "game": {
+        "type": "matching",
+        "title": "BT.6.1.10 - DİJİTAL TEHLİKELER - Eğlenceli Oyun",
+        "description": "Bu haftanın konusu 'BT.6.1.10 - DİJİTAL TEHLİKELER' ile ilgili eğlenceli bir matching oyunu!",
+        "topic": "BT.6.1.10 - DİJİTAL TEHLİKELER",
+        "unit": "BT.6.3. İLETİŞİM, ARAŞTIRMA VE İŞ BİRLİĞİ"
+      },
+      "homework": {
+        "type": "creative",
+        "title": "BT.6.1.10 - DİJİTAL TEHLİKELER Yaratıcı Proje",
+        "tasks": [
+          "'BT.6.1.10 - DİJİTAL TEHLİKELER' konusu ile ilgili yaratıcı bir proje hazırlayın.",
+          "Poster, sunum veya video hazırlayabilirsiniz.",
+          "Konuyu arkadaşlarınıza anlatabileceğiniz şekilde anlatın.",
+          "Renkli ve görsel öğeler kullanın.",
+          "Hazırladığınız materyali sınıfta sunmaya hazır olun."
+        ],
+        "duration": "1 hafta",
+        "topic": "BT.6.1.10 - DİJİTAL TEHLİKELER"
+      },
+      "fun": {
+        "fun_fact": "Dünyada her saniye 2.5 milyon GB veri üretiliyor!",
+        "riddle": {
+          "soru": "Internette gezinmek için kullandığımız programa ne denir?",
+          "cevap": "Tarayıcı (Browser)"
+        },
+        "joke": "Bilgisayar virüsü hastaneye gitse doktor ne der?\n'Antivirüs alın, hemen geçer!'",
+        "category": "internet"
+      }
+    },
+    {
+      "week": 10,
+      "grade": 6,
+      "week_text": "11. Hafta:\n 24-28 Kasım",
+      "unit": "BT.6.3. İLETİŞİM, ARAŞTIRMA VE İŞ BİRLİĞİ",
+      "topic": "BT.6.1.11 - BİLGİSAYAR AĞLARI",
+      "outcome": "BT.6.3.1.1. Ağ kurmak için gerekli bileşenleri ve bileşenlerin özelliklerini açıklar.\nBT.6.3.1.2. Bir ağdan dosya ve yazıcı paylaşımı yapar.\nBT.6.3.1.3. Bilgisayar ağlarının boyutlarına ve bileşenlerine ilişkin farklılıkların nedenlerini tartışır.",
+      "game": {
+        "type": "quiz",
+        "title": "BT.6.1.11 - BİLGİSAYAR AĞLARI - Eğlenceli Oyun",
+        "description": "Bu haftanın konusu 'BT.6.1.11 - BİLGİSAYAR AĞLARI' ile ilgili eğlenceli bir quiz oyunu!",
+        "topic": "BT.6.1.11 - BİLGİSAYAR AĞLARI",
+        "unit": "BT.6.3. İLETİŞİM, ARAŞTIRMA VE İŞ BİRLİĞİ"
+      },
+      "homework": {
+        "type": "creative",
+        "title": "BT.6.1.11 - BİLGİSAYAR AĞLARI Yaratıcı Proje",
+        "tasks": [
+          "'BT.6.1.11 - BİLGİSAYAR AĞLARI' konusu ile ilgili yaratıcı bir proje hazırlayın.",
+          "Poster, sunum veya video hazırlayabilirsiniz.",
+          "Konuyu arkadaşlarınıza anlatabileceğiniz şekilde anlatın.",
+          "Renkli ve görsel öğeler kullanın.",
+          "Hazırladığınız materyali sınıfta sunmaya hazır olun."
+        ],
+        "duration": "1 hafta",
+        "topic": "BT.6.1.11 - BİLGİSAYAR AĞLARI"
+      },
+      "fun": {
+        "fun_fact": "İlk e-posta 1971'de gönderildi ve mesaj sadece 'QWERTYUIOP' idi.",
+        "riddle": {
+          "soru": "1 GB kaç MB'dir?",
+          "cevap": "1024 MB"
+        },
+        "joke": "Öğretmen: 'Bilgisayarın kalbi var mı?'\nÖğrenci: 'Hayır ama faresi var!'",
+        "category": "internet"
+      }
+    },
+    {
+      "week": 11,
+      "grade": 6,
+      "week_text": "12. Hafta:\n 1-5 Aralık",
+      "unit": "BT.6.3. İLETİŞİM, ARAŞTIRMA VE İŞ BİRLİĞİ",
+      "topic": "BT.6.1.12 - ARA-TARA, SOR-SORGULA",
+      "outcome": "BT.6.3.2.1. Arama motorlarını kullanarak ileri düzeyde araştırma yapar.\nBT.6.3.2.2. Bilgiye ulaşırken zararlı ve gereksiz içerikleri ayırt eder.\nBT.6.3.2.3. Bilgi yönetimi kavramını ve önemini ifade eder.\nBT.6.3.2.4. EBA üzerinden farklı içeriklere erişim sağlar.",
+      "game": {
+        "type": "memory",
+        "title": "BT.6.1.12 - ARA-TARA, SOR-SORGULA - Eğlenceli Oyun",
+        "description": "Bu haftanın konusu 'BT.6.1.12 - ARA-TARA, SOR-SORGULA' ile ilgili eğlenceli bir memory oyunu!",
+        "topic": "BT.6.1.12 - ARA-TARA, SOR-SORGULA",
+        "unit": "BT.6.3. İLETİŞİM, ARAŞTIRMA VE İŞ BİRLİĞİ"
+      },
+      "homework": {
+        "type": "practical",
+        "title": "BT.6.1.12 - ARA-TARA, SOR-SORGULA Uygulaması",
+        "tasks": [
+          "Bu hafta öğrendiğiniz 'BT.6.1.12 - ARA-TARA, SOR-SORGULA' konusunu uygulayın.",
+          "Pratik bir çalışma yapın.",
+          "Yaptığınız çalışmayı fotoğraflayın veya ekran görüntüsü alın.",
+          "Çalışmanızda karşılaştığınız zorlukları not edin.",
+          "Öğrendiklerinizi 5-10 cümle ile özetleyin."
+        ],
+        "duration": "1 hafta",
+        "topic": "BT.6.1.12 - ARA-TARA, SOR-SORGULA"
+      },
+      "fun": {
+        "fun_fact": "Her gün 300 milyardan fazla e-posta gönderiliyor ve %85'i spam!",
+        "riddle": {
+          "soru": "HTML açılımı nedir?",
+          "cevap": "HyperText Markup Language"
+        },
+        "joke": "İki bilgisayar sokakta karşılaşır.\nBiri diğerine: 'Nasılsın?'\nÖteki: 'Güncelleme yapıyorum, sonra kapanacağım!'",
+        "category": "guvenlik"
+      }
+    },
+    {
+      "week": 12,
+      "grade": 6,
+      "week_text": "13. Hafta:\n 8-12 Aralık",
+      "unit": "BT.6.3. İLETİŞİM, ARAŞTIRMA VE İŞ BİRLİĞİ",
+      "topic": "BT.6.1.13 - İLETİŞİM BENİM İŞİM!",
+      "outcome": "BT.6.3.3.1. Farklı ve eş zamanlı iletişim sürecini kavrar.\nBT.6.3.3.2. Farklı ve eş zamanlı olarak kullanılan iletişim teknolojilerini sınıflandırır.\nBT.6.3.3.3. Forum ve sohbet araçlarını listeler.\nBT.6.3.3.4. Sesli ve görüntülü iletişim araçlarını listeler.\nBT.6.3.3.5. İletişim süreci açısından araçlar arasındaki farklılıkları tartışır.\nBT.6.3.3.6. İhtiyaca göre doğru iletişim aracını seçerek etkili biçimde kullanır.",
+      "game": {
+        "type": "quiz",
+        "title": "BT.6.1.13 - İLETİŞİM BENİM İŞİM! - Eğlenceli Oyun",
+        "description": "Bu haftanın konusu 'BT.6.1.13 - İLETİŞİM BENİM İŞİM!' ile ilgili eğlenceli bir quiz oyunu!",
+        "topic": "BT.6.1.13 - İLETİŞİM BENİM İŞİM!",
+        "unit": "BT.6.3. İLETİŞİM, ARAŞTIRMA VE İŞ BİRLİĞİ"
+      },
+      "homework": {
+        "type": "creative",
+        "title": "BT.6.1.13 - İLETİŞİM BENİM İŞİM! Yaratıcı Proje",
+        "tasks": [
+          "'BT.6.1.13 - İLETİŞİM BENİM İŞİM!' konusu ile ilgili yaratıcı bir proje hazırlayın.",
+          "Poster, sunum veya video hazırlayabilirsiniz.",
+          "Konuyu arkadaşlarınıza anlatabileceğiniz şekilde anlatın.",
+          "Renkli ve görsel öğeler kullanın.",
+          "Hazırladığınız materyali sınıfta sunmaya hazır olun."
+        ],
+        "duration": "1 hafta",
+        "topic": "BT.6.1.13 - İLETİŞİM BENİM İŞİM!"
+      },
+      "fun": {
+        "fun_fact": "İlk web sitesi 1991'de Tim Berners-Lee tarafından yayınlandı ve bugün hala aktif!",
+        "riddle": {
+          "soru": "Bilgisayarın geçici hafızasına ne denir?",
+          "cevap": "RAM"
+        },
+        "joke": "Neden bilgisayarlar üşümez?\nÇünkü pencereleri (Windows) var!",
+        "category": "internet"
+      }
+    },
+    {
+      "week": 13,
+      "grade": 6,
+      "week_text": "14. Hafta:\n 15-19 Aralık",
+      "unit": "BT.6.4. ÜRÜN OLUŞTURMA",
+      "topic": "BT.6.1.14 - SAYILARLA OYNUYORUM",
+      "outcome": "BT.6.4.1.1. Tablolama programının arayüzünü ve özelliklerini tanıyarak amaca uygun bir tablo oluşturur.\nBT.6.4.1.2. Belirli bir amaç için oluşturduğu tabloyu biçimlendirir.\nBT.6.4.1.3. Oluşturduğu tablo üzerinde hesaplama işlemleri yapar.\nBT.6.4.1.4. Tablodaki verilere filtre uygular.\nBT.6.4.1.5. Amaca uygun grafik türlerini kullanarak veriyi görselleştirir.\nBT.6.4.1.6. Farklı tablolama programlarını keşfeder.\nBT.6.4.1.7. İş birliğine dayalı olarak oluşturduğu belgeyi paylaşır.",
+      "game": {
+        "type": "sorting",
+        "title": "BT.6.1.14 - SAYILARLA OYNUYORUM - Eğlenceli Oyun",
+        "description": "Bu haftanın konusu 'BT.6.1.14 - SAYILARLA OYNUYORUM' ile ilgili eğlenceli bir sorting oyunu!",
+        "topic": "BT.6.1.14 - SAYILARLA OYNUYORUM",
+        "unit": "BT.6.4. ÜRÜN OLUŞTURMA"
+      },
+      "homework": {
+        "type": "research",
+        "title": "BT.6.1.14 - SAYILARLA OYNUYORUM Araştırması",
+        "tasks": [
+          "'BT.6.1.14 - SAYILARLA OYNUYORUM' konusu hakkında araştırma yapın.",
+          "En az 3 kaynak kullanın (kitap, internet, dergi).",
+          "Bulgularınızı 1 sayfalık bir rapor halinde yazın.",
+          "Görseller ekleyin.",
+          "Kaynakçanızı belirtin."
+        ],
+        "duration": "1 hafta",
+        "topic": "BT.6.1.14 - SAYILARLA OYNUYORUM"
+      },
+      "fun": {
+        "fun_fact": "Google'ın adı aslında 'Googol' kelimesinden geliyor (10^100 sayısı).",
+        "riddle": {
+          "soru": "Mouse'u Türkçe'ye çevirelim. Ne olur?",
+          "cevap": "Fare"
+        },
+        "joke": "Robot öğretmene ne denir?\nCTRL + ALT + DELETE yapamayan öğretmen!",
+        "category": "yazilim"
+      }
+    },
+    {
+      "week": 14,
+      "grade": 6,
+      "week_text": "15. Hafta:\n 22-26 Aralık",
+      "unit": "BT.6.4. ÜRÜN OLUŞTURMA",
+      "topic": "BT.6.1.15 - VERİLER FİLTRELENİYOR VE SIRALANIYOR",
+      "outcome": "BT.6.4.1.2. Belirli bir amaç için oluşturduğu tabloyu biçimlendirir.\nBT.6.4.1.3. Oluşturduğu tablo üzerinde hesaplama işlemleri yapar.\nBT.6.4.1.4. Tablodaki verilere filtre uygular.\nBT.6.4.1.5. Amaca uygun grafik türlerini kullanarak veriyi görselleştirir.\nBT.6.4.1.7. İş birliğine dayalı olarak oluşturduğu belgeyi paylaşır.",
+      "game": {
+        "type": "sorting",
+        "title": "BT.6.1.15 - VERİLER FİLTRELENİYOR VE SIRALANIYOR - Eğlenceli Oyun",
+        "description": "Bu haftanın konusu 'BT.6.1.15 - VERİLER FİLTRELENİYOR VE SIRALANIYOR' ile ilgili eğlenceli bir sorting oyunu!",
+        "topic": "BT.6.1.15 - VERİLER FİLTRELENİYOR VE SIRALANIYOR",
+        "unit": "BT.6.4. ÜRÜN OLUŞTURMA"
+      },
+      "homework": {
+        "type": "research",
+        "title": "BT.6.1.15 - VERİLER FİLTRELENİYOR VE SIRALANIYOR Araştırması",
+        "tasks": [
+          "'BT.6.1.15 - VERİLER FİLTRELENİYOR VE SIRALANIYOR' konusu hakkında araştırma yapın.",
+          "En az 3 kaynak kullanın (kitap, internet, dergi).",
+          "Bulgularınızı 1 sayfalık bir rapor halinde yazın.",
+          "Görseller ekleyin.",
+          "Kaynakçanızı belirtin."
+        ],
+        "duration": "1 hafta",
+        "topic": "BT.6.1.15 - VERİLER FİLTRELENİYOR VE SIRALANIYOR"
+      },
+      "fun": {
+        "fun_fact": "QWERTY klavye düzeni 1873'te tasarlandı ve bugün hala kullanılıyor!",
+        "riddle": {
+          "soru": "Siber zorbalığa İngilizce ne denir?",
+          "cevap": "Cyberbullying"
+        },
+        "joke": "Bilgisayar virüsü hastaneye gitse doktor ne der?\n'Antivirüs alın, hemen geçer!'",
+        "category": "bilgisayar"
+      }
+    },
+    {
+      "week": 16,
+      "grade": 6,
+      "week_text": "17. Hafta:\n 5-9 Ocak",
+      "unit": "BT.6.4. ÜRÜN OLUŞTURMA",
+      "topic": "BT.6.1.17 - SES VE VİDEO İŞLEME\nPROGRAMLARI",
+      "outcome": "BT.6.4.2. Ses ve Video İşleme Programları\nBT.6.4.2.1. Ses ve video dosya biçimlerini bilir.\nBT.6.4.2.2. Ses ve video dosyalarını düzenleyebileceği yazılımları kullanır.\nBT.6.4.2.3. Ses dosyaları ile ilgili düzenleme işlemlerini yürütür.",
+      "game": {
+        "type": "sorting",
+        "title": "BT.6.1.17 - SES VE VİDEO İŞLEME\nPROGRAMLARI - Eğlenceli Oyun",
+        "description": "Bu haftanın konusu 'BT.6.1.17 - SES VE VİDEO İŞLEME\nPROGRAMLARI' ile ilgili eğlenceli bir sorting oyunu!",
+        "topic": "BT.6.1.17 - SES VE VİDEO İŞLEME\nPROGRAMLARI",
+        "unit": "BT.6.4. ÜRÜN OLUŞTURMA"
+      },
+      "homework": {
+        "type": "research",
+        "title": "BT.6.1.17 - SES VE VİDEO İŞLEME\nPROGRAMLARI Araştırması",
+        "tasks": [
+          "'BT.6.1.17 - SES VE VİDEO İŞLEME\nPROGRAMLARI' konusu hakkında araştırma yapın.",
+          "En az 3 kaynak kullanın (kitap, internet, dergi).",
+          "Bulgularınızı 1 sayfalık bir rapor halinde yazın.",
+          "Görseller ekleyin.",
+          "Kaynakçanızı belirtin."
+        ],
+        "duration": "1 hafta",
+        "topic": "BT.6.1.17 - SES VE VİDEO İŞLEME\nPROGRAMLARI"
+      },
+      "fun": {
+        "fun_fact": "Python programlama dili adını 'Monty Python' komedi grubundan alıyor!",
+        "riddle": {
+          "soru": "Hangi bilgisayar parçası 'bilgisayarın beyni' olarak bilinir?",
+          "cevap": "İşlemci (CPU)"
+        },
+        "joke": "İki bilgisayar sokakta karşılaşır.\nBiri diğerine: 'Nasılsın?'\nÖteki: 'Güncelleme yapıyorum, sonra kapanacağım!'",
+        "category": "yazilim"
+      }
+    },
+    {
+      "week": 17,
+      "grade": 6,
+      "week_text": "18. Hafta:\n 12-16 Ocak",
+      "unit": "BT.6.4. ÜRÜN OLUŞTURMA",
+      "topic": "BT.6.1.18 - VİDEOMU DÜZENLİYORUM",
+      "outcome": "BT.6.4.3.4. Video dosyaları ile ilgili düzenleme işlemlerini yürütür.\nBT.6.4.3.5. İş birliğine dayalı olarak oluşturduğu video dosyasını çevrimiçi ortamda paylaşır.",
+      "game": {
+        "type": "quiz",
+        "title": "BT.6.1.18 - VİDEOMU DÜZENLİYORUM - Eğlenceli Oyun",
+        "description": "Bu haftanın konusu 'BT.6.1.18 - VİDEOMU DÜZENLİYORUM' ile ilgili eğlenceli bir quiz oyunu!",
+        "topic": "BT.6.1.18 - VİDEOMU DÜZENLİYORUM",
+        "unit": "BT.6.4. ÜRÜN OLUŞTURMA"
+      },
+      "homework": {
+        "type": "research",
+        "title": "BT.6.1.18 - VİDEOMU DÜZENLİYORUM Araştırması",
+        "tasks": [
+          "'BT.6.1.18 - VİDEOMU DÜZENLİYORUM' konusu hakkında araştırma yapın.",
+          "En az 3 kaynak kullanın (kitap, internet, dergi).",
+          "Bulgularınızı 1 sayfalık bir rapor halinde yazın.",
+          "Görseller ekleyin.",
+          "Kaynakçanızı belirtin."
+        ],
+        "duration": "1 hafta",
+        "topic": "BT.6.1.18 - VİDEOMU DÜZENLİYORUM"
+      },
+      "fun": {
+        "fun_fact": "İlk yapay zeka programı 1956'da yazıldı ve satranç oynayabiliyordu.",
+        "riddle": {
+          "soru": "Internette gezinmek için kullandığımız programa ne denir?",
+          "cevap": "Tarayıcı (Browser)"
+        },
+        "joke": "Neden bilgisayarlar üşümez?\nÇünkü pencereleri (Windows) var!",
+        "category": "yapay_zeka"
+      }
+    },
+    {
+      "week": 18,
+      "grade": 6,
+      "week_text": "19. Hafta:\n 2-6 Şubat",
+      "unit": "BT.6.5. PROBLEM ÇÖZME VE PROGRAMLAMA",
+      "topic": "BT.6.2.1 - HAYDİ VERİ TOPLAMAYA!",
+      "outcome": "BT.6.5.1.1. Verileri toplayarak türlerine göre sınıflandırır.\nBT.6.5.1.10. Matematik ve bilgisayar bilimi arasındaki ilişkiyi tartışır.",
+      "game": {
+        "type": "sorting",
+        "title": "BT.6.2.1 - HAYDİ VERİ TOPLAMAYA! - Eğlenceli Oyun",
+        "description": "Bu haftanın konusu 'BT.6.2.1 - HAYDİ VERİ TOPLAMAYA!' ile ilgili eğlenceli bir sorting oyunu!",
+        "topic": "BT.6.2.1 - HAYDİ VERİ TOPLAMAYA!",
+        "unit": "BT.6.5. PROBLEM ÇÖZME VE PROGRAMLAMA"
+      },
+      "homework": {
+        "type": "research",
+        "title": "BT.6.2.1 - HAYDİ VERİ TOPLAMAYA! Araştırması",
+        "tasks": [
+          "'BT.6.2.1 - HAYDİ VERİ TOPLAMAYA!' konusu hakkında araştırma yapın.",
+          "En az 3 kaynak kullanın (kitap, internet, dergi).",
+          "Bulgularınızı 1 sayfalık bir rapor halinde yazın.",
+          "Görseller ekleyin.",
+          "Kaynakçanızı belirtin."
+        ],
+        "duration": "1 hafta",
+        "topic": "BT.6.2.1 - HAYDİ VERİ TOPLAMAYA!"
+      },
+      "fun": {
+        "fun_fact": "Scratch programı 2007'de MIT'de geliştirildi ve 60 milyondan fazla proje yapıldı.",
+        "riddle": {
+          "soru": "1 GB kaç MB'dir?",
+          "cevap": "1024 MB"
+        },
+        "joke": "Robot öğretmene ne denir?\nCTRL + ALT + DELETE yapamayan öğretmen!",
+        "category": "yazilim"
+      }
+    },
+    {
+      "week": 19,
+      "grade": 6,
+      "week_text": "20. Hafta:\n 9-13 Şubat",
+      "unit": "BT.6.5. PROBLEM ÇÖZME VE PROGRAMLAMA",
+      "topic": "BT.6.2.2 - SABİT Mİ DEĞİŞKEN Mİ?",
+      "outcome": "BT.6.5.1.2. Sabitleri ve değişkenleri problem çözümünde kullanır.",
+      "game": {
+        "type": "matching",
+        "title": "BT.6.2.2 - SABİT Mİ DEĞİŞKEN Mİ? - Eğlenceli Oyun",
+        "description": "Bu haftanın konusu 'BT.6.2.2 - SABİT Mİ DEĞİŞKEN Mİ?' ile ilgili eğlenceli bir matching oyunu!",
+        "topic": "BT.6.2.2 - SABİT Mİ DEĞİŞKEN Mİ?",
+        "unit": "BT.6.5. PROBLEM ÇÖZME VE PROGRAMLAMA"
+      },
+      "homework": {
+        "type": "practical",
+        "title": "BT.6.2.2 - SABİT Mİ DEĞİŞKEN Mİ? Uygulaması",
+        "tasks": [
+          "Bu hafta öğrendiğiniz 'BT.6.2.2 - SABİT Mİ DEĞİŞKEN Mİ?' konusunu uygulayın.",
+          "Pratik bir çalışma yapın.",
+          "Yaptığınız çalışmayı fotoğraflayın veya ekran görüntüsü alın.",
+          "Çalışmanızda karşılaştığınız zorlukları not edin.",
+          "Öğrendiklerinizi 5-10 cümle ile özetleyin."
+        ],
+        "duration": "1 hafta",
+        "topic": "BT.6.2.2 - SABİT Mİ DEĞİŞKEN Mİ?"
+      },
+      "fun": {
+        "fun_fact": "Dünyada her saniye 2.5 milyon GB veri üretiliyor!",
+        "riddle": {
+          "soru": "HTML açılımı nedir?",
+          "cevap": "HyperText Markup Language"
+        },
+        "joke": "Bilgisayar virüsü hastaneye gitse doktor ne der?\n'Antivirüs alın, hemen geçer!'",
+        "category": "internet"
+      }
+    },
+    {
+      "week": 20,
+      "grade": 6,
+      "week_text": "21. Hafta:\n 16-20 Şubat",
+      "unit": "BT.6.5. PROBLEM ÇÖZME VE PROGRAMLAMA",
+      "topic": "BT.6.2.3 - BÖL, PARÇALA, ÇÖZ",
+      "outcome": "BT.6.5.1.3. Bir problemi alt problemlere böler.\nBT.6.5.1.4. Temel fonksiyonları problem çözme sürecinde kullanır.",
+      "game": {
+        "type": "memory",
+        "title": "BT.6.2.3 - BÖL, PARÇALA, ÇÖZ - Eğlenceli Oyun",
+        "description": "Bu haftanın konusu 'BT.6.2.3 - BÖL, PARÇALA, ÇÖZ' ile ilgili eğlenceli bir memory oyunu!",
+        "topic": "BT.6.2.3 - BÖL, PARÇALA, ÇÖZ",
+        "unit": "BT.6.5. PROBLEM ÇÖZME VE PROGRAMLAMA"
+      },
+      "homework": {
+        "type": "practical",
+        "title": "BT.6.2.3 - BÖL, PARÇALA, ÇÖZ Uygulaması",
+        "tasks": [
+          "Bu hafta öğrendiğiniz 'BT.6.2.3 - BÖL, PARÇALA, ÇÖZ' konusunu uygulayın.",
+          "Pratik bir çalışma yapın.",
+          "Yaptığınız çalışmayı fotoğraflayın veya ekran görüntüsü alın.",
+          "Çalışmanızda karşılaştığınız zorlukları not edin.",
+          "Öğrendiklerinizi 5-10 cümle ile özetleyin."
+        ],
+        "duration": "1 hafta",
+        "topic": "BT.6.2.3 - BÖL, PARÇALA, ÇÖZ"
+      },
+      "fun": {
+        "fun_fact": "İlk siber saldırı 1988'de yapıldı ve 6000 bilgisayarı etkiledi.",
+        "riddle": {
+          "soru": "Bilgisayarın geçici hafızasına ne denir?",
+          "cevap": "RAM"
+        },
+        "joke": "Öğretmen: 'Bilgisayarın kalbi var mı?'\nÖğrenci: 'Hayır ama faresi var!'",
+        "category": "guvenlik"
+      }
+    },
+    {
+      "week": 21,
+      "grade": 6,
+      "week_text": "22. Hafta:\n 23-27 Şubat",
+      "unit": "BT.6.5. PROBLEM ÇÖZME VE PROGRAMLAMA",
+      "topic": "BT.6.2.4 - PROBLEM ÇÖZMEK BENİM İŞİM!",
+      "outcome": "BT.6.5.1.5. Problemin çözümü için bir algoritma geliştirir.\nBT.6.5.1.6. Bir algoritmanın çözümünü test eder.",
+      "game": {
+        "type": "quiz",
+        "title": "BT.6.2.4 - PROBLEM ÇÖZMEK BENİM İŞİM! - Eğlenceli Oyun",
+        "description": "Bu haftanın konusu 'BT.6.2.4 - PROBLEM ÇÖZMEK BENİM İŞİM!' ile ilgili eğlenceli bir quiz oyunu!",
+        "topic": "BT.6.2.4 - PROBLEM ÇÖZMEK BENİM İŞİM!",
+        "unit": "BT.6.5. PROBLEM ÇÖZME VE PROGRAMLAMA"
+      },
+      "homework": {
+        "type": "creative",
+        "title": "BT.6.2.4 - PROBLEM ÇÖZMEK BENİM İŞİM! Yaratıcı Proje",
+        "tasks": [
+          "'BT.6.2.4 - PROBLEM ÇÖZMEK BENİM İŞİM!' konusu ile ilgili yaratıcı bir proje hazırlayın.",
+          "Poster, sunum veya video hazırlayabilirsiniz.",
+          "Konuyu arkadaşlarınıza anlatabileceğiniz şekilde anlatın.",
+          "Renkli ve görsel öğeler kullanın.",
+          "Hazırladığınız materyali sınıfta sunmaya hazır olun."
+        ],
+        "duration": "1 hafta",
+        "topic": "BT.6.2.4 - PROBLEM ÇÖZMEK BENİM İŞİM!"
+      },
+      "fun": {
+        "fun_fact": "İki faktörlü doğrulama kullanmak hesap güvenliğini %99 artırıyor.",
+        "riddle": {
+          "soru": "Mouse'u Türkçe'ye çevirelim. Ne olur?",
+          "cevap": "Fare"
+        },
+        "joke": "İki bilgisayar sokakta karşılaşır.\nBiri diğerine: 'Nasılsın?'\nÖteki: 'Güncelleme yapıyorum, sonra kapanacağım!'",
+        "category": "guvenlik"
+      }
+    },
+    {
+      "week": 22,
+      "grade": 6,
+      "week_text": "23. Hafta:\n 2-6 Mart",
+      "unit": "BT.6.5. PROBLEM ÇÖZME VE PROGRAMLAMA",
+      "topic": "BT.6.2.5 - FARKLI YOLLARDAN AYNI ÇÖZÜME",
+      "outcome": "BT.6.5.1.5. Problemin çözümü için bir algoritma geliştirir.\nBT.6.5.1.6. Bir algoritmanın çözümünü test eder.\nBT.6.5.1.7. Farklı algoritmaları inceleyerek en hızlı ve doğru çözümü seçer.",
+      "game": {
+        "type": "quiz",
+        "title": "BT.6.2.5 - FARKLI YOLLARDAN AYNI ÇÖZÜME - Eğlenceli Oyun",
+        "description": "Bu haftanın konusu 'BT.6.2.5 - FARKLI YOLLARDAN AYNI ÇÖZÜME' ile ilgili eğlenceli bir quiz oyunu!",
+        "topic": "BT.6.2.5 - FARKLI YOLLARDAN AYNI ÇÖZÜME",
+        "unit": "BT.6.5. PROBLEM ÇÖZME VE PROGRAMLAMA"
+      },
+      "homework": {
+        "type": "creative",
+        "title": "BT.6.2.5 - FARKLI YOLLARDAN AYNI ÇÖZÜME Yaratıcı Proje",
+        "tasks": [
+          "'BT.6.2.5 - FARKLI YOLLARDAN AYNI ÇÖZÜME' konusu ile ilgili yaratıcı bir proje hazırlayın.",
+          "Poster, sunum veya video hazırlayabilirsiniz.",
+          "Konuyu arkadaşlarınıza anlatabileceğiniz şekilde anlatın.",
+          "Renkli ve görsel öğeler kullanın.",
+          "Hazırladığınız materyali sınıfta sunmaya hazır olun."
+        ],
+        "duration": "1 hafta",
+        "topic": "BT.6.2.5 - FARKLI YOLLARDAN AYNI ÇÖZÜME"
+      },
+      "fun": {
+        "fun_fact": "İlk video oyunu 'Pong' 1972'de çıktı ve sadece bir top ve iki raket vardı!",
+        "riddle": {
+          "soru": "Siber zorbalığa İngilizce ne denir?",
+          "cevap": "Cyberbullying"
+        },
+        "joke": "Neden bilgisayarlar üşümez?\nÇünkü pencereleri (Windows) var!",
+        "category": "yazilim"
+      }
+    },
+    {
+      "week": 23,
+      "grade": 6,
+      "week_text": "24. Hafta:\n 9-13 Mart",
+      "unit": "BT.6.5. PROBLEM ÇÖZME VE PROGRAMLAMA",
+      "topic": "BT.6.2.6 - AYIKLA PİRİNCİN TAŞINI",
+      "outcome": "BT.6.5.1.8. Hatalı bir algoritmayı doğru çalışacak biçimde düzenler.",
+      "game": {
+        "type": "sorting",
+        "title": "BT.6.2.6 - AYIKLA PİRİNCİN TAŞINI - Eğlenceli Oyun",
+        "description": "Bu haftanın konusu 'BT.6.2.6 - AYIKLA PİRİNCİN TAŞINI' ile ilgili eğlenceli bir sorting oyunu!",
+        "topic": "BT.6.2.6 - AYIKLA PİRİNCİN TAŞINI",
+        "unit": "BT.6.5. PROBLEM ÇÖZME VE PROGRAMLAMA"
+      },
+      "homework": {
+        "type": "research",
+        "title": "BT.6.2.6 - AYIKLA PİRİNCİN TAŞINI Araştırması",
+        "tasks": [
+          "'BT.6.2.6 - AYIKLA PİRİNCİN TAŞINI' konusu hakkında araştırma yapın.",
+          "En az 3 kaynak kullanın (kitap, internet, dergi).",
+          "Bulgularınızı 1 sayfalık bir rapor halinde yazın.",
+          "Görseller ekleyin.",
+          "Kaynakçanızı belirtin."
+        ],
+        "duration": "1 hafta",
+        "topic": "BT.6.2.6 - AYIKLA PİRİNCİN TAŞINI"
+      },
+      "fun": {
+        "fun_fact": "Yapay zeka, sanat eserleri yapabiliyor! Bazıları milyonlarca dolara satıldı.",
+        "riddle": {
+          "soru": "Scratch'te kullandığımız renkli komutlara ne denir?",
+          "cevap": "Blok"
+        },
+        "joke": "Robot öğretmene ne denir?\nCTRL + ALT + DELETE yapamayan öğretmen!",
+        "category": "yapay_zeka"
+      }
+    },
+    {
+      "week": 24,
+      "grade": 6,
+      "week_text": "25. Hafta:\n 23-27 Mart",
+      "unit": "BT.6.5. PROBLEM ÇÖZME VE PROGRAMLAMA",
+      "topic": "BT.6.2.7 - BENZER SORUN BENZER ÇÖZÜM",
+      "outcome": "BT.6.5.1.9. Problemin çözümünü, benzer problemler için geneller.",
+      "game": {
+        "type": "sorting",
+        "title": "BT.6.2.7 - BENZER SORUN BENZER ÇÖZÜM - Eğlenceli Oyun",
+        "description": "Bu haftanın konusu 'BT.6.2.7 - BENZER SORUN BENZER ÇÖZÜM' ile ilgili eğlenceli bir sorting oyunu!",
+        "topic": "BT.6.2.7 - BENZER SORUN BENZER ÇÖZÜM",
+        "unit": "BT.6.5. PROBLEM ÇÖZME VE PROGRAMLAMA"
+      },
+      "homework": {
+        "type": "practical",
+        "title": "BT.6.2.7 - BENZER SORUN BENZER ÇÖZÜM Uygulaması",
+        "tasks": [
+          "Bu hafta öğrendiğiniz 'BT.6.2.7 - BENZER SORUN BENZER ÇÖZÜM' konusunu uygulayın.",
+          "Pratik bir çalışma yapın.",
+          "Yaptığınız çalışmayı fotoğraflayın veya ekran görüntüsü alın.",
+          "Çalışmanızda karşılaştığınız zorlukları not edin.",
+          "Öğrendiklerinizi 5-10 cümle ile özetleyin."
+        ],
+        "duration": "1 hafta",
+        "topic": "BT.6.2.7 - BENZER SORUN BENZER ÇÖZÜM"
+      },
+      "fun": {
+        "fun_fact": "Dünyada her saniye 2.5 milyon GB veri üretiliyor!",
+        "riddle": {
+          "soru": "Hangi bilgisayar parçası 'bilgisayarın beyni' olarak bilinir?",
+          "cevap": "İşlemci (CPU)"
+        },
+        "joke": "Bilgisayar virüsü hastaneye gitse doktor ne der?\n'Antivirüs alın, hemen geçer!'",
+        "category": "internet"
+      }
+    },
+    {
+      "week": 26,
+      "grade": 6,
+      "week_text": "27. Hafta:\n 6-10 Nisan",
+      "unit": "BT.6.5. PROBLEM ÇÖZME VE PROGRAMLAMA",
+      "topic": "BT.6.2.9 - BLOK TABANLI KODLAMA İLE TANIŞIYORUM",
+      "outcome": "BT.6.5.2.1. Blok tabanlı programlama aracının arayüzünü ve özelliklerini tanır.\nBT.6.5.2.2. Blok tabanlı programlama aracında sunulan bir programın işlevlerini açıklar.",
+      "game": {
+        "type": "memory",
+        "title": "BT.6.2.9 - BLOK TABANLI KODLAMA İLE TANIŞIYORUM - Eğlenceli Oyun",
+        "description": "Bu haftanın konusu 'BT.6.2.9 - BLOK TABANLI KODLAMA İLE TANIŞIYORUM' ile ilgili eğlenceli bir memory oyunu!",
+        "topic": "BT.6.2.9 - BLOK TABANLI KODLAMA İLE TANIŞIYORUM",
+        "unit": "BT.6.5. PROBLEM ÇÖZME VE PROGRAMLAMA"
+      },
+      "homework": {
+        "type": "research",
+        "title": "BT.6.2.9 - BLOK TABANLI KODLAMA İLE TANIŞIYORUM Araştırması",
+        "tasks": [
+          "'BT.6.2.9 - BLOK TABANLI KODLAMA İLE TANIŞIYORUM' konusu hakkında araştırma yapın.",
+          "En az 3 kaynak kullanın (kitap, internet, dergi).",
+          "Bulgularınızı 1 sayfalık bir rapor halinde yazın.",
+          "Görseller ekleyin.",
+          "Kaynakçanızı belirtin."
+        ],
+        "duration": "1 hafta",
+        "topic": "BT.6.2.9 - BLOK TABANLI KODLAMA İLE TANIŞIYORUM"
+      },
+      "fun": {
+        "fun_fact": "İlk bilgisayar virüsü 1983'te yazıldı ve ismiydi 'Elk Cloner'.",
+        "riddle": {
+          "soru": "1 GB kaç MB'dir?",
+          "cevap": "1024 MB"
+        },
+        "joke": "İki bilgisayar sokakta karşılaşır.\nBiri diğerine: 'Nasılsın?'\nÖteki: 'Güncelleme yapıyorum, sonra kapanacağım!'",
+        "category": "yazilim"
+      }
+    },
+    {
+      "week": 27,
+      "grade": 6,
+      "week_text": "28. Hafta:\n 13-17 Nisan",
+      "unit": "BT.6.5. PROBLEM ÇÖZME VE PROGRAMLAMA",
+      "topic": "BT.6.2.10 - BLOK TABANLI KODLAMA PROGRAMINI KEŞFEDİYORUM",
+      "outcome": "BT.6.5.2.2. Blok tabanlı programlama aracında sunulan bir programın işlevlerini açıklar.\nBT.6.5.2.3. Blok tabanlı programlama aracında sunulan bir programın hatalarını ayıklar.\nBT.6.5.2.4. Blok tabanlı programlama aracında sunulan bir programı verilen ölçütlere göre geliştirerek düzenler.",
+      "game": {
+        "type": "quiz",
+        "title": "BT.6.2.10 - BLOK TABANLI KODLAMA PROGRAMINI KEŞFEDİYORUM - Eğlenceli Oyun",
+        "description": "Bu haftanın konusu 'BT.6.2.10 - BLOK TABANLI KODLAMA PROGRAMINI KEŞFEDİYORUM' ile ilgili eğlenceli bir quiz oyunu!",
+        "topic": "BT.6.2.10 - BLOK TABANLI KODLAMA PROGRAMINI KEŞFEDİYORUM",
+        "unit": "BT.6.5. PROBLEM ÇÖZME VE PROGRAMLAMA"
+      },
+      "homework": {
+        "type": "research",
+        "title": "BT.6.2.10 - BLOK TABANLI KODLAMA PROGRAMINI KEŞFEDİYORUM Araştırması",
+        "tasks": [
+          "'BT.6.2.10 - BLOK TABANLI KODLAMA PROGRAMINI KEŞFEDİYORUM' konusu hakkında araştırma yapın.",
+          "En az 3 kaynak kullanın (kitap, internet, dergi).",
+          "Bulgularınızı 1 sayfalık bir rapor halinde yazın.",
+          "Görseller ekleyin.",
+          "Kaynakçanızı belirtin."
+        ],
+        "duration": "1 hafta",
+        "topic": "BT.6.2.10 - BLOK TABANLI KODLAMA PROGRAMINI KEŞFEDİYORUM"
+      },
+      "fun": {
+        "fun_fact": "İlk video oyunu 'Pong' 1972'de çıktı ve sadece bir top ve iki raket vardı!",
+        "riddle": {
+          "soru": "HTML açılımı nedir?",
+          "cevap": "HyperText Markup Language"
+        },
+        "joke": "Neden bilgisayarlar üşümez?\nÇünkü pencereleri (Windows) var!",
+        "category": "yazilim"
+      }
+    },
+    {
+      "week": 28,
+      "grade": 6,
+      "week_text": "29. Hafta:\n 20-24 Nisan",
+      "unit": "BT.6.5. PROBLEM ÇÖZME VE PROGRAMLAMA",
+      "topic": "BT.6.2.11 - HAYDİ CANLANALIM",
+      "outcome": "BT.6.5.2.3. Blok tabanlı programlama aracında sunulan bir programın hatalarını ayıklar.\nBT.6.5.2.4. Blok tabanlı programlama aracında sunulan bir programı verilen ölçütlere göre geliştirerek düzenler.\nBT.6.5.2.5. Doğrusal mantık yapısını içeren programlar oluşturur.\nBT.6.5.2.6. Doğrusal mantık yapısını içeren programları test ederek hatalarını ayıklar.",
+      "game": {
+        "type": "sorting",
+        "title": "BT.6.2.11 - HAYDİ CANLANALIM - Eğlenceli Oyun",
+        "description": "Bu haftanın konusu 'BT.6.2.11 - HAYDİ CANLANALIM' ile ilgili eğlenceli bir sorting oyunu!",
+        "topic": "BT.6.2.11 - HAYDİ CANLANALIM",
+        "unit": "BT.6.5. PROBLEM ÇÖZME VE PROGRAMLAMA"
+      },
+      "homework": {
+        "type": "research",
+        "title": "BT.6.2.11 - HAYDİ CANLANALIM Araştırması",
+        "tasks": [
+          "'BT.6.2.11 - HAYDİ CANLANALIM' konusu hakkında araştırma yapın.",
+          "En az 3 kaynak kullanın (kitap, internet, dergi).",
+          "Bulgularınızı 1 sayfalık bir rapor halinde yazın.",
+          "Görseller ekleyin.",
+          "Kaynakçanızı belirtin."
+        ],
+        "duration": "1 hafta",
+        "topic": "BT.6.2.11 - HAYDİ CANLANALIM"
+      },
+      "fun": {
+        "fun_fact": "İlk e-posta 1971'de gönderildi ve mesaj sadece 'QWERTYUIOP' idi.",
+        "riddle": {
+          "soru": "Bilgisayarın geçici hafızasına ne denir?",
+          "cevap": "RAM"
+        },
+        "joke": "Robot öğretmene ne denir?\nCTRL + ALT + DELETE yapamayan öğretmen!",
+        "category": "internet"
+      }
+    },
+    {
+      "week": 29,
+      "grade": 6,
+      "week_text": "30. Hafta:\n 27 Nisan-1 Mayıs",
+      "unit": "BT.6.5. PROBLEM ÇÖZME VE PROGRAMLAMA",
+      "topic": "BT.6.2.12 - NESNELER KONUŞUYOR",
+      "outcome": "BT.6.5.2.5. Doğrusal mantık yapısını içeren programlar oluşturur.\nBT.6.5.2.6. Doğrusal mantık yapısını içeren programları test ederek hatalarını ayıklar.\nBT.6.5.2.7. Karar yapısını içeren programlar oluşturur\nBT.6.5.2.8. Karar yapısını içeren programları test ederek hatalarını ayıklar.",
+      "game": {
+        "type": "sorting",
+        "title": "BT.6.2.12 - NESNELER KONUŞUYOR - Eğlenceli Oyun",
+        "description": "Bu haftanın konusu 'BT.6.2.12 - NESNELER KONUŞUYOR' ile ilgili eğlenceli bir sorting oyunu!",
+        "topic": "BT.6.2.12 - NESNELER KONUŞUYOR",
+        "unit": "BT.6.5. PROBLEM ÇÖZME VE PROGRAMLAMA"
+      },
+      "homework": {
+        "type": "research",
+        "title": "BT.6.2.12 - NESNELER KONUŞUYOR Araştırması",
+        "tasks": [
+          "'BT.6.2.12 - NESNELER KONUŞUYOR' konusu hakkında araştırma yapın.",
+          "En az 3 kaynak kullanın (kitap, internet, dergi).",
+          "Bulgularınızı 1 sayfalık bir rapor halinde yazın.",
+          "Görseller ekleyin.",
+          "Kaynakçanızı belirtin."
+        ],
+        "duration": "1 hafta",
+        "topic": "BT.6.2.12 - NESNELER KONUŞUYOR"
+      },
+      "fun": {
+        "fun_fact": "Dünyanın ilk bilgisayar programcısı Ada Lovelace adında bir kadındır (1843).",
+        "riddle": {
+          "soru": "Mouse'u Türkçe'ye çevirelim. Ne olur?",
+          "cevap": "Fare"
+        },
+        "joke": "Bilgisayar virüsü hastaneye gitse doktor ne der?\n'Antivirüs alın, hemen geçer!'",
+        "category": "bilgisayar"
+      }
+    },
+    {
+      "week": 30,
+      "grade": 6,
+      "week_text": "31. Hafta:\n 4-8 Mayıs",
+      "unit": "BT.6.5. PROBLEM ÇÖZME VE PROGRAMLAMA",
+      "topic": "BT.6.2.13 - DÜŞÜNEN BİLGİSAYAR",
+      "outcome": "BT.6.5.2.5. Doğrusal mantık yapısını içeren programlar oluşturur.\nBT.6.5.2.6. Doğrusal mantık yapısını içeren programları test ederek hatalarını ayıklar.\nBT.6.5.2.7. Karar yapısını içeren programlar oluşturur.\nBT.6.5.2.8. Karar yapısını içeren programları test ederek hatalarını ayıklar.\nBT.6.5.2.9. Çoklu karar yapıları içeren programlar oluşturur.\nBT.6.5.2.10. Çoklu karar yapısını içeren programları test ederek hatalarını ayıklar.\nBT.6.5.2.11. Döngü yapısını içeren programlar oluşturur.\nBT.6.5.2.12. Döngü yapısını içeren programları test ederek hatalarını ayıklar.\nBT.6.5.2.13. Bir algoritmayı uyarlamak için en uygun karar yapılarını seçer.\nBT.6.5.2.14. Farklı programlama yapılarını kullanarak karmaşık problemlere çözüm üretir.",
+      "game": {
+        "type": "memory",
+        "title": "BT.6.2.13 - DÜŞÜNEN BİLGİSAYAR - Eğlenceli Oyun",
+        "description": "Bu haftanın konusu 'BT.6.2.13 - DÜŞÜNEN BİLGİSAYAR' ile ilgili eğlenceli bir memory oyunu!",
+        "topic": "BT.6.2.13 - DÜŞÜNEN BİLGİSAYAR",
+        "unit": "BT.6.5. PROBLEM ÇÖZME VE PROGRAMLAMA"
+      },
+      "homework": {
+        "type": "practical",
+        "title": "BT.6.2.13 - DÜŞÜNEN BİLGİSAYAR Uygulaması",
+        "tasks": [
+          "Bu hafta öğrendiğiniz 'BT.6.2.13 - DÜŞÜNEN BİLGİSAYAR' konusunu uygulayın.",
+          "Pratik bir çalışma yapın.",
+          "Yaptığınız çalışmayı fotoğraflayın veya ekran görüntüsü alın.",
+          "Çalışmanızda karşılaştığınız zorlukları not edin.",
+          "Öğrendiklerinizi 5-10 cümle ile özetleyin."
+        ],
+        "duration": "1 hafta",
+        "topic": "BT.6.2.13 - DÜŞÜNEN BİLGİSAYAR"
+      },
+      "fun": {
+        "fun_fact": "İlk e-posta 1971'de gönderildi ve mesaj sadece 'QWERTYUIOP' idi.",
+        "riddle": {
+          "soru": "Siber zorbalığa İngilizce ne denir?",
+          "cevap": "Cyberbullying"
+        },
+        "joke": "Öğretmen: 'Bilgisayarın kalbi var mı?'\nÖğrenci: 'Hayır ama faresi var!'",
+        "category": "internet"
+      }
+    },
+    {
+      "week": 31,
+      "grade": 6,
+      "week_text": "32. Hafta:\n 11-15 Mayıs",
+      "unit": "BT.6.5. PROBLEM ÇÖZME VE PROGRAMLAMA",
+      "topic": "BT.6.2.14 - ÇİZİM YAPIYORUM",
+      "outcome": "",
+      "game": {
+        "type": "sorting",
+        "title": "BT.6.2.14 - ÇİZİM YAPIYORUM - Eğlenceli Oyun",
+        "description": "Bu haftanın konusu 'BT.6.2.14 - ÇİZİM YAPIYORUM' ile ilgili eğlenceli bir sorting oyunu!",
+        "topic": "BT.6.2.14 - ÇİZİM YAPIYORUM",
+        "unit": "BT.6.5. PROBLEM ÇÖZME VE PROGRAMLAMA"
+      },
+      "homework": {
+        "type": "creative",
+        "title": "BT.6.2.14 - ÇİZİM YAPIYORUM Yaratıcı Proje",
+        "tasks": [
+          "'BT.6.2.14 - ÇİZİM YAPIYORUM' konusu ile ilgili yaratıcı bir proje hazırlayın.",
+          "Poster, sunum veya video hazırlayabilirsiniz.",
+          "Konuyu arkadaşlarınıza anlatabileceğiniz şekilde anlatın.",
+          "Renkli ve görsel öğeler kullanın.",
+          "Hazırladığınız materyali sınıfta sunmaya hazır olun."
+        ],
+        "duration": "1 hafta",
+        "topic": "BT.6.2.14 - ÇİZİM YAPIYORUM"
+      },
+      "fun": {
+        "fun_fact": "Google'ın adı aslında 'Googol' kelimesinden geliyor (10^100 sayısı).",
+        "riddle": {
+          "soru": "Scratch'te kullandığımız renkli komutlara ne denir?",
+          "cevap": "Blok"
+        },
+        "joke": "İki bilgisayar sokakta karşılaşır.\nBiri diğerine: 'Nasılsın?'\nÖteki: 'Güncelleme yapıyorum, sonra kapanacağım!'",
+        "category": "yazilim"
+      }
+    },
+    {
+      "week": 32,
+      "grade": 6,
+      "week_text": "33. Hafta:\n 18-22 Mayıs",
+      "unit": "BT.6.5. PROBLEM ÇÖZME VE PROGRAMLAMA",
+      "topic": "BT.6.2.15 - OYUN YAZIYORUM",
+      "outcome": "",
+      "game": {
+        "type": "sorting",
+        "title": "BT.6.2.15 - OYUN YAZIYORUM - Eğlenceli Oyun",
+        "description": "Bu haftanın konusu 'BT.6.2.15 - OYUN YAZIYORUM' ile ilgili eğlenceli bir sorting oyunu!",
+        "topic": "BT.6.2.15 - OYUN YAZIYORUM",
+        "unit": "BT.6.5. PROBLEM ÇÖZME VE PROGRAMLAMA"
+      },
+      "homework": {
+        "type": "practical",
+        "title": "BT.6.2.15 - OYUN YAZIYORUM Uygulaması",
+        "tasks": [
+          "Bu hafta öğrendiğiniz 'BT.6.2.15 - OYUN YAZIYORUM' konusunu uygulayın.",
+          "Pratik bir çalışma yapın.",
+          "Yaptığınız çalışmayı fotoğraflayın veya ekran görüntüsü alın.",
+          "Çalışmanızda karşılaştığınız zorlukları not edin.",
+          "Öğrendiklerinizi 5-10 cümle ile özetleyin."
+        ],
+        "duration": "1 hafta",
+        "topic": "BT.6.2.15 - OYUN YAZIYORUM"
+      },
+      "fun": {
+        "fun_fact": "İlk bilgisayar ENIAC 1946'da yapıldı ve tam 30 ton ağırlığındaydı!",
+        "riddle": {
+          "soru": "Hangi bilgisayar parçası 'bilgisayarın beyni' olarak bilinir?",
+          "cevap": "İşlemci (CPU)"
+        },
+        "joke": "Neden bilgisayarlar üşümez?\nÇünkü pencereleri (Windows) var!",
+        "category": "bilgisayar"
+      }
+    },
+    {
+      "week": 33,
+      "grade": 6,
+      "week_text": "34. Hafta:\n 25-29 Mayıs",
+      "unit": "BT.6.5. PROBLEM ÇÖZME VE PROGRAMLAMA",
+      "topic": "BT.6.2.16 - BLOK TABANLI KODLAMA PROJEM",
+      "outcome": "6.5.2.15. Tüm programlama yapılarını içeren özgün bir proje oluşturur.",
+      "game": {
+        "type": "quiz",
+        "title": "BT.6.2.16 - BLOK TABANLI KODLAMA PROJEM - Eğlenceli Oyun",
+        "description": "Bu haftanın konusu 'BT.6.2.16 - BLOK TABANLI KODLAMA PROJEM' ile ilgili eğlenceli bir quiz oyunu!",
+        "topic": "BT.6.2.16 - BLOK TABANLI KODLAMA PROJEM",
+        "unit": "BT.6.5. PROBLEM ÇÖZME VE PROGRAMLAMA"
+      },
+      "homework": {
+        "type": "research",
+        "title": "BT.6.2.16 - BLOK TABANLI KODLAMA PROJEM Araştırması",
+        "tasks": [
+          "'BT.6.2.16 - BLOK TABANLI KODLAMA PROJEM' konusu hakkında araştırma yapın.",
+          "En az 3 kaynak kullanın (kitap, internet, dergi).",
+          "Bulgularınızı 1 sayfalık bir rapor halinde yazın.",
+          "Görseller ekleyin.",
+          "Kaynakçanızı belirtin."
+        ],
+        "duration": "1 hafta",
+        "topic": "BT.6.2.16 - BLOK TABANLI KODLAMA PROJEM"
+      },
+      "fun": {
+        "fun_fact": "İlk video oyunu 'Pong' 1972'de çıktı ve sadece bir top ve iki raket vardı!",
+        "riddle": {
+          "soru": "Internette gezinmek için kullandığımız programa ne denir?",
+          "cevap": "Tarayıcı (Browser)"
+        },
+        "joke": "Robot öğretmene ne denir?\nCTRL + ALT + DELETE yapamayan öğretmen!",
+        "category": "yazilim"
+      }
+    },
+    {
+      "week": 35,
+      "grade": 6,
+      "week_text": "36. Hafta:\n 8-12 Haziran",
+      "unit": "BT.6.5. PROBLEM ÇÖZME VE PROGRAMLAMA",
+      "topic": "BT.6.2.17 - PROJELERİMİZİ\nDEĞERLENDİRİYORUZ\nBT.6.2.18 - TEKRAR EDELİM",
+      "outcome": "BT.6.5.2.13. Bir algoritmayı uyarlamak için en uygun karar yapılarını seçer.\nBT.6.5.2.14. Farklı programlama yapılarını kullanarak karmaşık problemlere çözüm üretir.\nBT.6.5.2.15. Tüm programlama yapılarını içeren özgün bir proje oluşturur.",
+      "game": {
+        "type": "quiz",
+        "title": "BT.6.2.17 - PROJELERİMİZİ\nDEĞERLENDİRİYORUZ\nBT.6.2.18 - TEKRAR EDELİM - Eğlenceli Oyun",
+        "description": "Bu haftanın konusu 'BT.6.2.17 - PROJELERİMİZİ\nDEĞERLENDİRİYORUZ\nBT.6.2.18 - TEKRAR EDELİM' ile ilgili eğlenceli bir quiz oyunu!",
+        "topic": "BT.6.2.17 - PROJELERİMİZİ\nDEĞERLENDİRİYORUZ\nBT.6.2.18 - TEKRAR EDELİM",
+        "unit": "BT.6.5. PROBLEM ÇÖZME VE PROGRAMLAMA"
+      },
+      "homework": {
+        "type": "practical",
+        "title": "BT.6.2.17 - PROJELERİMİZİ\nDEĞERLENDİRİYORUZ\nBT.6.2.18 - TEKRAR EDELİM Uygulaması",
+        "tasks": [
+          "Bu hafta öğrendiğiniz 'BT.6.2.17 - PROJELERİMİZİ\nDEĞERLENDİRİYORUZ\nBT.6.2.18 - TEKRAR EDELİM' konusunu uygulayın.",
+          "Pratik bir çalışma yapın.",
+          "Yaptığınız çalışmayı fotoğraflayın veya ekran görüntüsü alın.",
+          "Çalışmanızda karşılaştığınız zorlukları not edin.",
+          "Öğrendiklerinizi 5-10 cümle ile özetleyin."
+        ],
+        "duration": "1 hafta",
+        "topic": "BT.6.2.17 - PROJELERİMİZİ\nDEĞERLENDİRİYORUZ\nBT.6.2.18 - TEKRAR EDELİM"
+      },
+      "fun": {
+        "fun_fact": "Scratch programı 2007'de MIT'de geliştirildi ve 60 milyondan fazla proje yapıldı.",
+        "riddle": {
+          "soru": "HTML açılımı nedir?",
+          "cevap": "HyperText Markup Language"
+        },
+        "joke": "Öğretmen: 'Bilgisayarın kalbi var mı?'\nÖğrenci: 'Hayır ama faresi var!'",
+        "category": "yazilim"
+      }
+    }
+  ]
+};
+        let currentGrade = null;
+
+        console.log('Haftalık içerikler yüklendi:', weeklyData);
+
+        function onGradeChange() {
+            const gradeSelect = document.getElementById('grade-select');
+            const weekSelect = document.getElementById('week-select');
+            const grade = gradeSelect.value;
+
+            if (!grade) {
+                weekSelect.disabled = true;
+                weekSelect.innerHTML = '<option value="">Önce sınıf seçin</option>';
+                clearContent();
+                return;
+            }
+
+            currentGrade = grade;
+            const gradeKey = `grade${grade}`;
+            const weeks = weeklyData[gradeKey];
+
+            // Hafta dropdown'ını doldur
+            weekSelect.innerHTML = '<option value="">Hafta Seçin</option>';
+            weeks.forEach((week, index) => {
+                const option = document.createElement('option');
+                option.value = index;
+                option.textContent = `${week.week}. Hafta - ${week.topic || 'Konu Yok'}`;
+                weekSelect.appendChild(option);
+            });
+
+            weekSelect.disabled = false;
+            clearContent();
+        }
+
+        function onWeekChange() {
+            const weekSelect = document.getElementById('week-select');
+            const weekIndex = weekSelect.value;
+
+            if (weekIndex === '') {
+                clearContent();
+                return;
+            }
+
+            const gradeKey = `grade${currentGrade}`;
+            const weekData = weeklyData[gradeKey][parseInt(weekIndex)];
+
+            displayContent(weekData);
+        }
+
+        function displayContent(data) {
+            const container = document.getElementById('content-container');
+            container.classList.add('active');
+
+            container.innerHTML = `
+                <div class="week-info">
+                    <h2>📚 ${data.grade}. Sınıf - ${data.week}. Hafta</h2>
+                    <p><strong>📌 Ünite:</strong> ${data.unit || 'Belirtilmemiş'}</p>
+                    <p><strong>📖 Konu:</strong> ${data.topic || 'Belirtilmemiş'}</p>
+                    <p><strong>🎯 Kazanım:</strong> ${data.outcome || 'Belirtilmemiş'}</p>
+                </div>
+
+                <div class="content-grid">
+                    <!-- OYUN -->
+                    <div class="content-card game-card">
+                        <h3><span class="icon">🎮</span> Haftanın Oyunu</h3>
+                        <h4 style="color: #333; margin: 15px 0;">${data.game.title}</h4>
+                        <p style="color: #666; line-height: 1.6;">${data.game.description}</p>
+                        <span class="game-type-badge">${getGameTypeName(data.game.type)}</span>
+                        <br><br>
+                        <a href="haftalik-oyunlar/oyun-${data.grade}sinif-hafta${data.week}.html" target="_blank" style="text-decoration: none;">
+                            <button style="background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%); color: white; padding: 15px 30px; border: none; border-radius: 10px; font-size: 1.1em; font-weight: bold; cursor: pointer; transition: all 0.3s; width: 100%;">
+                                🎮 Oyunu Oyna
+                            </button>
+                        </a>
+                    </div>
+
+                    <!-- ÖDEV -->
+                    <div class="content-card homework-card">
+                        <h3><span class="icon">📝</span> Haftanın Ödevi</h3>
+                        <h4 style="color: #333; margin: 15px 0;">${data.homework.title}</h4>
+                        <p style="color: #666; margin-bottom: 15px;"><strong>Süre:</strong> ${data.homework.duration}</p>
+                        <ul class="task-list">
+                            ${data.homework.tasks.map(task => `<li>${task}</li>`).join('')}
+                        </ul>
+                        <br>
+                        <a href="haftalik-calisma-sayfalari/calisma-${data.grade}sinif-hafta${data.week}.html" target="_blank" style="text-decoration: none;">
+                            <button style="background: linear-gradient(135deg, #FF9800 0%, #FB8C00 100%); color: white; padding: 15px 30px; border: none; border-radius: 10px; font-size: 1.1em; font-weight: bold; cursor: pointer; transition: all 0.3s; width: 100%;">
+                                📄 Çalışma Sayfasını İndir / Yazdır
+                            </button>
+                        </a>
+                    </div>
+
+                    <!-- MERAKLISINA -->
+                    <div class="content-card fun-card">
+                        <h3><span class="icon">🎉</span> Meraklısına</h3>
+
+                        <div class="fact-box">
+                            <h4>💡 İlginç Bilgi</h4>
+                            <p style="line-height: 1.6;">${data.fun.fun_fact}</p>
+                        </div>
+
+                        <div class="riddle-box">
+                            <h4>🤔 Bulmaca</h4>
+                            <p style="margin-bottom: 10px;"><strong>Soru:</strong> ${data.fun.riddle.soru}</p>
+                            <div class="riddle-answer hidden" onclick="this.classList.toggle('hidden')">
+                                Cevabı Görmek İçin Tıkla
+                            </div>
+                            <div class="riddle-answer" style="display: none;">${data.fun.riddle.cevap}</div>
+                        </div>
+
+                        <div class="joke-box">
+                            <h4>😄 Fıkra</h4>
+                            <p style="line-height: 1.8;">${data.fun.joke}</p>
+                        </div>
+                    </div>
+
+                    <!-- DERS SUNUMU -->
+                    ${getPresentationFile(data.grade, data.week) ? `
+                    <div class="content-card presentation-card" style="grid-column: 1 / -1;">
+                        <h3><span class="icon">📊</span> Haftalık Ders Sunumu</h3>
+                        <p style="color: #666; margin-bottom: 15px;">Bu haftanın konularını içeren ders sunumu</p>
+
+                        <div class="presentation-viewer" id="presentation-viewer-${data.week}">
+                            <div class="presentation-controls" style="display: flex; gap: 10px; margin-bottom: 15px; flex-wrap: wrap;">
+                                <a href="${getPresentationFile(data.grade, data.week)}" download style="text-decoration: none; flex: 1; min-width: 200px;">
+                                    <button style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 12px 25px; border: none; border-radius: 10px; font-size: 1em; font-weight: bold; cursor: pointer; transition: all 0.3s; width: 100%;">
+                                        💾 Sunumu İndir
+                                    </button>
+                                </a>
+                                <button onclick="openPresentationFullscreen('${getPresentationFile(data.grade, data.week)}')" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white; padding: 12px 25px; border: none; border-radius: 10px; font-size: 1em; font-weight: bold; cursor: pointer; transition: all 0.3s; flex: 1; min-width: 200px;">
+                                    🖥️ Tam Ekranda Aç
+                                </button>
+                            </div>
+
+                            <div class="presentation-frame-container" style="position: relative; width: 100%; background: #f5f5f5; border-radius: 10px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
+                                <iframe
+                                    src="https://view.officeapps.live.com/op/embed.aspx?src=${encodeURIComponent(window.location.origin + window.location.pathname.substring(0, window.location.pathname.lastIndexOf('/') + 1) + getPresentationFile(data.grade, data.week))}"
+                                    style="width: 100%; height: 600px; border: none;"
+                                    frameborder="0">
+                                </iframe>
+                                <div style="text-align: center; padding: 15px; background: #fff; border-top: 2px solid #667eea;">
+                                    <p style="color: #666; font-size: 0.9em; margin: 0;">
+                                        💡 <strong>İpucu:</strong> Sunumu daha iyi görüntülemek için "Tam Ekranda Aç" butonunu kullanabilir veya indirebilirsiniz.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    ` : ''}
+                </div>
+            `;
+
+            // Bulmaca toggle işlevi
+            const riddleAnswers = container.querySelectorAll('.riddle-answer');
+            riddleAnswers[0].addEventListener('click', function() {
+                riddleAnswers[0].style.display = 'none';
+                riddleAnswers[1].style.display = 'block';
+            });
+        }
+
+        function getGameTypeName(type) {
+            const types = {
+                'quiz': 'Quiz Oyunu',
+                'matching': 'Eşleştirme Oyunu',
+                'memory': 'Hafıza Oyunu',
+                'sorting': 'Sıralama Oyunu'
+            };
+            return types[type] || 'Eğitsel Oyun';
+        }
+
+        function getPresentationFile(grade, week) {
+            // Hafta numarasına göre ünite belirleme ve sunum dosyası eşleştirme
+            let presentationFile = '';
+
+            if (grade === 5) {
+                if (week >= 1 && week <= 6) {
+                    presentationFile = 'sunumlar/5-sinif-unite1-bilisim-temelleri.pptx';
+                } else if (week >= 7 && week <= 12) {
+                    presentationFile = 'sunumlar/5-sinif-unite2-dijital-urun.pptx';
+                } else if (week >= 13 && week <= 18) {
+                    presentationFile = 'sunumlar/5-sinif-unite3-aglar-iletisim.pptx';
+                } else if (week >= 19 && week <= 24) {
+                    presentationFile = 'sunumlar/5-sinif-unite4-etik-guvenlik.pptx';
+                } else if (week >= 25 && week <= 30) {
+                    presentationFile = 'sunumlar/5-sinif-unite5-yapay-zeka.pptx';
+                } else if (week >= 31 && week <= 36) {
+                    presentationFile = 'sunumlar/5-sinif-unite6-scratch.pptx';
+                }
+            } else if (grade === 6) {
+                if (week >= 1 && week <= 7) {
+                    presentationFile = 'sunumlar/6-sinif-unite1-bilisim.pptx';
+                } else if (week >= 8 && week <= 14) {
+                    presentationFile = 'sunumlar/6-sinif-unite2-etik-guvenlik.pptx';
+                } else if (week >= 15 && week <= 21) {
+                    presentationFile = 'sunumlar/6-sinif-unite3-iletisim.pptx';
+                } else if (week >= 22 && week <= 28) {
+                    presentationFile = 'sunumlar/6-sinif-unite4-urun-olusturma.pptx';
+                } else if (week >= 29 && week <= 36) {
+                    presentationFile = 'sunumlar/6-sinif-unite5-problem-cozme.pptx';
+                }
+            }
+
+            return presentationFile;
+        }
+
+        function openPresentationFullscreen(filePath) {
+            // Tam ekran sunum görüntüleyici
+            const fullUrl = window.location.origin + window.location.pathname.substring(0, window.location.pathname.lastIndexOf('/') + 1) + filePath;
+            const viewerUrl = `https://view.officeapps.live.com/op/view.aspx?src=${encodeURIComponent(fullUrl)}`;
+
+            // Yeni pencerede aç
+            window.open(viewerUrl, '_blank', 'width=1200,height=800,menubar=no,toolbar=no,location=no,status=no');
+        }
+
+        function clearContent() {
+            const container = document.getElementById('content-container');
+            container.classList.remove('active');
+            container.innerHTML = `
+                <div class="no-selection">
+                    <div class="emoji">🎓</div>
+                    <h3>Hafta Seçin</h3>
+                    <p>Yukarıdan sınıf ve hafta seçerek içerikleri görüntüleyebilirsiniz.</p>
+                </div>
+            `;
+        }
+    </script>
+</body>
+</html>

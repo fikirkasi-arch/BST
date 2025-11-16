@@ -1,0 +1,1075 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Veli Bilgilendirme Mektupları - BTY</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .container { max-width: 1200px; margin: 0 auto; }
+
+        header {
+            text-align: center;
+            color: white;
+            padding: 40px 20px;
+            margin-bottom: 30px;
+        }
+
+        header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .intro-box {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .intro-box h2 {
+            color: #667eea;
+            margin-bottom: 15px;
+        }
+
+        .intro-box p {
+            color: #555;
+            line-height: 1.8;
+            margin-bottom: 10px;
+        }
+
+        .templates-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+
+        .template-card {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            cursor: pointer;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .template-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+        }
+
+        .template-icon {
+            font-size: 3em;
+            margin-bottom: 15px;
+        }
+
+        .template-card h3 {
+            color: #667eea;
+            margin-bottom: 10px;
+            font-size: 1.4em;
+        }
+
+        .template-card p {
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+
+        .open-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1em;
+            width: 100%;
+            transition: opacity 0.3s;
+        }
+
+        .open-btn:hover {
+            opacity: 0.9;
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.7);
+            z-index: 1000;
+            overflow-y: auto;
+            padding: 20px;
+        }
+
+        .modal-content {
+            background: white;
+            max-width: 900px;
+            margin: 20px auto;
+            border-radius: 15px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+
+        .modal-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 25px 30px;
+            border-radius: 15px 15px 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h2 {
+            font-size: 1.8em;
+        }
+
+        .close-btn {
+            background: rgba(255,255,255,0.2);
+            border: none;
+            color: white;
+            font-size: 1.5em;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .close-btn:hover {
+            background: rgba(255,255,255,0.3);
+        }
+
+        .modal-body {
+            padding: 40px;
+        }
+
+        .letter-content {
+            background: white;
+            padding: 50px;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            font-family: 'Times New Roman', serif;
+            line-height: 1.8;
+            color: #333;
+        }
+
+        .editable {
+            background: #fffbcc;
+            padding: 2px 6px;
+            border-bottom: 2px dashed #667eea;
+            min-width: 150px;
+            display: inline-block;
+            cursor: text;
+        }
+
+        .editable:focus {
+            outline: none;
+            background: #fff9b3;
+            border-bottom: 2px solid #667eea;
+        }
+
+        .letter-header {
+            text-align: right;
+            margin-bottom: 30px;
+            font-size: 0.95em;
+        }
+
+        .letter-title {
+            text-align: center;
+            font-weight: bold;
+            font-size: 1.3em;
+            margin: 30px 0;
+            text-decoration: underline;
+        }
+
+        .letter-greeting {
+            margin-bottom: 20px;
+        }
+
+        .letter-body {
+            text-align: justify;
+            margin-bottom: 30px;
+        }
+
+        .letter-body p {
+            margin-bottom: 15px;
+        }
+
+        .letter-footer {
+            margin-top: 40px;
+            text-align: right;
+        }
+
+        .signature-line {
+            margin-top: 50px;
+            border-top: 1px solid #333;
+            width: 200px;
+            float: right;
+            text-align: center;
+            padding-top: 10px;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+            padding: 20px 40px;
+            background: #f8f9fa;
+            border-radius: 0 0 15px 15px;
+        }
+
+        .action-btn {
+            flex: 1;
+            padding: 15px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1em;
+            cursor: pointer;
+            transition: opacity 0.3s;
+        }
+
+        .print-btn {
+            background: #28a745;
+            color: white;
+        }
+
+        .reset-btn {
+            background: #ffc107;
+            color: #333;
+        }
+
+        .action-btn:hover {
+            opacity: 0.9;
+        }
+
+        .info-list {
+            background: #e7f3ff;
+            border-left: 4px solid #0066cc;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+
+        .info-list ul {
+            margin-left: 20px;
+            margin-top: 10px;
+        }
+
+        .info-list li {
+            margin-bottom: 8px;
+        }
+
+        .table-editable {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+
+        .table-editable th,
+        .table-editable td {
+            border: 1px solid #333;
+            padding: 10px;
+            text-align: left;
+        }
+
+        .table-editable th {
+            background: #f0f0f0;
+            font-weight: bold;
+        }
+
+        /* Print Styles */
+        @media print {
+            body {
+                background: white;
+                padding: 0;
+            }
+
+            .modal {
+                display: block;
+                position: static;
+                background: white;
+                padding: 0;
+            }
+
+            .modal-content {
+                box-shadow: none;
+                max-width: 100%;
+                margin: 0;
+            }
+
+            .modal-header,
+            .action-buttons,
+            .open-btn,
+            .close-btn,
+            header,
+            .intro-box,
+            .templates-grid {
+                display: none !important;
+            }
+
+            .modal-body {
+                padding: 0;
+            }
+
+            .letter-content {
+                border: none;
+                padding: 20mm;
+            }
+
+            .editable {
+                background: transparent;
+                border-bottom: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>📧 Veli Bilgilendirme Mektupları</h1>
+            <p>Düzenlenebilir ve PDF Olarak İndirilebilir Şablonlar</p>
+        </header>
+
+        <div class="intro-box">
+            <h2>📝 Kullanım Kılavuzu</h2>
+            <p><strong>Bu sayfada hazır veli mektup şablonları bulabilirsiniz.</strong></p>
+            <p>✏️ <strong>Düzenleme:</strong> Sarı renkli alanlar düzenlenebilir. Üzerine tıklayarak kendi bilgilerinizi girebilirsiniz.</p>
+            <p>🖨️ <strong>PDF İndirme:</strong> "PDF Olarak İndir" butonuna basarak mektubu PDF formatında kaydedebilirsiniz.</p>
+            <p>🔄 <strong>Sıfırlama:</strong> "Sıfırla" butonu ile mektubu varsayılan haline döndürebilirsiniz.</p>
+        </div>
+
+        <div class="templates-grid">
+            <!-- Template 1: Dönem Başı Bilgilendirme -->
+            <div class="template-card">
+                <div class="template-icon">📋</div>
+                <h3>Dönem Başı Bilgilendirme</h3>
+                <p>Dönem başında velileri ders içeriği, kullanılacak materyaller ve değerlendirme kriterleri hakkında bilgilendirme mektubu.</p>
+                <button class="open-btn" onclick="openModal('modal1')">📄 Mektubu Aç ve Düzenle</button>
+            </div>
+
+            <!-- Template 2: Proje Duyurusu -->
+            <div class="template-card">
+                <div class="template-icon">🎯</div>
+                <h3>Proje Duyurusu</h3>
+                <p>Öğrencilere verilen proje ödevleri hakkında velileri bilgilendirme ve destek talep etme mektubu.</p>
+                <button class="open-btn" onclick="openModal('modal2')">📄 Mektubu Aç ve Düzenle</button>
+            </div>
+
+            <!-- Template 3: Dönem Sonu Raporu -->
+            <div class="template-card">
+                <div class="template-icon">📊</div>
+                <h3>Dönem Sonu Gelişim Raporu</h3>
+                <p>Öğrencinin dönem boyunca gösterdiği gelişim ve başarı durumu hakkında veli bilgilendirme mektubu.</p>
+                <button class="open-btn" onclick="openModal('modal3')">📄 Mektubu Aç ve Düzenle</button>
+            </div>
+
+            <!-- Template 4: Dijital Güvenlik -->
+            <div class="template-card">
+                <div class="template-icon">🔒</div>
+                <h3>Dijital Güvenlik Bilgilendirme</h3>
+                <p>İnternet güvenliği, dijital vatandaşlık ve ebeveyn kontrolü hakkında velilere öneriler ve bilgilendirme.</p>
+                <button class="open-btn" onclick="openModal('modal4')">📄 Mektubu Aç ve Düzenle</button>
+            </div>
+
+            <!-- Template 5: Etkinlik Daveti -->
+            <div class="template-card">
+                <div class="template-icon">🎉</div>
+                <h3>Etkinlik ve Sergi Daveti</h3>
+                <p>Öğrenci proje sergisi, kodlama etkinliği veya sunumlar için velileri davet mektubu.</p>
+                <button class="open-btn" onclick="openModal('modal5')">📄 Mektubu Aç ve Düzenle</button>
+            </div>
+
+            <!-- Template 6: Ödev Takip Formu -->
+            <div class="template-card">
+                <div class="template-icon">✅</div>
+                <h3>Haftalık Ödev Takip Formu</h3>
+                <p>Haftalık ödevlerin takibi ve veli imzası için kullanılabilecek form şablonu.</p>
+                <button class="open-btn" onclick="openModal('modal6')">📄 Mektubu Aç ve Düzenle</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal 1: Dönem Başı Bilgilendirme -->
+    <div id="modal1" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>📋 Dönem Başı Bilgilendirme Mektubu</h2>
+                <button class="close-btn" onclick="closeModal('modal1')">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="letter-content" id="letter1">
+                    <div class="letter-header">
+                        <div><span class="editable" contenteditable="true">OKUL ADI</span></div>
+                        <div>Bilişim Teknolojileri ve Yazılım Dersi</div>
+                        <div>Tarih: <span class="editable" contenteditable="true">__ / __ / 2024</span></div>
+                    </div>
+
+                    <div class="letter-title">DÖNEM BAŞI BİLGİLENDİRME MEKTUBU</div>
+
+                    <div class="letter-greeting">
+                        Sayın Veli,
+                    </div>
+
+                    <div class="letter-body">
+                        <p>
+                            <span class="editable" contenteditable="true">2024-2025</span> Eğitim-Öğretim yılı
+                            <span class="editable" contenteditable="true">1. Dönem</span>'inde öğrenciniz
+                            <span class="editable" contenteditable="true">________</span> ile Bilişim Teknolojileri ve Yazılım dersinde birlikte olacağız.
+                        </p>
+
+                        <p>
+                            Bu dönem boyunca öğrencilerimiz;
+                        </p>
+
+                        <div class="info-list">
+                            <strong>📚 Ders İçeriği:</strong>
+                            <ul>
+                                <li>Bilişim teknolojilerinin tanıtımı ve güvenli kullanımı</li>
+                                <li>Algoritmik düşünme ve problem çözme becerileri</li>
+                                <li>Scratch programlama temelleri</li>
+                                <li>Robotik kodlama etkinlikleri</li>
+                                <li>Dijital tasarım ve yaratıcılık projeleri</li>
+                            </ul>
+                        </div>
+
+                        <p>
+                            <strong>📖 Kullanılacak Materyaller:</strong> Ders kitabı, Scratch platformu (scratch.mit.edu),
+                            çalışma yaprakları, eğitsel oyunlar ve dijital araçlar kullanılacaktır.
+                        </p>
+
+                        <p>
+                            <strong>📊 Değerlendirme Kriterleri:</strong> Öğrenciler sınıf içi etkinlikler (%30),
+                            proje çalışmaları (%40) ve yazılı sınavlar (%30) ile değerlendirilecektir.
+                        </p>
+
+                        <div class="info-list">
+                            <strong>👨‍👩‍👧‍👦 Velilerimizden Beklentilerimiz:</strong>
+                            <ul>
+                                <li>Öğrencinizin internet kullanımını kontrol altında tutmanız</li>
+                                <li>Scratch projelerini evde birlikte incelemeniz</li>
+                                <li>Ekran süresinin sınırlandırılması ve dengeli kullanımı</li>
+                                <li>Ödevlerin düzenli takibi</li>
+                            </ul>
+                        </div>
+
+                        <p>
+                            Herhangi bir sorunuz olduğunda benimle iletişime geçmekten çekinmeyiniz.
+                        </p>
+
+                        <p>
+                            Saygılarımla,
+                        </p>
+                    </div>
+
+                    <div class="letter-footer">
+                        <div><span class="editable" contenteditable="true">ÖĞRETMEN ADI SOYADI</span></div>
+                        <div>Bilişim Teknolojileri Öğretmeni</div>
+                        <div>İletişim: <span class="editable" contenteditable="true">e-posta / telefon</span></div>
+                    </div>
+                </div>
+            </div>
+            <div class="action-buttons">
+                <button class="action-btn print-btn" onclick="printLetter()">🖨️ PDF Olarak İndir</button>
+                <button class="action-btn reset-btn" onclick="resetLetter('letter1')">🔄 Sıfırla</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal 2: Proje Duyurusu -->
+    <div id="modal2" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>🎯 Proje Duyurusu</h2>
+                <button class="close-btn" onclick="closeModal('modal2')">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="letter-content" id="letter2">
+                    <div class="letter-header">
+                        <div><span class="editable" contenteditable="true">OKUL ADI</span></div>
+                        <div>Bilişim Teknolojileri ve Yazılım Dersi</div>
+                        <div>Tarih: <span class="editable" contenteditable="true">__ / __ / 2024</span></div>
+                    </div>
+
+                    <div class="letter-title">PROJE DUYURUSU</div>
+
+                    <div class="letter-greeting">
+                        Sayın Veli,
+                    </div>
+
+                    <div class="letter-body">
+                        <p>
+                            Öğrenciniz <span class="editable" contenteditable="true">________</span>'a
+                            <span class="editable" contenteditable="true">PROJE KONUSU</span> konulu proje ödevi verilmiştir.
+                        </p>
+
+                        <div class="info-list">
+                            <strong>🎯 Proje Hedefleri:</strong>
+                            <ul>
+                                <li><span class="editable" contenteditable="true">Scratch kullanarak bir oyun tasarlama</span></li>
+                                <li><span class="editable" contenteditable="true">Algoritma geliştirme ve problem çözme</span></li>
+                                <li><span class="editable" contenteditable="true">Yaratıcılık ve tasarım becerileri</span></li>
+                            </ul>
+                        </div>
+
+                        <p>
+                            <strong>📅 Önemli Tarihler:</strong>
+                        </p>
+                        <ul>
+                            <li>Proje Başlangıç: <span class="editable" contenteditable="true">__ / __ / 2024</span></li>
+                            <li>Teslim Tarihi: <span class="editable" contenteditable="true">__ / __ / 2024</span></li>
+                            <li>Sunum Günü: <span class="editable" contenteditable="true">__ / __ / 2024</span></li>
+                        </ul>
+
+                        <div class="info-list">
+                            <strong>📋 Beklenen Çıktılar:</strong>
+                            <ul>
+                                <li><span class="editable" contenteditable="true">Çalışır durumda bir Scratch projesi</span></li>
+                                <li><span class="editable" contenteditable="true">Proje raporu (1-2 sayfa)</span></li>
+                                <li><span class="editable" contenteditable="true">Sınıfta yapılacak kısa sunum (5 dk)</span></li>
+                            </ul>
+                        </div>
+
+                        <div class="info-list">
+                            <strong>👨‍👩‍👧‍👦 Veli Desteği Önerileri:</strong>
+                            <ul>
+                                <li>Projeyi birlikte planlayabilir, ancak yapımını öğrenciniz gerçekleştirmelidir</li>
+                                <li>Düzenli çalışma saatleri oluşturulmasına yardımcı olabilirsiniz</li>
+                                <li>Projeyi test edip geri bildirim verebilirsiniz</li>
+                                <li>Öğrencinizi motive edebilir ve cesaretlendirebilirsiniz</li>
+                            </ul>
+                        </div>
+
+                        <p>
+                            Proje ile ilgili sorularınız için benimle iletişime geçebilirsiniz.
+                        </p>
+
+                        <p>
+                            Saygılarımla,
+                        </p>
+                    </div>
+
+                    <div class="letter-footer">
+                        <div><span class="editable" contenteditable="true">ÖĞRETMEN ADI SOYADI</span></div>
+                        <div>Bilişim Teknolojileri Öğretmeni</div>
+                        <div>İletişim: <span class="editable" contenteditable="true">e-posta / telefon</span></div>
+                    </div>
+                </div>
+            </div>
+            <div class="action-buttons">
+                <button class="action-btn print-btn" onclick="printLetter()">🖨️ PDF Olarak İndir</button>
+                <button class="action-btn reset-btn" onclick="resetLetter('letter2')">🔄 Sıfırla</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal 3: Dönem Sonu Raporu -->
+    <div id="modal3" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>📊 Dönem Sonu Gelişim Raporu</h2>
+                <button class="close-btn" onclick="closeModal('modal3')">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="letter-content" id="letter3">
+                    <div class="letter-header">
+                        <div><span class="editable" contenteditable="true">OKUL ADI</span></div>
+                        <div>Bilişim Teknolojileri ve Yazılım Dersi</div>
+                        <div>Tarih: <span class="editable" contenteditable="true">__ / __ / 2024</span></div>
+                    </div>
+
+                    <div class="letter-title">DÖNEM SONU GELİŞİM RAPORU</div>
+
+                    <div class="letter-greeting">
+                        Sayın Veli,
+                    </div>
+
+                    <div class="letter-body">
+                        <p>
+                            <span class="editable" contenteditable="true">2024-2025</span> Eğitim-Öğretim yılı
+                            <span class="editable" contenteditable="true">1. Dönem</span>'i sona ermiştir.
+                            Öğrenciniz <span class="editable" contenteditable="true">________</span>'ın dönem boyunca gösterdiği
+                            gelişim ve başarı durumu hakkında sizi bilgilendirmek isterim.
+                        </p>
+
+                        <p>
+                            <strong>📊 Genel Başarı Durumu:</strong> <span class="editable" contenteditable="true">85/100</span>
+                        </p>
+
+                        <table class="table-editable">
+                            <tr>
+                                <th>Değerlendirme Alanı</th>
+                                <th>Puan</th>
+                                <th>Açıklama</th>
+                            </tr>
+                            <tr>
+                                <td>Sınıf İçi Etkinlikler</td>
+                                <td><span class="editable" contenteditable="true">80</span>/100</td>
+                                <td><span class="editable" contenteditable="true">Aktif katılım</span></td>
+                            </tr>
+                            <tr>
+                                <td>Proje Çalışmaları</td>
+                                <td><span class="editable" contenteditable="true">90</span>/100</td>
+                                <td><span class="editable" contenteditable="true">Çok başarılı projeler</span></td>
+                            </tr>
+                            <tr>
+                                <td>Yazılı Sınavlar</td>
+                                <td><span class="editable" contenteditable="true">85</span>/100</td>
+                                <td><span class="editable" contenteditable="true">İyi performans</span></td>
+                            </tr>
+                        </table>
+
+                        <div class="info-list">
+                            <strong>✅ Güçlü Yönler:</strong>
+                            <ul>
+                                <li><span class="editable" contenteditable="true">Scratch programlamada oldukça yetenekli</span></li>
+                                <li><span class="editable" contenteditable="true">Yaratıcı projeler geliştiriyor</span></li>
+                                <li><span class="editable" contenteditable="true">Akranlarına yardımcı oluyor</span></li>
+                            </ul>
+                        </div>
+
+                        <div class="info-list">
+                            <strong>📈 Geliştirilmesi Gereken Alanlar:</strong>
+                            <ul>
+                                <li><span class="editable" contenteditable="true">Algoritma tasarımında daha sistematik olabilir</span></li>
+                                <li><span class="editable" contenteditable="true">Proje sunumlarında daha özgüvenli olmalı</span></li>
+                            </ul>
+                        </div>
+
+                        <div class="info-list">
+                            <strong>💡 Öneriler:</strong>
+                            <ul>
+                                <li><span class="editable" contenteditable="true">Evde düzenli Scratch çalışması yapabilir</span></li>
+                                <li><span class="editable" contenteditable="true">Online kodlama platformlarını keşfedebilir</span></li>
+                                <li><span class="editable" contenteditable="true">Robotik kodlama kulüplerine katılabilir</span></li>
+                            </ul>
+                        </div>
+
+                        <p>
+                            Öğrencinizle gurur duyabilirsiniz. Gösterdiği başarı ve çabanın devamını diliyorum.
+                        </p>
+
+                        <p>
+                            Saygılarımla,
+                        </p>
+                    </div>
+
+                    <div class="letter-footer">
+                        <div><span class="editable" contenteditable="true">ÖĞRETMEN ADI SOYADI</span></div>
+                        <div>Bilişim Teknolojileri Öğretmeni</div>
+                        <div>İletişim: <span class="editable" contenteditable="true">e-posta / telefon</span></div>
+                    </div>
+                </div>
+            </div>
+            <div class="action-buttons">
+                <button class="action-btn print-btn" onclick="printLetter()">🖨️ PDF Olarak İndir</button>
+                <button class="action-btn reset-btn" onclick="resetLetter('letter3')">🔄 Sıfırla</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal 4: Dijital Güvenlik -->
+    <div id="modal4" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>🔒 Dijital Güvenlik Bilgilendirme</h2>
+                <button class="close-btn" onclick="closeModal('modal4')">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="letter-content" id="letter4">
+                    <div class="letter-header">
+                        <div><span class="editable" contenteditable="true">OKUL ADI</span></div>
+                        <div>Bilişim Teknolojileri ve Yazılım Dersi</div>
+                        <div>Tarih: <span class="editable" contenteditable="true">__ / __ / 2024</span></div>
+                    </div>
+
+                    <div class="letter-title">DİJİTAL GÜVENLİK BİLGİLENDİRME</div>
+
+                    <div class="letter-greeting">
+                        Sayın Veli,
+                    </div>
+
+                    <div class="letter-body">
+                        <p>
+                            Dijital dünyada çocuklarımızın güvenliği her geçen gün daha fazla önem kazanmaktadır.
+                            Bu mektupla, öğrencinizin internet ve dijital araçları güvenli kullanması için
+                            yapabileceğiniz önemli düzenlemeler hakkında sizi bilgilendirmek istiyorum.
+                        </p>
+
+                        <div class="info-list">
+                            <strong>🔐 İnternet Güvenliği İpuçları:</strong>
+                            <ul>
+                                <li><strong>Kişisel Bilgi Paylaşımı:</strong> Çocuğunuza adres, telefon, okul bilgisi gibi
+                                kişisel verileri asla paylaşmaması gerektiğini öğretin</li>
+                                <li><strong>Güçlü Şifreler:</strong> Tüm hesaplar için güçlü ve farklı şifreler kullanın</li>
+                                <li><strong>Tanımadık Kişilerle İletişim:</strong> Online ortamlarda tanımadık kişilerle
+                                konuşmaması konusunda uyarın</li>
+                                <li><strong>Şüpheli Linkler:</strong> Bilmediği linkler, dosyalar veya eklere tıklamaması
+                                gerektiğini öğretin</li>
+                                <li><strong>Siber Zorbalık:</strong> Herhangi bir rahatsız edici durumla karşılaşırsa
+                                sizinle paylaşmasını sağlayın</li>
+                            </ul>
+                        </div>
+
+                        <div class="info-list">
+                            <strong>👨‍👩‍👧‍👦 Ebeveyn Kontrolleri:</strong>
+                            <ul>
+                                <li><strong>Google Family Link:</strong> Android cihazlar için ebeveyn kontrolü</li>
+                                <li><strong>Apple Parental Controls:</strong> iPhone/iPad için içerik filtreleme</li>
+                                <li><strong>Windows Family Safety:</strong> Bilgisayarlarda kullanım süresi sınırlama</li>
+                                <li><strong>YouTube Kids:</strong> Çocuklar için güvenli video platformu</li>
+                                <li><strong>Scratch:</strong> Güvenli ve eğitsel kodlama platformu (scratch.mit.edu)</li>
+                            </ul>
+                        </div>
+
+                        <div class="info-list">
+                            <strong>⏰ Ekran Süresi Önerileri:</strong>
+                            <ul>
+                                <li><strong>6-10 yaş:</strong> Günde maksimum 1-2 saat (eğitsel içerik dahil)</li>
+                                <li><strong>11-14 yaş:</strong> Günde maksimum 2-3 saat (ödev dahil)</li>
+                                <li><strong>Molalar:</strong> Her 30 dakikada bir 5-10 dakika ara verin</li>
+                                <li><strong>Uyku Öncesi:</strong> Yatmadan 1 saat önce ekran kullanımını sonlandırın</li>
+                                <li><strong>Aile Zamanı:</strong> Yemek ve aile zamanlarında ekran kullanmayın</li>
+                            </ul>
+                        </div>
+
+                        <div class="info-list">
+                            <strong>🌐 Dijital Vatandaşlık:</strong>
+                            <ul>
+                                <li>Saygılı ve nazik online davranış</li>
+                                <li>Telif haklarına saygı (müzik, resim, video kullanımı)</li>
+                                <li>Güvenilir kaynaklardan bilgi edinme</li>
+                                <li>Kendi dijital ayak izini yönetme bilinci</li>
+                                <li>Online ve offline yaşam dengesi</li>
+                            </ul>
+                        </div>
+
+                        <p>
+                            <strong>📚 Faydalı Kaynaklar:</strong>
+                        </p>
+                        <ul>
+                            <li>Güvenli İnternet Merkezi: www.guvenliweb.org.tr</li>
+                            <li>BTK Çocuk Akademi: cocukakademi.btk.gov.tr</li>
+                            <li>ALO 114 Çocuk Destek Hattı</li>
+                        </ul>
+
+                        <p>
+                            Birlikte çocuklarımızın dijital dünyada güvenli ve bilinçli bireyler olmasını sağlayabiliriz.
+                        </p>
+
+                        <p>
+                            Saygılarımla,
+                        </p>
+                    </div>
+
+                    <div class="letter-footer">
+                        <div><span class="editable" contenteditable="true">ÖĞRETMEN ADI SOYADI</span></div>
+                        <div>Bilişim Teknolojileri Öğretmeni</div>
+                        <div>İletişim: <span class="editable" contenteditable="true">e-posta / telefon</span></div>
+                    </div>
+                </div>
+            </div>
+            <div class="action-buttons">
+                <button class="action-btn print-btn" onclick="printLetter()">🖨️ PDF Olarak İndir</button>
+                <button class="action-btn reset-btn" onclick="resetLetter('letter4')">🔄 Sıfırla</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal 5: Etkinlik Daveti -->
+    <div id="modal5" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>🎉 Etkinlik ve Sergi Daveti</h2>
+                <button class="close-btn" onclick="closeModal('modal5')">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="letter-content" id="letter5">
+                    <div class="letter-header">
+                        <div><span class="editable" contenteditable="true">OKUL ADI</span></div>
+                        <div>Bilişim Teknolojileri ve Yazılım Dersi</div>
+                        <div>Tarih: <span class="editable" contenteditable="true">__ / __ / 2024</span></div>
+                    </div>
+
+                    <div class="letter-title">ETKİNLİK VE SERGİ DAVETİ</div>
+
+                    <div class="letter-greeting">
+                        Sayın Veli,
+                    </div>
+
+                    <div class="letter-body">
+                        <p>
+                            Okulumuzda düzenlenecek olan
+                            <strong><span class="editable" contenteditable="true">KODLAMA VE ROBOTĐK PROJE SERGİSİ</span></strong>
+                            etkinliğine sizi ve ailenizi davet etmekten mutluluk duyarız.
+                        </p>
+
+                        <div class="info-list">
+                            <strong>📅 Etkinlik Detayları:</strong>
+                            <ul>
+                                <li><strong>Tarih:</strong> <span class="editable" contenteditable="true">__ / __ / 2024</span></li>
+                                <li><strong>Saat:</strong> <span class="editable" contenteditable="true">14:00 - 16:00</span></li>
+                                <li><strong>Yer:</strong> <span class="editable" contenteditable="true">Okul Konferans Salonu</span></li>
+                            </ul>
+                        </div>
+
+                        <div class="info-list">
+                            <strong>🎯 Etkinlik Programı:</strong>
+                            <ul>
+                                <li><span class="editable" contenteditable="true">14:00 - 14:30: Açılış ve Hoş Geldiniz Konuşması</span></li>
+                                <li><span class="editable" contenteditable="true">14:30 - 15:30: Öğrenci Proje Sunumları</span></li>
+                                <li><span class="editable" contenteditable="true">15:30 - 16:00: Proje Sergisi Gezisi ve İkramlar</span></li>
+                            </ul>
+                        </div>
+
+                        <p>
+                            <strong>🎨 Sergilenecek Projeler:</strong>
+                        </p>
+                        <ul>
+                            <li><span class="editable" contenteditable="true">Scratch ile hazırlanan oyun ve animasyonlar</span></li>
+                            <li><span class="editable" contenteditable="true">Robotik kodlama projeleri</span></li>
+                            <li><span class="editable" contenteditable="true">Dijital tasarım çalışmaları</span></li>
+                            <li><span class="editable" contenteditable="true">Algoritma ve mantık oyunları</span></li>
+                        </ul>
+
+                        <p>
+                            Öğrenciniz <span class="editable" contenteditable="true">________</span> bu etkinlikte
+                            <strong><span class="editable" contenteditable="true">PROJE ADI</span></strong> başlıklı projesini sunacaktır.
+                        </p>
+
+                        <div class="info-list">
+                            <strong>ℹ️ Önemli Bilgiler:</strong>
+                            <ul>
+                                <li>Etkinliğe katılım ücretsizdir</li>
+                                <li>Velilerimiz için otopark alanı mevcuttur</li>
+                                <li>Fotoğraf ve video çekimi yapılacaktır</li>
+                                <li>Etkinlik sonunda sertifika töreni düzenlenecektir</li>
+                            </ul>
+                        </div>
+
+                        <p>
+                            Katılımınızı rica eder, öğrencilerimizin çabalarını birlikte kutlamak isteriz.
+                        </p>
+
+                        <p>
+                            <strong>Lütfen katılım durumunuzu <span class="editable" contenteditable="true">__ / __ / 2024</span> tarihine kadar bildiriniz.</strong>
+                        </p>
+
+                        <p style="text-align: center; margin-top: 30px; padding-top: 20px; border-top: 2px dashed #333;">
+                            ✂️ ---------------------------------------------- KESTİKTEN SONRA GÖNDERİNİZ ----------------------------------------------
+                        </p>
+
+                        <p style="margin-top: 20px;">
+                            Öğrenci: <span class="editable" contenteditable="true">________</span> |
+                            Sınıf: <span class="editable" contenteditable="true">___</span>
+                        </p>
+
+                        <p>
+                            ☐ Etkinliğe katılacağız (<span class="editable" contenteditable="true">__ </span> kişi)
+                        </p>
+                        <p>
+                            ☐ Maalesef katılamayacağız
+                        </p>
+
+                        <p style="margin-top: 30px;">
+                            Veli Adı Soyadı: _____________________ &nbsp;&nbsp;&nbsp; İmza: _____________________
+                        </p>
+                    </div>
+
+                    <div class="letter-footer">
+                        <div><span class="editable" contenteditable="true">ÖĞRETMEN ADI SOYADI</span></div>
+                        <div>Bilişim Teknolojileri Öğretmeni</div>
+                        <div>İletişim: <span class="editable" contenteditable="true">e-posta / telefon</span></div>
+                    </div>
+                </div>
+            </div>
+            <div class="action-buttons">
+                <button class="action-btn print-btn" onclick="printLetter()">🖨️ PDF Olarak İndir</button>
+                <button class="action-btn reset-btn" onclick="resetLetter('letter5')">🔄 Sıfırla</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal 6: Ödev Takip Formu -->
+    <div id="modal6" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>✅ Haftalık Ödev Takip Formu</h2>
+                <button class="close-btn" onclick="closeModal('modal6')">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="letter-content" id="letter6">
+                    <div class="letter-header">
+                        <div><span class="editable" contenteditable="true">OKUL ADI</span></div>
+                        <div>Bilişim Teknolojileri ve Yazılım Dersi</div>
+                        <div>Öğretmen: <span class="editable" contenteditable="true">___________</span></div>
+                    </div>
+
+                    <div class="letter-title">HAFTALIK ÖDEV TAKİP FORMU</div>
+
+                    <p style="text-align: center; margin-bottom: 20px;">
+                        Öğrenci: <span class="editable" contenteditable="true">___________</span> |
+                        Sınıf: <span class="editable" contenteditable="true">___</span> |
+                        Ay: <span class="editable" contenteditable="true">___________</span>
+                    </p>
+
+                    <div class="letter-body">
+                        <table class="table-editable">
+                            <tr>
+                                <th style="width: 15%;">Hafta</th>
+                                <th style="width: 35%;">Ödev Konusu</th>
+                                <th style="width: 15%;">Teslim Tarihi</th>
+                                <th style="width: 20%;">Tamamlandı mı?</th>
+                                <th style="width: 15%;">Veli İmzası</th>
+                            </tr>
+                            <tr>
+                                <td>Hafta 1</td>
+                                <td><span class="editable" contenteditable="true">Scratch'te dans eden karakter</span></td>
+                                <td><span class="editable" contenteditable="true">__ / __</span></td>
+                                <td>☐ Evet ☐ Hayır</td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td>Hafta 2</td>
+                                <td><span class="editable" contenteditable="true">Çalışma yaprağı - Algoritma</span></td>
+                                <td><span class="editable" contenteditable="true">__ / __</span></td>
+                                <td>☐ Evet ☐ Hayır</td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td>Hafta 3</td>
+                                <td><span class="editable" contenteditable="true">Top yakalama oyunu projesi</span></td>
+                                <td><span class="editable" contenteditable="true">__ / __</span></td>
+                                <td>☐ Evet ☐ Hayır</td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td>Hafta 4</td>
+                                <td><span class="editable" contenteditable="true">Dijital güvenlik araştırması</span></td>
+                                <td><span class="editable" contenteditable="true">__ / __</span></td>
+                                <td>☐ Evet ☐ Hayır</td>
+                                <td></td>
+                            </tr>
+                        </table>
+
+                        <div class="info-list" style="margin-top: 30px;">
+                            <strong>📋 Velilerimizden Ricamız:</strong>
+                            <ul>
+                                <li>Lütfen ödevlerin tamamlanma durumunu kontrol ediniz</li>
+                                <li>Ödevin yapıldığı hafta ilgili kutucuğu işaretleyiniz</li>
+                                <li>Haftalık olarak imzalayarak geri gönderiniz</li>
+                                <li>Ödev ile ilgili sorularınızda benimle iletişime geçiniz</li>
+                            </ul>
+                        </div>
+
+                        <div class="info-list">
+                            <strong>💡 Ödev İpuçları:</strong>
+                            <ul>
+                                <li><strong>Düzenli Çalışma:</strong> Her gün 15-20 dakika çalışma ideal</li>
+                                <li><strong>Scratch Hesabı:</strong> scratch.mit.edu'dan ücretsiz hesap açın</li>
+                                <li><strong>Proje Kaydetme:</strong> Projeler online kaydedilmeli</li>
+                                <li><strong>Yardım:</strong> Takıldığı yerlerde öğretmene sorabilir</li>
+                            </ul>
+                        </div>
+
+                        <p style="margin-top: 40px;">
+                            <strong>Öğretmen Notları:</strong>
+                        </p>
+                        <p style="border: 1px solid #333; min-height: 80px; padding: 10px; margin-top: 10px;">
+                            <span class="editable" contenteditable="true">
+                                (Öğretmen bu alana haftalık geri bildirim yazabilir)
+                            </span>
+                        </p>
+
+                        <div style="margin-top: 40px; display: flex; justify-content: space-between;">
+                            <div>
+                                <p>Öğretmen İmzası</p>
+                                <p style="margin-top: 40px;">___________________</p>
+                            </div>
+                            <div>
+                                <p>Veli İmzası</p>
+                                <p style="margin-top: 40px;">___________________</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="action-buttons">
+                <button class="action-btn print-btn" onclick="printLetter()">🖨️ PDF Olarak İndir</button>
+                <button class="action-btn reset-btn" onclick="resetLetter('letter6')">🔄 Sıfırla</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Store original content for reset functionality
+        const originalContent = {};
+
+        // Initialize original content on page load
+        window.addEventListener('DOMContentLoaded', function() {
+            for (let i = 1; i <= 6; i++) {
+                const letter = document.getElementById('letter' + i);
+                if (letter) {
+                    originalContent['letter' + i] = letter.innerHTML;
+                }
+            }
+        });
+
+        function openModal(modalId) {
+            document.getElementById(modalId).style.display = 'block';
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }
+
+        function printLetter() {
+            window.print();
+        }
+
+        function resetLetter(letterId) {
+            if (confirm('Mektubu varsayılan haline döndürmek istediğinizden emin misiniz?')) {
+                const letter = document.getElementById(letterId);
+                if (letter && originalContent[letterId]) {
+                    letter.innerHTML = originalContent[letterId];
+                }
+            }
+        }
+
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            if (event.target.classList.contains('modal')) {
+                event.target.style.display = 'none';
+                document.body.style.overflow = 'auto';
+            }
+        }
+
+        // ESC key to close modal
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                const modals = document.getElementsByClassName('modal');
+                for (let modal of modals) {
+                    modal.style.display = 'none';
+                }
+                document.body.style.overflow = 'auto';
+            }
+        });
+    </script>
+</body>
+</html>

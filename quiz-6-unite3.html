@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <title>6. Sınıf Ünite 3 - İletişim ve İşbirliği Quiz</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', sans-serif; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; padding: 20px; }
+        .quiz-container { max-width: 800px; margin: 0 auto; background: white; border-radius: 20px; padding: 40px; box-shadow: 0 10px 40px rgba(0,0,0,0.2); }
+        h1 { text-align: center; color: #764ba2; font-size: 2.5em; margin-bottom: 10px; }
+        .subtitle { text-align: center; color: #666; margin-bottom: 30px; font-size: 1.2em; }
+        .progress-bar { width: 100%; height: 30px; background: #e0e0e0; border-radius: 15px; overflow: hidden; margin-bottom: 30px; }
+        .progress-fill { height: 100%; background: linear-gradient(90deg, #667eea 0%, #764ba2 100%); width: 0%; transition: width 0.3s; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; }
+        .question-number { color: #764ba2; font-weight: bold; font-size: 1.2em; margin-bottom: 10px; }
+        .question-text { font-size: 1.3em; color: #333; margin-bottom: 20px; line-height: 1.6; }
+        .options { display: flex; flex-direction: column; gap: 15px; }
+        .option { padding: 20px; border: 3px solid #e0e0e0; border-radius: 15px; cursor: pointer; transition: all 0.3s; font-size: 1.1em; }
+        .option:hover { border-color: #764ba2; background: #f5f0ff; transform: translateX(10px); }
+        .option.selected { border-color: #764ba2; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; }
+        .buttons { display: flex; gap: 20px; justify-content: center; margin-top: 30px; }
+        .btn { padding: 15px 40px; font-size: 1.1em; border: none; border-radius: 10px; cursor: pointer; font-weight: bold; transition: all 0.3s; }
+        .btn-primary { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; }
+        .btn-secondary { background: #e0e0e0; color: #333; }
+        .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+        .result-container { text-align: center; display: none; }
+        .score-display { font-size: 5em; color: #764ba2; font-weight: bold; margin: 30px 0; }
+        .emoji-celebration { font-size: 4em; margin: 20px 0; }
+        .score-details { background: #f5f0ff; padding: 30px; border-radius: 15px; margin-bottom: 30px; }
+        .score-item { font-size: 1.2em; margin: 10px 0; color: #555; }
+    </style>
+</head>
+<body>
+    <div class="quiz-container">
+        <h1>📡 İletişim ve İşbirliği Quiz</h1>
+        <p class="subtitle">6. Sınıf - Ünite 3 | 10 Soru</p>
+        <div class="progress-bar"><div class="progress-fill" id="progressBar">0/10</div></div>
+        <div id="quizContent">
+            <div><div class="question-number" id="questionNumber"></div>
+            <div class="question-text" id="questionText"></div>
+            <div class="options" id="optionsContainer"></div></div>
+            <div class="buttons">
+                <button class="btn btn-secondary" id="prevBtn" onclick="previousQuestion()" disabled>⬅️ Önceki</button>
+                <button class="btn btn-primary" id="nextBtn" onclick="nextQuestion()" disabled>Sonraki ➡️</button>
+                <button class="btn btn-primary" id="finishBtn" onclick="finishQuiz()" style="display:none;">✅ Bitir</button>
+            </div>
+        </div>
+        <div class="result-container" id="resultContainer">
+            <div class="emoji-celebration" id="celebrationEmoji"></div>
+            <div class="score-display" id="scoreDisplay"></div>
+            <div class="score-details">
+                <div class="score-item">✅ Doğru: <strong id="correctCount">0</strong></div>
+                <div class="score-item">❌ Yanlış: <strong id="incorrectCount">0</strong></div>
+                <div class="score-item">📊 Başarı: <strong id="successRate">0%</strong></div>
+            </div>
+            <button class="btn btn-primary" onclick="restartQuiz()">🔄 Tekrar Dene</button>
+            <br><a href="index.html" style="display:inline-block; margin-top:20px; color:#764ba2; text-decoration:none; font-size:1.1em;">⬅️ Ana Sayfaya Dön</a>
+        </div>
+    </div>
+    <script>
+        const questions = [
+            { question: "Google Drive kaç GB ücretsiz alan sunar?", options: ["5 GB", "10 GB", "15 GB", "20 GB"], correct: 2 },
+            { question: "Microsoft Teams ne için kullanılır?", options: ["Oyun oynama", "Ekip çalışması ve toplantılar", "Müzik dinleme", "Resim çizme"], correct: 1 },
+            { question: "Google Docs'un avantajı nedir?", options: ["Pahalıdır", "Aynı anda birden fazla kişi çalışabilir", "İnternet gerektirmez", "Sadece tek kişi kullanır"], correct: 1 },
+            { question: "Zoom'da ekran paylaşımı ne için kullanılır?", options: ["Oyun için", "Sunumları paylaşmak için", "Müzik için", "Resim için"], correct: 1 },
+            { question: "Bulut depolamanın avantajı nedir?", options: ["Sadece bir yerden erişim", "Her yerden erişim", "Pahalı", "Yavaş"], correct: 1 },
+            { question: "OneDrive hangi şirketin servisidir?", options: ["Google", "Microsoft", "Apple", "Facebook"], correct: 1 },
+            { question: "Video konferansta mikrofon ne zaman açılmalı?", options: ["Her zaman açık", "Konuşacağında", "Hiç açılmaz", "Sadece başta"], correct: 1 },
+            { question: "Google Sheets ne için kullanılır?", options: ["Video izleme", "Ortak tablolar oluşturma", "Oyun oynama", "Müzik yapma"], correct: 1 },
+            { question: "Değişiklik geçmişi ne işe yarar?", options: ["Hiçbir şeye", "Eski versiyonları görmek", "Sadece silmek için", "Sadece yazdırmak için"], correct: 1 },
+            { question: "Ortak belgede yorum bırakma neden önemlidir?", options: ["Gereksizdir", "İşbirliği için önemlidir", "Sadece eğlence için", "Zorunludur"], correct: 1 }
+        ];
+        let currentQuestion = 0, userAnswers = [], selectedOption = null;
+        function loadQuestion() { const q = questions[currentQuestion]; document.getElementById('questionNumber').textContent = `Soru ${currentQuestion + 1}/${questions.length}`; document.getElementById('questionText').textContent = q.question; const container = document.getElementById('optionsContainer'); container.innerHTML = ''; q.options.forEach((opt, idx) => { const div = document.createElement('div'); div.className = 'option'; div.textContent = opt; div.onclick = () => selectOption(idx); if (userAnswers[currentQuestion] === idx) { div.classList.add('selected'); selectedOption = idx; } container.appendChild(div); }); updateProgress(); updateButtons(); }
+        function selectOption(idx) { selectedOption = idx; userAnswers[currentQuestion] = idx; document.querySelectorAll('.option').forEach((o, i) => { o.classList.remove('selected'); if (i === idx) o.classList.add('selected'); }); updateButtons(); }
+        function nextQuestion() { if (currentQuestion < questions.length - 1) { currentQuestion++; selectedOption = null; loadQuestion(); } }
+        function previousQuestion() { if (currentQuestion > 0) { currentQuestion--; selectedOption = userAnswers[currentQuestion]; loadQuestion(); } }
+        function updateButtons() { document.getElementById('prevBtn').disabled = currentQuestion === 0; document.getElementById('nextBtn').disabled = selectedOption === null; if (currentQuestion === questions.length - 1) { document.getElementById('nextBtn').style.display = 'none'; document.getElementById('finishBtn').style.display = 'inline-block'; document.getElementById('finishBtn').disabled = userAnswers.filter(a => a !== undefined).length !== questions.length; } else { document.getElementById('nextBtn').style.display = 'inline-block'; document.getElementById('finishBtn').style.display = 'none'; } }
+        function updateProgress() { const answered = userAnswers.filter(a => a !== undefined).length; document.getElementById('progressBar').style.width = ((answered / questions.length) * 100) + '%'; document.getElementById('progressBar').textContent = `${answered}/${questions.length}`; }
+        function finishQuiz() { let correct = 0; questions.forEach((q, idx) => { if (userAnswers[idx] === q.correct) correct++; }); const pct = Math.round((correct / questions.length) * 100); document.getElementById('quizContent').style.display = 'none'; document.getElementById('resultContainer').style.display = 'block'; document.getElementById('scoreDisplay').textContent = `${correct}/${questions.length}`; document.getElementById('correctCount').textContent = correct; document.getElementById('incorrectCount').textContent = questions.length - correct; document.getElementById('successRate').textContent = pct + '%'; document.getElementById('celebrationEmoji').textContent = pct >= 90 ? '🏆' : pct >= 70 ? '🎉' : pct >= 50 ? '😊' : '📚'; }
+        function restartQuiz() { currentQuestion = 0; userAnswers = []; selectedOption = null; document.getElementById('quizContent').style.display = 'block'; document.getElementById('resultContainer').style.display = 'none'; loadQuestion(); }
+        loadQuestion();
+    </script>
+</body>
+</html>

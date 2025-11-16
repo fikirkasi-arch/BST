@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Donanım Hafıza Oyunu - 5. Sınıf Ünite 1</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .container {
+            max-width: 900px;
+            width: 100%;
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        h1 {
+            text-align: center;
+            color: #667eea;
+            margin-bottom: 10px;
+            font-size: 2em;
+        }
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 20px;
+        }
+        .stats {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 20px;
+            padding: 15px;
+            background: #f5f5f5;
+            border-radius: 10px;
+        }
+        .stat {
+            text-align: center;
+        }
+        .stat-value {
+            font-size: 2em;
+            font-weight: bold;
+            color: #667eea;
+        }
+        .stat-label {
+            font-size: 0.9em;
+            color: #666;
+        }
+        .game-board {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            margin: 30px 0;
+        }
+        .card {
+            aspect-ratio: 1;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 15px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3em;
+            transition: transform 0.6s;
+            transform-style: preserve-3d;
+            position: relative;
+        }
+        .card.flipped {
+            transform: rotateY(180deg);
+        }
+        .card.matched {
+            background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+            cursor: default;
+            animation: pulse 0.5s;
+        }
+        .card-front, .card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 15px;
+        }
+        .card-back {
+            transform: rotateY(180deg);
+            background: white;
+            color: #333;
+            font-size: 0.5em;
+            font-weight: bold;
+            text-align: center;
+            padding: 10px;
+        }
+        .card-front {
+            color: white;
+            font-size: 1.5em;
+        }
+        @keyframes pulse {
+            0%, 100% { transform: scale(1) rotateY(180deg); }
+            50% { transform: scale(1.1) rotateY(180deg); }
+        }
+        .buttons {
+            text-align: center;
+            margin-top: 20px;
+        }
+        .btn {
+            padding: 15px 30px;
+            font-size: 1.1em;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            margin: 5px;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+        .btn-secondary {
+            background: #e0e0e0;
+            color: #333;
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.7);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+        .modal.active {
+            display: flex;
+        }
+        .modal-content {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            text-align: center;
+            max-width: 500px;
+            animation: popIn 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+        @keyframes popIn {
+            0% { transform: scale(0); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        .modal h2 {
+            color: #667eea;
+            font-size: 2.5em;
+            margin-bottom: 20px;
+        }
+        .modal-stats {
+            background: #f5f5f5;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+        @media (max-width: 768px) {
+            .game-board {
+                grid-template-columns: repeat(3, 1fr);
+                gap: 10px;
+            }
+            .card {
+                font-size: 2em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>💾 Donanım Hafıza Oyunu</h1>
+        <p class="subtitle">5. Sınıf - Ünite 1: Bilişim Temelleri</p>
+
+        <div class="stats">
+            <div class="stat">
+                <div class="stat-value" id="moves">0</div>
+                <div class="stat-label">Hamle</div>
+            </div>
+            <div class="stat">
+                <div class="stat-value" id="matches">0/8</div>
+                <div class="stat-label">Eşleşme</div>
+            </div>
+            <div class="stat">
+                <div class="stat-value" id="timer">0:00</div>
+                <div class="stat-label">Süre</div>
+            </div>
+        </div>
+
+        <div class="game-board" id="gameBoard"></div>
+
+        <div class="buttons">
+            <button class="btn btn-primary" onclick="startGame()">🔄 Yeni Oyun</button>
+            <button class="btn btn-secondary" onclick="window.location.href='../index.html'">🏠 Ana Sayfa</button>
+        </div>
+    </div>
+
+    <div class="modal" id="winModal">
+        <div class="modal-content">
+            <h2>🎉 Tebrikler!</h2>
+            <p style="font-size: 1.2em; color: #666; margin-bottom: 20px;">Tüm eşleşmeleri buldunuz!</p>
+            <div class="modal-stats">
+                <p style="font-size: 1.1em; margin: 10px 0;"><strong>Hamle:</strong> <span id="finalMoves"></span></p>
+                <p style="font-size: 1.1em; margin: 10px 0;"><strong>Süre:</strong> <span id="finalTime"></span></p>
+            </div>
+            <button class="btn btn-primary" onclick="startGame(); document.getElementById('winModal').classList.remove('active');">🔄 Tekrar Oyna</button>
+            <button class="btn btn-secondary" onclick="window.location.href='../games-hub.html'">🎮 Oyun Merkezi</button>
+        </div>
+    </div>
+
+    <script>
+        const cards = [
+            { icon: '🖥️', name: 'CPU\n(İşlemci)' },
+            { icon: '💾', name: 'RAM\n(Bellek)' },
+            { icon: '💿', name: 'Hard Disk\n(Sabit Disk)' },
+            { icon: '🎮', name: 'Ekran Kartı\n(GPU)' },
+            { icon: '⌨️', name: 'Klavye\n(Girdi)' },
+            { icon: '🖱️', name: 'Mouse\n(Fare)' },
+            { icon: '🖨️', name: 'Yazıcı\n(Çıktı)' },
+            { icon: '🔊', name: 'Hoparlör\n(Ses)' }
+        ];
+
+        let gameCards = [];
+        let flippedCards = [];
+        let matchedPairs = 0;
+        let moves = 0;
+        let timerInterval;
+        let seconds = 0;
+
+        function initGame() {
+            // Her karttan 2 tane oluştur
+            gameCards = [];
+            cards.forEach((card, index) => {
+                gameCards.push({ ...card, id: index * 2 });
+                gameCards.push({ ...card, id: index * 2 + 1 });
+            });
+
+            // Kartları karıştır
+            gameCards.sort(() => Math.random() - 0.5);
+        }
+
+        function renderBoard() {
+            const board = document.getElementById('gameBoard');
+            board.innerHTML = '';
+
+            gameCards.forEach((card, index) => {
+                const cardEl = document.createElement('div');
+                cardEl.className = 'card';
+                cardEl.dataset.index = index;
+                cardEl.innerHTML = `
+                    <div class="card-front">❓</div>
+                    <div class="card-back">
+                        <div>${card.icon}</div>
+                        <div style="font-size: 0.4em; margin-top: 5px;">${card.name}</div>
+                    </div>
+                `;
+                cardEl.onclick = () => flipCard(index);
+                board.appendChild(cardEl);
+            });
+        }
+
+        function flipCard(index) {
+            const cardEl = document.querySelectorAll('.card')[index];
+
+            // Zaten çevrilmiş veya eşleşmiş kartı tekrar çevirme
+            if (cardEl.classList.contains('flipped') || cardEl.classList.contains('matched')) {
+                return;
+            }
+
+            // İki karttan fazla açılmasın
+            if (flippedCards.length >= 2) {
+                return;
+            }
+
+            cardEl.classList.add('flipped');
+            flippedCards.push({ index, card: gameCards[index] });
+
+            if (flippedCards.length === 2) {
+                moves++;
+                document.getElementById('moves').textContent = moves;
+                checkMatch();
+            }
+        }
+
+        function checkMatch() {
+            const [card1, card2] = flippedCards;
+
+            setTimeout(() => {
+                if (card1.card.name === card2.card.name) {
+                    // Eşleşme var
+                    const cardEls = document.querySelectorAll('.card');
+                    cardEls[card1.index].classList.add('matched');
+                    cardEls[card2.index].classList.add('matched');
+
+                    matchedPairs++;
+                    document.getElementById('matches').textContent = `${matchedPairs}/8`;
+
+                    if (matchedPairs === 8) {
+                        endGame();
+                    }
+                } else {
+                    // Eşleşme yok, kartları geri çevir
+                    const cardEls = document.querySelectorAll('.card');
+                    cardEls[card1.index].classList.remove('flipped');
+                    cardEls[card2.index].classList.remove('flipped');
+                }
+
+                flippedCards = [];
+            }, 1000);
+        }
+
+        function startTimer() {
+            seconds = 0;
+            updateTimer();
+            timerInterval = setInterval(() => {
+                seconds++;
+                updateTimer();
+            }, 1000);
+        }
+
+        function updateTimer() {
+            const mins = Math.floor(seconds / 60);
+            const secs = seconds % 60;
+            document.getElementById('timer').textContent = `${mins}:${secs.toString().padStart(2, '0')}`;
+        }
+
+        function endGame() {
+            clearInterval(timerInterval);
+
+            document.getElementById('finalMoves').textContent = moves;
+            document.getElementById('finalTime').textContent = document.getElementById('timer').textContent;
+
+            setTimeout(() => {
+                document.getElementById('winModal').classList.add('active');
+            }, 500);
+        }
+
+        function startGame() {
+            clearInterval(timerInterval);
+            matchedPairs = 0;
+            moves = 0;
+            flippedCards = [];
+
+            document.getElementById('moves').textContent = '0';
+            document.getElementById('matches').textContent = '0/8';
+            document.getElementById('timer').textContent = '0:00';
+
+            initGame();
+            renderBoard();
+            startTimer();
+        }
+
+        // Sayfa yüklenince oyunu başlat
+        startGame();
+    </script>
+</body>
+</html>

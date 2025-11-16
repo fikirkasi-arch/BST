@@ -1,0 +1,993 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kodlama Parkuru - BST</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        h1 {
+            text-align: center;
+            color: #667eea;
+            margin-bottom: 10px;
+            font-size: 2.5em;
+        }
+        .subtitle { text-align: center; color: #666; margin-bottom: 20px; }
+
+        .game-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+        }
+
+        .level-info {
+            font-size: 1.5em;
+            font-weight: bold;
+        }
+
+        .lives {
+            display: flex;
+            gap: 5px;
+            font-size: 1.5em;
+        }
+
+        .score {
+            font-size: 1.3em;
+        }
+
+        .game-layout {
+            display: grid;
+            grid-template-columns: 350px 1fr;
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .code-panel {
+            background: #f5f5f5;
+            border-radius: 15px;
+            padding: 20px;
+            height: fit-content;
+            position: sticky;
+            top: 20px;
+        }
+
+        .code-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .code-tab {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+
+        .code-tab.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .code-tab:not(.active) {
+            background: white;
+            color: #666;
+        }
+
+        .code-content {
+            display: none;
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            min-height: 200px;
+        }
+
+        .code-content.active {
+            display: block;
+        }
+
+        .scratch-block {
+            background: #4C97FF;
+            color: white;
+            padding: 10px 15px;
+            border-radius: 8px;
+            margin: 8px 0;
+            font-family: 'Courier New', monospace;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+
+        .scratch-block.control {
+            background: #FFAB19;
+        }
+
+        .scratch-block.operator {
+            background: #59C059;
+        }
+
+        .scratch-block.variable {
+            background: #FF8C1A;
+        }
+
+        .python-code {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            line-height: 1.8;
+            overflow-x: auto;
+        }
+
+        .keyword { color: #66d9ef; }
+        .string { color: #e6db74; }
+        .number { color: #ae81ff; }
+        .comment { color: #75715e; }
+
+        .level-objective {
+            background: #fff3cd;
+            border-left: 5px solid #ffc107;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+
+        .game-area {
+            background: linear-gradient(135deg, #e0e0e0 0%, #f5f5f5 100%);
+            border-radius: 15px;
+            padding: 20px;
+            min-height: 600px;
+            position: relative;
+        }
+
+        .platform-canvas {
+            position: relative;
+            width: 100%;
+            height: 500px;
+            background: linear-gradient(to bottom, #87CEEB 0%, #87CEEB 70%, #8B7355 70%, #8B7355 100%);
+            border-radius: 10px;
+            overflow: hidden;
+            border: 3px solid #667eea;
+        }
+
+        .character {
+            position: absolute;
+            width: 50px;
+            height: 50px;
+            background: #f5576c;
+            border-radius: 10px;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2em;
+            z-index: 10;
+        }
+
+        .platform {
+            position: absolute;
+            background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+            border-radius: 5px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.3);
+        }
+
+        .obstacle {
+            position: absolute;
+            background: linear-gradient(135deg, #f5576c 0%, #d63447 100%);
+            border-radius: 5px;
+        }
+
+        .coin {
+            position: absolute;
+            width: 30px;
+            height: 30px;
+            background: gold;
+            border-radius: 50%;
+            font-size: 1.5em;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: float 2s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .goal {
+            position: absolute;
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%);
+            border-radius: 50%;
+            font-size: 2em;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: pulse 1s ease-in-out infinite;
+            border: 3px solid #ffa500;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        .controls {
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .control-btn {
+            padding: 15px 30px;
+            margin: 5px;
+            font-size: 1.1em;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+            color: white;
+        }
+
+        .control-btn.up {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .control-btn.down {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        }
+
+        .control-btn.left {
+            background: linear-gradient(135deg, #fa8231 0%, #feca57 100%);
+        }
+
+        .control-btn.right {
+            background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+        }
+
+        .control-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+
+        .control-btn:active {
+            transform: translateY(-1px);
+        }
+
+        .btn {
+            padding: 15px 30px;
+            font-size: 1.1em;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+
+        .btn-success {
+            background: #28a745;
+            color: white;
+        }
+
+        .buttons {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            text-align: center;
+            max-width: 600px;
+            animation: slideIn 0.3s;
+        }
+
+        .modal-icon {
+            font-size: 5em;
+            margin-bottom: 20px;
+        }
+
+        .level-select {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .level-card {
+            padding: 20px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 3px solid transparent;
+        }
+
+        .level-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+        }
+
+        .level-card.locked {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .level-card.completed {
+            border-color: #28a745;
+        }
+
+        .hint-box {
+            background: #e7f3ff;
+            border-left: 5px solid #4facfe;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 15px;
+        }
+
+        .algorithm-info {
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 15px;
+            border: 2px solid #667eea;
+        }
+
+        .algorithm-title {
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🏃 Kodlama Parkuru</h1>
+        <p class="subtitle">Platform Oyunu ile Algoritma Öğren - Scratch & Python</p>
+
+        <div class="game-header">
+            <div class="level-info">
+                <span id="levelTitle">Seviye 1: Değişkenler</span>
+            </div>
+            <div class="lives">
+                ❤️❤️❤️
+            </div>
+            <div class="score">
+                🌟 Puan: <span id="score">0</span>
+            </div>
+        </div>
+
+        <div class="game-layout">
+            <div class="code-panel">
+                <div class="code-tabs">
+                    <button class="code-tab active" onclick="switchCodeTab('scratch')">🐱 Scratch</button>
+                    <button class="code-tab" onclick="switchCodeTab('python')">🐍 Python</button>
+                </div>
+
+                <div id="scratch-code" class="code-content active">
+                    <h4 style="margin-bottom: 15px; color: #667eea;">Scratch Blokları</h4>
+                    <div id="scratchBlocks"></div>
+                </div>
+
+                <div id="python-code" class="code-content">
+                    <h4 style="margin-bottom: 15px; color: #667eea;">Python Kodu</h4>
+                    <div class="python-code" id="pythonCode"></div>
+                </div>
+
+                <div class="level-objective" id="objective">
+                    <strong>🎯 Görev:</strong>
+                    <p id="objectiveText"></p>
+                </div>
+
+                <div class="algorithm-info" id="algorithmInfo">
+                    <div class="algorithm-title">📚 Algoritma Konsepti</div>
+                    <div id="algorithmText"></div>
+                </div>
+
+                <div class="hint-box" id="hintBox">
+                    <strong>💡 İpucu:</strong>
+                    <p id="hintText"></p>
+                </div>
+            </div>
+
+            <div class="game-area">
+                <div class="platform-canvas" id="canvas">
+                    <div class="character" id="character">🤖</div>
+                </div>
+
+                <div class="controls">
+                    <div>
+                        <button class="control-btn up" onclick="moveCharacter('up')">↑</button>
+                    </div>
+                    <div>
+                        <button class="control-btn left" onclick="moveCharacter('left')">←</button>
+                        <button class="control-btn down" onclick="moveCharacter('down')">↓</button>
+                        <button class="control-btn right" onclick="moveCharacter('right')">→</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="buttons">
+            <button class="btn btn-success" onclick="runCode()">▶️ Kodu Çalıştır</button>
+            <button class="btn btn-primary" onclick="resetLevel()">🔄 Seviyeyi Sıfırla</button>
+            <button class="btn btn-primary" onclick="showLevelSelect()">📋 Seviye Seç</button>
+            <button class="btn btn-secondary" onclick="window.location.href='../index.html'">🏠 Ana Sayfa</button>
+        </div>
+    </div>
+
+    <!-- Level Complete Modal -->
+    <div class="modal" id="successModal">
+        <div class="modal-content">
+            <div class="modal-icon">🎉</div>
+            <h2 style="color: #28a745; margin-bottom: 20px;">Seviye Tamamlandı!</h2>
+            <p style="font-size: 1.2em; margin: 20px 0;" id="successMessage"></p>
+            <div class="buttons">
+                <button class="btn btn-primary" onclick="nextLevel()">➡️ Sonraki Seviye</button>
+                <button class="btn btn-secondary" onclick="closeModal()">🔄 Tekrar Oyna</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Level Select Modal -->
+    <div class="modal" id="levelSelectModal">
+        <div class="modal-content" style="max-width: 800px;">
+            <h2 style="color: #667eea; margin-bottom: 20px;">📚 Seviye Seçin</h2>
+            <div class="level-select" id="levelSelectGrid"></div>
+            <button class="btn btn-secondary" onclick="closeLevelSelect()" style="margin-top: 20px;">✖️ Kapat</button>
+        </div>
+    </div>
+
+    <script>
+        let currentLevel = 1;
+        let score = 0;
+        let lives = 3;
+        let characterPos = { x: 50, y: 400 };
+        let coinsCollected = 0;
+        let goalReached = false;
+
+        const levels = {
+            1: {
+                title: "Seviye 1: Değişkenler",
+                objective: "Karakteri hareket ettirerek altın hedefi bul! Değişkenler ile pozisyon kontrolü öğren.",
+                algorithm: "Değişkenler programlamada veri saklamak için kullanılır. x ve y pozisyonları değişkenlerle saklanır.",
+                hint: "Ok tuşlarıyla karakteri hareket ettir. Altın hedefe ulaşmaya çalış!",
+                scratchBlocks: [
+                    { text: "x pozisyonu değişkenini oluştur", type: "variable" },
+                    { text: "y pozisyonu değişkenini oluştur", type: "variable" },
+                    { text: "x pozisyonunu 10 değiştir", type: "motion" },
+                    { text: "y pozisyonunu 10 değiştir", type: "motion" }
+                ],
+                pythonCode: `# Değişkenler ile pozisyon kontrolü
+x_pozisyon = 50
+y_pozisyon = 400
+
+# Hareket fonksiyonları
+def saga_git():
+    x_pozisyon += 10
+
+def yukari_cik():
+    y_pozisyon -= 10`,
+                goal: { x: 700, y: 100 },
+                platforms: [
+                    { x: 0, y: 450, width: 800, height: 50 }
+                ],
+                obstacles: [],
+                coins: []
+            },
+            2: {
+                title: "Seviye 2: Döngüler (For Loop)",
+                objective: "Tekrarlayan hareketler yap! Döngüler ile aynı işlemi birden fazla kez yap.",
+                algorithm: "Döngüler aynı kod bloğunu birden fazla kez çalıştırır. 'for' döngüsü belirli sayıda tekrar eder.",
+                hint: "3 adım sağa git, 2 adım yukarı çık. Döngü kullanarak tekrarla!",
+                scratchBlocks: [
+                    { text: "10 kere tekrarla", type: "control" },
+                    { text: "  x pozisyonunu 10 değiştir", type: "motion" },
+                    { text: "5 kere tekrarla", type: "control" },
+                    { text: "  y pozisyonunu -10 değiştir", type: "motion" }
+                ],
+                pythonCode: `# For döngüsü ile tekrar
+for i in range(10):
+    x_pozisyon += 10
+
+for i in range(5):
+    y_pozisyon -= 10
+
+# Daha kısa hareket!`,
+                goal: { x: 600, y: 200 },
+                platforms: [
+                    { x: 0, y: 450, width: 300, height: 50 },
+                    { x: 350, y: 350, width: 200, height: 50 },
+                    { x: 600, y: 250, width: 200, height: 50 }
+                ],
+                obstacles: [],
+                coins: [
+                    { x: 400, y: 320 },
+                    { x: 650, y: 220 }
+                ]
+            },
+            3: {
+                title: "Seviye 3: Koşullar (If-Else)",
+                objective: "Engelleri aş! Koşullarla kararlar ver ve doğru yolu seç.",
+                algorithm: "If-else yapısı koşullara göre farklı kodlar çalıştırır. Eğer koşul doğruysa bir işlem, değilse başka işlem yapar.",
+                hint: "Engel varsa atla, yoksa yürü. Koşullu karar verme!",
+                scratchBlocks: [
+                    { text: "eğer <engel var?> ise", type: "control" },
+                    { text: "  y pozisyonunu -50 değiştir (zıpla)", type: "motion" },
+                    { text: "değilse", type: "control" },
+                    { text: "  x pozisyonunu 10 değiştir (yürü)", type: "motion" }
+                ],
+                pythonCode: `# If-else ile karar verme
+if engel_var:
+    y_pozisyon -= 50  # Zıpla
+else:
+    x_pozisyon += 10  # Yürü
+
+# Koşula göre hareket!`,
+                goal: { x: 700, y: 150 },
+                platforms: [
+                    { x: 0, y: 450, width: 250, height: 50 },
+                    { x: 300, y: 450, width: 150, height: 50 },
+                    { x: 500, y: 350, width: 150, height: 50 },
+                    { x: 700, y: 200, width: 100, height: 50 }
+                ],
+                obstacles: [
+                    { x: 250, y: 400, width: 40, height: 50 },
+                    { x: 450, y: 300, width: 40, height: 50 }
+                ],
+                coins: [
+                    { x: 350, y: 420 },
+                    { x: 550, y: 320 }
+                ]
+            },
+            4: {
+                title: "Seviye 4: Fonksiyonlar",
+                objective: "Fonksiyonlar ile kod tekrarını önle! Yeniden kullanılabilir kod blokları oluştur.",
+                algorithm: "Fonksiyonlar belirli bir görevi yapan kod bloklarıdır. Bir kez tanımla, istediğin kadar kullan!",
+                hint: "zipla() fonksiyonu oluştur ve engelleri aşmak için kullan!",
+                scratchBlocks: [
+                    { text: "zipla bloğunu tanımla", type: "control" },
+                    { text: "  y pozisyonunu -60 değiştir", type: "motion" },
+                    { text: "  0.5 saniye bekle", type: "control" },
+                    { text: "  y pozisyonunu 60 değiştir", type: "motion" },
+                    { text: "zipla bloğunu çalıştır", type: "control" }
+                ],
+                pythonCode: `# Fonksiyon tanımlama
+def zipla():
+    y_pozisyon -= 60
+    bekle(0.5)
+    y_pozisyon += 60
+
+# Fonksiyon kullanma
+zipla()
+zipla()
+zipla()  # 3 kez zıpla!`,
+                goal: { x: 650, y: 100 },
+                platforms: [
+                    { x: 0, y: 450, width: 200, height: 50 },
+                    { x: 250, y: 450, width: 150, height: 50 },
+                    { x: 450, y: 350, width: 150, height: 50 },
+                    { x: 650, y: 150, width: 150, height: 50 }
+                ],
+                obstacles: [
+                    { x: 200, y: 400, width: 40, height: 50 },
+                    { x: 400, y: 300, width: 40, height: 50 },
+                    { x: 600, y: 100, width: 40, height: 50 }
+                ],
+                coins: [
+                    { x: 300, y: 420 },
+                    { x: 500, y: 320 },
+                    { x: 700, y: 120 }
+                ]
+            },
+            5: {
+                title: "Seviye 5: Listeler",
+                objective: "Listeler ile birden fazla veriyi sakla! Tüm altınları topla.",
+                algorithm: "Listeler (diziler) birden fazla değeri bir arada tutar. Her altın bir liste elemanıdır.",
+                hint: "Her altını listene ekle. Tüm listeyi dolaş ve topla!",
+                scratchBlocks: [
+                    { text: "altinlar listesini oluştur", type: "variable" },
+                    { text: "altinlar listesine coin1 ekle", type: "variable" },
+                    { text: "altinlar listesinin her elemanı için", type: "control" },
+                    { text: "  elemanı topla", type: "variable" }
+                ],
+                pythonCode: `# Liste kullanımı
+altinlar = []
+
+# Altın topla
+altinlar.append(coin1)
+altinlar.append(coin2)
+
+# Tüm altınları kontrol et
+for altin in altinlar:
+    topla(altin)
+
+print(len(altinlar))  # Kaç tane?`,
+                goal: { x: 700, y: 50 },
+                platforms: [
+                    { x: 0, y: 450, width: 150, height: 50 },
+                    { x: 200, y: 380, width: 120, height: 50 },
+                    { x: 370, y: 310, width: 120, height: 50 },
+                    { x: 540, y: 240, width: 120, height: 50 },
+                    { x: 700, y: 100, width: 100, height: 50 }
+                ],
+                obstacles: [],
+                coins: [
+                    { x: 100, y: 420 },
+                    { x: 250, y: 350 },
+                    { x: 420, y: 280 },
+                    { x: 590, y: 210 },
+                    { x: 750, y: 70 }
+                ]
+            },
+            6: {
+                title: "Seviye 6: İç İçe Döngüler",
+                objective: "Karmaşık algoritmaları çöz! İç içe döngülerle 2 boyutlu hareket et.",
+                algorithm: "İç içe döngüler daha karmaşık işlemler için kullanılır. Bir döngünün içinde başka döngü!",
+                hint: "Her platform için: sağa git, sonra yukarı çık. 2D grid sistemi!",
+                scratchBlocks: [
+                    { text: "3 kere tekrarla (satır)", type: "control" },
+                    { text: "  4 kere tekrarla (sütun)", type: "control" },
+                    { text: "    x pozisyonunu 50 değiştir", type: "motion" },
+                    { text: "  y pozisyonunu -100 değiştir", type: "motion" },
+                    { text: "  x pozisyonunu sıfırla", type: "motion" }
+                ],
+                pythonCode: `# İç içe döngüler
+for satir in range(3):
+    for sutun in range(4):
+        x_pozisyon += 50
+    y_pozisyon -= 100
+    x_pozisyon = 0
+
+# 2D grid oluşturma!`,
+                goal: { x: 700, y: 50 },
+                platforms: [
+                    { x: 0, y: 450, width: 100, height: 50 },
+                    { x: 150, y: 450, width: 100, height: 50 },
+                    { x: 300, y: 350, width: 100, height: 50 },
+                    { x: 450, y: 350, width: 100, height: 50 },
+                    { x: 600, y: 250, width: 100, height: 50 },
+                    { x: 700, y: 100, width: 100, height: 50 }
+                ],
+                obstacles: [
+                    { x: 250, y: 300, width: 40, height: 50 },
+                    { x: 550, y: 200, width: 40, height: 50 }
+                ],
+                coins: [
+                    { x: 200, y: 420 },
+                    { x: 350, y: 320 },
+                    { x: 500, y: 320 },
+                    { x: 650, y: 220 },
+                    { x: 750, y: 70 }
+                ]
+            }
+        };
+
+        function loadLevel(levelNum) {
+            currentLevel = levelNum;
+            const level = levels[levelNum];
+
+            document.getElementById('levelTitle').textContent = level.title;
+            document.getElementById('objectiveText').textContent = level.objective;
+            document.getElementById('algorithmText').textContent = level.algorithm;
+            document.getElementById('hintText').textContent = level.hint;
+
+            // Load Scratch blocks
+            const scratchContainer = document.getElementById('scratchBlocks');
+            scratchContainer.innerHTML = '';
+            level.scratchBlocks.forEach(block => {
+                const blockDiv = document.createElement('div');
+                blockDiv.className = `scratch-block ${block.type}`;
+                blockDiv.textContent = block.text;
+                scratchContainer.appendChild(blockDiv);
+            });
+
+            // Load Python code
+            document.getElementById('pythonCode').innerHTML = formatPythonCode(level.pythonCode);
+
+            // Setup game canvas
+            setupCanvas(level);
+            resetLevel();
+        }
+
+        function formatPythonCode(code) {
+            return code
+                .replace(/(def|for|if|else|in|range|return|import)/g, '<span class="keyword">$1</span>')
+                .replace(/('.*?'|".*?")/g, '<span class="string">$1</span>')
+                .replace(/(\d+)/g, '<span class="number">$1</span>')
+                .replace(/(#.*)/g, '<span class="comment">$1</span>')
+                .replace(/\n/g, '<br>');
+        }
+
+        function setupCanvas(level) {
+            const canvas = document.getElementById('canvas');
+
+            // Clear existing elements except character
+            canvas.querySelectorAll('.platform, .obstacle, .coin, .goal').forEach(el => el.remove());
+
+            // Add platforms
+            level.platforms.forEach(p => {
+                const platform = document.createElement('div');
+                platform.className = 'platform';
+                platform.style.left = p.x + 'px';
+                platform.style.top = p.y + 'px';
+                platform.style.width = p.width + 'px';
+                platform.style.height = p.height + 'px';
+                canvas.appendChild(platform);
+            });
+
+            // Add obstacles
+            level.obstacles.forEach(o => {
+                const obstacle = document.createElement('div');
+                obstacle.className = 'obstacle';
+                obstacle.style.left = o.x + 'px';
+                obstacle.style.top = o.y + 'px';
+                obstacle.style.width = o.width + 'px';
+                obstacle.style.height = o.height + 'px';
+                canvas.appendChild(obstacle);
+            });
+
+            // Add coins
+            level.coins.forEach(c => {
+                const coin = document.createElement('div');
+                coin.className = 'coin';
+                coin.style.left = c.x + 'px';
+                coin.style.top = c.y + 'px';
+                coin.textContent = '💰';
+                canvas.appendChild(coin);
+            });
+
+            // Add goal
+            const goal = document.createElement('div');
+            goal.className = 'goal';
+            goal.style.left = level.goal.x + 'px';
+            goal.style.top = level.goal.y + 'px';
+            goal.textContent = '🏆';
+            canvas.appendChild(goal);
+        }
+
+        function resetLevel() {
+            characterPos = { x: 50, y: 400 };
+            coinsCollected = 0;
+            goalReached = false;
+            updateCharacterPosition();
+
+            // Reset coins
+            document.querySelectorAll('.coin').forEach(coin => {
+                coin.style.display = 'flex';
+            });
+        }
+
+        function moveCharacter(direction) {
+            const moveSpeed = 50;
+
+            switch(direction) {
+                case 'up':
+                    characterPos.y = Math.max(0, characterPos.y - moveSpeed);
+                    break;
+                case 'down':
+                    characterPos.y = Math.min(450, characterPos.y + moveSpeed);
+                    break;
+                case 'left':
+                    characterPos.x = Math.max(0, characterPos.x - moveSpeed);
+                    break;
+                case 'right':
+                    characterPos.x = Math.min(750, characterPos.x + moveSpeed);
+                    break;
+            }
+
+            updateCharacterPosition();
+            checkCollisions();
+        }
+
+        function updateCharacterPosition() {
+            const character = document.getElementById('character');
+            character.style.left = characterPos.x + 'px';
+            character.style.top = characterPos.y + 'px';
+        }
+
+        function checkCollisions() {
+            // Check coin collection
+            document.querySelectorAll('.coin').forEach(coin => {
+                if (coin.style.display !== 'none') {
+                    const coinRect = coin.getBoundingClientRect();
+                    const charRect = document.getElementById('character').getBoundingClientRect();
+
+                    if (isColliding(charRect, coinRect)) {
+                        coin.style.display = 'none';
+                        coinsCollected++;
+                        score += 10;
+                        document.getElementById('score').textContent = score;
+                    }
+                }
+            });
+
+            // Check goal
+            const goal = document.querySelector('.goal');
+            const goalRect = goal.getBoundingClientRect();
+            const charRect = document.getElementById('character').getBoundingClientRect();
+
+            if (isColliding(charRect, goalRect) && !goalReached) {
+                goalReached = true;
+                levelComplete();
+            }
+        }
+
+        function isColliding(rect1, rect2) {
+            return !(rect1.right < rect2.left ||
+                    rect1.left > rect2.right ||
+                    rect1.bottom < rect2.top ||
+                    rect1.top > rect2.bottom);
+        }
+
+        function runCode() {
+            // Simulate code execution
+            alert('💡 İpucu: Ok tuşlarıyla karakteri hareket ettir ve hedefe ulaş!\n\nGerçek bir platformda bu buton kodu otomatik çalıştırır.');
+        }
+
+        function levelComplete() {
+            score += 50;
+            document.getElementById('score').textContent = score;
+
+            const bonusCoins = coinsCollected * 10;
+            score += bonusCoins;
+
+            document.getElementById('successMessage').innerHTML = `
+                <p>🎯 Seviye ${currentLevel} tamamlandı!</p>
+                <p>💰 Toplanan Altın: ${coinsCollected}</p>
+                <p>⭐ Bonus: ${bonusCoins} puan</p>
+                <p>🏆 Toplam Puan: ${score}</p>
+            `;
+
+            document.getElementById('successModal').classList.add('active');
+        }
+
+        function nextLevel() {
+            closeModal();
+            if (currentLevel < 6) {
+                loadLevel(currentLevel + 1);
+            } else {
+                alert('🎉 Tebrikler! Tüm seviyeleri tamamladın!\n\n🏆 Final Puanın: ' + score);
+            }
+        }
+
+        function closeModal() {
+            document.getElementById('successModal').classList.remove('active');
+        }
+
+        function switchCodeTab(tab) {
+            document.querySelectorAll('.code-tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.code-content').forEach(c => c.classList.remove('active'));
+
+            if (tab === 'scratch') {
+                document.querySelector('.code-tab:first-child').classList.add('active');
+                document.getElementById('scratch-code').classList.add('active');
+            } else {
+                document.querySelector('.code-tab:last-child').classList.add('active');
+                document.getElementById('python-code').classList.add('active');
+            }
+        }
+
+        function showLevelSelect() {
+            const grid = document.getElementById('levelSelectGrid');
+            grid.innerHTML = '';
+
+            for (let i = 1; i <= 6; i++) {
+                const card = document.createElement('div');
+                card.className = 'level-card';
+
+                const colors = [
+                    'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)',
+                    'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)',
+                    'linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)',
+                    'linear-gradient(135deg, #fa8231 0%, #feca57 100%)',
+                    'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                    'linear-gradient(135deg, #f5576c 0%, #d63447 100%)'
+                ];
+
+                card.style.background = colors[i-1];
+                card.style.color = 'white';
+                card.innerHTML = `
+                    <h3>Seviye ${i}</h3>
+                    <p>${levels[i].title.split(': ')[1]}</p>
+                `;
+
+                card.onclick = () => {
+                    loadLevel(i);
+                    closeLevelSelect();
+                };
+
+                grid.appendChild(card);
+            }
+
+            document.getElementById('levelSelectModal').classList.add('active');
+        }
+
+        function closeLevelSelect() {
+            document.getElementById('levelSelectModal').classList.remove('active');
+        }
+
+        // Keyboard controls
+        document.addEventListener('keydown', (e) => {
+            switch(e.key) {
+                case 'ArrowUp':
+                    e.preventDefault();
+                    moveCharacter('up');
+                    break;
+                case 'ArrowDown':
+                    e.preventDefault();
+                    moveCharacter('down');
+                    break;
+                case 'ArrowLeft':
+                    e.preventDefault();
+                    moveCharacter('left');
+                    break;
+                case 'ArrowRight':
+                    e.preventDefault();
+                    moveCharacter('right');
+                    break;
+            }
+        });
+
+        // Initialize game
+        loadLevel(1);
+    </script>
+</body>
+</html>

@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bulut İşbirliği Simülasyonu - 6. Sınıf Ünite 3</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        h1 { text-align: center; color: #00c9ff; margin-bottom: 20px; }
+        .scenario {
+            background: #f5f5f5;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+        .team-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        .team-member {
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            border: 2px solid #e0e0e0;
+            text-align: center;
+        }
+        .member-icon {
+            font-size: 3em;
+            margin-bottom: 10px;
+        }
+        .member-name {
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 5px;
+        }
+        .member-role {
+            font-size: 0.9em;
+            color: #666;
+        }
+        .cloud-storage {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 15px;
+            margin: 20px 0;
+        }
+        .file-list {
+            display: grid;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        .file-item {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 12px;
+            border-radius: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .action-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        .action-btn {
+            background: white;
+            border: 2px solid #e0e0e0;
+            padding: 20px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: left;
+        }
+        .action-btn:hover {
+            border-color: #00c9ff;
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 201, 255, 0.3);
+        }
+        .action-btn.selected {
+            border-color: #00c9ff;
+            background: #e0f7ff;
+        }
+        .action-btn.correct {
+            border-color: #28a745;
+            background: #d4edda;
+        }
+        .action-btn.wrong {
+            border-color: #dc3545;
+            background: #f8d7da;
+        }
+        .action-icon {
+            font-size: 2em;
+            margin-bottom: 10px;
+        }
+        .btn {
+            padding: 15px 30px;
+            font-size: 1.1em;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: bold;
+            background: linear-gradient(135deg, #00c9ff 0%, #92fe9d 100%);
+            color: white;
+            margin: 10px 5px;
+        }
+        .feedback {
+            background: #fff3cd;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            border-left: 5px solid #ffc107;
+            display: none;
+        }
+        .progress-bar {
+            background: #e0e0e0;
+            height: 10px;
+            border-radius: 5px;
+            overflow: hidden;
+            margin: 20px 0;
+        }
+        .progress-fill {
+            background: linear-gradient(90deg, #00c9ff 0%, #92fe9d 100%);
+            height: 100%;
+            width: 0%;
+            transition: width 0.5s;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>☁️ Bulut İşbirliği Simülasyonu</h1>
+        <div class="progress-bar">
+            <div class="progress-fill" id="progress"></div>
+        </div>
+        <div id="content"></div>
+    </div>
+
+    <script>
+        const scenarios = [
+            {
+                title: 'Proje Dosyası Paylaşımı',
+                description: 'Ekibiniz bir sunum projesi hazırlıyor. Dosyayı tüm ekip üyelerine ulaştırmanız gerekiyor.',
+                icon: '📊',
+                question: 'Dosyayı nasıl paylaşmalısınız?',
+                actions: [
+                    { icon: '📧', text: 'Her birine email ile gönder', correct: false, feedback: '❌ Email ile gönderirseniz her değişiklikte yeniden göndermen gerekir. Verimsiz!' },
+                    { icon: '💾', text: 'USB belleğe kaydet ve herkese ver', correct: false, feedback: '❌ USB ile paylaşım yavaş ve pratik değil. Ayrıca virüs riski var!' },
+                    { icon: '☁️', text: 'Google Drive/OneDrive\'a yükle ve link paylaş', correct: true, feedback: '✅ Doğru! Bulut depolama ile herkes aynı dosyaya erişir ve değişiklikleri görür.' },
+                    { icon: '💬', text: 'WhatsApp\'tan dosya gönder', correct: false, feedback: '❌ WhatsApp dosya boyutu kısıtlı ve sürüm kontrolü yok!' }
+                ]
+            },
+            {
+                title: 'Eş Zamanlı Düzenleme',
+                description: '4 kişilik ekipte bir rapor hazırlıyorsunuz. Herkes kendi bölümünü yazacak.',
+                icon: '✍️',
+                question: 'En verimli yöntem hangisidir?',
+                actions: [
+                    { icon: '📄', text: 'Word dosyasını sırayla birbirimize gönder', correct: false, feedback: '❌ Sıralı çalışma çok zaman alır ve bekleme yaratır!' },
+                    { icon: '📝', text: 'Google Docs\'ta aynı anda birlikte çalış', correct: true, feedback: '✅ Mükemmel! Google Docs/Office 365 ile herkes aynı anda çalışabilir.' },
+                    { icon: '📧', text: 'Herkes kendi bölümünü yazıp email atsın', correct: false, feedback: '❌ Sonra birleştirmek zor olur ve tutarsızlıklar oluşabilir!' },
+                    { icon: '🖨️', text: 'Herkes kağıda yazsın, sonra birleştirelim', correct: false, feedback: '❌ Dijital çağda en verimsiz yöntem!' }
+                ]
+            },
+            {
+                title: 'Sürüm Kontrolü',
+                description: 'Projenizde değişiklikler yapıldı ama eski halini geri getirmeniz gerekiyor.',
+                icon: '⏮️',
+                question: 'Ne yapmalısınız?',
+                actions: [
+                    { icon: '❌', text: 'Eski hali kaydetmedim, yapamam', correct: false, feedback: '❌ Bulut servisleri otomatik sürüm geçmişi tutar!' },
+                    { icon: '📂', text: 'Dosya > Sürüm Geçmişi\'nden eski halini geri getir', correct: true, feedback: '✅ Doğru! Google Drive/OneDrive otomatik sürüm geçmişi tutar.' },
+                    { icon: '💾', text: 'Bilgisayarımda yedek varsa kullanırım', correct: false, feedback: '❌ Bulut servislerin otomatik özelliğini kullanmıyorsun!' },
+                    { icon: '🔄', text: 'Baştan yaparım', correct: false, feedback: '❌ Zaman kaybı! Bulut servislerde sürüm geçmişi var.' }
+                ]
+            },
+            {
+                title: 'Erişim İzinleri',
+                description: 'Proje dosyanızı sadece ekip üyelerinin görmesini istiyorsunuz.',
+                icon: '🔒',
+                question: 'Nasıl paylaşmalısınız?',
+                actions: [
+                    { icon: '🌍', text: 'Herkese açık link oluştur', correct: false, feedback: '❌ Herkese açık link tehlikeli! Herkes erişebilir.' },
+                    { icon: '👥', text: 'Sadece belirli email adreslerine izin ver', correct: true, feedback: '✅ Doğru! Güvenli paylaşım için sadece ekip üyelerine izin verin.' },
+                    { icon: '🔓', text: 'Şifresiz paylaş', correct: false, feedback: '❌ Güvensiz! Gizli bilgiler sızabilir.' },
+                    { icon: '📧', text: 'Email eki olarak gönder', correct: false, feedback: '❌ Email güvenli değil ve işbirliği özellikleri yok!' }
+                ]
+            },
+            {
+                title: 'Yorum ve Geri Bildirim',
+                description: 'Arkadaşınızın hazırladığı sunuma önerilerde bulunmak istiyorsunuz.',
+                icon: '💬',
+                question: 'En iyi yöntem nedir?',
+                actions: [
+                    { icon: '📱', text: 'WhatsApp\'tan mesaj at', correct: false, feedback: '❌ Yorumlar dosyadan ayrı olur, karışıklık yaratır!' },
+                    { icon: '💬', text: 'Bulut dosyasına yorum ekle', correct: true, feedback: '✅ Harika! Google Docs/Slides yorumlar dosyaya yapışır, düzenli olur.' },
+                    { icon: '✏️', text: 'Dosyayı indir, üzerine yaz, geri gönder', correct: false, feedback: '❌ Karmaşık ve sürüm kontrolü kaybolur!' },
+                    { icon: '📞', text: 'Telefon et ve söyle', correct: false, feedback: '❌ Kayıt altında olmaz, unutulabilir!' }
+                ]
+            },
+            {
+                title: 'Çevrimdışı Çalışma',
+                description: 'İnternetsiz bir yerdeyken projede çalışmanız gerekiyor.',
+                icon: '📴',
+                question: 'Ne yapmalısınız?',
+                actions: [
+                    { icon: '❌', text: 'İnternet olmadan çalışamam', correct: false, feedback: '❌ Bulut servislerin çevrimdışı modu var!' },
+                    { icon: '☁️', text: 'Çevrimdışı modu aktif et, çalış, internet olunca senkronize et', correct: true, feedback: '✅ Mükemmel! Google Drive çevrimdışı modda çalışır, sonra otomatik senkronize eder.' },
+                    { icon: '📋', text: 'Kağıda yazarım, sonra bilgisayara geçiririm', correct: false, feedback: '❌ Verimsiz! Bulutun çevrimdışı özelliğini kullan.' },
+                    { icon: '⏸️', text: 'Beklerim', correct: false, feedback: '❌ Zaman kaybı! Çevrimdışı mod kullan.' }
+                ]
+            }
+        ];
+
+        let currentScenario = 0;
+        let score = 0;
+        let selectedAction = null;
+
+        function loadScenario() {
+            if (currentScenario >= scenarios.length) {
+                showResults();
+                return;
+            }
+
+            const scenario = scenarios[currentScenario];
+            document.getElementById('progress').style.width = ((currentScenario / scenarios.length) * 100) + '%';
+
+            document.getElementById('content').innerHTML = `
+                <div class="scenario">
+                    <div style="font-size: 4em; text-align: center; margin-bottom: 15px;">${scenario.icon}</div>
+                    <h2 style="color: #00c9ff; text-align: center; margin-bottom: 15px;">${scenario.title}</h2>
+                    <p style="font-size: 1.1em; text-align: center; color: #666; line-height: 1.6;">
+                        ${scenario.description}
+                    </p>
+                </div>
+
+                <h3 style="color: #333; margin: 20px 0; text-align: center;">❓ ${scenario.question}</h3>
+
+                <div class="action-grid" id="actions">
+                    ${scenario.actions.map((action, i) => `
+                        <div class="action-btn" onclick="selectAction(${i})">
+                            <div class="action-icon">${action.icon}</div>
+                            <div style="font-weight: bold; color: #333;">${action.text}</div>
+                        </div>
+                    `).join('')}
+                </div>
+
+                <div class="feedback" id="feedback"></div>
+
+                <div style="text-align: center;">
+                    <button class="btn" id="checkBtn" onclick="checkAnswer()" disabled>✅ Kontrol Et</button>
+                    <button class="btn" id="nextBtn" onclick="nextScenario()" style="display: none;">➡️ Sonraki</button>
+                </div>
+            `;
+
+            selectedAction = null;
+        }
+
+        function selectAction(index) {
+            if (document.getElementById('feedback').style.display === 'block') return;
+
+            selectedAction = index;
+            const actions = document.querySelectorAll('.action-btn');
+            actions.forEach((btn, i) => {
+                btn.classList.toggle('selected', i === index);
+            });
+            document.getElementById('checkBtn').disabled = false;
+        }
+
+        function checkAnswer() {
+            const scenario = scenarios[currentScenario];
+            const action = scenario.actions[selectedAction];
+            const actions = document.querySelectorAll('.action-btn');
+
+            actions.forEach((btn, i) => {
+                btn.style.pointerEvents = 'none';
+                if (scenario.actions[i].correct) {
+                    btn.classList.add('correct');
+                } else if (i === selectedAction) {
+                    btn.classList.add('wrong');
+                }
+            });
+
+            if (action.correct) {
+                score++;
+            }
+
+            const feedbackDiv = document.getElementById('feedback');
+            feedbackDiv.innerHTML = `
+                <h3 style="color: #333; margin-bottom: 10px;">${action.feedback}</h3>
+                ${!action.correct ? `<p style="margin-top: 10px;"><strong>💡 Doğru cevap:</strong> ${scenario.actions.find(a => a.correct).text}</p>` : ''}
+            `;
+            feedbackDiv.style.display = 'block';
+
+            document.getElementById('checkBtn').style.display = 'none';
+            document.getElementById('nextBtn').style.display = 'inline-block';
+        }
+
+        function nextScenario() {
+            currentScenario++;
+            loadScenario();
+        }
+
+        function showResults() {
+            const percentage = Math.round((score / scenarios.length) * 100);
+            let message, emoji, tips;
+
+            if (percentage >= 80) {
+                message = 'Harikasın! Bulut işbirliği konusunda uzman oldun!';
+                emoji = '🏆';
+            } else if (percentage >= 60) {
+                message = 'İyi iş! Bulut teknolojilerini iyi anlıyorsun.';
+                emoji = '👍';
+            } else {
+                message = 'Daha fazla pratik yapmalısın!';
+                emoji = '📚';
+            }
+
+            document.getElementById('progress').style.width = '100%';
+            document.getElementById('content').innerHTML = `
+                <div style="text-align: center; padding: 40px;">
+                    <div style="font-size: 6em;">${emoji}</div>
+                    <h2 style="color: #00c9ff; margin: 20px 0;">${message}</h2>
+                    <div style="font-size: 3em; font-weight: bold; color: #00c9ff; margin: 20px 0;">
+                        ${score}/${scenarios.length} Doğru
+                    </div>
+                    <div style="font-size: 2em; font-weight: bold; color: #667eea;">
+                        %${percentage} Başarı
+                    </div>
+
+                    <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 25px; border-radius: 15px; margin-top: 30px; text-align: left;">
+                        <h3 style="margin-bottom: 15px;">☁️ Bulut İşbirliği Avantajları:</h3>
+                        <ul style="line-height: 2;">
+                            <li>📱 Her yerden erişim (telefon, tablet, bilgisayar)</li>
+                            <li>👥 Eş zamanlı çalışma (birden fazla kişi)</li>
+                            <li>💾 Otomatik kaydetme (veri kaybı yok)</li>
+                            <li>⏮️ Sürüm geçmişi (her değişiklik kayıtlı)</li>
+                            <li>💬 Yorum ve geri bildirim (dosya üzerinde)</li>
+                            <li>🔒 Güvenli paylaşım (izin kontrolü)</li>
+                            <li>📴 Çevrimdışı çalışma (internet olmadan)</li>
+                            <li>🆓 Ücretsiz depolama (5-15 GB)</li>
+                        </ul>
+                    </div>
+
+                    <div style="background: #e7f3ff; padding: 25px; border-radius: 15px; margin-top: 20px; text-align: left;">
+                        <h3 style="color: #333; margin-bottom: 15px;">🔧 Popüler Bulut Servisleri:</h3>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
+                            <div style="background: white; padding: 15px; border-radius: 10px; text-align: center;">
+                                <div style="font-size: 2em;">📊</div>
+                                <strong>Google Drive</strong>
+                                <div style="font-size: 0.9em; color: #666;">Docs, Sheets, Slides</div>
+                            </div>
+                            <div style="background: white; padding: 15px; border-radius: 10px; text-align: center;">
+                                <div style="font-size: 2em;">☁️</div>
+                                <strong>OneDrive</strong>
+                                <div style="font-size: 0.9em; color: #666;">Microsoft Office 365</div>
+                            </div>
+                            <div style="background: white; padding: 15px; border-radius: 10px; text-align: center;">
+                                <div style="font-size: 2em;">📦</div>
+                                <strong>Dropbox</strong>
+                                <div style="font-size: 0.9em; color: #666;">Dosya senkronizasyonu</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button class="btn" onclick="location.reload()" style="margin-top: 30px;">🔄 Tekrar Oyna</button>
+                </div>
+            `;
+        }
+
+        // Oyunu başlat
+        loadScenario();
+    </script>
+</body>
+</html>

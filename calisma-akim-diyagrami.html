@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <title>Algoritma Akış Diyagramı Çalışması</title>
+    <style>
+        @media print { .no-print { display: none; } body { background: white; } }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', sans-serif; background: #f5f5f5; padding: 20px; }
+        .container { max-width: 900px; margin: 0 auto; background: white; padding: 40px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        h1 { text-align: center; color: #333; margin-bottom: 10px; border-bottom: 3px solid #4caf50; padding-bottom: 10px; }
+        .subtitle { text-align: center; color: #666; margin-bottom: 30px; }
+        .diagram { margin: 30px auto; max-width: 600px; }
+        .shape { margin: 20px auto; padding: 20px; text-align: center; font-weight: bold; }
+        .start-end { background: #4caf50; color: white; border-radius: 50px; width: 200px; }
+        .process { background: #2196f3; color: white; width: 300px; }
+        .decision { background: #ff9800; color: white; transform: rotate(45deg); width: 200px; height: 200px; display: flex; align-items: center; justify-content: center; }
+        .decision-text { transform: rotate(-45deg); }
+        .arrow { text-align: center; font-size: 2em; color: #666; }
+        .example { background: #e3f2fd; padding: 20px; border-radius: 10px; margin-top: 30px; }
+        .btn { display: block; margin: 20px auto; padding: 15px 40px; background: #4caf50; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 16px; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📊 Algoritma Akış Diyagramı Çalışması</h1>
+        <p class="subtitle">Aşağıdaki örnek akış diyagramını inceleyin ve kendi algoritmanızı oluşturun.</p>
+        
+        <div class="example">
+            <h3 style="color: #4caf50; margin-bottom: 20px;">Örnek: Sabah Okula Gitme Algoritması</h3>
+            <div class="diagram">
+                <div class="shape start-end">BAŞLA</div>
+                <div class="arrow">↓</div>
+                <div class="shape process">Alarm çaldı mı?</div>
+                <div class="arrow">↓</div>
+                <div class="shape process">Uyan ve yataktan kalk</div>
+                <div class="arrow">↓</div>
+                <div class="shape process">Kahvaltı yap</div>
+                <div class="arrow">↓</div>
+                <div class="shape process">Okul kıyafetlerini giy</div>
+                <div class="arrow">↓</div>
+                <div class="shape process">Çantanı hazırla</div>
+                <div class="arrow">↓</div>
+                <div class="shape process">Okula git</div>
+                <div class="arrow">↓</div>
+                <div class="shape start-end">SON</div>
+            </div>
+        </div>
+        
+        <div style="margin-top: 50px; padding: 30px; background: #fff3e0; border-radius: 10px;">
+            <h3 style="color: #ff9800; margin-bottom: 20px;">📝 Ödev: Kendi Algoritmanızı Oluşturun</h3>
+            <p style="line-height: 1.8; margin-bottom: 15px;">
+                Aşağıdaki konulardan birini seçin ve akış diyagramını çizin:
+            </p>
+            <ul style="margin-left: 30px; line-height: 2;">
+                <li>Bilgisayarı açma ve kapama</li>
+                <li>Dosya kaydetme</li>
+                <li>İnternet bağlantısı kurma</li>
+                <li>Scratch'te basit oyun yapma</li>
+            </ul>
+        </div>
+        
+        <button class="btn no-print" onclick="window.print()">🖨️ Yazdır</button>
+        <button class="btn no-print" onclick="window.location.href='index.html'">🏠 Ana Sayfa</button>
+    </div>
+</body>
+</html>

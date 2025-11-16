@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scratch Projeleri - BTY</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+            min-height: 100vh;
+        }
+        .container { max-width: 1200px; margin: 0 auto; }
+        header {
+            text-align: center;
+            color: white;
+            padding: 40px 20px;
+            margin-bottom: 30px;
+        }
+        header h1 { font-size: 2.5em; margin-bottom: 10px; text-shadow: 2px 2px 4px rgba(0,0,0,0.3); }
+        .info-box {
+            background: #e7f3ff;
+            border-left: 5px solid #0066cc;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+        }
+        .info-box h3 { color: #0066cc; margin-bottom: 10px; }
+        .section {
+            background: white;
+            border-radius: 15px;
+            padding: 40px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        .section-title {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px 30px;
+            border-radius: 12px;
+            font-size: 1.8em;
+            margin-bottom: 30px;
+        }
+        .project-card {
+            background: #f8f9fa;
+            border-left: 5px solid #667eea;
+            border-radius: 10px;
+            padding: 30px;
+            margin: 25px 0;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        .project-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .project-title {
+            font-size: 1.6em;
+            color: #667eea;
+            font-weight: bold;
+        }
+        .difficulty {
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            font-weight: 600;
+        }
+        .easy { background: #d4edda; color: #155724; }
+        .medium { background: #fff3cd; color: #856404; }
+        .hard { background: #f8d7da; color: #721c24; }
+        .step {
+            padding: 15px;
+            margin: 15px 0;
+            background: #f8f9fa;
+            border-left: 4px solid #667eea;
+            border-radius: 5px;
+        }
+        .step-number {
+            background: #667eea;
+            color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+        .code-block {
+            background: #2d3748;
+            color: #68d391;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            margin: 15px 0;
+            overflow-x: auto;
+            line-height: 1.6;
+        }
+        .tip-box {
+            background: #fff3cd;
+            border-left: 5px solid #ffc107;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+        }
+        .concepts {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin: 15px 0;
+        }
+        .concept-tag {
+            background: #667eea;
+            color: white;
+            padding: 5px 15px;
+            border-radius: 15px;
+            font-size: 0.9em;
+        }
+        ul, ol { margin-left: 25px; line-height: 2; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🎮 Scratch Projeleri ve Öğreticiler</h1>
+            <p>Adım Adım Proje Yapım Kılavuzları</p>
+        </header>
+
+        <div class="info-box">
+            <h3>📚 Bu Sayfada Neler Var?</h3>
+            <p style="line-height: 1.8; color: #333;">
+                Ders müfredatında öğrendiğiniz Scratch kavramlarını kullanarak yapabileceğiniz
+                <strong>detaylı proje örnekleri</strong> bulunmaktadır. Her proje için adım adım yapım kılavuzu,
+                kullanılan bloklar, ipuçları ve geliştirme fikirleri mevcut.
+            </p>
+        </div>
+
+        <div class="section">
+            <div class="section-title">🟢 Başlangıç Seviyesi Projeler</div>
+
+            <div class="project-card">
+                <div class="project-header">
+                    <div class="project-title">🕺 Dans Eden Karakter</div>
+                    <span class="difficulty easy">🟢 Kolay - 15 dakika</span>
+                </div>
+
+                <p style="font-size: 1.1em; color: #555; margin: 15px 0;">
+                    Müzik eşliğinde dans eden bir karakter animasyonu. Kostüm değiştirme ve ses blokları öğrenilir.
+                </p>
+
+                <h4 style="color: #667eea; margin: 20px 0;">🧩 Öğrenilen Kavramlar:</h4>
+                <div class="concepts">
+                    <span class="concept-tag">Görünüm</span>
+                    <span class="concept-tag">Ses</span>
+                    <span class="concept-tag">Kostüm</span>
+                    <span class="concept-tag">Döngü</span>
+                </div>
+
+                <h4 style="color: #667eea; margin: 20px 0;">📝 Yapım Adımları:</h4>
+
+                <div class="step">
+                    <span class="step-number">1</span>
+                    <strong>Karakter Seç:</strong> "Avery Dancing" karakterini ekleyin
+                </div>
+
+                <div class="step">
+                    <span class="step-number">2</span>
+                    <strong>Müzik Ekle:</strong> Sesler sekmesinden "Dance Beat" seçin
+                </div>
+
+                <div class="step">
+                    <span class="step-number">3</span>
+                    <strong>Kod Yaz:</strong>
+                </div>
+
+                <div class="code-block">
+🏁 Yeşil bayrak tıklandığında
+   [dance beat] sesini başlat
+   sürekli tekrarla
+      kostümü [avery-a] yap
+      0.3 saniye bekle
+      kostümü [avery-b] yap
+      0.3 saniye bekle
+                </div>
+
+                <div class="tip-box">
+                    <strong>💡 İpucu:</strong> Bekleme süresini değiştirerek dans hızını ayarlayın!
+                </div>
+            </div>
+
+            <div class="project-card">
+                <div class="project-header">
+                    <div class="project-title">🐟 Kayan Balık</div>
+                    <span class="difficulty easy">🟢 Kolay - 20 dakika</span>
+                </div>
+
+                <p style="font-size: 1.1em; color: #555; margin: 15px 0;">
+                    Fare imlecini takip eden balık. Hareket blokları ve algılama öğrenilir.
+                </p>
+
+                <div class="concepts">
+                    <span class="concept-tag">Hareket</span>
+                    <span class="concept-tag">Algılama</span>
+                    <span class="concept-tag">Yön</span>
+                </div>
+
+                <div class="step">
+                    <span class="step-number">1</span>
+                    <strong>Sahne:</strong> "Underwater" arka planı seçin
+                </div>
+
+                <div class="step">
+                    <span class="step-number">2</span>
+                    <strong>Balık Ekle:</strong> "Fish" karakterini ekleyin
+                </div>
+
+                <div class="code-block">
+🏁 Yeşil bayrak tıklandığında
+   sürekli tekrarla
+      [fare işaretçisi] yönüne bak
+      10 adım git
+                </div>
+
+                <div class="tip-box">
+                    <strong>🚀 Geliştirme Fikirleri:</strong>
+                    <br>• İkinci balık ekle, birincisi takip etsin
+                    <br>• Yem ekle, balık yeme gitsin
+                    <br>• Kabarcık efekti ekle
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <div class="section-title">🟡 Orta Seviye Projeler</div>
+
+            <div class="project-card">
+                <div class="project-header">
+                    <div class="project-title">⚽ Top Yakalama Oyunu</div>
+                    <span class="difficulty medium">🟡 Orta - 40 dakika</span>
+                </div>
+
+                <p style="font-size: 1.1em; color: #555; margin: 15px 0;">
+                    Düşen topları sepet ile yakala. Değişken, rastgele sayı ve klonlar kullanılır.
+                </p>
+
+                <div class="concepts">
+                    <span class="concept-tag">Değişkenler</span>
+                    <span class="concept-tag">Rastgele Sayı</span>
+                    <span class="concept-tag">Klonlar</span>
+                    <span class="concept-tag">Çarpışma</span>
+                </div>
+
+                <div class="step">
+                    <span class="step-number">1</span>
+                    <strong>Değişken Oluştur:</strong> "Skor" adında değişken yarat
+                </div>
+
+                <div class="step">
+                    <span class="step-number">2</span>
+                    <strong>Sepet Kodları:</strong>
+                </div>
+
+                <div class="code-block">
+🏁 Yeşil bayrak tıklandığında
+   [Skor] = 0 yap
+   y:-150'ye git
+   sürekli tekrarla
+      x:[fare x] konumuna git
+                </div>
+
+                <div class="step">
+                    <span class="step-number">3</span>
+                    <strong>Top Kodları:</strong>
+                </div>
+
+                <div class="code-block">
+🏁 Yeşil bayrak tıklandığında
+   gizlen
+   sürekli tekrarla
+      x:rastgele(-200,200), y:180'e git
+      kendini klonla
+      1 saniye bekle
+
+📋 Klonlandığımda
+   göster
+   sürekli
+      y:-10 değiştir
+      eğer <Sepet'e değiyor> ise
+         Skor'u 1 artır
+         klonu sil
+                </div>
+
+                <div class="tip-box">
+                    <strong>🚀 Geliştirme:</strong>
+                    <br>• Bomba ekle (yakalanırsa puan azalsın)
+                    <br>• Süre sistemi ekle
+                    <br>• Skor arttıkça hızlansın
+                </div>
+            </div>
+
+            <div class="project-card">
+                <div class="project-header">
+                    <div class="project-title">🎯 Labirent Oyunu</div>
+                    <span class="difficulty medium">🟡 Orta - 35 dakika</span>
+                </div>
+
+                <p style="font-size: 1.1em; color: #555; margin: 15px 0;">
+                    Ok tuşları ile labirentten çık. Tuş kontrolleri ve renk algılama öğrenilir.
+                </p>
+
+                <div class="concepts">
+                    <span class="concept-tag">Tuş Kontrolleri</span>
+                    <span class="concept-tag">Renk Algılama</span>
+                    <span class="concept-tag">Koşullar</span>
+                </div>
+
+                <div class="step">
+                    <span class="step-number">1</span>
+                    <strong>Labirent Çiz:</strong> Sahne arka planında siyah duvarlar çiz
+                </div>
+
+                <div class="step">
+                    <span class="step-number">2</span>
+                    <strong>Başlangıç ve Bitiş:</strong> Başlangıç kırmızı, bitiş yeşil nokta koy
+                </div>
+
+                <div class="code-block">
+🏁 Yeşil bayrak tıklandığında
+   başlangıca git
+   sürekli tekrarla
+      eğer <yukarı ok> ise y:5 değiştir
+      eğer <aşağı ok> ise y:-5 değiştir
+      eğer <sağ ok> ise x:5 değiştir
+      eğer <sol ok> ise x:-5 değiştir
+      
+      eğer <siyaha değiyor> ise
+         başlangıca dön
+      
+      eğer <yeşile değiyor> ise
+         "Kazandın!" de
+                </div>
+
+                <div class="tip-box">
+                    <strong>🚀 Geliştirme:</strong>
+                    <br>• 3 can sistemi ekle
+                    <br>• Zamanlayıcı koy
+                    <br>• Hareket eden düşmanlar
+                    <br>• Çoklu seviye
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <div class="section-title">💡 İpuçları ve Püf Noktaları</div>
+
+            <h3 style="color: #667eea; margin: 20px 0;">🎯 Proje Yapma Adımları:</h3>
+            <ol style="line-height: 2;">
+                <li><strong>Plan Yap:</strong> Önce kağıda çiz, ne yapacağını belirle</li>
+                <li><strong>Basit Başla:</strong> En basit versiyonu yap, sonra özellik ekle</li>
+                <li><strong>Test Et:</strong> Her eklediğini hemen dene</li>
+                <li><strong>Hata Ayıkla:</strong> Çalışmazsa blokları kontrol et</li>
+                <li><strong>Geliştir:</strong> Çalışınca yeni fikirler ekle</li>
+            </ol>
+
+            <h3 style="color: #667eea; margin: 30px 0 20px;">🐛 Sık Hatalar:</h3>
+            <div class="tip-box">
+                <strong>❌ Karakterim hareket etmiyor</strong>
+                <br>✅ "Sürekli tekrarla" bloğu var mı?
+                <br>✅ Yeşil bayrağa tıkla
+            </div>
+
+            <div class="tip-box">
+                <strong>❌ Ses çalmıyor</strong>
+                <br>✅ Bilgisayar sesi açık mı?
+                <br>✅ "sesini başlat" bloğunu kullan
+            </div>
+
+            <h3 style="color: #667eea; margin: 30px 0 20px;">🚀 Daha Fazla Fikir:</h3>
+            <ul style="line-height: 2;">
+                <li>Müzik Makinesi - Tuşlara basarak nota çal</li>
+                <li>Soru-Cevap Oyunu - Bilgi yarışması yap</li>
+                <li>Hikaye Anlatımı - İnteraktif animasyon</li>
+                <li>Yarış Oyunu - Arabalar yarışsın</li>
+                <li>Hesap Makinesi - Matematik işlemleri</li>
+            </ul>
+        </div>
+
+        <div class="info-box" style="background: #d4edda; border-left-color: #28a745;">
+            <h3 style="color: #155724;">🎉 Başarı İpuçları</h3>
+            <p style="color: #155724; line-height: 1.8;">
+                • Her gün biraz pratik yap<br>
+                • Hatalardan öğren<br>
+                • Hayal gücünü kullan<br>
+                • Vazgeçme!<br>
+                • En önemlisi: Eğlen! 🎮
+            </p>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <title>Bilişim - Boşluk Doldurma Çalışması</title>
+    <style>
+        @media print {
+            .no-print { display: none; }
+            body { background: white; }
+            input { border-bottom: 2px solid #000 !important; }
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: #f5f5f5;
+            padding: 20px;
+        }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 10px;
+            border-bottom: 3px solid #667eea;
+            padding-bottom: 10px;
+        }
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+        }
+        .questions {
+            margin: 30px 0;
+        }
+        .question {
+            margin-bottom: 25px;
+            padding: 20px;
+            background: #f9f9f9;
+            border-radius: 10px;
+            border-left: 4px solid #667eea;
+        }
+        .question-number {
+            color: #667eea;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        .question-text {
+            font-size: 1.1em;
+            line-height: 1.8;
+        }
+        input[type="text"] {
+            border: none;
+            border-bottom: 2px solid #667eea;
+            padding: 5px 10px;
+            min-width: 150px;
+            font-size: 1em;
+            background: white;
+        }
+        .word-bank {
+            background: #e8f4f8;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+        }
+        .word-bank h3 {
+            color: #00796b;
+            margin-bottom: 15px;
+        }
+        .words {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .word {
+            background: white;
+            padding: 8px 15px;
+            border-radius: 5px;
+            border: 2px solid #00796b;
+            font-weight: bold;
+        }
+        .btn {
+            display: block;
+            margin: 20px auto;
+            padding: 15px 40px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+        }
+        .btn:hover { background: #5568d3; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>✍️ Bilişim - Boşluk Doldurma Çalışması</h1>
+        <p class="subtitle">Aşağıdaki cümlelerdeki boşlukları kelime bankasından seçerek doldurun.</p>
+        
+        <div class="word-bank">
+            <h3>📦 Kelime Bankası:</h3>
+            <div class="words">
+                <div class="word">İşlemci</div>
+                <div class="word">RAM</div>
+                <div class="word">İşletim Sistemi</div>
+                <div class="word">Algoritma</div>
+                <div class="word">Scratch</div>
+                <div class="word">Python</div>
+                <div class="word">Phishing</div>
+                <div class="word">Bulut</div>
+                <div class="word">Yapay Zeka</div>
+                <div class="word">İnternet</div>
+            </div>
+        </div>
+        
+        <div class="questions">
+            <div class="question">
+                <div class="question-number">Soru 1:</div>
+                <div class="question-text">
+                    <input type="text" placeholder="..........."> bilgisayarın beyni olarak adlandırılır ve tüm hesaplamaları yapar.
+                </div>
+            </div>
+            
+            <div class="question">
+                <div class="question-number">Soru 2:</div>
+                <div class="question-text">
+                    <input type="text" placeholder="..........."> geçici hafızadır ve bilgisayar kapatıldığında içindeki verileri kaybeder.
+                </div>
+            </div>
+            
+            <div class="question">
+                <div class="question-number">Soru 3:</div>
+                <div class="question-text">
+                    Bilgisayarı çalıştıran ve yöneten ana yazılıma <input type="text" placeholder="..........."> denir.
+                </div>
+            </div>
+            
+            <div class="question">
+                <div class="question-number">Soru 4:</div>
+                <div class="question-text">
+                    Bir problemi çözmek için izlenen adım adım yola <input type="text" placeholder="..........."> denir.
+                </div>
+            </div>
+            
+            <div class="question">
+                <div class="question-number">Soru 5:</div>
+                <div class="question-text">
+                    <input type="text" placeholder="..........."> MIT tarafından geliştirilen blok tabanlı programlama dilidir.
+                </div>
+            </div>
+            
+            <div class="question">
+                <div class="question-number">Soru 6:</div>
+                <div class="question-text">
+                    <input type="text" placeholder="..........."> öğrenmesi kolay ve güçlü bir programlama dilidir.
+                </div>
+            </div>
+            
+            <div class="question">
+                <div class="question-number">Soru 7:</div>
+                <div class="question-text">
+                    Sahte e-postalarla kişisel bilgi çalmaya <input type="text" placeholder="..........."> denir.
+                </div>
+            </div>
+            
+            <div class="question">
+                <div class="question-number">Soru 8:</div>
+                <div class="question-text">
+                    <input type="text" placeholder="..........."> bilişim, verilerimizi internetteki sunucularda saklama yöntemidir.
+                </div>
+            </div>
+            
+            <div class="question">
+                <div class="question-number">Soru 9:</div>
+                <div class="question-text">
+                    <input type="text" placeholder="..........."> bilgisayarların insan gibi düşünmesini sağlayan teknolojidir.
+                </div>
+            </div>
+            
+            <div class="question">
+                <div class="question-number">Soru 10:</div>
+                <div class="question-text">
+                    Dünyadaki milyonlarca bilgisayarın birbirine bağlanmasıyla <input type="text" placeholder="..........."> oluşur.
+                </div>
+            </div>
+        </div>
+        
+        <button class="btn no-print" onclick="window.print()">🖨️ Yazdır</button>
+        <button class="btn no-print" onclick="window.location.href='index.html'">🏠 Ana Sayfa</button>
+    </div>
+</body>
+</html>

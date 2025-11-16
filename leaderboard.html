@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <title>Liderlik Tablosu - BST</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', sans-serif; background: linear-gradient(135deg, #ffd89b 0%, #19547b 100%); min-height: 100vh; padding: 20px; }
+        .container { max-width: 1000px; margin: 0 auto; }
+        h1 { text-align: center; color: white; font-size: 3em; margin-bottom: 15px; text-shadow: 2px 2px 4px rgba(0,0,0,0.3); }
+        .subtitle { text-align: center; color: white; font-size: 1.2em; margin-bottom: 40px; opacity: 0.95; }
+        .tabs { display: flex; gap: 15px; justify-content: center; margin-bottom: 30px; }
+        .tab { padding: 12px 30px; background: rgba(255,255,255,0.3); color: white; border: none; border-radius: 10px; cursor: pointer; font-weight: bold; transition: all 0.3s; }
+        .tab.active { background: white; color: #19547b; }
+        .leaderboard { background: white; border-radius: 20px; padding: 40px; box-shadow: 0 10px 40px rgba(0,0,0,0.3); }
+        .podium { display: flex; justify-content: center; align-items: flex-end; gap: 20px; margin-bottom: 40px; }
+        .podium-item { text-align: center; }
+        .podium-icon { font-size: 4em; margin-bottom: 10px; }
+        .podium-rank { background: linear-gradient(135deg, #ffd89b 0%, #19547b 100%); color: white; width: 80px; height: auto; padding: 20px 10px; border-radius: 10px; font-weight: bold; }
+        .rank-1 { height: 150px; background: linear-gradient(135deg, #ffd700 0%, #ff8c00 100%); }
+        .rank-2 { height: 120px; background: linear-gradient(135deg, #c0c0c0 0%, #808080 100%); }
+        .rank-3 { height: 100px; background: linear-gradient(135deg, #cd7f32 0%, #8b4513 100%); }
+        .player-name { font-size: 1.1em; font-weight: 600; margin: 10px 0 5px 0; }
+        .player-score { font-size: 1.5em; color: #667eea; font-weight: bold; }
+        .rank-list { list-style: none; }
+        .rank-item { display: flex; align-items: center; padding: 15px; margin: 10px 0; background: #f5f5f5; border-radius: 12px; transition: all 0.3s; }
+        .rank-item:hover { background: #e8e8ff; transform: translateX(5px); }
+        .rank-number { width: 50px; font-size: 1.5em; font-weight: bold; color: #667eea; }
+        .player-info { flex: 1; margin-left: 15px; }
+        .player-stats { display: flex; gap: 20px; color: #666; font-size: 0.9em; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🏆 Liderlik Tablosu</h1>
+        <p class="subtitle">En başarılı öğrenciler!</p>
+
+        <div class="tabs">
+            <button class="tab active">📊 Genel</button>
+            <button class="tab">📚 5. Sınıf</button>
+            <button class="tab">📗 6. Sınıf</button>
+            <button class="tab">📅 Bu Hafta</button>
+        </div>
+
+        <div class="leaderboard">
+            <div class="podium">
+                <div class="podium-item">
+                    <div class="podium-icon">🥈</div>
+                    <div class="podium-rank rank-2">
+                        <div style="font-size:2em;">2</div>
+                        <div class="player-name">Ayşe Y.</div>
+                        <div class="player-score">2850</div>
+                    </div>
+                </div>
+                <div class="podium-item">
+                    <div class="podium-icon">🏆</div>
+                    <div class="podium-rank rank-1">
+                        <div style="font-size:2.5em;">1</div>
+                        <div class="player-name">Mehmet A.</div>
+                        <div class="player-score">3200</div>
+                    </div>
+                </div>
+                <div class="podium-item">
+                    <div class="podium-icon">🥉</div>
+                    <div class="podium-rank rank-3">
+                        <div style="font-size:2em;">3</div>
+                        <div class="player-name">Zeynep K.</div>
+                        <div class="player-score">2650</div>
+                    </div>
+                </div>
+            </div>
+
+            <ul class="rank-list">
+                <li class="rank-item">
+                    <div class="rank-number">4</div>
+                    <div class="player-info">
+                        <div class="player-name">Can Ö.</div>
+                        <div class="player-stats">
+                            <span>📊 2450 puan</span>
+                            <span>✅ 10 quiz</span>
+                            <span>🏆 15 rozet</span>
+                        </div>
+                    </div>
+                </li>
+                <li class="rank-item">
+                    <div class="rank-number">5</div>
+                    <div class="player-info">
+                        <div class="player-name">Elif T.</div>
+                        <div class="player-stats">
+                            <span>📊 2350 puan</span>
+                            <span>✅ 9 quiz</span>
+                            <span>🏆 12 rozet</span>
+                        </div>
+                    </div>
+                </li>
+                <li class="rank-item">
+                    <div class="rank-number">6</div>
+                    <div class="player-info">
+                        <div class="player-name">Ahmet S.</div>
+                        <div class="player-stats">
+                            <span>📊 2200 puan</span>
+                            <span>✅ 8 quiz</span>
+                            <span>🏆 11 rozet</span>
+                        </div>
+                    </div>
+                </li>
+            </ul>
+
+            <div style="text-align: center; margin-top: 30px;">
+                <a href="student-dashboard.html" style="display:inline-block; padding:15px 35px; background:linear-gradient(135deg, #667eea 0%, #764ba2 100%); color:white; text-decoration:none; border-radius:10px; font-weight:bold;">📊 Panelime Dön</a>
+            </div>
+        </div>
+    </div>
+    <script src="scripts/storage.js"></script>
+</body>
+</html>

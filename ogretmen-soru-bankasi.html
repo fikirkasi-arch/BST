@@ -1,0 +1,746 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Soru Bankası Yöneticisi - BST</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        h1 {
+            text-align: center;
+            color: #43e97b;
+            margin-bottom: 10px;
+            font-size: 2.5em;
+        }
+        .subtitle { text-align: center; color: #666; margin-bottom: 30px; }
+
+        .stats-bar {
+            display: flex;
+            justify-content: space-around;
+            background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+        }
+        .stat-item {
+            text-align: center;
+        }
+        .stat-value {
+            font-size: 2em;
+            font-weight: bold;
+        }
+        .stat-label {
+            font-size: 0.9em;
+            opacity: 0.9;
+        }
+
+        .toolbar {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-bottom: 30px;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            font-size: 1em;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+            color: white;
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+
+        .btn-success {
+            background: #28a745;
+            color: white;
+        }
+
+        .btn-warning {
+            background: #ffc107;
+            color: #333;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+
+        .filters {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .form-label {
+            font-weight: bold;
+            color: #333;
+            font-size: 0.9em;
+        }
+
+        .form-control {
+            padding: 10px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1em;
+            transition: all 0.3s;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: #43e97b;
+            box-shadow: 0 0 0 3px rgba(67, 233, 123, 0.1);
+        }
+
+        .questions-grid {
+            display: grid;
+            gap: 20px;
+        }
+
+        .question-card {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 15px;
+            border-left: 5px solid #43e97b;
+            position: relative;
+            transition: all 0.3s;
+        }
+
+        .question-card:hover {
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            transform: translateY(-2px);
+        }
+
+        .question-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 15px;
+        }
+
+        .question-tags {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .tag {
+            padding: 5px 12px;
+            border-radius: 15px;
+            font-size: 0.85em;
+            font-weight: bold;
+        }
+
+        .tag-grade {
+            background: #4facfe;
+            color: white;
+        }
+
+        .tag-subject {
+            background: #f093fb;
+            color: white;
+        }
+
+        .tag-difficulty {
+            background: #feca57;
+            color: #333;
+        }
+
+        .question-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn-icon {
+            padding: 8px 12px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1.2em;
+            transition: all 0.3s;
+        }
+
+        .btn-edit {
+            background: #4facfe;
+            color: white;
+        }
+
+        .btn-delete {
+            background: #f5576c;
+            color: white;
+        }
+
+        .btn-icon:hover {
+            transform: scale(1.1);
+        }
+
+        .question-text {
+            font-size: 1.1em;
+            color: #333;
+            margin-bottom: 15px;
+            line-height: 1.6;
+        }
+
+        .question-options {
+            display: grid;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .option {
+            padding: 10px;
+            background: white;
+            border-radius: 8px;
+            border: 2px solid #e0e0e0;
+        }
+
+        .option.correct {
+            border-color: #28a745;
+            background: #d4edda;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            z-index: 1000;
+            overflow-y: auto;
+            padding: 20px;
+        }
+
+        .modal.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            width: 100%;
+            max-width: 800px;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .modal-title {
+            font-size: 1.8em;
+            color: #43e97b;
+        }
+
+        .close-btn {
+            font-size: 2em;
+            border: none;
+            background: none;
+            cursor: pointer;
+            color: #999;
+            transition: all 0.3s;
+        }
+
+        .close-btn:hover {
+            color: #333;
+            transform: rotate(90deg);
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        textarea {
+            min-height: 100px;
+            resize: vertical;
+            font-family: inherit;
+        }
+
+        .options-editor {
+            margin: 20px 0;
+        }
+
+        .option-input {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .option-input input[type="text"] {
+            flex: 1;
+        }
+
+        .option-input input[type="radio"] {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #999;
+        }
+
+        .empty-icon {
+            font-size: 5em;
+            margin-bottom: 20px;
+        }
+
+        .search-bar {
+            position: relative;
+            margin-bottom: 20px;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 15px 50px 15px 20px;
+            font-size: 1.1em;
+            border: 3px solid #43e97b;
+            border-radius: 15px;
+        }
+
+        .search-icon {
+            position: absolute;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 1.5em;
+            color: #43e97b;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📚 Soru Bankası Yöneticisi</h1>
+        <p class="subtitle">Kişisel Soru Bankanızı Oluşturun ve Yönetin</p>
+
+        <div class="stats-bar">
+            <div class="stat-item">
+                <div class="stat-value" id="totalQuestions">0</div>
+                <div class="stat-label">Toplam Soru</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value" id="subjectCount">0</div>
+                <div class="stat-label">Konu</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value" id="easyCount">0</div>
+                <div class="stat-label">Kolay</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value" id="mediumCount">0</div>
+                <div class="stat-label">Orta</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value" id="hardCount">0</div>
+                <div class="stat-label">Zor</div>
+            </div>
+        </div>
+
+        <div class="toolbar">
+            <button class="btn btn-primary" onclick="showAddModal()">➕ Yeni Soru Ekle</button>
+            <button class="btn btn-success" onclick="exportToJSON()">💾 Dışa Aktar (JSON)</button>
+            <button class="btn btn-success" onclick="document.getElementById('importFile').click()">📥 İçe Aktar</button>
+            <input type="file" id="importFile" accept=".json" style="display: none;" onchange="importFromJSON(event)">
+            <button class="btn btn-warning" onclick="exportToPDF()">📄 PDF Oluştur</button>
+            <button class="btn btn-secondary" onclick="window.location.href='index.html'">🏠 Ana Sayfa</button>
+        </div>
+
+        <div class="search-bar">
+            <input type="text" class="search-input" id="searchInput" placeholder="🔍 Soru metni içinde ara..." onkeyup="filterQuestions()">
+            <span class="search-icon">🔍</span>
+        </div>
+
+        <div class="filters">
+            <div class="form-group">
+                <label class="form-label">Sınıf</label>
+                <select class="form-control" id="filterGrade" onchange="filterQuestions()">
+                    <option value="">Tümü</option>
+                    <option value="5">5. Sınıf</option>
+                    <option value="6">6. Sınıf</option>
+                    <option value="7">7. Sınıf</option>
+                    <option value="8">8. Sınıf</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Konu</label>
+                <select class="form-control" id="filterSubject" onchange="filterQuestions()">
+                    <option value="">Tümü</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Zorluk</label>
+                <select class="form-control" id="filterDifficulty" onchange="filterQuestions()">
+                    <option value="">Tümü</option>
+                    <option value="kolay">Kolay</option>
+                    <option value="orta">Orta</option>
+                    <option value="zor">Zor</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Sıralama</label>
+                <select class="form-control" id="sortBy" onchange="filterQuestions()">
+                    <option value="newest">En Yeni</option>
+                    <option value="oldest">En Eski</option>
+                    <option value="grade">Sınıfa Göre</option>
+                    <option value="difficulty">Zorluğa Göre</option>
+                </select>
+            </div>
+        </div>
+
+        <div id="questionsContainer"></div>
+    </div>
+
+    <!-- Add/Edit Question Modal -->
+    <div class="modal" id="questionModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title" id="modalTitle">Yeni Soru Ekle</h2>
+                <button class="close-btn" onclick="closeModal()">×</button>
+            </div>
+
+            <form id="questionForm" onsubmit="saveQuestion(event)">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Sınıf *</label>
+                        <select class="form-control" id="grade" required>
+                            <option value="">Seçiniz</option>
+                            <option value="5">5. Sınıf</option>
+                            <option value="6">6. Sınıf</option>
+                            <option value="7">7. Sınıf</option>
+                            <option value="8">8. Sınıf</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Konu *</label>
+                        <input type="text" class="form-control" id="subject" required placeholder="Örn: Bilişim Temelleri">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Zorluk *</label>
+                        <select class="form-control" id="difficulty" required>
+                            <option value="">Seçiniz</option>
+                            <option value="kolay">Kolay</option>
+                            <option value="orta">Orta</option>
+                            <option value="zor">Zor</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Soru Metni *</label>
+                    <textarea class="form-control" id="questionText" required placeholder="Sorunuzu buraya yazın..."></textarea>
+                </div>
+
+                <div class="options-editor">
+                    <label class="form-label">Şıklar (Doğru cevabı işaretleyin) *</label>
+                    <div class="option-input">
+                        <input type="radio" name="correct" value="0" required>
+                        <input type="text" class="form-control" id="option0" placeholder="A şıkkı" required>
+                    </div>
+                    <div class="option-input">
+                        <input type="radio" name="correct" value="1">
+                        <input type="text" class="form-control" id="option1" placeholder="B şıkkı" required>
+                    </div>
+                    <div class="option-input">
+                        <input type="radio" name="correct" value="2">
+                        <input type="text" class="form-control" id="option2" placeholder="C şıkkı" required>
+                    </div>
+                    <div class="option-input">
+                        <input type="radio" name="correct" value="3">
+                        <input type="text" class="form-control" id="option3" placeholder="D şıkkı" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Açıklama (Opsiyonel)</label>
+                    <textarea class="form-control" id="explanation" placeholder="Cevap açıklaması veya notlar..."></textarea>
+                </div>
+
+                <div style="display: flex; gap: 15px; margin-top: 25px;">
+                    <button type="submit" class="btn btn-primary" style="flex: 1;">💾 Kaydet</button>
+                    <button type="button" class="btn btn-secondary" onclick="closeModal()">✖️ İptal</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        let questions = JSON.parse(localStorage.getItem('questionBank')) || [];
+        let editingIndex = -1;
+
+        function renderQuestions() {
+            const container = document.getElementById('questionsContainer');
+
+            if (questions.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-icon">📝</div>
+                        <h3>Henüz soru eklenmemiş</h3>
+                        <p>Yeni soru ekleyerek soru bankanızı oluşturmaya başlayın!</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = '<div class="questions-grid">' +
+                questions.map((q, index) => `
+                    <div class="question-card">
+                        <div class="question-header">
+                            <div class="question-tags">
+                                <span class="tag tag-grade">${q.grade}. Sınıf</span>
+                                <span class="tag tag-subject">${q.subject}</span>
+                                <span class="tag tag-difficulty">${q.difficulty.toUpperCase()}</span>
+                            </div>
+                            <div class="question-actions">
+                                <button class="btn-icon btn-edit" onclick="editQuestion(${index})">✏️</button>
+                                <button class="btn-icon btn-delete" onclick="deleteQuestion(${index})">🗑️</button>
+                            </div>
+                        </div>
+                        <div class="question-text">${q.questionText}</div>
+                        <div class="question-options">
+                            ${q.options.map((opt, i) => `
+                                <div class="option ${i === q.correctAnswer ? 'correct' : ''}">
+                                    ${String.fromCharCode(65 + i)}) ${opt} ${i === q.correctAnswer ? '✓' : ''}
+                                </div>
+                            `).join('')}
+                        </div>
+                        ${q.explanation ? `<div style="margin-top: 15px; padding: 10px; background: #e7f3ff; border-radius: 8px; font-size: 0.9em;"><strong>💡 Açıklama:</strong> ${q.explanation}</div>` : ''}
+                        <div style="margin-top: 10px; font-size: 0.85em; color: #999;">
+                            📅 ${new Date(q.createdAt).toLocaleDateString('tr-TR')}
+                        </div>
+                    </div>
+                `).join('') + '</div>';
+
+            updateStats();
+        }
+
+        function updateStats() {
+            document.getElementById('totalQuestions').textContent = questions.length;
+
+            const subjects = [...new Set(questions.map(q => q.subject))];
+            document.getElementById('subjectCount').textContent = subjects.length;
+
+            // Update subject filter
+            const subjectFilter = document.getElementById('filterSubject');
+            const currentValue = subjectFilter.value;
+            subjectFilter.innerHTML = '<option value="">Tümü</option>' +
+                subjects.map(s => `<option value="${s}">${s}</option>`).join('');
+            subjectFilter.value = currentValue;
+
+            document.getElementById('easyCount').textContent = questions.filter(q => q.difficulty === 'kolay').length;
+            document.getElementById('mediumCount').textContent = questions.filter(q => q.difficulty === 'orta').length;
+            document.getElementById('hardCount').textContent = questions.filter(q => q.difficulty === 'zor').length;
+        }
+
+        function showAddModal() {
+            editingIndex = -1;
+            document.getElementById('modalTitle').textContent = 'Yeni Soru Ekle';
+            document.getElementById('questionForm').reset();
+            document.getElementById('questionModal').classList.add('active');
+        }
+
+        function editQuestion(index) {
+            editingIndex = index;
+            const q = questions[index];
+
+            document.getElementById('modalTitle').textContent = 'Soruyu Düzenle';
+            document.getElementById('grade').value = q.grade;
+            document.getElementById('subject').value = q.subject;
+            document.getElementById('difficulty').value = q.difficulty;
+            document.getElementById('questionText').value = q.questionText;
+            document.getElementById('explanation').value = q.explanation || '';
+
+            q.options.forEach((opt, i) => {
+                document.getElementById(`option${i}`).value = opt;
+            });
+
+            document.querySelector(`input[name="correct"][value="${q.correctAnswer}"]`).checked = true;
+
+            document.getElementById('questionModal').classList.add('active');
+        }
+
+        function deleteQuestion(index) {
+            if (confirm('Bu soruyu silmek istediğinizden emin misiniz?')) {
+                questions.splice(index, 1);
+                saveToStorage();
+                filterQuestions();
+            }
+        }
+
+        function saveQuestion(event) {
+            event.preventDefault();
+
+            const question = {
+                grade: document.getElementById('grade').value,
+                subject: document.getElementById('subject').value,
+                difficulty: document.getElementById('difficulty').value,
+                questionText: document.getElementById('questionText').value,
+                options: [
+                    document.getElementById('option0').value,
+                    document.getElementById('option1').value,
+                    document.getElementById('option2').value,
+                    document.getElementById('option3').value
+                ],
+                correctAnswer: parseInt(document.querySelector('input[name="correct"]:checked').value),
+                explanation: document.getElementById('explanation').value,
+                createdAt: editingIndex === -1 ? new Date().toISOString() : questions[editingIndex].createdAt,
+                updatedAt: new Date().toISOString()
+            };
+
+            if (editingIndex === -1) {
+                questions.push(question);
+            } else {
+                questions[editingIndex] = question;
+            }
+
+            saveToStorage();
+            closeModal();
+            filterQuestions();
+        }
+
+        function closeModal() {
+            document.getElementById('questionModal').classList.remove('active');
+        }
+
+        function saveToStorage() {
+            localStorage.setItem('questionBank', JSON.stringify(questions));
+        }
+
+        function filterQuestions() {
+            const searchText = document.getElementById('searchInput').value.toLowerCase();
+            const grade = document.getElementById('filterGrade').value;
+            const subject = document.getElementById('filterSubject').value;
+            const difficulty = document.getElementById('filterDifficulty').value;
+            const sortBy = document.getElementById('sortBy').value;
+
+            let filtered = questions.filter(q => {
+                const matchSearch = q.questionText.toLowerCase().includes(searchText);
+                const matchGrade = !grade || q.grade === grade;
+                const matchSubject = !subject || q.subject === subject;
+                const matchDifficulty = !difficulty || q.difficulty === difficulty;
+                return matchSearch && matchGrade && matchSubject && matchDifficulty;
+            });
+
+            // Sort
+            if (sortBy === 'newest') {
+                filtered.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+            } else if (sortBy === 'oldest') {
+                filtered.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+            } else if (sortBy === 'grade') {
+                filtered.sort((a, b) => a.grade - b.grade);
+            } else if (sortBy === 'difficulty') {
+                const diffOrder = { 'kolay': 1, 'orta': 2, 'zor': 3 };
+                filtered.sort((a, b) => diffOrder[a.difficulty] - diffOrder[b.difficulty]);
+            }
+
+            // Update display
+            const container = document.getElementById('questionsContainer');
+            if (filtered.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-icon">🔍</div>
+                        <h3>Sonuç bulunamadı</h3>
+                        <p>Filtreleri değiştirerek tekrar deneyin</p>
+                    </div>
+                `;
+            } else {
+                // Render filtered questions (similar to renderQuestions but with filtered array)
+                const tempQuestions = questions;
+                questions = filtered;
+                renderQuestions();
+                questions = tempQuestions;
+            }
+        }
+
+        function exportToJSON() {
+            const dataStr = JSON.stringify(questions, null, 2);
+            const dataBlob = new Blob([dataStr], { type: 'application/json' });
+            const url = URL.createObjectURL(dataBlob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `soru-bankasi-${new Date().toISOString().split('T')[0]}.json`;
+            link.click();
+            URL.revokeObjectURL(url);
+        }
+
+        function importFromJSON(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const imported = JSON.parse(e.target.result);
+                    if (confirm(`${imported.length} soru içe aktarılacak. Devam etmek istiyor musunuz?`)) {
+                        questions = questions.concat(imported);
+                        saveToStorage();
+                        renderQuestions();
+                        alert('Sorular başarıyla içe aktarıldı!');
+                    }
+                } catch (error) {
+                    alert('Hata: Geçersiz dosya formatı!');
+                }
+            };
+            reader.readAsText(file);
+            event.target.value = '';
+        }
+
+        function exportToPDF() {
+            alert('PDF export özelliği aktif!\n\nGerçek uygulamada jsPDF kütüphanesi ile PDF oluşturulur.\n\nŞimdilik JSON olarak dışa aktarıp yazdırabilirsiniz.');
+        }
+
+        // Initial render
+        renderQuestions();
+    </script>
+</body>
+</html>

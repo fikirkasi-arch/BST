@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bilişim Temelleri - Kart Eşleştirme Oyunu</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .game-container {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 900px;
+            width: 100%;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        h1 { text-align: center; color: #667eea; margin-bottom: 20px; font-size: 2.5em; }
+        .stats {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 30px;
+            font-size: 1.2em;
+        }
+        .stat { background: #f0f2ff; padding: 15px 30px; border-radius: 10px; font-weight: bold; color: #667eea; }
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+        .card {
+            aspect-ratio: 1;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 15px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5em;
+            font-weight: bold;
+            color: white;
+            transition: all 0.3s ease;
+            position: relative;
+            transform-style: preserve-3d;
+        }
+        .card.flipped {
+            background: white;
+            border: 3px solid #667eea;
+            color: #333;
+        }
+        .card.matched {
+            background: #4caf50;
+            cursor: default;
+            animation: matchPulse 0.5s;
+        }
+        .card:hover:not(.matched) {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+        @keyframes matchPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+        .buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+        }
+        .btn {
+            padding: 15px 40px;
+            font-size: 1.1em;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        .btn-primary:hover { transform: translateY(-3px); box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4); }
+        .btn-secondary { background: #e0e0e0; color: #333; }
+        .win-message {
+            display: none;
+            text-align: center;
+            font-size: 2em;
+            color: #4caf50;
+            margin: 20px 0;
+        }
+        @media (max-width: 768px) {
+            .cards-grid { grid-template-columns: repeat(3, 1fr); }
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <h1>🎮 Bilişim Temelleri - Kart Eşleştirme</h1>
+        <div class="stats">
+            <div class="stat">⏱️ Hamle: <span id="moves">0</span></div>
+            <div class="stat">✅ Eşleşme: <span id="matches">0/8</span></div>
+            <div class="stat">⏲️ Süre: <span id="time">0</span>s</div>
+        </div>
+        <div class="win-message" id="winMessage">🎉 Tebrikler! Tüm eşleşmeleri buldun!</div>
+        <div class="cards-grid" id="cardsGrid"></div>
+        <div class="buttons">
+            <button class="btn btn-primary" onclick="startGame()">🔄 Yeni Oyun</button>
+            <button class="btn btn-secondary" onclick="window.location.href='index.html'">🏠 Ana Sayfa</button>
+        </div>
+    </div>
+    <script>
+        const pairs = [
+            { id: 1, text: 'İşlemci (CPU)' },
+            { id: 1, text: 'Bilgisayarın beyni' },
+            { id: 2, text: 'RAM' },
+            { id: 2, text: 'Geçici bellek' },
+            { id: 3, text: 'Hard Disk' },
+            { id: 3, text: 'Kalıcı hafıza' },
+            { id: 4, text: 'Anakart' },
+            { id: 4, text: 'Parçaları birbirine bağlar' },
+            { id: 5, text: 'İşletim Sistemi' },
+            { id: 5, text: 'Windows, Linux, macOS' },
+            { id: 6, text: '.docx' },
+            { id: 6, text: 'Word belgesi' },
+            { id: 7, text: '.jpg' },
+            { id: 7, text: 'Resim dosyası' },
+            { id: 8, text: 'Klasör' },
+            { id: 8, text: 'Dosyaları düzenli tutar' }
+        ];
+
+        let cards = [];
+        let flippedCards = [];
+        let matchedPairs = 0;
+        let moves = 0;
+        let startTime = null;
+        let timerInterval = null;
+
+        function shuffle(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
+
+        function startGame() {
+            cards = shuffle([...pairs]);
+            flippedCards = [];
+            matchedPairs = 0;
+            moves = 0;
+            startTime = Date.now();
+            
+            document.getElementById('moves').textContent = '0';
+            document.getElementById('matches').textContent = '0/8';
+            document.getElementById('time').textContent = '0';
+            document.getElementById('winMessage').style.display = 'none';
+            
+            if (timerInterval) clearInterval(timerInterval);
+            timerInterval = setInterval(updateTimer, 1000);
+            
+            renderCards();
+        }
+
+        function updateTimer() {
+            if (startTime) {
+                const elapsed = Math.floor((Date.now() - startTime) / 1000);
+                document.getElementById('time').textContent = elapsed;
+            }
+        }
+
+        function renderCards() {
+            const grid = document.getElementById('cardsGrid');
+            grid.innerHTML = '';
+            
+            cards.forEach((card, index) => {
+                const cardEl = document.createElement('div');
+                cardEl.className = 'card';
+                cardEl.textContent = '?';
+                cardEl.dataset.index = index;
+                cardEl.onclick = () => flipCard(index);
+                grid.appendChild(cardEl);
+            });
+        }
+
+        function flipCard(index) {
+            if (flippedCards.length >= 2) return;
+            if (flippedCards.find(c => c.index === index)) return;
+            
+            const cardEl = document.querySelectorAll('.card')[index];
+            if (cardEl.classList.contains('matched')) return;
+            
+            cardEl.classList.add('flipped');
+            cardEl.textContent = cards[index].text;
+            
+            flippedCards.push({ index, id: cards[index].id, element: cardEl });
+            
+            if (flippedCards.length === 2) {
+                moves++;
+                document.getElementById('moves').textContent = moves;
+                
+                setTimeout(checkMatch, 1000);
+            }
+        }
+
+        function checkMatch() {
+            const [card1, card2] = flippedCards;
+            
+            if (card1.id === card2.id) {
+                card1.element.classList.add('matched');
+                card2.element.classList.add('matched');
+                matchedPairs++;
+                document.getElementById('matches').textContent = matchedPairs + '/8';
+                
+                if (matchedPairs === 8) {
+                    clearInterval(timerInterval);
+                    document.getElementById('winMessage').style.display = 'block';
+                }
+            } else {
+                card1.element.classList.remove('flipped');
+                card2.element.classList.remove('flipped');
+                card1.element.textContent = '?';
+                card2.element.textContent = '?';
+            }
+            
+            flippedCards = [];
+        }
+
+        startGame();
+    </script>
+</body>
+</html>
