@@ -207,6 +207,23 @@
             background: #f9f9f9;
             border-radius: 10px;
             border-left: 4px solid #43e97b;
+            page-break-inside: avoid;
+        }
+
+        .answer-box {
+            margin-top: 15px;
+            padding: 15px;
+            border: 2px solid #43e97b;
+            border-radius: 8px;
+            min-height: 100px;
+            background: white;
+        }
+
+        .answer-box-label {
+            font-weight: bold;
+            color: #43e97b;
+            margin-bottom: 8px;
+            font-size: 0.9em;
         }
 
         .question-number {
@@ -345,10 +362,12 @@
             body {
                 background: white;
                 padding: 0;
+                margin: 0;
             }
             .container {
                 box-shadow: none;
-                padding: 20px;
+                padding: 0;
+                margin: 0;
             }
             .workflow {
                 display: block;
@@ -358,6 +377,46 @@
             }
             .btn {
                 display: none;
+            }
+            .preview-area {
+                padding: 0;
+                background: white;
+            }
+            .test-paper {
+                padding: 15px;
+                box-shadow: none;
+                border-radius: 0;
+            }
+            .test-header {
+                padding-bottom: 8px;
+                margin-bottom: 15px;
+                border-bottom: 2px solid #000;
+            }
+            .test-title {
+                font-size: 1.3em;
+                margin-bottom: 5px;
+            }
+            .test-info {
+                font-size: 0.85em;
+                margin-top: 8px;
+            }
+            .question-item {
+                margin-bottom: 20px;
+                padding: 12px;
+                background: white;
+                border: 1px solid #ddd;
+                border-left: 3px solid #000;
+                border-radius: 0;
+                page-break-inside: avoid;
+            }
+            .answer-box {
+                min-height: 120px;
+                border: 2px solid #000;
+                border-radius: 0;
+                background: white;
+            }
+            .answer-key {
+                page-break-before: always;
             }
         }
     </style>
@@ -471,7 +530,12 @@
                     { q: 'Bilgisayar ağlarında veri paketleri hangi protokol ile taşınır?', o: ['A) HTTP', 'B) FTP', 'C) IP', 'D) DNS'], a: 'C', unit: 'Ağlar İletişim' },
                     { q: 'Phishing saldırısı nedir?', o: ['A) Virüs bulaştırma', 'B) Sahte e-posta ile bilgi çalma', 'C) Bilgisayarı yavaşlatma', 'D) Ağ bağlantısını kesme'], a: 'B', unit: 'Etik Güvenlik' },
                     { q: 'RAM\'in açılımı nedir?', o: ['A) Random Access Memory', 'B) Read All Memory', 'C) Run And Move', 'D) Rapid Access Mode'], a: 'A', unit: 'Bilişim Temelleri' },
-                    { q: 'Scratch\'te döngü bloğu ne işe yarar?', o: ['A) Ses çıkarmak', 'B) Renk değiştirmek', 'C) Komutları tekrar etmek', 'D) Sprite silmek'], a: 'C', unit: 'Programlama' }
+                    { q: 'Scratch\'te döngü bloğu ne işe yarar?', o: ['A) Ses çıkarmak', 'B) Renk değiştirmek', 'C) Komutları tekrar etmek', 'D) Sprite silmek'], a: 'C', unit: 'Programlama' },
+                    { q: 'USB bellekler hangi tür bellektir?', o: ['A) RAM', 'B) ROM', 'C) Flash Bellek', 'D) Cache'], a: 'C', unit: 'Bilişim Temelleri' },
+                    { q: 'Dijital vatandaşlık ne anlama gelir?', o: ['A) Sadece internette olmak', 'B) Dijital ortamlarda sorumlu davranmak', 'C) Sadece oyun oynamak', 'D) Bilgisayar kullanmak'], a: 'B', unit: 'Etik Güvenlik' },
+                    { q: 'İnternette güvenli alışveriş için sitelerin adresinde ne olmalıdır?', o: ['A) www', 'B) com', 'C) https', 'D) html'], a: 'C', unit: 'Ağlar İletişim' },
+                    { q: 'Siri ve Alexa hangi teknolojiye örnektir?', o: ['A) Donanım', 'B) Yapay Zeka Asistanları', 'C) İşletim Sistemi', 'D) Antivirüs'], a: 'B', unit: 'Yapay Zeka' },
+                    { q: 'Scratch\'te sahneye ne denir?', o: ['A) Block', 'B) Sprite', 'C) Stage', 'D) Script'], a: 'C', unit: 'Programlama' }
                 ],
                 orta: [
                     { q: 'Cache bellek hangi donanım parçasında bulunur?', o: ['A) Hard Disk', 'B) RAM', 'C) İşlemci', 'D) Anakart'], a: 'C', unit: 'Bilişim Temelleri' },
@@ -488,14 +552,34 @@
                     { q: 'Malware genel olarak neyi ifade eder?', o: ['A) Yararlı yazılım', 'B) Zararlı yazılım', 'C) İşletim sistemi', 'D) Oyun programı'], a: 'B', unit: 'Etik Güvenlik' },
                     { q: 'Yapay sinir ağları neyi taklit eder?', o: ['A) Bilgisayar ağlarını', 'B) İnsan beynini', 'C) İnternet bağlantısını', 'D) Dosya sistemini'], a: 'B', unit: 'Yapay Zeka' },
                     { q: 'Scratch\'te değişken ne için kullanılır?', o: ['A) Müzik çalmak', 'B) Veri saklamak', 'C) Renk değiştirmek', 'D) Hareket ettirmek'], a: 'B', unit: 'Programlama' },
-                    { q: 'Pixel nedir?', o: ['A) Ekran çözünürlüğü birimi', 'B) Ses dosyası formatı', 'C) Ağ protokolü', 'D) Programlama dili'], a: 'A', unit: 'Dijital Ürün' }
+                    { q: 'Pixel nedir?', o: ['A) Ekran çözünürlüğü birimi', 'B) Ses dosyası formatı', 'C) Ağ protokolü', 'D) Programlama dili'], a: 'A', unit: 'Dijital Ürün' },
+                    { q: 'BIOS ne işe yarar?', o: ['A) Oyun oynamak', 'B) Donanımı başlatmak', 'C) İnternet bağlantısı', 'D) Yazı yazmak'], a: 'B', unit: 'Bilişim Temelleri' },
+                    { q: 'VPN kullanımının amacı nedir?', o: ['A) Daha hızlı internet', 'B) Güvenli ve gizli bağlantı', 'C) Virüs temizleme', 'D) Oyun oynamak'], a: 'B', unit: 'Etik Güvenlik' },
+                    { q: 'Scratch\'te liste (array) ne için kullanılır?', o: ['A) Renk değiştirmek', 'B) Birden fazla değer saklamak', 'C) Ses çalmak', 'D) Sahne değiştirmek'], a: 'B', unit: 'Programlama' },
+                    { q: 'Görüntü tanıma teknolojisi hangi alana aittir?', o: ['A) Ağ yönetimi', 'B) Yapay Zeka', 'C) Donanım', 'D) İşletim sistemi'], a: 'B', unit: 'Yapay Zeka' },
+                    { q: 'FTP protokolü ne için kullanılır?', o: ['A) E-posta', 'B) Web sayfası', 'C) Dosya aktarımı', 'D) Video izleme'], a: 'C', unit: 'Ağlar İletişim' }
                 ],
                 zor: [
                     { q: 'Von Neumann mimarisi hangi kavramı tanımlar?', o: ['A) Ağ yapısı', 'B) Bilgisayar mimarisi', 'C) Güvenlik protokolü', 'D) Programlama paradigması'], a: 'B', unit: 'Bilişim Temelleri' },
                     { q: 'OSI modelinde kaç katman vardır?', o: ['A) 5', 'B) 6', 'C) 7', 'D) 8'], a: 'C', unit: 'Ağlar İletişim' },
                     { q: 'End-to-end şifreleme ne anlama gelir?', o: ['A) Sadece gönderici şifreler', 'B) Sadece alıcı şifreler', 'C) Uçtan uca şifreleme', 'D) Sunucu şifreler'], a: 'C', unit: 'Etik Güvenlik' },
                     { q: 'Derin öğrenme ve makine öğrenmesi arasındaki fark nedir?', o: ['A) Derin öğrenme daha fazla katman kullanır', 'B) Hiçbir fark yok', 'C) Makine öğrenmesi daha yenidir', 'D) Derin öğrenme donanım gerektirmez'], a: 'A', unit: 'Yapay Zeka' },
-                    { q: 'Recursive (özyinelemeli) fonksiyon ne demektir?', o: ['A) Hiç çalışmayan fonksiyon', 'B) Kendini çağıran fonksiyon', 'C) En hızlı fonksiyon', 'D) Döngü içermeyen fonksiyon'], a: 'B', unit: 'Programlama' }
+                    { q: 'Recursive (özyinelemeli) fonksiyon ne demektir?', o: ['A) Hiç çalışmayan fonksiyon', 'B) Kendini çağıran fonksiyon', 'C) En hızlı fonksiyon', 'D) Döngü içermeyen fonksiyon'], a: 'B', unit: 'Programlama' },
+                    { q: 'Harvard mimarisi ve Von Neumann mimarisi arasındaki temel fark nedir?', o: ['A) Harvard\'da veri ve komut ayrı belleklerde', 'B) Fark yok', 'C) Harvard daha yavaş', 'D) Von Neumann daha pahalı'], a: 'A', unit: 'Bilişim Temelleri' },
+                    { q: 'TCP ve UDP protokolleri arasındaki temel fark nedir?', o: ['A) TCP güvenilirdir, UDP değil', 'B) UDP güvenilirdir, TCP değil', 'C) Hiçbir fark yok', 'D) Sadece hız farkı var'], a: 'A', unit: 'Ağlar İletişim' },
+                    { q: 'SQL Injection saldırısı nasıl gerçekleşir?', o: ['A) E-posta ile', 'B) Veritabanı sorgularına zararlı kod enjekte ederek', 'C) Fiziksel erişim ile', 'D) Sadece şifre kırarak'], a: 'B', unit: 'Etik Güvenlik' },
+                    { q: 'Backpropagation algoritması nerede kullanılır?', o: ['A) Ağ yönetiminde', 'B) Yapay sinir ağlarının eğitiminde', 'C) Dosya sıkıştırmada', 'D) İşletim sisteminde'], a: 'B', unit: 'Yapay Zeka' },
+                    { q: 'Bubble Sort algoritmasının en kötü durum zaman karmaşıklığı nedir?', o: ['A) O(n)', 'B) O(log n)', 'C) O(n²)', 'D) O(n log n)'], a: 'C', unit: 'Programlama' },
+                    { q: 'IPv6 adres uzunluğu kaç bittir?', o: ['A) 32 bit', 'B) 64 bit', 'C) 128 bit', 'D) 256 bit'], a: 'C', unit: 'Ağlar İletişim' },
+                    { q: 'RAID teknolojisinin amacı nedir?', o: ['A) Daha hızlı işlemci', 'B) Veri güvenliği ve performans artırma', 'C) Daha fazla RAM', 'D) Ağ hızlandırma'], a: 'B', unit: 'Bilişim Temelleri' },
+                    { q: 'Asymmetric encryption\'da hangi kavram kullanılır?', o: ['A) Tek anahtar', 'B) Public ve Private key çifti', 'C) Şifresiz sistem', 'D) Sadece hash'], a: 'B', unit: 'Etik Güvenlik' },
+                    { q: 'Turing Testi neyi ölçer?', o: ['A) Bilgisayar hızı', 'B) Makinenin insan gibi düşünme yeteneği', 'C) Ağ bant genişliği', 'D) Bellek kapasitesi'], a: 'B', unit: 'Yapay Zeka' },
+                    { q: 'Binary Search algoritması hangi durumda kullanılabilir?', o: ['A) Sıralanmamış dizi', 'B) Sıralanmış dizi', 'C) Her durumda', 'D) Hiçbir durumda'], a: 'B', unit: 'Programlama' },
+                    { q: 'Parity bit ne için kullanılır?', o: ['A) Veri sıkıştırma', 'B) Hata tespiti', 'C) Şifreleme', 'D) Sıralama'], a: 'B', unit: 'Bilişim Temelleri' },
+                    { q: 'SSL/TLS hangi OSI katmanında çalışır?', o: ['A) Physical', 'B) Data Link', 'C) Transport', 'D) Presentation'], a: 'D', unit: 'Ağlar İletişim' },
+                    { q: 'Zero Knowledge Proof nedir?', o: ['A) Hiçbir bilgi vermeden ispat etme', 'B) Sıfır güvenlik', 'C) Yeni bir donanım', 'D) Ağ protokolü'], a: 'A', unit: 'Etik Güvenlik' },
+                    { q: 'Convolutional Neural Networks (CNN) hangi alanda kullanılır?', o: ['A) Metin işleme', 'B) Görüntü işleme', 'C) Ses işleme', 'D) Hiçbiri'], a: 'B', unit: 'Yapay Zeka' },
+                    { q: 'Dijkstra algoritması ne için kullanılır?', o: ['A) Sıralama', 'B) En kısa yol bulma', 'C) Arama', 'D) Şifreleme'], a: 'B', unit: 'Programlama' }
                 ]
             },
             6: {
@@ -514,7 +598,12 @@
                     { q: 'Google Docs hangi tür araçtır?', o: ['A) İşbirlikli döküman', 'B) Antivirüs', 'C) Oyun', 'D) İşletim sistemi'], a: 'A', unit: 'İletişim İşbirliği' },
                     { q: 'Hangi dosya formatı video içindir?', o: ['A) .docx', 'B) .xlsx', 'C) .mp4', 'D) .txt'], a: 'C', unit: 'Ürün Oluşturma' },
                     { q: 'Algoritma ne demektir?', o: ['A) Bilgisayar virüsü', 'B) Problem çözme adımları', 'C) Oyun', 'D) Web sitesi'], a: 'B', unit: 'Problem Çözme' },
-                    { q: 'SSL sertifikası ne sağlar?', o: ['A) Hızlı internet', 'B) Güvenli bağlantı', 'C) Ücretsiz hosting', 'D) Daha fazla RAM'], a: 'B', unit: 'Etik Güvenlik' }
+                    { q: 'SSL sertifikası ne sağlar?', o: ['A) Hızlı internet', 'B) Güvenli bağlantı', 'C) Ücretsiz hosting', 'D) Daha fazla RAM'], a: 'B', unit: 'Etik Güvenlik' },
+                    { q: 'PowerPoint hangi amaçla kullanılır?', o: ['A) Müzik dinlemek', 'B) Sunum hazırlamak', 'C) Virüs temizlemek', 'D) İnternet taramak'], a: 'B', unit: 'Ürün Oluşturma' },
+                    { q: 'Python\'da değişken tanımlamak için hangi anahtar kelime kullanılır?', o: ['A) var', 'B) let', 'C) Gerekli değil, direk atama yapılır', 'D) define'], a: 'C', unit: 'Problem Çözme' },
+                    { q: 'Siber zorbalık nedir?', o: ['A) Bilgisayar oyunu', 'B) Dijital ortamda taciz ve zorbalık', 'C) Antivirüs', 'D) Programlama dili'], a: 'B', unit: 'Etik Güvenlik' },
+                    { q: 'Zoom hangi tür uygulamadır?', o: ['A) Video oyun', 'B) Video konferans', 'C) Fotoğraf editörü', 'D) Antivirüs'], a: 'B', unit: 'İletişim İşbirliği' },
+                    { q: 'Dosya uzantısı ".pdf" neyin kısaltmasıdır?', o: ['A) Public Data File', 'B) Portable Document Format', 'C) Private Digital File', 'D) Print Data Format'], a: 'B', unit: 'Bilişim Teknolojileri' }
                 ],
                 orta: [
                     { q: 'Excel\'de =SUM() fonksiyonu ne işe yarar?', o: ['A) Ortalama alır', 'B) Toplar', 'C) Çarpar', 'D) Sayar'], a: 'B', unit: 'Bilişim Teknolojileri' },
@@ -531,14 +620,34 @@
                     { q: 'Ransomware ne tür bir tehdittir?', o: ['A) Spam e-posta', 'B) Fidye yazılımı', 'C) Oyun', 'D) İşletim sistemi'], a: 'B', unit: 'Etik Güvenlik' },
                     { q: 'CSS ne için kullanılır?', o: ['A) Programlama', 'B) Stil verme', 'C) Veritabanı', 'D) Ağ yönetimi'], a: 'B', unit: 'Ürün Oluşturma' },
                     { q: 'Debugging ne demektir?', o: ['A) Hata ayıklama', 'B) Program yazma', 'C) Test etme', 'D) Yayınlama'], a: 'A', unit: 'Problem Çözme' },
-                    { q: 'API nedir?', o: ['A) Uygulama Programlama Arayüzü', 'B) Antivirüs Programı', 'C) Ağ Protokolü', 'D) İşletim Sistemi'], a: 'A', unit: 'İletişim İşbirliği' }
+                    { q: 'API nedir?', o: ['A) Uygulama Programlama Arayüzü', 'B) Antivirüs Programı', 'C) Ağ Protokolü', 'D) İşletim Sistemi'], a: 'A', unit: 'İletişim İşbirliği' },
+                    { q: 'Excel\'de =AVERAGE() fonksiyonu ne yapar?', o: ['A) Toplar', 'B) Ortalama alır', 'C) Sayar', 'D) Böler'], a: 'B', unit: 'Bilişim Teknolojileri' },
+                    { q: 'Two-factor authentication (2FA) neden önemlidir?', o: ['A) Hızlı giriş', 'B) Ekstra güvenlik katmanı', 'C) Ücretsiz', 'D) Kolay kullanım'], a: 'B', unit: 'Etik Güvenlik' },
+                    { q: 'JavaScript ne tür bir dildir?', o: ['A) Derlenen dil', 'B) Script dili', 'C) Donanım dili', 'D) İşletim sistemi'], a: 'B', unit: 'Ürün Oluşturma' },
+                    { q: 'Python\'da liste (list) tanımlamak için hangi parantez kullanılır?', o: ['A) ()', 'B) {}', 'C) []', 'D) <>'], a: 'C', unit: 'Problem Çözme' },
+                    { q: 'Trello hangi tür bir araçtır?', o: ['A) Antivirüs', 'B) Proje yönetimi', 'C) Oyun', 'D) Video editörü'], a: 'B', unit: 'İletişim İşbirliği' }
                 ],
                 zor: [
                     { q: 'Normalizasyon veritabanında ne için yapılır?', o: ['A) Hızlandırma', 'B) Veri tekrarını önleme', 'C) Yedekleme', 'D) Şifreleme'], a: 'B', unit: 'Bilişim Teknolojileri' },
                     { q: 'Zero-day açığı ne demektir?', o: ['A) Henüz keşfedilmemiş güvenlik açığı', 'B) Eski açık', 'C) Düzeltilmiş açık', 'D) Önemsiz açık'], a: 'A', unit: 'Etik Güvenlik' },
                     { q: 'Big O notasyonu ne için kullanılır?', o: ['A) Kod güzelliği', 'B) Algoritma karmaşıklığı', 'C) Güvenlik seviyesi', 'D) Dosya boyutu'], a: 'B', unit: 'Problem Çözme' },
                     { q: 'MVC pattern\'de "M" neyi temsil eder?', o: ['A) Main', 'B) Model', 'C) Method', 'D) Memory'], a: 'B', unit: 'Ürün Oluşturma' },
-                    { q: 'WebSocket TCP\'den nasıl farklıdır?', o: ['A) Çift yönlü iletişim sağlar', 'B) Daha yavaştır', 'C) Fark yoktur', 'D) Sadece video için'], a: 'A', unit: 'İletişim İşbirliği' }
+                    { q: 'WebSocket TCP\'den nasıl farklıdır?', o: ['A) Çift yönlü iletişim sağlar', 'B) Daha yavaştır', 'C) Fark yoktur', 'D) Sadece video için'], a: 'A', unit: 'İletişim İşbirliği' },
+                    { q: 'ACID özellikleri neyle ilgilidir?', o: ['A) Ağ protokolleri', 'B) Veritabanı işlemleri', 'C) Güvenlik', 'D) Donanım'], a: 'B', unit: 'Bilişim Teknolojileri' },
+                    { q: 'Blockchain teknolojisinin temel özelliği nedir?', o: ['A) Merkezi yapı', 'B) Dağıtık ve değişmez kayıt', 'C) Hızlı işlem', 'D) Ücretsiz'], a: 'B', unit: 'Etik Güvenlik' },
+                    { q: 'Quick Sort algoritmasının ortalama zaman karmaşıklığı nedir?', o: ['A) O(n)', 'B) O(n²)', 'C) O(n log n)', 'D) O(log n)'], a: 'C', unit: 'Problem Çözme' },
+                    { q: 'RESTful API\'de HTTP metodlarından PUT ne için kullanılır?', o: ['A) Veri silme', 'B) Veri güncelleme', 'C) Veri okuma', 'D) Veri oluşturma'], a: 'B', unit: 'Ürün Oluşturma' },
+                    { q: 'Microservices mimarisi monolitik mimariden nasıl farklıdır?', o: ['A) Bağımsız servisler', 'B) Daha yavaş', 'C) Daha basit', 'D) Fark yok'], a: 'A', unit: 'İletişim İşbirliği' },
+                    { q: 'Foreign Key (Yabancı Anahtar) ne işe yarar?', o: ['A) Hızlandırma', 'B) Tablolar arası ilişki kurma', 'C) Şifreleme', 'D) Yedekleme'], a: 'B', unit: 'Bilişim Teknolojileri' },
+                    { q: 'Man-in-the-Middle (MITM) saldırısı nasıl çalışır?', o: ['A) İki taraf arasına girerek veri dinleme', 'B) Virüs gönderme', 'C) Sunucu kapatma', 'D) Şifre kırma'], a: 'A', unit: 'Etik Güvenlik' },
+                    { q: 'Dynamic Programming ne zaman kullanılır?', o: ['A) Rastgele problemler', 'B) Overlapping subproblems olan durumlarda', 'C) Her zaman', 'D) Hiçbir zaman'], a: 'B', unit: 'Problem Çözme' },
+                    { q: 'Single Page Application (SPA) nedir?', o: ['A) Tek sayfalık site', 'B) Dinamik içerik yükleme ile tek sayfa', 'C) Basit HTML', 'D) PDF döküman'], a: 'B', unit: 'Ürün Oluşturma' },
+                    { q: 'CI/CD pipeline\'ın amacı nedir?', o: ['A) Oyun oynamak', 'B) Otomatik test ve deployment', 'C) Virüs tarama', 'D) Veri yedekleme'], a: 'B', unit: 'İletişim İşbirliği' },
+                    { q: 'NoSQL veritabanları SQL\'den temel farkı nedir?', o: ['A) Schema-less yapı', 'B) Daha yavaş', 'C) Daha pahalı', 'D) Fark yok'], a: 'A', unit: 'Bilişim Teknolojileri' },
+                    { q: 'Cross-Site Scripting (XSS) saldırısı nedir?', o: ['A) Zararlı script enjekte etme', 'B) Ağ kesme', 'C) Dosya silme', 'D) E-posta spam'], a: 'A', unit: 'Etik Güvenlik' },
+                    { q: 'Greedy algoritma ne zaman optimal çözüm vermeyebilir?', o: ['A) Global optimum gerektiğinde', 'B) Her zaman verir', 'C) Hiçbir zaman vermez', 'D) Sadece sıralamada'], a: 'A', unit: 'Problem Çözme' },
+                    { q: 'Progressive Web App (PWA) ne sağlar?', o: ['A) Sadece web', 'B) Web ve native app özellikleri', 'C) Sadece mobil', 'D) Hiçbiri'], a: 'B', unit: 'Ürün Oluşturma' },
+                    { q: 'OAuth 2.0 protokolü ne için kullanılır?', o: ['A) Veri şifreleme', 'B) Yetkilendirme ve kimlik doğrulama', 'C) Dosya aktarımı', 'D) E-posta'], a: 'B', unit: 'İletişim İşbirliği' }
                 ]
             }
         };
@@ -646,6 +755,9 @@
                             <div class="question-text">${q.q}</div>
                             <div class="options">
                                 ${q.o.map(opt => `<div class="option">${opt}</div>`).join('')}
+                            </div>
+                            <div class="answer-box">
+                                <div class="answer-box-label">✏️ CEVAP:</div>
                             </div>
                         </div>
                     `).join('')}
