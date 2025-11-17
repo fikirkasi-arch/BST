@@ -6,6 +6,7 @@ from dataclasses import dataclass, field, asdict
 from datetime import date, time
 from pathlib import Path
 from typing import Dict, List, Optional, TypedDict
+from uuid import uuid4
 
 CONFIG_PATH = Path("config.json")
 
@@ -36,6 +37,16 @@ class CeremonyItem(TypedDict, total=False):
     start_ms: int
     end_ms: Optional[int]
     duration_sec: Optional[int]
+    status: str
+    status_detail: Optional[str]
+    cache_path: Optional[str]
+
+
+class SoundAsset(TypedDict, total=False):
+    asset_id: str
+    name: str
+    path: str
+    tags: List[str]
 
 
 @dataclass
@@ -68,6 +79,7 @@ class BellConfig:
     ceremony_playlist: List[CeremonyItem] = field(default_factory=list)
     recess_music_enabled: bool = False
     holidays: Dict[str, str] = field(default_factory=dict)
+    sound_library: List[SoundAsset] = field(default_factory=list)
 
     @classmethod
     def load(cls) -> "BellConfig":
@@ -102,6 +114,19 @@ class BellConfig:
                     item["end_ms"] = int(end_ms)
                 playlist.append(item)
 
+            library: List[SoundAsset] = []
+            for raw_asset in data.get("sound_library", []):
+                tags = raw_asset.get("tags") or []
+                if isinstance(tags, str):
+                    tags = [tag.strip() for tag in tags.split(",") if tag.strip()]
+                asset: SoundAsset = {
+                    "asset_id": raw_asset.get("asset_id") or uuid4().hex,
+                    "name": raw_asset.get("name", "Ses Dosyası"),
+                    "path": raw_asset.get("path", ""),
+                    "tags": list(tags),
+                }
+                library.append(asset)
+
             instance = cls(
                 daily_schedule={**{day: [] for day in WEEKDAYS}, **schedule},
                 sound_files=data.get("sound_files", {}),
@@ -112,6 +137,7 @@ class BellConfig:
                 ceremony_playlist=playlist,
                 recess_music_enabled=data.get("recess_music_enabled", False),
                 holidays=data.get("holidays", {}),
+                sound_library=library,
             )
             return instance
         return cls()
@@ -179,5 +205,53 @@ class BellConfig:
     def holiday_for(self, day: date) -> Optional[str]:
         return self.holidays.get(day.strftime("%Y-%m-%d"))
 
+    # region sound library helpers
+    def add_sound_asset(self, name: str, path: str, tags: Optional[List[str]] = None) -> SoundAsset:
+        asset: SoundAsset = {
+            "asset_id": uuid4().hex,
+            "name": name or Path(path).stem,
+            "path": path,
+            "tags": list(tags or []),
+        }
+        self.sound_library.append(asset)
+        self.save()
+        return asset
 
-__all__ = ["BellConfig", "BellEvent", "WEEKDAYS", "parse_time", "time_to_str"]
+    def update_sound_asset(self, asset_id: str, *, name: Optional[str] = None, tags: Optional[List[str]] = None) -> None:
+        for asset in self.sound_library:
+            if asset.get("asset_id") == asset_id:
+                if name is not None:
+                    asset["name"] = name
+                if tags is not None:
+                    asset["tags"] = list(tags)
+                self.save()
+                break
+
+    def remove_sound_asset(self, asset_id: str) -> None:
+        self.sound_library = [asset for asset in self.sound_library if asset.get("asset_id") != asset_id]
+        self.save()
+
+    def get_sound_asset(self, asset_id: str) -> Optional[SoundAsset]:
+        for asset in self.sound_library:
+            if asset.get("asset_id") == asset_id:
+                return asset
+        return None
+
+    def find_sound_asset_by_name(self, name: str) -> Optional[SoundAsset]:
+        name_lower = name.strip().lower()
+        for asset in self.sound_library:
+            if asset.get("name", "").strip().lower() == name_lower:
+                return asset
+        return None
+
+    # endregion
+
+
+__all__ = [
+    "BellConfig",
+    "BellEvent",
+    "WEEKDAYS",
+    "parse_time",
+    "time_to_str",
+    "SoundAsset",
+]

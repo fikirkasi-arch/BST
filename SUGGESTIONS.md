@@ -3,6 +3,7 @@
 Aşağıdaki fikirler, okul yönetimlerinin JinniBell Pro'yu daha hızlı ve hatasız kullanmasına yardımcı olacak şekilde planlandı. Her madde, son kullanıcı tarafında gözlenen sık hataları azaltmaya veya günlük akışı hızlandırmaya odaklanır.
 
 ## 1. Takvim Tabanlı Program Görünümü
+> **Durum:** JinniBell Pro arayüzüne aylık takvim paneli eklendi; bu madde uygulandı.
 - Haftalık tabloya ek olarak aylık takvim görünümü ekleyip her günün zil sayısını renk kodlarıyla göstermek, yoğun günleri çabucak fark etmeyi sağlar.
 - Takvimdeki herhangi bir güne tıklayınca ilgili kayıtlar sağ panelde açılarak tek ekranda düzenleme yapılabilir.
 
@@ -19,10 +20,12 @@ Aşağıdaki fikirler, okul yönetimlerinin JinniBell Pro'yu daha hızlı ve hat
 - Yanlış girişleri anında vurgulamak için alan kenarlıkları kırmızıya döner; kullanıcı düzeltmeden kayda izin verilmez.
 
 ## 5. Ses Kütüphanesi ve Etiketler
+> **Durum:** Ses kütüphanesi + etiket sistemi eklendi; madde tamamlandı.
 - Sık kullanılan ses dosyaları için dahili bir kütüphane ekranı ekleyip etiketleme ("v.1 teneffüs", "uzun siren" gibi) yapılabilir.
 - Aynı dosya farklı derslere atanırken sadece etiketi seçmek, her defasında dosya gezgini açma ihtiyacını ortadan kaldırır.
 
 ## 6. Tören Çalma Listesi İçin Durum Takibi
+> **Durum:** Playlist satırlarına hazır/bekliyor/indiriliyor rozetleri ve hata mesajları eklendi.
 - Playlist satırlarına "indirilmiş / bekliyor" gibi durum ikonları eklenerek YouTube bağlantısının hazır olup olmadığı gösterilebilir.
 - Her parça için tahmini indirme süresi veya boyutu görüntülenirse büyük dosyalarda kullanıcı bekleme süresini bilir.
 
@@ -31,14 +34,17 @@ Aşağıdaki fikirler, okul yönetimlerinin JinniBell Pro'yu daha hızlı ve hat
 - Aynı okulda birden fazla bilgisayar varsa, dosya değiştiğinde diğer istemciye otomatik senkronizasyon yapacak bir izleme mekanizması kurulabilir.
 
 ## 8. Zil Testi İçin Simülasyon Modu
+> **Durum:** Simülasyon paneli ders programı sekmesine eklendi ve çakışmaları raporluyor.
 - Okul dışı saatlerde programın tüm günü hızlandırılmış şekilde simüle etmesini sağlayan "senaryo" moduyla kullanıcılar planlarını sınayabilir.
 - Simülasyon raporu, hangi zilin kaçıncı dakikada çaldığını ve çakışma olup olmadığını göstererek veri girişi hatalarını azaltır.
 
 ## 9. Tören Esnasında Sürükle-Bırak Sıralama
+> **Durum:** Tören playlisti artık doğrudan sürükle-bırak yöntemiyle sıralanabiliyor.
 - Playlist öğelerini sürükle-bırak yöntemiyle sıralamak, özellikle dokunmatik ekranlı cihazlarda kullanım kolaylığı sağlar.
 - Sürükleme sırasında hedef pozisyonu gösteren görsel bir çizgi ile kullanıcı hata yapmadan sıralamayı tamamlar.
 
 ## 10. Bildirim ve Geri Sayım Paneli
+> **Durum:** Kontrol sekmesinde canlı geri sayım + tören modu rozeti devrede.
 - Kontrol sekmesine "Sonraki zil 03:12 sonra" gibi büyük puntolu bir geri sayım göstergesi eklenebilir.
 - Tören modu aktifken ekranın üst kısmında kırmızı bir şerit veya simge gösterilirse öğretmenler otomatik zillerin durdurulduğunu kolayca anlar.
 

@@ -6,18 +6,28 @@ haftanın her günü için farklı ders giriş/çıkış saatleri ayarlayabilir,
 başlatabilirsiniz.
 
 ## Özellikler
+- Aylık takvim görünümüyle yoğun günleri renk kodlarıyla görüp tek tıkla ilgili güne geçerek ders
+  programını düzenleme
 - Her gün için sınırsız sayıda zil olayı ekleme/silme; saat, kategori ve açıklama sütunlarıyla modern
   bir tablo üzerinden düzenleme
 - Saat girişleri 00-23 / 00-59 aralığında otomatik doğrulandığı için yanlış saat yazımının önüne
   geçme
 - Öğrenci girişi, öğretmen girişi, ders sonu ve teneffüs müziği için ayrı ses dosyaları
 - Ses dosyalarını arayüzden seçtikten sonra aynı satırdaki **Test** butonuyla anında dinleyebilme
+- Etiketlenebilir **Ses Kütüphanesi** sayesinde sık kullanılan dosyaları kaydedip ders zil türlerine tek
+  tıkla atayabilme
 - İstiklal Marşı, siren ve saygı duruşu kombinasyonları için tek tuşlu manuel tetikleme
+- Manuel butonların çalma zamanını **Hemen / 3 / 5 / 7 / 10 / 15 sn sonra** seçenekleriyle ayarlayarak
+  tören anonslarına tam zamanında başlama
+- Kontrol sekmesindeki geri sayım paneli ile sıradaki zili HH:MM:SS formatında ve tören modu
+  uyarısıyla takip etme
 - Tören programı için bilgisayardan veya YouTube bağlantısından müzik listesi oluşturma
   - YouTube linkleri eklendiğinde video başlığı otomatik olarak alınır
   - Başlangıç ve opsiyonel bitiş süreleri MM:SS formatında girilebilir; her parça sırasını
-    yukarı/aşağı tuşlarıyla değiştirebilirsiniz
+    yukarı/aşağı tuşlarıyla ya da sürükle-bırak yöntemiyle değiştirebilirsiniz
   - Seçilen müzikleri istenen dakikadan itibaren başlatma ve toplam süresini gösterme
+- Tören listesinde her satır için **Hazır / Bekliyor / İndiriliyor** durumunu ve olası hata mesajını
+  görebilme; YouTube indirmeleri tamamlandığında durum otomatik güncellenir
 - Teneffüslerde otomatik müzik yayını
 - Belirlenen saatte bilgisayarı otomatik kapatma
 - Tek tuşla programı başka günlere aktarma veya aynı planı birden fazla güne topluca uygulama
@@ -25,6 +35,8 @@ başlatabilirsiniz.
 - Kontrol sekmesinde bugünkü tatil durumu ve sıradaki zil bilgisini görme
 - Tören moduna alınca otomatik zilleri geçici olarak kapatma
 - Ses seviyesi ayarı ve tek tuşla zili susturma
+- "Zil Testi Simülasyonu" paneli ile herhangi bir günü hızlandırılmış olarak oynatıp olası saat
+  çakışmalarını rapor hâlinde görme
 
 ## Kurulum
 ```bash
@@ -99,10 +111,9 @@ bilgisayarlara kurulabilir bir setup üretmek için bu rehberdeki ekran görünt
 izleyebilirsiniz.
 
 ## Kullanışlılığı Artırmak İçin Öneriler
-JinniBell Pro'nun sahadaki deneyimini ileriye taşımak için hazırlanan öneri listesini `SUGGESTIONS.md`
-dosyasında bulabilirsiniz. Takvim tabanlı görünüm, ilk kurulum sihirbazı, ses kütüphanesi ve playlist
-durum takibi gibi başlıklar, veri girişinde hata payını azaltmaya ve kullanıcıların günlük işlemlerini
-hızlandırmaya odaklanır.
+Aylık takvim, ses kütüphanesi, tören playlisti durum takibi ve sürükle-bırak sıralama gibi fikirler bu
+sürümde gerçeğe dönüştürüldü. Okulunuzda ihtiyaç duyabileceğiniz ek geliştirmeleri ise hâlâ
+`SUGGESTIONS.md` dosyasında bulabilir, listedeki diğer maddeler için geri bildirim verebilirsiniz.
 
 ## Geliştirici Bilgisi
 Bu uygulama 2026 yılında **Emre Esen** tarafından kodlanmıştır. Program arayüzünün sol alt köşesindeki
