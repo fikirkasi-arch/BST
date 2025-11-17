@@ -567,11 +567,41 @@
             <button class="tab teacher-only" onclick="openTab('kaynaklar')">💾 Kaynaklar</button>
         </div>
 
+        <!-- Breadcrumb Navigasyon -->
+        <div id="breadcrumb" style="background: #f8f9fa; padding: 12px 40px; border-bottom: 1px solid #e0e0e0; font-size: 0.9em;">
+            <span style="color: #667eea; cursor: pointer;" onclick="openTab('anasayfa')">🏠 Ana Sayfa</span>
+        </div>
+
         <!-- ANA SAYFA -->
         <div id="anasayfa" class="tab-content active">
             <div class="student-workspace">
                 <h2>🚀 Hoş Geldiniz!</h2>
                 <p style="font-size: 1.2em; margin-bottom: 30px;">Bilişim Teknolojileri dersinde neler öğreneceğiz?</p>
+
+                <!-- Günlük Hedefler ve Hızlı Erişim -->
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 25px; margin-bottom: 40px;">
+                    <!-- Günlük Hedefler -->
+                    <div id="daily-goals-container"></div>
+
+                    <!-- Hızlı Erişim Kartları -->
+                    <div>
+                        <!-- Son Açtıkların -->
+                        <div style="background: white; padding: 25px; border-radius: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.08); margin-bottom: 20px;">
+                            <h3 style="margin-bottom: 20px; display: flex; align-items: center; gap: 10px;">
+                                <span>⏱️</span> Son Açtıkların
+                            </h3>
+                            <div id="recent-items-container"></div>
+                        </div>
+
+                        <!-- Favoriler -->
+                        <div style="background: white; padding: 25px; border-radius: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.08);">
+                            <h3 style="margin-bottom: 20px; display: flex; align-items: center; gap: 10px;">
+                                <span>⭐</span> Favoriler
+                            </h3>
+                            <div id="favorites-container"></div>
+                        </div>
+                    </div>
+                </div>
 
                 <div class="grade-selector">
                     <button class="grade-btn grade-5" onclick="showGrade(5)">
@@ -741,6 +771,27 @@
         <!-- DERSLER (Ders Anlatımı + Çalışma + Sunumlar) -->
         <div id="dersler" class="tab-content">
             <h2 style="margin-bottom: 20px;">📚 Dersler - Tüm Eğitim İçerikleri</h2>
+
+            <!-- Filtre Sistemi -->
+            <div style="background: white; padding: 20px; border-radius: 12px; margin-bottom: 25px; box-shadow: 0 2px 10px rgba(0,0,0,0.05);">
+                <div style="display: flex; align-items: center; gap: 15px; flex-wrap: wrap;">
+                    <span style="font-weight: 600; color: #666;">🔍 Filtrele:</span>
+                    <select id="dersler-sinif-filter" onchange="filterDersler()" style="padding: 8px 15px; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 0.95em; cursor: pointer;">
+                        <option value="all">Tüm Sınıflar</option>
+                        <option value="5">5. Sınıf</option>
+                        <option value="6">6. Sınıf</option>
+                    </select>
+                    <select id="dersler-tur-filter" onchange="filterDersler()" style="padding: 8px 15px; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 0.95em; cursor: pointer;">
+                        <option value="all">Tüm Türler</option>
+                        <option value="anlatim">Ders Anlatımı</option>
+                        <option value="calisma">Çalışma Sayfası</option>
+                        <option value="sunum">Sunum</option>
+                    </select>
+                    <button onclick="resetDerslerFilters()" style="padding: 8px 20px; background: #667eea; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 500;">
+                        ↻ Sıfırla
+                    </button>
+                </div>
+            </div>
 
             <!-- Alt Sekmeler -->
             <div style="display: flex; gap: 10px; margin-bottom: 30px; flex-wrap: wrap; justify-content: center;">
@@ -1452,6 +1503,27 @@
         <div id="aktiviteler" class="tab-content" style="display: none;">
             <h2 style="margin-bottom: 30px; text-align: center;">🎮 Aktiviteler - Oyunlar ve Quizler</h2>
 
+            <!-- Filtre Sistemi -->
+            <div style="background: white; padding: 20px; border-radius: 12px; margin-bottom: 25px; box-shadow: 0 2px 10px rgba(0,0,0,0.05);">
+                <div style="display: flex; align-items: center; gap: 15px; flex-wrap: wrap;">
+                    <span style="font-weight: 600; color: #666;">🔍 Filtrele:</span>
+                    <select id="aktivite-tur-filter" onchange="filterAktiviteler()" style="padding: 8px 15px; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 0.95em; cursor: pointer;">
+                        <option value="all">Tüm Türler</option>
+                        <option value="quiz">Quiz'ler</option>
+                        <option value="game">Oyunlar</option>
+                        <option value="flashcard">Flash Kartlar</option>
+                    </select>
+                    <select id="aktivite-sinif-filter" onchange="filterAktiviteler()" style="padding: 8px 15px; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 0.95em; cursor: pointer;">
+                        <option value="all">Tüm Sınıflar</option>
+                        <option value="5">5. Sınıf</option>
+                        <option value="6">6. Sınıf</option>
+                    </select>
+                    <button onclick="resetAktivitelerFilters()" style="padding: 8px 20px; background: #667eea; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 500;">
+                        ↻ Sıfırla
+                    </button>
+                </div>
+            </div>
+
             <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 40px; border-radius: 15px; margin-bottom: 40px; text-align: center;">
                 <h2 style="margin-bottom: 15px; color: white;">🎯 Eğlenerek Öğren!</h2>
                 <p style="font-size: 1.2em; opacity: 0.95;">Oyunlar, quizler ve interaktif aktiviteler</p>
@@ -2123,6 +2195,77 @@
             if (event && event.target) {
                 event.target.classList.add("active");
             }
+
+            // Breadcrumb'ı güncelle
+            updateBreadcrumb(tabName);
+        }
+
+        // Breadcrumb güncelleme
+        function updateBreadcrumb(tabName) {
+            const breadcrumb = document.getElementById('breadcrumb');
+            if (!breadcrumb) return;
+
+            const tabNames = {
+                'anasayfa': '🏠 Ana Sayfa',
+                'ogretmen': '👨‍🏫 Öğretmen Araçları',
+                'dersler': '📚 Dersler',
+                'aktiviteler': '🎮 Aktiviteler',
+                'yardimcilar': '📖 Yardımcılar',
+                'profilim': '👤 Profilim',
+                'kaynaklar': '💾 Kaynaklar'
+            };
+
+            const displayName = tabNames[tabName] || tabName;
+
+            breadcrumb.innerHTML = `
+                <span style="color: #667eea; cursor: pointer;" onclick="openTab('anasayfa')">🏠 Ana Sayfa</span>
+                ${tabName !== 'anasayfa' ? `<span style="margin: 0 8px; color: #999;">›</span><span style="font-weight: 600;">${displayName}</span>` : ''}
+            `;
+        }
+
+        // Dersler Filtreleme
+        function filterDersler() {
+            const sinifFilter = document.getElementById('dersler-sinif-filter').value;
+            const turFilter = document.getElementById('dersler-tur-filter').value;
+
+            // Filtre mantığı için BSTNotification göster
+            if (typeof BSTNotification !== 'undefined') {
+                let message = 'Filtre uygulandı';
+                if (sinifFilter !== 'all') message += `: ${sinifFilter}. Sınıf`;
+                if (turFilter !== 'all') message += ` - ${turFilter}`;
+                BSTNotification.show(message, 'info', 2000);
+            }
+
+            // Not: Gerçek filtreleme mantığı için içerik kartlarına data-sinif ve data-tur attribute'leri eklenebilir
+        }
+
+        function resetDerslerFilters() {
+            document.getElementById('dersler-sinif-filter').value = 'all';
+            document.getElementById('dersler-tur-filter').value = 'all';
+            if (typeof BSTNotification !== 'undefined') {
+                BSTNotification.show('Filtreler sıfırlandı', 'info', 2000);
+            }
+        }
+
+        // Aktiviteler Filtreleme
+        function filterAktiviteler() {
+            const turFilter = document.getElementById('aktivite-tur-filter').value;
+            const sinifFilter = document.getElementById('aktivite-sinif-filter').value;
+
+            if (typeof BSTNotification !== 'undefined') {
+                let message = 'Filtre uygulandı';
+                if (turFilter !== 'all') message += `: ${turFilter}`;
+                if (sinifFilter !== 'all') message += ` - ${sinifFilter}. Sınıf`;
+                BSTNotification.show(message, 'info', 2000);
+            }
+        }
+
+        function resetAktivitelerFilters() {
+            document.getElementById('aktivite-tur-filter').value = 'all';
+            document.getElementById('aktivite-sinif-filter').value = 'all';
+            if (typeof BSTNotification !== 'undefined') {
+                BSTNotification.show('Filtreler sıfırlandı', 'info', 2000);
+            }
         }
 
         function showGrade(grade) {
@@ -2186,6 +2329,9 @@
     <script src="scripts/search.js"></script>
     <script src="scripts/dark-mode.js"></script>
     <script src="scripts/daily-challenges.js"></script>
+    <script src="scripts/notification.js"></script>
+    <script src="scripts/recent-items.js"></script>
+    <script src="scripts/daily-goals.js"></script>
 
     <!-- Rol Yönetimi -->
     <script>
