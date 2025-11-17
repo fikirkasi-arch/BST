@@ -1,4 +1,4 @@
-# Okul Zil ve Tören Asistanı
+# JinniBell Pro - Okul Zil ve Tören Asistanı
 
 Windows 7 ve üzeri bilgisayarlarda çalışacak şekilde tasarlanan Tk tabanlı uygulama ile
 haftanın her günü için farklı ders giriş/çıkış saatleri ayarlayabilir, teneffüslerde müzik
@@ -60,22 +60,22 @@ durdurur.
      arşivini manuel indirip proje içindeki `packaging` klasörüne `ffmpeg-offline.zip` adıyla
      kopyalayın. Alternatif olarak zip dosyasının yolunu `FFMPEG_ZIP_PATH` ortam değişkeniyle
      belirtebilirsiniz. Betik önce bu yerel arşive bakar, bulursa indirme yapmaz.
-4. PyInstaller çağrısı, program kodu ile birlikte bu FFmpeg dosyalarını da `dist/OkulZilAsistani/ffmpeg`
+4. PyInstaller çağrısı, program kodu ile birlikte bu FFmpeg dosyalarını da `dist/JinniBellPro/ffmpeg`
    klasörüne gömerek tek başına çalışabilen bir çıktı üretir; hedef bilgisayarda ek DLL veya modül
    kurmanıza gerek kalmaz.
-5. İşlem sonunda `dist/OkulZilAsistani/OkulZilAsistani.exe` dosyası oluşturulur. Bu klasörü tek
+5. İşlem sonunda `dist/JinniBellPro/JinniBellPro.exe` dosyası oluşturulur. Bu klasörü tek
    başına başka bilgisayarlara kopyalayarak da uygulamayı taşıyabilirsiniz.
 
 ## Kurulum Dosyası (Setup EXE) Oluşturma
-1. Yukarıdaki PyInstaller adımlarını tamamlayarak `dist/OkulZilAsistani` klasörünü üretin.
+1. Yukarıdaki PyInstaller adımlarını tamamlayarak `dist/JinniBellPro` klasörünü üretin.
 2. [Inno Setup](https://jrsoftware.org/isinfo.php) kurun ve uygulamayı başlatın.
 3. `packaging/installer.iss` dosyasını açın; gerekirse `MyAppVersion` satırını güncelleyin.
-4. Inno Setup içinden **Build ➜ Compile** seçeneğini çalıştırın. Oluşan `Output/OkulZilAsistani-Setup.exe`
+4. Inno Setup içinden **Build ➜ Compile** seçeneğini çalıştırın. Oluşan `Output/JinniBellPro-Setup.exe`
    dosyası, istediğiniz bilgisayarlara kurulabilir bir sihirbaz sunar.
 5. Kurulum dosyası, PyInstaller'ın çıkardığı tüm paketleri, `bell_app` klasörünü ve
-   `dist/OkulZilAsistani/ffmpeg` altındaki FFmpeg/FFprobe dosyalarını otomatik olarak
+   `dist/JinniBellPro/ffmpeg` altındaki FFmpeg/FFprobe dosyalarını otomatik olarak
    içerdiğinden ek bağımlılık kurulumu istemez.
-6. Kurulum dosyasını dağıttığınızda program `C:\Program Files\OkulZilAsistani` klasörüne kurulur ve
+6. Kurulum dosyasını dağıttığınızda program `C:\Program Files\JinniBellPro` klasörüne kurulur ve
    Başlat menüsüne kısayol ekler.
 
 ## Programlama bilmeyenler için adım adım paketleme

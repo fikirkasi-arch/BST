@@ -1,4 +1,4 @@
-"""Okul zil ve tören programı yöneticisi."""
+"""JinniBell Pro okul zil ve tören programı yöneticisi."""
 from __future__ import annotations
 
 import os
@@ -37,7 +37,7 @@ MANUAL_BUTTONS = {
 class BellApplication:
     def __init__(self, root: tk.Tk) -> None:
         self.root = root
-        self.root.title("Okul Zil Asistanı")
+        self.root.title("JinniBell Pro")
         self.config = BellConfig.load()
         self.audio = AudioController()
         self.audio.set_state_callback(self._update_status)

@@ -18,7 +18,7 @@ echo [+] FFmpeg denetlemesi yapılıyor (Python tabanlı)...
 
 %PY% -m pip install --upgrade pip
 %PY% -m pip install -r requirements.txt pyinstaller
-pyinstaller --noconfirm --noconsole --name "OkulZilAsistani" ^
+pyinstaller --noconfirm --noconsole --name "JinniBellPro" ^
     --add-data "bell_app;bell_app" ^
     --add-binary "packaging\ffmpeg-bin\ffmpeg.exe;ffmpeg" ^
     --add-binary "packaging\ffmpeg-bin\ffprobe.exe;ffmpeg" ^
