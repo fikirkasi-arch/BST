@@ -49,7 +49,9 @@ durdurur.
    ```
    > İsterseniz komutu `packaging\build_exe.bat C:\Python311\python.exe` şeklinde belirli bir
    > Python yolu vererek de çalıştırabilirsiniz.
-3. İşlem sonunda `dist/OkulZilAsistani/OkulZilAsistani.exe` dosyası oluşturulur. Bu klasörü tek
+3. Betik, `requirements.txt` içindeki bütün paketleri indirip PyInstaller ile aynı klasörün içine
+   gömdüğü için ek DLL veya modül kurmanıza gerek kalmaz.
+4. İşlem sonunda `dist/OkulZilAsistani/OkulZilAsistani.exe` dosyası oluşturulur. Bu klasörü tek
    başına başka bilgisayarlara kopyalayarak da uygulamayı taşıyabilirsiniz.
 
 ## Kurulum Dosyası (Setup EXE) Oluşturma
@@ -58,8 +60,16 @@ durdurur.
 3. `packaging/installer.iss` dosyasını açın; gerekirse `MyAppVersion` satırını güncelleyin.
 4. Inno Setup içinden **Build ➜ Compile** seçeneğini çalıştırın. Oluşan `Output/OkulZilAsistani-Setup.exe`
    dosyası, istediğiniz bilgisayarlara kurulabilir bir sihirbaz sunar.
-5. Kurulum dosyasını dağıttığınızda program `C:\Program Files\OkulZilAsistani` klasörüne kurulur ve
+5. Kurulum dosyası, PyInstaller'ın çıkardığı tüm paketleri ve `bell_app` klasörünü otomatik olarak
+   içerdiğinden ek bağımlılık kurulumu istemez.
+6. Kurulum dosyasını dağıttığınızda program `C:\Program Files\OkulZilAsistani` klasörüne kurulur ve
    Başlat menüsüne kısayol ekler.
+
+## Programlama bilmeyenler için adım adım paketleme
+Kurulum scriptlerini hiç kod yazmadan kullanmak için ayrıntılı yönergeler `packaging/STEP_BY_STEP.md`
+dosyasında anlatılmıştır. Tüm bağımlılıkların EXE içerisine gömülü geldiğini doğrulamak ve farklı
+bilgisayarlara kurulabilir bir setup üretmek için bu rehberdeki ekran görüntülü (metin içi) adımları
+izleyebilirsiniz.
 
 ## Geliştirici Bilgisi
 Bu uygulama 2026 yılında **Emre Esen** tarafından kodlanmıştır. Program arayüzünün sol alt köşesindeki
