@@ -98,6 +98,12 @@ dosyasında anlatılmıştır. Tüm bağımlılıkların EXE içerisine gömül�
 bilgisayarlara kurulabilir bir setup üretmek için bu rehberdeki ekran görüntülü (metin içi) adımları
 izleyebilirsiniz.
 
+## Kullanışlılığı Artırmak İçin Öneriler
+JinniBell Pro'nun sahadaki deneyimini ileriye taşımak için hazırlanan öneri listesini `SUGGESTIONS.md`
+dosyasında bulabilirsiniz. Takvim tabanlı görünüm, ilk kurulum sihirbazı, ses kütüphanesi ve playlist
+durum takibi gibi başlıklar, veri girişinde hata payını azaltmaya ve kullanıcıların günlük işlemlerini
+hızlandırmaya odaklanır.
+
 ## Geliştirici Bilgisi
 Bu uygulama 2026 yılında **Emre Esen** tarafından kodlanmıştır. Program arayüzünün sol alt köşesindeki
 imza bölümü de bu bilgiyi gösterir.
