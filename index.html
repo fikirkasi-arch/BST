@@ -1465,7 +1465,7 @@
                     <p>Tüm oyunlara buradan ulaş!</p>
                 </div>
 
-                <div style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); color: white; padding: 30px; border-radius: 15px; text-align: center; cursor: pointer;" onclick="window.open('quiz-5-unite1.html', '_blank')">
+                <div style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); color: white; padding: 30px; border-radius: 15px; text-align: center; cursor: pointer;" onclick="showAllQuizzes()">
                     <div style="font-size: 3em; margin-bottom: 10px;">📝</div>
                     <h3 style="margin-bottom: 10px; color: white;">Quiz'ler</h3>
                     <p>İnteraktif testler çöz!</p>
@@ -1502,6 +1502,46 @@
                         <div style="font-size: 3em; margin-bottom: 15px;">🏃</div>
                         <h3 style="color: #43e97b; margin-bottom: 10px;">Kodlama Parkuru</h3>
                         <p style="color: #666;">Engelleri aşarak kod öğren!</p>
+                    </div>
+                </a>
+
+                <a href="oyunlar/5sinif-unite1-donanimoyunu.html" target="_blank" style="text-decoration: none;">
+                    <div style="background: white; padding: 25px; border-radius: 15px; border: 2px solid #667eea; text-align: center; cursor: pointer; transition: transform 0.3s;" onmouseover="this.style.transform='translateY(-5px)'" onmouseout="this.style.transform='translateY(0)'">
+                        <div style="font-size: 3em; margin-bottom: 15px;">💻</div>
+                        <h3 style="color: #667eea; margin-bottom: 10px;">Donanım Eşleştirme</h3>
+                        <p style="color: #666;">RAM, CPU ve ekran kartı öğren!</p>
+                    </div>
+                </a>
+
+                <a href="oyunlar/5sinif-unite2-harfavi.html" target="_blank" style="text-decoration: none;">
+                    <div style="background: white; padding: 25px; border-radius: 15px; border: 2px solid #f093fb; text-align: center; cursor: pointer; transition: transform 0.3s;" onmouseover="this.style.transform='translateY(-5px)'" onmouseout="this.style.transform='translateY(0)'">
+                        <div style="font-size: 3em; margin-bottom: 15px;">🔤</div>
+                        <h3 style="color: #f093fb; margin-bottom: 10px;">Harf Avı</h3>
+                        <p style="color: #666;">Bilişim terimlerini bul!</p>
+                    </div>
+                </a>
+
+                <a href="oyunlar/6sinif-unite1-algoritmapuzzle.html" target="_blank" style="text-decoration: none;">
+                    <div style="background: white; padding: 25px; border-radius: 15px; border: 2px solid #fccb90; text-align: center; cursor: pointer; transition: transform 0.3s;" onmouseover="this.style.transform='translateY(-5px)'" onmouseout="this.style.transform='translateY(0)'">
+                        <div style="font-size: 3em; margin-bottom: 15px;">🧩</div>
+                        <h3 style="color: #d57eeb; margin-bottom: 10px;">Algoritma Bulmaca</h3>
+                        <p style="color: #666;">Mantık oyunu ile algoritma öğren!</p>
+                    </div>
+                </a>
+
+                <a href="oyunlar/6sinif-unite2-scratchproject.html" target="_blank" style="text-decoration: none;">
+                    <div style="background: white; padding: 25px; border-radius: 15px; border: 2px solid #38f9d7; text-align: center; cursor: pointer; transition: transform 0.3s;" onmouseover="this.style.transform='translateY(-5px)'" onmouseout="this.style.transform='translateY(0)'">
+                        <div style="font-size: 3em; margin-bottom: 15px;">🎮</div>
+                        <h3 style="color: #38f9d7; margin-bottom: 10px;">Scratch Projesi</h3>
+                        <p style="color: #666;">Blok kodlama ile oyun yap!</p>
+                    </div>
+                </a>
+
+                <a href="oyunlar/6sinif-unite3-internetquiz.html" target="_blank" style="text-decoration: none;">
+                    <div style="background: white; padding: 25px; border-radius: 15px; border: 2px solid #ff9800; text-align: center; cursor: pointer; transition: transform 0.3s;" onmouseover="this.style.transform='translateY(-5px)'" onmouseout="this.style.transform='translateY(0)'">
+                        <div style="font-size: 3em; margin-bottom: 15px;">🌐</div>
+                        <h3 style="color: #ff9800; margin-bottom: 10px;">İnternet Güvenliği</h3>
+                        <p style="color: #666;">Güvenli internet kullanımı!</p>
                     </div>
                 </a>
             </div>
@@ -2236,6 +2276,75 @@
             const targetTab = document.getElementById(subTabId);
             if (targetTab) {
                 targetTab.style.display = 'block';
+            }
+        }
+
+        // Tüm quizleri gösteren modal
+        function showAllQuizzes() {
+            const quizzes = [
+                { title: '5. Sınıf - Ünite 1: Bilişim Temelleri', url: 'quiz-5-unite1.html', emoji: '📱', color: '#f5576c' },
+                { title: '5. Sınıf - Ünite 2: Dijital Ürün Tasarımı', url: 'quiz-5-unite2.html', emoji: '🎨', color: '#fccb90' },
+                { title: '5. Sınıf - Ünite 3: Ağlar ve İletişim', url: 'quiz-5-unite3.html', emoji: '🌐', color: '#4facfe' },
+                { title: '5. Sınıf - Ünite 4: Etik ve Güvenlik', url: 'quiz-5-unite4.html', emoji: '🛡️', color: '#667eea' },
+                { title: '5. Sınıf - Ünite 5: Yapay Zeka', url: 'quiz-5-unite5.html', emoji: '🤖', color: '#43e97b' },
+                { title: '5. Sınıf - Ünite 6: Scratch Programlama', url: 'quiz-5-unite6.html', emoji: '💻', color: '#764ba2' },
+                { title: '6. Sınıf - Ünite 1: Bilişim Teknolojileri', url: 'quiz-6-unite1.html', emoji: '💾', color: '#00f2fe' },
+                { title: '6. Sınıf - Ünite 2: Etik ve Güvenlik', url: 'quiz-6-unite2.html', emoji: '🔐', color: '#38f9d7' },
+                { title: '6. Sınıf - Ünite 3: İletişim ve İşbirliği', url: 'quiz-6-unite3.html', emoji: '📡', color: '#764ba2' },
+                { title: '6. Sınıf - Ünite 4: Ürün Oluşturma', url: 'quiz-6-unite4.html', emoji: '🎬', color: '#d57eeb' },
+                { title: '6. Sınıf - Ünite 5: Problem Çözme', url: 'quiz-6-unite5.html', emoji: '🧩', color: '#f5576c' }
+            ];
+
+            const modalHTML = `
+                <div id="quizModal" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 9999; display: flex; align-items: center; justify-content: center; padding: 20px;">
+                    <div style="background: white; border-radius: 20px; max-width: 900px; width: 100%; max-height: 85vh; overflow-y: auto; box-shadow: 0 20px 60px rgba(0,0,0,0.4);">
+                        <div style="position: sticky; top: 0; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 30px; border-radius: 20px 20px 0 0; z-index: 1;">
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <h2 style="margin: 0; color: white;">📝 Tüm Quiz'ler</h2>
+                                <button onclick="closeQuizModal()" style="background: rgba(255,255,255,0.2); border: none; color: white; font-size: 1.5em; cursor: pointer; width: 40px; height: 40px; border-radius: 50%; transition: all 0.3s;" onmouseover="this.style.background='rgba(255,255,255,0.3)'" onmouseout="this.style.background='rgba(255,255,255,0.2)'">✖</button>
+                            </div>
+                            <p style="margin: 10px 0 0 0; opacity: 0.95;">İnteraktif testlerle bilgilerini test et!</p>
+                        </div>
+                        <div style="padding: 30px;">
+                            <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px;">
+                                ${quizzes.map(quiz => `
+                                    <a href="${quiz.url}" target="_blank" style="text-decoration: none;">
+                                        <div style="background: white; border: 3px solid ${quiz.color}; border-radius: 15px; padding: 25px; text-align: center; cursor: pointer; transition: all 0.3s;" onmouseover="this.style.transform='translateY(-5px)'; this.style.boxShadow='0 10px 30px rgba(0,0,0,0.2)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none'">
+                                            <div style="font-size: 3.5em; margin-bottom: 15px;">${quiz.emoji}</div>
+                                            <h3 style="color: ${quiz.color}; margin-bottom: 10px; font-size: 1.1em;">${quiz.title}</h3>
+                                            <div style="background: linear-gradient(135deg, ${quiz.color}15, ${quiz.color}30); color: ${quiz.color}; padding: 8px 16px; border-radius: 20px; font-weight: bold; display: inline-block; margin-top: 10px;">
+                                                Başla →
+                                            </div>
+                                        </div>
+                                    </a>
+                                `).join('')}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            document.body.insertAdjacentHTML('beforeend', modalHTML);
+
+            // ESC tuşu ile kapat
+            document.getElementById('quizModal').addEventListener('keydown', (e) => {
+                if (e.key === 'Escape') {
+                    closeQuizModal();
+                }
+            });
+
+            // Modal dışına tıklanınca kapat
+            document.getElementById('quizModal').addEventListener('click', (e) => {
+                if (e.target.id === 'quizModal') {
+                    closeQuizModal();
+                }
+            });
+        }
+
+        function closeQuizModal() {
+            const modal = document.getElementById('quizModal');
+            if (modal) {
+                modal.remove();
             }
         }
     </script>
