@@ -1299,16 +1299,102 @@
 
         </div>
 
-        <!-- AKTİVİTELER (Oyunlar + Quizler) - Geçici olarak gizli -->
+        <!-- AKTİVİTELER (Oyunlar + Quizler) -->
         <div id="aktiviteler" class="tab-content" style="display: none;">
-            <h2>🎮 Aktiviteler - Oyunlar ve Quizler</h2>
-            <p>Aktivite içeriği buraya taşınacak...</p>
+            <h2 style="margin-bottom: 30px; text-align: center;">🎮 Aktiviteler - Oyunlar ve Quizler</h2>
+
+            <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 40px; border-radius: 15px; margin-bottom: 40px; text-align: center;">
+                <h2 style="margin-bottom: 15px; color: white;">🎯 Eğlenerek Öğren!</h2>
+                <p style="font-size: 1.2em; opacity: 0.95;">Oyunlar, quizler ve interaktif aktiviteler</p>
+            </div>
+
+            <!-- Hızlı Erişim -->
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-bottom: 40px;">
+                <div style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white; padding: 30px; border-radius: 15px; text-align: center; cursor: pointer;" onclick="window.open('games-hub.html', '_blank')">
+                    <div style="font-size: 3em; margin-bottom: 10px;">🎮</div>
+                    <h3 style="margin-bottom: 10px; color: white;">Oyun Merkezi</h3>
+                    <p>Tüm oyunlara buradan ulaş!</p>
+                </div>
+
+                <div style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); color: white; padding: 30px; border-radius: 15px; text-align: center; cursor: pointer;" onclick="window.open('quiz-5-unite1.html', '_blank')">
+                    <div style="font-size: 3em; margin-bottom: 10px;">📝</div>
+                    <h3 style="margin-bottom: 10px; color: white;">Quiz'ler</h3>
+                    <p>İnteraktif testler çöz!</p>
+                </div>
+
+                <div style="background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%); color: white; padding: 30px; border-radius: 15px; text-align: center; cursor: pointer;" onclick="window.open('flashcards.html', '_blank')">
+                    <div style="font-size: 3em; margin-bottom: 10px;">🃏</div>
+                    <h3 style="margin-bottom: 10px; color: white;">Flash Kartlar</h3>
+                    <p>Kelime kartları!</p>
+                </div>
+            </div>
+
+            <!-- Popüler Oyunlar -->
+            <h3 style="margin-bottom: 20px;">🔥 Popüler Oyunlar</h3>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;">
+                <a href="oyunlar/5sinif-unite1-memorygame.html" target="_blank" style="text-decoration: none;">
+                    <div style="background: white; padding: 25px; border-radius: 15px; border: 2px solid #f5576c; text-align: center; cursor: pointer; transition: transform 0.3s;" onmouseover="this.style.transform='translateY(-5px)'" onmouseout="this.style.transform='translateY(0)'">
+                        <div style="font-size: 3em; margin-bottom: 15px;">🧠</div>
+                        <h3 style="color: #f5576c; margin-bottom: 10px;">Hafıza Oyunu</h3>
+                        <p style="color: #666;">Bilgisayar parçalarını eşleştir!</p>
+                    </div>
+                </a>
+
+                <a href="kelime-eslestirme.html" target="_blank" style="text-decoration: none;">
+                    <div style="background: white; padding: 25px; border-radius: 15px; border: 2px solid #00f2fe; text-align: center; cursor: pointer; transition: transform 0.3s;" onmouseover="this.style.transform='translateY(-5px)'" onmouseout="this.style.transform='translateY(0)'">
+                        <div style="font-size: 3em; margin-bottom: 15px;">🎯</div>
+                        <h3 style="color: #00f2fe; margin-bottom: 10px;">Kelime Eşleştirme</h3>
+                        <p style="color: #666;">Terimleri tanımlarıyla eşleştir!</p>
+                    </div>
+                </a>
+
+                <a href="oyunlar/coding-parkour.html" target="_blank" style="text-decoration: none;">
+                    <div style="background: white; padding: 25px; border-radius: 15px; border: 2px solid #43e97b; text-align: center; cursor: pointer; transition: transform 0.3s;" onmouseover="this.style.transform='translateY(-5px)'" onmouseout="this.style.transform='translateY(0)'">
+                        <div style="font-size: 3em; margin-bottom: 15px;">🏃</div>
+                        <h3 style="color: #43e97b; margin-bottom: 10px;">Kodlama Parkuru</h3>
+                        <p style="color: #666;">Engelleri aşarak kod öğren!</p>
+                    </div>
+                </a>
+            </div>
         </div>
 
         <!-- YARDIMCILAR (Sözlük + Konu Haritası) -->
         <div id="yardimcilar" class="tab-content" style="display: none;">
-            <h2>📖 Yardımcılar</h2>
-            <p>Sözlük ve konu haritası buraya taşınacak...</p>
+            <h2 style="margin-bottom: 30px;">📖 Yardımcılar</h2>
+
+            <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 40px; border-radius: 20px; margin-bottom: 30px; text-align: center;">
+                <h2 style="color: white; margin-bottom: 15px;">💡 Öğrenme Araçların</h2>
+                <p style="font-size: 1.1em; opacity: 0.95;">Sözlük, konu haritası ve daha fazlası</p>
+            </div>
+
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px;">
+                <div style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white; padding: 40px; border-radius: 20px; text-align: center; cursor: pointer;" onclick="window.open('sozluk.html', '_blank')">
+                    <div style="font-size: 4em; margin-bottom: 15px;">📚</div>
+                    <h3 style="margin-bottom: 15px; color: white;">Bilişim Sözlüğü</h3>
+                    <p style="font-size: 1.1em; opacity: 0.95; margin-bottom: 20px;">200+ terim ve tanım</p>
+                    <button style="background: rgba(255,255,255,0.3); color: white; padding: 12px 30px; border: 2px solid white; border-radius: 25px; font-size: 1em; cursor: pointer; font-weight: 600;">
+                        Sözlüğe Git
+                    </button>
+                </div>
+
+                <div style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); color: white; padding: 40px; border-radius: 20px; text-align: center; cursor: pointer;" onclick="window.open('konular-haritasi.html', '_blank')">
+                    <div style="font-size: 4em; margin-bottom: 15px;">🗺️</div>
+                    <h3 style="margin-bottom: 15px; color: white;">Konu Haritası</h3>
+                    <p style="font-size: 1.1em; opacity: 0.95; margin-bottom: 20px;">Tüm konuların görsel haritası</p>
+                    <button style="background: rgba(255,255,255,0.3); color: white; padding: 12px 30px; border: 2px solid white; border-radius: 25px; font-size: 1em; cursor: pointer; font-weight: 600;">
+                        Haritayı Aç
+                    </button>
+                </div>
+
+                <div style="background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%); color: white; padding: 40px; border-radius: 20px; text-align: center; cursor: pointer;" onclick="window.open('video-library.html', '_blank')">
+                    <div style="font-size: 4em; margin-bottom: 15px;">🎥</div>
+                    <h3 style="margin-bottom: 15px; color: white;">Video Kütüphanesi</h3>
+                    <p style="font-size: 1.1em; opacity: 0.95; margin-bottom: 20px;">Eğitici videolar</p>
+                    <button style="background: rgba(255,255,255,0.3); color: white; padding: 12px 30px; border: 2px solid white; border-radius: 25px; font-size: 1em; cursor: pointer; font-weight: 600;">
+                        Videoları İzle
+                    </button>
+                </div>
+            </div>
         </div>
 
         <!-- PROFİLİM (Dashboard + Rozetler + Lider Tablosu) -->
