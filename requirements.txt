@@ -1,0 +1,4 @@
+mutagen
+pydub
+simpleaudio
+yt_dlp
