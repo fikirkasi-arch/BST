@@ -17,8 +17,6 @@ const BSTDailyGoals = {
                 quizTarget: 1,
                 gameCompleted: 0,
                 gameTarget: 1,
-                videoCompleted: 0,
-                videoTarget: 1,
                 minutesStudied: 0,
                 minutesTarget: 20
             };
@@ -47,15 +45,6 @@ const BSTDailyGoals = {
         this.checkAllGoalsComplete();
     },
 
-    // Video izlendi
-    completeVideo() {
-        const goals = this.getTodayGoals();
-        goals.videoCompleted++;
-        localStorage.setItem(this.GOALS_KEY, JSON.stringify(goals));
-        this.updateDisplay();
-        this.checkAllGoalsComplete();
-    },
-
     // Çalışma dakikası ekle
     addStudyMinutes(minutes) {
         const goals = this.getTodayGoals();
@@ -69,8 +58,7 @@ const BSTDailyGoals = {
         const goals = this.getTodayGoals();
         const allComplete =
             goals.quizCompleted >= goals.quizTarget &&
-            goals.gameCompleted >= goals.gameTarget &&
-            goals.videoCompleted >= goals.videoTarget;
+            goals.gameCompleted >= goals.gameTarget;
 
         if (allComplete) {
             setTimeout(() => {
@@ -138,7 +126,6 @@ const BSTDailyGoals = {
 
         const quizProgress = Math.min((goals.quizCompleted / goals.quizTarget) * 100, 100);
         const gameProgress = Math.min((goals.gameCompleted / goals.gameTarget) * 100, 100);
-        const videoProgress = Math.min((goals.videoCompleted / goals.videoTarget) * 100, 100);
 
         container.innerHTML = `
             <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 30px; border-radius: 20px; box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);">
@@ -162,7 +149,7 @@ const BSTDailyGoals = {
                 </div>
 
                 <!-- Oyun Hedefi -->
-                <div style="background: rgba(255,255,255,0.15); padding: 15px; border-radius: 12px; margin-bottom: 15px; backdrop-filter: blur(10px);">
+                <div style="background: rgba(255,255,255,0.15); padding: 15px; border-radius: 12px; backdrop-filter: blur(10px);">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
                         <div style="display: flex; align-items: center; gap: 10px;">
                             <span style="font-size: 1.5em;">🎮</span>
@@ -175,21 +162,7 @@ const BSTDailyGoals = {
                     </div>
                 </div>
 
-                <!-- Video Hedefi -->
-                <div style="background: rgba(255,255,255,0.15); padding: 15px; border-radius: 12px; backdrop-filter: blur(10px);">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-                        <div style="display: flex; align-items: center; gap: 10px;">
-                            <span style="font-size: 1.5em;">🎬</span>
-                            <span style="font-weight: 500;">Video İzle</span>
-                        </div>
-                        <span style="font-weight: bold; font-size: 1.1em;">${goals.videoCompleted}/${goals.videoTarget}</span>
-                    </div>
-                    <div style="background: rgba(0,0,0,0.2); height: 8px; border-radius: 4px; overflow: hidden;">
-                        <div style="background: #43e97b; height: 100%; width: ${videoProgress}%; transition: width 0.5s;"></div>
-                    </div>
-                </div>
-
-                ${quizProgress === 100 && gameProgress === 100 && videoProgress === 100 ?
+                ${quizProgress === 100 && gameProgress === 100 ?
                     '<div style="margin-top: 20px; text-align: center; font-size: 1.2em; font-weight: bold; animation: pulse 2s infinite;">🎉 Tüm hedefler tamamlandı! 🎉</div>' :
                     '<div style="margin-top: 15px; text-align: center; opacity: 0.9; font-size: 0.9em;">Hedeflerini tamamlayarak streak kazanmaya devam et!</div>'
                 }

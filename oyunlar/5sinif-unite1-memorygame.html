@@ -346,6 +346,11 @@
             document.getElementById('finalMoves').textContent = moves;
             document.getElementById('finalTime').textContent = document.getElementById('timer').textContent;
 
+            // Günlük hedeflere oyun tamamlandı bilgisini gönder
+            if (window.opener && window.opener.BSTDailyGoals) {
+                window.opener.BSTDailyGoals.completeGame();
+            }
+
             setTimeout(() => {
                 document.getElementById('winModal').classList.add('active');
             }, 500);

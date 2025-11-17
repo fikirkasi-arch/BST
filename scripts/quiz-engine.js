@@ -284,6 +284,13 @@ const QuizEngine = {
             </div>
         `;
 
+        // Günlük hedeflere quiz tamamlandı bilgisini gönder
+        if (typeof BSTDailyGoals !== 'undefined') {
+            BSTDailyGoals.completeQuiz();
+        } else if (window.opener && window.opener.BSTDailyGoals) {
+            window.opener.BSTDailyGoals.completeQuiz();
+        }
+
         // Timer'ı durdur
         if (this.timerInterval) {
             clearInterval(this.timerInterval);
