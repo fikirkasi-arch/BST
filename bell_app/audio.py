@@ -1,6 +1,8 @@
 """Audio playback helpers."""
 from __future__ import annotations
 
+import os
+import sys
 import threading
 import time
 from pathlib import Path
@@ -8,6 +10,40 @@ from typing import Callable, Dict, Optional
 
 from pydub import AudioSegment
 from pydub.playback import _play_with_simpleaudio  # type: ignore
+
+
+def _configure_external_binaries() -> None:
+    """Point pydub to bundled ffmpeg/ffprobe if they exist."""
+
+    def _resolve_binary(name: str) -> Optional[Path]:
+        # explicit env override
+        env_hint = os.environ.get(f"{name.upper()}_PATH") or os.environ.get("FFMPEG_HOME")
+        if env_hint:
+            candidate = Path(env_hint) / (name + (".exe" if os.name == "nt" else ""))
+            if candidate.exists():
+                return candidate
+
+        search_roots = []
+        if getattr(sys, "frozen", False):
+            search_roots.append(Path(getattr(sys, "_MEIPASS")))
+            search_roots.append(Path(sys.executable).parent)
+        search_roots.append(Path(__file__).resolve().parents[1])
+
+        for root in search_roots:
+            binary = root / "ffmpeg" / (name + (".exe" if os.name == "nt" else ""))
+            if binary.exists():
+                return binary
+        return None
+
+    ffmpeg_path = _resolve_binary("ffmpeg")
+    ffprobe_path = _resolve_binary("ffprobe")
+    if ffmpeg_path:
+        AudioSegment.converter = str(ffmpeg_path)
+    if ffprobe_path:
+        AudioSegment.ffprobe = str(ffprobe_path)
+
+
+_configure_external_binaries()
 
 
 class AudioController:

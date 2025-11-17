@@ -28,8 +28,10 @@ pip install -r requirements.txt
 ```
 
 > **Not:** `pydub` kütüphanesi MP3 gibi dosyaları çalabilmek için FFmpeg gerektirir.
-Bilgisayarınızda FFmpeg kurulu olduğundan emin olun. YouTube bağlantılarından ses almak
-isterseniz `yt-dlp` paketinin kurulması gerekir (requirements dosyasında mevcuttur).
+Bilgisayarınızda FFmpeg kurulu olduğundan emin olun. Windows için hazırladığınız EXE/kurulum
+paketlerinde FFmpeg ve FFprobe dosyaları otomatik olarak gömüldüğünden, başka bilgisayarlarda
+ayrıca kurulmasına gerek kalmaz. YouTube bağlantılarından ses almak isterseniz `yt-dlp`
+paketinin kurulması gerekir (requirements dosyasında mevcuttur).
 
 ## Çalıştırma
 ```bash
@@ -49,9 +51,12 @@ durdurur.
    ```
    > İsterseniz komutu `packaging\build_exe.bat C:\Python311\python.exe` şeklinde belirli bir
    > Python yolu vererek de çalıştırabilirsiniz.
-3. Betik, `requirements.txt` içindeki bütün paketleri indirip PyInstaller ile aynı klasörün içine
-   gömdüğü için ek DLL veya modül kurmanıza gerek kalmaz.
-4. İşlem sonunda `dist/OkulZilAsistani/OkulZilAsistani.exe` dosyası oluşturulur. Bu klasörü tek
+3. Betik, `requirements.txt` içindeki bütün paketleri indirir ve eksikse güncel FFmpeg/FFprobe
+   ikililerini otomatik olarak download edip `packaging\ffmpeg-bin` klasörüne çıkarır.
+4. PyInstaller çağrısı, program kodu ile birlikte bu FFmpeg dosyalarını da `dist/OkulZilAsistani/ffmpeg`
+   klasörüne gömerek tek başına çalışabilen bir çıktı üretir; hedef bilgisayarda ek DLL veya modül
+   kurmanıza gerek kalmaz.
+5. İşlem sonunda `dist/OkulZilAsistani/OkulZilAsistani.exe` dosyası oluşturulur. Bu klasörü tek
    başına başka bilgisayarlara kopyalayarak da uygulamayı taşıyabilirsiniz.
 
 ## Kurulum Dosyası (Setup EXE) Oluşturma
@@ -60,7 +65,8 @@ durdurur.
 3. `packaging/installer.iss` dosyasını açın; gerekirse `MyAppVersion` satırını güncelleyin.
 4. Inno Setup içinden **Build ➜ Compile** seçeneğini çalıştırın. Oluşan `Output/OkulZilAsistani-Setup.exe`
    dosyası, istediğiniz bilgisayarlara kurulabilir bir sihirbaz sunar.
-5. Kurulum dosyası, PyInstaller'ın çıkardığı tüm paketleri ve `bell_app` klasörünü otomatik olarak
+5. Kurulum dosyası, PyInstaller'ın çıkardığı tüm paketleri, `bell_app` klasörünü ve
+   `dist/OkulZilAsistani/ffmpeg` altındaki FFmpeg/FFprobe dosyalarını otomatik olarak
    içerdiğinden ek bağımlılık kurulumu istemez.
 6. Kurulum dosyasını dağıttığınızda program `C:\Program Files\OkulZilAsistani` klasörüne kurulur ve
    Başlat menüsüne kısayol ekler.

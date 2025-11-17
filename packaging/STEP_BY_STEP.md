@@ -22,10 +22,14 @@ paketleyip kurulabilir bir `Setup.exe` dosyası çıkarmasını sağlar.
 4. Betik otomatik olarak
    - `pip`i günceller,
    - `requirements.txt` içindeki **mutagen, pydub, simpleaudio, yt_dlp** gibi tüm paketleri indirir,
-   - PyInstaller'ı çağırarak bu paketleri, program dosyalarını ve `bell_app` klasörünü `dist/OkulZilAsistani`
-     klasörünün içine kopyalar.
+   - Eksikse güncel **FFmpeg** ve **FFprobe** dosyalarını download edip `packaging\ffmpeg-bin`
+     klasörüne çıkarır,
+   - PyInstaller'ı çağırarak program dosyalarını, bağımlılıkları ve `ffmpeg` klasörünü
+     `dist/OkulZilAsistani` klasörünün içine kopyalar.
 5. Komut isteminde `BUILDING EXE` benzeri satırlar bittikten sonra `dist/OkulZilAsistani/OkulZilAsistani.exe`
-   dosyası oluşur. Bu klasörü tek başına USB belleğe atıp başka bilgisayarda çalıştırabilirsiniz.
+   dosyası oluşur. Klasörde ayrıca `ffmpeg` isimli bir alt klasör göreceksiniz; burada gömülü gelen
+   `ffmpeg.exe` ve `ffprobe.exe` dosyaları bulunur. Bu klasörü tek başına USB belleğe atıp başka
+   bilgisayarda çalıştırabilirsiniz.
 
 ## 3. Kurulum sihirbazı (Setup.exe) üretmek
 1. [Inno Setup](https://jrsoftware.org/isdl.php) programını indirin ve varsayılan ayarlarla kurun.
