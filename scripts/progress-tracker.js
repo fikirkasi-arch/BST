@@ -38,6 +38,7 @@ const BSTProgress = {
 
         this.saveProgress(progress);
         this.updateAllProgressDisplays();
+        this.updateDashboardData();
     },
 
     // Oyun tamamlandı
@@ -50,6 +51,7 @@ const BSTProgress = {
 
         this.saveProgress(progress);
         this.updateAllProgressDisplays();
+        this.updateDashboardData();
     },
 
     // Ders tamamlandı
@@ -251,6 +253,50 @@ const BSTProgress = {
         }
     },
 
+    // Dashboard verilerini güncelle (student-dashboard.html için)
+    updateDashboardData() {
+        const progress = this.getProgress();
+
+        // Toplam quiz sayısı
+        const completedQuizzes = progress.completed.quizzes.length;
+
+        // Toplam oyun sayısı
+        const playedGames = progress.completed.games.length;
+
+        // Ortalama quiz puanı hesapla
+        let totalScore = 0;
+        let quizCount = 0;
+        for (const quizId in progress.scores) {
+            if (progress.scores[quizId].percentage) {
+                totalScore += progress.scores[quizId].percentage;
+                quizCount++;
+            }
+        }
+        const avgScore = quizCount > 0 ? Math.round(totalScore / quizCount) : 0;
+
+        // Toplam puan hesapla (her quiz 100 puan, her oyun 50 puan)
+        const totalPoints = (completedQuizzes * 100) + (playedGames * 50);
+
+        // Streak bilgisini al (BSTDailyGoals'dan)
+        let streakDays = 0;
+        if (typeof BSTDailyGoals !== 'undefined') {
+            streakDays = BSTDailyGoals.getStreak();
+        }
+
+        // localStorage'a kaydet
+        const userData = {
+            completedQuizzes: completedQuizzes,
+            playedGames: playedGames,
+            avgScore: avgScore,
+            earnedBadges: Math.floor(completedQuizzes / 3), // Her 3 quiz için 1 rozet
+            streakDays: streakDays,
+            totalPoints: totalPoints,
+            lastUpdated: new Date().toISOString()
+        };
+
+        localStorage.setItem('bstUserData', JSON.stringify(userData));
+    },
+
     // Test için örnek veri ekle
     addSampleProgress() {
         const progress = this.getProgress();
@@ -280,5 +326,6 @@ document.addEventListener('DOMContentLoaded', () => {
     // Küçük bir gecikme ile kartların yüklenmesini bekle
     setTimeout(() => {
         BSTProgress.updateAllProgressDisplays();
+        BSTProgress.updateDashboardData();
     }, 500);
 });
