@@ -376,6 +376,16 @@
             startTimer();
         }
 
+        // Son açtıklara ekle (ana penceredeki BSTRecent'e kaydet)
+        if (window.opener && window.opener.BSTRecent) {
+            window.opener.BSTRecent.addRecentItem({
+                title: '5. Sınıf - Hafıza Oyunu',
+                url: window.location.pathname,
+                emoji: '🧠',
+                category: 'game'
+            });
+        }
+
         // Sayfa yüklenince oyunu başlat
         startGame();
     </script>

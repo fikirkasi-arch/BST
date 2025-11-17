@@ -90,21 +90,29 @@ const BSTRecent = {
             lesson: '#667eea'
         };
 
-        container.innerHTML = recent.map(item => `
-            <a href="${item.url}" style="text-decoration: none;" onclick="BSTRecent.addRecentItem({title: '${item.title}', url: '${item.url}', emoji: '${item.emoji}', category: '${item.category}'})">
-                <div style="background: white; border-left: 4px solid ${categoryColors[item.category] || '#667eea'}; padding: 15px; border-radius: 8px; margin-bottom: 10px; cursor: pointer; transition: all 0.3s; box-shadow: 0 2px 5px rgba(0,0,0,0.05);"
-                     onmouseover="this.style.transform='translateX(5px)'; this.style.boxShadow='0 4px 12px rgba(0,0,0,0.1)'"
-                     onmouseout="this.style.transform='translateX(0)'; this.style.boxShadow='0 2px 5px rgba(0,0,0,0.05)'">
-                    <div style="display: flex; align-items: center; gap: 12px;">
-                        <span style="font-size: 1.8em;">${item.emoji}</span>
-                        <div style="flex: 1;">
-                            <div style="font-weight: 600; color: #333; margin-bottom: 3px;">${item.title}</div>
-                            <div style="font-size: 0.85em; color: #999;">${this.getTimeAgo(item.timestamp)}</div>
+        container.innerHTML = recent.map(item => {
+            // Quiz ve oyunlar yeni pencerede, dersler modalda açılır
+            const isExternal = item.category === 'quiz' || item.category === 'game';
+            const targetAttr = isExternal ? 'target="_blank"' : '';
+            const onclickAttr = item.category === 'lesson' ? `onclick="showModal('${item.url.replace('#', '')}')"` : '';
+            const href = item.category === 'lesson' ? '#' : item.url;
+
+            return `
+                <a href="${href}" ${targetAttr} ${onclickAttr} style="text-decoration: none;">
+                    <div style="background: white; border-left: 4px solid ${categoryColors[item.category] || '#667eea'}; padding: 15px; border-radius: 8px; margin-bottom: 10px; cursor: pointer; transition: all 0.3s; box-shadow: 0 2px 5px rgba(0,0,0,0.05);"
+                         onmouseover="this.style.transform='translateX(5px)'; this.style.boxShadow='0 4px 12px rgba(0,0,0,0.1)'"
+                         onmouseout="this.style.transform='translateX(0)'; this.style.boxShadow='0 2px 5px rgba(0,0,0,0.05)'">
+                        <div style="display: flex; align-items: center; gap: 12px;">
+                            <span style="font-size: 1.8em;">${item.emoji}</span>
+                            <div style="flex: 1;">
+                                <div style="font-weight: 600; color: #333; margin-bottom: 3px;">${item.title}</div>
+                                <div style="font-size: 0.85em; color: #999;">${this.getTimeAgo(item.timestamp)}</div>
+                            </div>
                         </div>
                     </div>
-                </div>
-            </a>
-        `).join('');
+                </a>
+            `;
+        }).join('');
     },
 
     // Favoriler görüntüsünü güncelle

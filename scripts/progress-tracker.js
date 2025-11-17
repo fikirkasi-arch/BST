@@ -144,8 +144,8 @@ const BSTProgress = {
 
     // Tüm ilerleme göstergelerini güncelle
     updateAllProgressDisplays() {
-        // Ana sayfadaki ünite kartlarını güncelle
-        this.updateUnitCards();
+        // Ana sayfadaki ünite kartlarını güncelle - DEVRE DIŞI (kullanıcı istemedi)
+        // this.updateUnitCards();
 
         // Profil sayfasındaki genel ilerlemeyi güncelle
         this.updateOverallProgress();

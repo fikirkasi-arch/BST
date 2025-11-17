@@ -114,6 +114,16 @@
 
         // Quiz'i başlat
         document.addEventListener('DOMContentLoaded', () => {
+            // Son açtıklara ekle (ana penceredeki BSTRecent'e kaydet)
+            if (window.opener && window.opener.BSTRecent) {
+                window.opener.BSTRecent.addRecentItem({
+                    title: quizData.title,
+                    url: window.location.pathname,
+                    emoji: '📝',
+                    category: 'quiz'
+                });
+            }
+
             if (typeof QuizEngine !== 'undefined' && QuizEngine.validateQuizData(quizData)) {
                 QuizEngine.initQuiz(quizData);
             } else {
