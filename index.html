@@ -1,0 +1,1123 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Dinamik Bulmaca Üretici</title>
+<style>
+  :root{
+    --cell: 34px; --gap: 2px; --num: 10px;
+    font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+  }
+  body{margin:0; background:#0b1020; color:#e8ecf1}
+  header{padding:20px; text-align:center}
+  h1{margin:0 0 8px 0; font-size:22px}
+  main{display:grid; grid-template-columns: 420px 1fr; gap:18px; padding:18px}
+  .card{background:#121a34; border:1px solid #233055; border-radius:14px; box-shadow:0 10px 30px rgba(0,0,0,.25)}
+  .card header{padding:14px 16px; text-align:left; font-weight:600; border-bottom:1px solid #223056}
+  .card section{padding:14px 16px}
+  textarea{width:100%; min-height:260px; resize:vertical; border-radius:10px; padding:12px; border:1px solid #2a3a66; background:#0f1630; color:#e8ecf1}
+  input, select, button{border-radius:10px; border:1px solid #2a3a66; background:#0f1630; color:#e8ecf1; padding:10px 12px}
+  button{cursor:pointer; font-weight:600}
+  button.primary{background:#2c6efd; border-color:#2362ea}
+  .row{display:flex; gap:10px; align-items:center; flex-wrap:wrap}
+  .muted{opacity:.75; font-size:13px}
+  .grid{display:inline-grid; grid-auto-rows: var(--cell); grid-auto-columns: var(--cell); gap: var(--gap); padding:12px; background:#0f1630; border-radius:12px; border:1px solid #2a3a66; break-inside: avoid}
+  .cell{position:relative; width:var(--cell); height:var(--cell); display:grid; place-items:center; font-weight:700; font-size:18px; text-transform:uppercase; user-select:none}
+  .cell.black{background:#0a0e1f}
+  .cell.white{background:#e8ecf1; color:#0b1020}
+  .num{position:absolute; left:4px; top:2px; font-size:10px; font-weight:700; color:#2b3c60}
+  .legend{display:grid; grid-template-columns:1fr 1fr; gap:18px}
+  ol{margin:6px 0 0 18px}
+  li{margin:2px 0}
+  .badge{font-size:12px; padding:2px 8px; border-radius:999px; background:#26345d; display:inline-block}
+  .tools{display:flex; gap:8px; flex-wrap:wrap}
+  .footer{padding:8px 16px 16px; display:flex; justify-content:space-between; align-items:center}
+  .print-only{display:none}
+  .no-print-on-screen{display:none}
+  .page-break{break-after: page}
+  @media print{*{box-shadow:none !important; filter:none !important}
+    @page { size: A4 portrait; margin: 12mm; }
+    body{background:#fff;color:#000}
+    .no-print{display:none !important}
+    .print-only{display:block !important}
+    main{display:block; padding:0}
+    .grid{border:1px solid #000}
+    .cell.white{background:#fff; color:#000}
+    .num{color:#444}
+    .page-break{break-after: page}
+    .print-row{display:block !important}
+  }
+.sheet-img{max-width:18cm;height:auto;display:block}
+@media print{ .sheet-img{ image-rendering: pixelated; width:19cm; max-width:19cm; margin:0 auto 8mm; display:block } }
+.cipher-img{max-width:16cm;height:auto;display:block;margin:6mm auto 0}
+@media print{ .cipher-img{ image-rendering: pixelated; max-width:16cm; } }
+  #playCard{display:none}
+  #playCard.active{display:block}
+  .play-grid{margin-top:12px}
+  .play-grid input{width:var(--cell); height:var(--cell); border-radius:6px; border:1px solid #40508a; background:#fefefe; color:#0a0e1f; text-align:center; font-size:18px; font-weight:700; text-transform:uppercase; display:block; font-family:'Noto Sans','Segoe UI',system-ui,sans-serif}
+  .play-grid input:focus{outline:2px solid #2c6efd; border-color:#2c6efd}
+  .play-grid .cell.black{background:#000; border-radius:6px}
+  .extra-note{margin-top:10px; font-size:13px; opacity:.8}
+  .guide-list{list-style:none; margin:10px 0 0 0; padding:0}
+  .guide-list li{margin:6px 0; line-height:1.4}
+  .guide-list li strong{color:#8fb0ff}
+</style>
+</head>
+<body>
+  <header class="no-print">
+    <h1>Dinamik Bulmaca Üretici</h1>
+    <div class="muted">Satır başına <strong>CEVAP | SORU</strong> formatıyla girin. “Yazdır / PDF” ile çıktı alın.</div>
+  </header>
+  <main>
+    <!-- Giriş Kartı (yazdırma sırasında gizli) -->
+    <div class="card no-print">
+      <header>Veri Girişi</header>
+      <section>
+        <textarea id="input" spellcheck="false" placeholder="ORNEK | Örnek soru
+ALGORITMA | Temel kavram nedir?
+TURKIYE | Başkenti neresi? (ANKARA)"></textarea>
+        <div class="row" style="margin-top:10px">
+          <label>Izgara Boyutu:
+            <select id="size">
+              <option value="auto" selected>Otomatik</option>
+              <option>13</option>
+              <option>15</option>
+              <option>17</option>
+              <option>19</option>
+              <option>21</option>
+            </select>
+          </label>
+          <label title="Aynı sorularla farklı yerleşimler üretmek için sabit tohum (seed). 0 girerseniz tek, diğer sayılar farklı dizilim üretir.">Rastgelelik:
+            <input type="number" id="seed" value="0" min="0" max="9999" style="width:100px" title="Aynı sorularla farklı yerleşimler üretmek için sabit tohum (seed). 0=deterministik; farklı sayı=farklı yerleşim."/>
+          </label>
+          <div class="tools">
+            <label>Bulmaca Tipi:
+              <select id="mode">
+                <option value="kare" selected>Kare Bulmaca</option>
+                <option value="kareplus">Güncellenmiş Kare Bulmaca</option>
+                <option value="sarmal">Şifreli Sarmal</option>
+                <option value="sozluk">Sözlük Avı</option>
+                <option value="anagram">Anagram Şifre</option>
+                <option value="akrostis">Akrostiş / Kripto Akrani</option>
+                <option value="cryptogram">Şifreli Alfabe</option>
+                <option value="ladder">Söz Zinciri</option>
+                <option value="cengel">Çengel Bulmaca</option>
+              </select>
+            </label>
+            <button class="primary" id="build">Bulmaca Oluştur</button>
+            <button id="print">Yazdır / PDF</button>
+            <button id="sample">Örnek Doldur</button>
+            <button id="runTests">Dahili Testleri Çalıştır</button>
+          </div>
+        </div>
+      </section>
+      <div class="footer">
+        <div class="muted">Boşluk ve noktalama yok sayılır, Türkçe karakterler desteklenir.</div>
+        <span class="badge" id="stats">—</span>
+        <span class="badge" id="testStatus">Test: —</span>
+      </div>
+    </div>
+
+    <!-- Ekran için canlı önizleme kartı (yazdırmada gizli) -->
+    <div class="card no-print">
+      <header>Önizleme (Ekran) — <span id="modeTitle">Kare Bulmaca</span></header>
+      <section style="display:flex; gap:24px; align-items:flex-start; flex-wrap:wrap">
+        <div id="grid" class="grid"></div>
+        <div class="legend">
+          <div>
+            <div class="badge">Yatay (Across)</div>
+            <ol id="across"></ol>
+          </div>
+          <div>
+            <div class="badge">Dikey (Down)</div>
+            <ol id="down"></ol>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <!-- İnteraktif Kare Bulmaca Kartı -->
+    <div class="card no-print" id="playCard">
+      <header>Güncellenmiş Kare Bulmaca</header>
+      <section>
+        <div class="row" style="justify-content:space-between">
+          <div class="badge" id="playDir">Yön: Yatay</div>
+          <div class="tools">
+            <button id="toggleDir">Yönü Değiştir</button>
+            <button id="clearPlay">Tümünü Temizle</button>
+          </div>
+        </div>
+        <div class="extra-note">Hücreye tıklayın ve yazın. Harf yazınca otomatik yönünüzde ilerler, kenara gelince yön değişir.</div>
+        <div id="playGrid" class="grid play-grid"></div>
+      </section>
+    </div>
+
+    <!-- Oyun açıklamaları ve öneriler -->
+    <div class="card no-print">
+      <header>Oyun Özeti & İpuçları</header>
+      <section>
+        <p style="margin-top:0">Her oyun tipi kısacık kurallarla oynanır. Aşağıdaki özetler hangi modda ne yapmanız gerektiğini hatırlatır:</p>
+        <ul class="guide-list">
+          <li><strong>Kare Bulmaca:</strong> Standart kare şablonda cevaplar yatay ve dikey yerleşir. Soruları listeden okuyup aynı numaralı hücrelere harfleri yazın.</li>
+          <li><strong>Güncellenmiş Kare Bulmaca:</strong> Ekrandaki interaktif kareyi kullanarak yazı yazar, yön düğmesiyle yatay/dikey geçiş yapar, hücre doldukça otomatik ilerlersiniz.</li>
+          <li><strong>Şifreli Sarmal:</strong> Tüm cevaplar tek bir spiral pistte birleşir. Merkezden dışa doğru sıralanan harfleri çözerek gizli mesajı bulun.</li>
+          <li><strong>Sözlük Avı:</strong> Kelimeler sağa, sola, çapraz tüm yönlerde saklıdır. İşaretlenen kelimeleri listeden seçip bulduğunuzda renklendirilmiş çözüm görselini kullanabilirsiniz.</li>
+          <li><strong>Anagram Şifre:</strong> Her satırda harfleri karıştırılmış bir cevap bulunur; doğru sıralayıp ilk harfleri birleştirerek alt kısımdaki gizli anahtarı çıkarın.</li>
+          <li><strong>Akrostiş / Kripto Akrani:</strong> İpuçlarını cevaplayın, her kelimenin ilk harfini mesaj kutularına taşıyarak final cümlesini elde edin.</li>
+          <li><strong>Şifreli Alfabe:</strong> Harfler rastgele eşleşmiş bir alfabe ile kodlandı. Tabloyu kullanarak her kodu Türkçe karşılığına çevirin ve paragrafı çözün.</li>
+          <li><strong>Söz Zinciri / Kelime Merdiveni:</strong> Başlangıç ve bitiş sözcükleri aynı uzunluktadır; arada her adımda tek harf değiştirerek hedefe ulaşın.</li>
+          <li><strong>Çengel Bulmaca:</strong> Okların gösterdiği yönde verilen ipucuna göre kelimeyi yazın; farklı yönlerde ilerleyen cevaplar birbirini keser.</li>
+        </ul>
+      </section>
+    </div>
+
+    <!-- YAZDIR / PDF İÇERİĞİ: 1. Sayfa boş bulmaca, 2. Sayfa çözümler -->
+    <div class="print-only">
+      <section class="print-wrap" id="print-blank">
+        <h2 style="margin:12px 0 0 12px">Bulmaca</h2>
+        <div class="print-row" style="display:flex; gap:24px; padding:12px; align-items:flex-start; flex-wrap:wrap">
+          <img id="imgBlank" class="sheet-img" alt="Bulmaca (boş)"/>
+          <div class="legend">
+            <div>
+              <strong>Yatay</strong>
+              <ol id="acrossBlank"></ol>
+            </div>
+            <div>
+              <strong>Dikey</strong>
+              <ol id="downBlank"></ol>
+            </div>
+          </div>
+        </div>
+        <div id="cipherWrapBlank" class="no-print-on-screen" style="padding:0 12px 12px">
+          <div style="font-weight:700;margin:0 0 6px 12px">Şifre</div>
+          <img id="imgCipherBlank" class="cipher-img" alt="Şifre (boş)"/>
+        </div>
+      </section>
+      <div class="page-break"></div>
+      <section class="print-wrap" id="print-solved">
+        <h2 style="margin:12px 0 0 12px">Cevap Anahtarı</h2>
+        <div class="print-row" style="display:flex; gap:24px; padding:12px; align-items:flex-start; flex-wrap:wrap">
+          <img id="imgSolved" class="sheet-img" alt="Bulmaca (cevaplı)"/>
+          <div class="legend">
+            <div>
+              <strong>Yatay (Cevaplar)</strong>
+              <ol id="acrossSolved"></ol>
+            </div>
+            <div>
+              <strong>Dikey (Cevaplar)</strong>
+              <ol id="downSolved"></ol>
+            </div>
+          </div>
+        </div>
+        <div id="cipherWrapSolved" class="no-print-on-screen" style="padding:0 12px 12px">
+          <div style="font-weight:700;margin:0 0 6px 12px">Şifre (Cevap)</div>
+          <img id="imgCipherSolved" class="cipher-img" alt="Şifre (cevap)"/>
+        </div>
+      </section>
+    </div>
+  </main>
+
+<script>
+// --- Yardımcılar ---
+const TURKISH_ALPHABET = 'ABCÇDEFGĞHIİJKLMNOÖPRSŞTUÜVYZ';
+const LETTERS_ONLY_REGEX = new RegExp(`[^${TURKISH_ALPHABET}0-9]`, 'g');
+const LETTERS_WITH_PUNCT_REGEX = new RegExp(`[^${TURKISH_ALPHABET}0-9\\s\\.,;:!?\\'\\-]`, 'g');
+const TURKISH_FONT_STACK = '"Noto Sans","Segoe UI","Helvetica Neue",Arial,sans-serif';
+const VOWELS = new Set(['A','E','I','İ','O','Ö','U','Ü']);
+const normalize = (s='')=> s
+  .toLocaleUpperCase('tr-TR')
+  .replace(LETTERS_ONLY_REGEX,'');
+const rnd = (seed)=>()=> (seed = (seed*9301 + 49297) % 233280)/233280;
+const shuffleArray = (arr, rng)=>{
+  for(let i=arr.length-1;i>0;i--){
+    const j = Math.floor(rng()*(i+1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+};
+
+function parseInput(text){
+  // Satırlara böl ve parçala
+  return text.split(/\n+/).map(l=>l.trim()).filter(Boolean).map((l,idx)=>{
+    const [ansRaw, ...qparts] = l.split('|');
+    const clue = (qparts.join('|')||`Soru ${idx+1}`).trim();
+    const answer = normalize(ansRaw||'').trim();
+    return {answer, clue};
+  }).filter(x=>x.answer.length>1);
+}
+
+function autoSize(entries){
+  const total = entries.reduce((a,b)=>a+b.answer.length,0);
+  const base = Math.max(11, Math.ceil(Math.sqrt(total*1.4))+4);
+  const sized = (base%2? base: base+1);
+  return Math.min(25, sized);
+}
+
+function makeGrid(n){
+  return Array.from({length:n},()=>Array(n).fill(null));
+}
+
+function canPlace(grid, word, r, c, dir){
+  const n = grid.length;
+  const dr = dir==='across'?0:1, dc = dir==='across'?1:0;
+  const len = word.length;
+  if(r<0||c<0||r+dr*(len-1)>=n||c+dc*(len-1)>=n) return false;
+  const br = r-dr, bc = c-dc, ar = r+dr*len, ac = c+dc*len;
+  if(br>=0 && bc>=0 && br<n && bc<n && grid[br][bc]) return false;
+  if(ar>=0 && ac>=0 && ar<n && ac<n && grid[ar][ac]) return false;
+  for(let i=0;i<len;i++){
+    const rr = r+dr*i, cc = c+dc*i;
+    const g = grid[rr][cc];
+    if(g && g!==word[i]) return false;
+    const nr1 = rr + (dir==='across'?1:0);
+    const nc1 = cc + (dir==='across'?0:1);
+    const nr2 = rr - (dir==='across'?1:0);
+    const nc2 = cc - (dir==='across'?0:1);
+    const isCross = (g===word[i]);
+    if(!isCross){
+      if(nr1>=0&&nc1>=0&&nr1<n&&nc1<n && grid[nr1][nc1]) return false;
+      if(nr2>=0&&nc2>=0&&nr2<n&&nc2<n && grid[nr2][nc2]) return false;
+    }
+  }
+  return true;
+}
+
+function placeWord(grid, word, r, c, dir){
+  const dr = dir==='across'?0:1, dc = dir==='across'?1:0;
+  for(let i=0;i<word.length;i++) grid[r+dr*i][c+dc*i] = word[i];
+  return {word, r, c, dir};
+}
+
+function bestPlacement(grid, word){
+  const n=grid.length; let best=null;
+  for(let r=0;r<n;r++) for(let c=0;c<n;c++){
+    const g = grid[r][c];
+    for(let k=0;k<word.length;k++) if(g===word[k]){
+      const c0 = c - k; if(canPlace(grid, word, r, c0, 'across')){
+        const inter = intersections(grid, word, r, c0, 'across');
+        const score = 100*inter - spreadPenalty(r,c0,word.length,'across',n);
+        if(!best || score>best.score) best={r, c:c0, dir:'across', score};
+      }
+      const r0 = r - k; if(canPlace(grid, word, r0, c, 'down')){
+        const inter = intersections(grid, word, r0, c, 'down');
+        const score = 100*inter - spreadPenalty(r0,c,word.length,'down',n);
+        if(!best || score>best.score) best={r:r0, c, dir:'down', score};
+      }
+    }
+  }
+  if(!best){
+    for(let r=0;r<n;r++) for(let c=0;c<n;c++){
+      if(canPlace(grid, word, r, c, 'across')) return {r, c, dir:'across'};
+      if(canPlace(grid, word, r, c, 'down')) return {r, c, dir:'down'};
+    }
+  }
+  return best;
+}
+
+function intersections(grid, word, r, c, dir){
+  const dr = dir==='across'?0:1, dc = dir==='across'?1:0; let x=0;
+  for(let i=0;i<word.length;i++){ if(grid[r+dr*i][c+dc*i]===word[i]) x++; }
+  return x;
+}
+function spreadPenalty(r,c,len,dir,n){
+  const dr = dir==='across'?0:1, dc = dir==='across'?1:0;
+  const r2 = r+dr*(len-1), c2 = c+dc*(len-1);
+  const centre = (n-1)/2;
+  const d1 = Math.hypot(r-centre, c-centre);
+  const d2 = Math.hypot(r2-centre, c2-centre);
+  return d1+d2;
+}
+
+function build(entries, chosenSize, seed=0){
+  let n = chosenSize==='auto'? autoSize(entries): Number(chosenSize);
+  n = Math.min(25, Math.max(11, n));
+  const grid = makeGrid(n);
+  const rndf = rnd(seed||0);
+  entries = entries.slice().sort((a,b)=> b.answer.length - a.answer.length);
+  const first = entries.shift();
+  const startC = Math.max(0, Math.floor((n - first.answer.length)/2));
+  placeWord(grid, first.answer, Math.floor(n/2), startC, 'across');
+  const placed=[{...first, ...{r:Math.floor(n/2), c:startC, dir:'across'}}];
+  for(const e of entries){
+    if(rndf()>0.5) e.answer = e.answer; // seed tüketici
+    const bp = bestPlacement(grid, e.answer);
+    if(bp){ placeWord(grid, e.answer, bp.r, bp.c, bp.dir); placed.push({...e, ...bp}); }
+  }
+  const {numbers, across, down} = annotate(grid, placed);
+  return {grid, placed, numbers, across, down};
+}
+
+function annotate(grid, placed){
+  const n=grid.length; const numbers=Array.from({length:n},()=>Array(n).fill(null));
+  let no=0; const across=[], down=[]; const used=new Set();
+  function pushClue(dir, r,c){
+    const word = readWord(grid,r,c,dir);
+    const key = dir+':'+r+','+c; if(used.has(key)) return; used.add(key);
+    const clueObj = placed.find(p=>p.answer===word);
+    const item = {no, clue: clueObj?.clue || '—', answer: word};
+    (dir==='across'?across:down).push(item);
+  }
+  function isLetter(x){return x && typeof x==='string';}
+  function readWord(grid,r,c,dir){
+    const dr = dir==='across'?0:1, dc = dir==='across'?1:0; let s='';
+    while(r>=0&&c>=0&&r<n&&c<n && isLetter(grid[r][c])){ s+=grid[r][c]; r+=dr; c+=dc; }
+    return s;
+  }
+  for(let r=0;r<n;r++) for(let c=0;c<n;c++) if(isLetter(grid[r][c])){
+    const left = (c===0 || !isLetter(grid[r][c-1]));
+    const up   = (r===0 || !isLetter(grid[r-1][c]));
+    const right = (c+1<n && isLetter(grid[r][c+1]));
+    const downc = (r+1<n && isLetter(grid[r+1][c]));
+    let numbered=false;
+    if((left && right) || (up && downc)){
+      numbers[r][c] = ++no; numbered=true;
+    }
+    if(numbered && left && right) pushClue('across', r, c);
+    if(numbered && up   && downc) pushClue('down',   r, c);
+  }
+  return {numbers, across, down};
+}
+
+function renderGrid(targetId, grid, numbers, showLetters){
+  const n=grid.length; const el=document.getElementById(targetId);
+  if(!el) return;
+  el.innerHTML='';
+  el.style.gridTemplateColumns = `repeat(${n}, var(--cell))`;
+  el.style.gridTemplateRows    = `repeat(${n}, var(--cell))`;
+  for(let r=0;r<n;r++) for(let c=0;c<n;c++){
+    const val = grid[r][c];
+    const div=document.createElement('div');
+    div.className='cell '+(val? 'white':'black');
+    if(val){
+      if(numbers[r][c]){
+        const sp=document.createElement('div');
+        sp.className='num'; sp.textContent=numbers[r][c];
+        div.appendChild(sp);
+      }
+      if(showLetters){ div.appendChild(document.createTextNode(val)); }
+    }
+    el.appendChild(div);
+  }
+}
+
+function fillList(id, items, withAnswer=false){
+  const el=document.getElementById(id); if(!el) return; el.innerHTML='';
+  items.forEach(x=>{
+    const li=document.createElement('li');
+    li.innerHTML = withAnswer ? `<strong>${x.no}.</strong> ${x.clue} <em>(${x.answer})</em>`
+                              : `<strong>${x.no}.</strong> ${x.clue}`;
+    el.appendChild(li);
+  });
+}
+
+function gridToDataURL(grid, numbers, showLetters){
+  const n = grid.length;
+  const cell = Math.max(16, Math.min(36, Math.floor(1200/n)));
+  const pad = 12;
+  const W = n*cell + pad*2, H = n*cell + pad*2;
+  const canvas = document.createElement('canvas');
+  canvas.width = W; canvas.height = H;
+  const ctx = canvas.getContext('2d');
+  ctx.fillStyle = '#ffffff'; ctx.fillRect(0,0,W,H);
+  for(let r=0;r<n;r++) for(let c=0;c<n;c++){
+    const x = pad + c*cell, y = pad + r*cell;
+    if(grid[r][c]){
+      ctx.fillStyle = '#ffffff'; ctx.fillRect(x,y,cell,cell);
+      ctx.strokeStyle='#000000'; ctx.strokeRect(x+0.5,y+0.5,cell-1,cell-1);
+      if(numbers[r][c]){
+        ctx.fillStyle = '#444'; ctx.font = `10px ${TURKISH_FONT_STACK}`;
+        ctx.textAlign = 'left'; ctx.textBaseline='top';
+        ctx.fillText(String(numbers[r][c]), x+2, y+1);
+      }
+      if(showLetters){
+        ctx.fillStyle = '#000'; ctx.font = `${Math.floor(cell*0.6)}px ${TURKISH_FONT_STACK}`;
+        ctx.textAlign='center'; ctx.textBaseline='middle';
+        ctx.fillText(grid[r][c], x+cell/2, y+cell/2+1);
+      }
+    }else{
+      ctx.fillStyle = '#000000'; ctx.fillRect(x,y,cell,cell);
+    }
+  }
+  return canvas.toDataURL('image/png');
+}
+
+function render(result){
+  const {grid, numbers, across, down} = result;
+  // Ekran
+  renderGrid('grid', grid, numbers, true);
+  fillList('across', across);
+  fillList('down',   down);
+  // Yazdır (1. sayfa boş)
+  const imgBlank = document.getElementById('imgBlank'); if(imgBlank) imgBlank.src = gridToDataURL(grid, numbers, false);
+  fillList('acrossBlank', across);
+  fillList('downBlank',   down);
+  // Yazdır (2. sayfa çözümler)
+  const imgSolved = document.getElementById('imgSolved'); if(imgSolved) imgSolved.src = gridToDataURL(grid, numbers, true);
+  fillList('acrossSolved', across, true);
+  fillList('downSolved',   down,   true);
+  document.getElementById('stats').textContent = `Izgara: ${grid.length}×${grid.length} • Kelime: ${across.length+down.length}`;
+}
+
+// --- Ek Bulmaca Türleri ve Görsel Üretici ---
+function makeSpiralCircleImages(entries, seed){
+  const letters = entries.map(e=>e.answer).join('');
+  // halka/sayı planı
+  function plan(len){
+    let rings=5, outer=28; let segs=[];
+    function sum(){ return segs.reduce((a,b)=>a+b,0); }
+    while(true){
+      segs = Array.from({length:rings}, (_,i)=> outer - 4*i);
+      if(sum()>=len || (rings>=6 && outer>=40)) break;
+      if(outer<40) outer+=4; else rings++;
+    }
+    return {rings, segs};
+  }
+  const {rings, segs} = plan(letters.length);
+  const totalCells = segs.reduce((a,b)=>a+b,0);
+  // indeks -> halka, segment
+  const path=[];
+  for(let ri=0; ri<rings; ri++){
+    const s=segs[ri]; for(let k=0;k<s;k++) path.push({ring:ri, seg:k});
+  }
+  // çizim
+  function draw(showLetters){
+    const size = 1100, pad=30; const cx=size/2, cy=size/2; const rOuter = size/2 - pad; const ringW = (rOuter - 80)/rings;
+    const canvas=document.createElement('canvas'); canvas.width=size; canvas.height=size; const ctx=canvas.getContext('2d');
+    ctx.fillStyle='#fff'; ctx.fillRect(0,0,size,size);
+    // merkezde dekoratif görsel (gradient rozet)
+    const rInner = (rOuter - ringW*rings) * 0.9;
+    const g = ctx.createRadialGradient(cx,cy,4, cx,cy, rInner);
+    g.addColorStop(0,'#ffffff'); g.addColorStop(0.5,'#e9eef7'); g.addColorStop(1,'#cfd8f3');
+    ctx.fillStyle=g; ctx.beginPath(); ctx.arc(cx,cy,rInner,0,Math.PI*2); ctx.fill();
+    ctx.strokeStyle='#7a86c5'; ctx.lineWidth=2; ctx.beginPath(); ctx.arc(cx,cy,rInner,0,Math.PI*2); ctx.stroke();
+    ctx.fillStyle='#2a3566'; ctx.font=`${Math.floor(rInner*0.5)}px ${TURKISH_FONT_STACK}`; ctx.textAlign='center'; ctx.textBaseline='middle'; ctx.fillText('★', cx, cy);
+    ctx.strokeStyle='#000'; ctx.lineWidth=1;
+    let idx=0; for(let ri=0; ri<rings; ri++){
+      const s=segs[ri]; const r1 = rOuter - ringW*ri; const r0 = r1 - ringW;
+      for(let k=0;k<s;k++){
+        idx++; const a0 = -Math.PI/2 + (2*Math.PI*k)/s; const a1 = -Math.PI/2 + (2*Math.PI*(k+1))/s;
+        // halka dilimini çiz
+        ctx.beginPath(); ctx.arc(cx,cy,r1,a0,a1); ctx.arc(cx,cy,r0,a1,a0,true); ctx.closePath(); ctx.stroke();
+        // içerik
+        const midA = (a0+a1)/2; const rm = (r0+r1)/2;
+        const lx = cx + Math.cos(midA)*rm, ly = cy + Math.sin(midA)*rm;
+        const n = (ri===0?0:segs.slice(0,ri).reduce((a,b)=>a+b,0)) + k + 1;
+        // numarayı küçük yaz
+        ctx.fillStyle='#333'; ctx.font=`12px ${TURKISH_FONT_STACK}`; ctx.textAlign='center'; ctx.textBaseline='middle'; ctx.fillText(String(n), lx, ly);
+        if(showLetters && n<=letters.length){
+          ctx.fillStyle='#000'; ctx.font=`${Math.floor(ringW*0.45)}px ${TURKISH_FONT_STACK}`; ctx.textAlign='center'; ctx.textBaseline='middle'; ctx.fillText(letters[n-1], lx, ly);
+        }
+      }
+    }
+    return canvas.toDataURL('image/png');
+  }
+  // şifre satırı
+  function cipherImages(){
+    const L = letters.length; const r = rnd(seed||0);
+    const pickCount = Math.min(L, Math.max(6, Math.min(8, Math.floor(L/3) || 6)));
+    const set=new Set(); while(set.size<pickCount){ set.add(1 + Math.floor(r()*L)); }
+    const picks = Array.from(set).sort((a,b)=>a-b);
+    function drawRow(showSolved){
+      const box=64; const pad=16; const W = picks.length*box + pad*2; const H = 2*box + pad*3;
+      const canvas=document.createElement('canvas'); canvas.width=W; canvas.height=H; const ctx=canvas.getContext('2d');
+      ctx.fillStyle='#fff'; ctx.fillRect(0,0,W,H);
+      ctx.strokeStyle='#000';
+      picks.forEach((n,i)=>{
+        const x=pad+i*box, y=pad; ctx.strokeRect(x+0.5,y+0.5,box-1,box-1);
+        ctx.fillStyle='#000'; ctx.font=`14px ${TURKISH_FONT_STACK}`; ctx.textAlign='center'; ctx.textBaseline='middle'; ctx.fillText(String(n), x+box/2, y+box/2);
+        ctx.strokeRect(x+0.5, y+box+pad+0.5, box-1, box-1);
+        if(showSolved){ const ch = letters[n-1]||''; ctx.font=`24px ${TURKISH_FONT_STACK}`; ctx.fillText(ch, x+box/2, y+box+pad+box/2); }
+      });
+      return canvas.toDataURL('image/png');
+    }
+    return {blank: drawRow(false), solved: drawRow(true), picks};
+  }
+  const c = cipherImages();
+  return {boardBlank: draw(false), boardSolved: draw(true), cipherBlank: c.blank, cipherSolved: c.solved, rings, totalCells, letters};
+}
+
+function gridToDataURLGeneric(grid, numbers, opts={}){
+  const n = grid.length;
+  const showLetters = !!opts.showLetters;
+  const cell = Math.max(16, Math.min(opts.maxCell||36, Math.floor((opts.maxPx||1200)/n)));
+  const pad = 12; const W = n*cell + pad*2, H = n*cell + pad*2;
+  const canvas=document.createElement('canvas'); canvas.width=W; canvas.height=H; const ctx=canvas.getContext('2d');
+  ctx.fillStyle='#fff'; ctx.fillRect(0,0,W,H);
+  for(let r=0;r<n;r++) for(let c=0;c<n;c++){
+    const x=pad+c*cell, y=pad+r*cell;
+    const val = grid[r][c];
+    if(val===null){ ctx.fillStyle='#000'; ctx.fillRect(x,y,cell,cell); continue; }
+    ctx.fillStyle='#fff'; ctx.fillRect(x,y,cell,cell);
+    ctx.strokeStyle='#000'; ctx.strokeRect(x+0.5,y+0.5,cell-1,cell-1);
+    if(numbers && numbers[r] && numbers[r][c]){
+      ctx.fillStyle='#444'; ctx.font=`10px ${TURKISH_FONT_STACK}`; ctx.textAlign='left'; ctx.textBaseline='top';
+      ctx.fillText(String(numbers[r][c]), x+2, y+1);
+    }
+    if(showLetters && typeof val==='string' && val.length){
+      ctx.fillStyle='#000'; ctx.font=`${Math.floor(cell*0.6)}px ${TURKISH_FONT_STACK}`; ctx.textAlign='center'; ctx.textBaseline='middle';
+      ctx.fillText(val, x+cell/2, y+cell/2+1);
+    }
+  }
+  if(opts.arrows && opts.arrows.length){
+    opts.arrows.forEach(a=>{ // a: {r,c,dir,no}
+      const x=pad+a.c*cell, y=pad+a.r*cell; const cx=x+cell/2, cy=y+cell/2;
+      const tri=(pts)=>{ const ctx2=ctx; ctx2.beginPath(); ctx2.moveTo(pts[0][0],pts[0][1]); for(let i=1;i<pts.length;i++) ctx2.lineTo(pts[i][0],pts[i][1]); ctx2.closePath(); ctx2.fillStyle='#000'; ctx2.fill(); };
+      if(a.dir==='right') tri([[x+cell-4,cy],[x+cell*0.5,y+4],[x+cell*0.5,y+cell-4]]);
+      if(a.dir==='down')  tri([[x+4,y+cell-4],[x+cell-4,y+cell-4],[x+cell*0.5,y+cell*0.5]]);
+      if(a.dir==='diag')  tri([[x+cell-4,y+cell-4],[x+cell-4, y+cell*0.4],[x+cell*0.4, y+cell-4]]);
+      if(a.dir==='diag2') tri([[x+4,y+cell-4],[x+cell*0.6, y+cell-4],[x+4, y+cell*0.4]]);
+      if(a.no){ ctx.fillStyle='#111'; ctx.font=`bold 10px ${TURKISH_FONT_STACK}`; ctx.textAlign='left'; ctx.textBaseline='top'; ctx.fillText(String(a.no), x+2, y+1); }
+    });
+  }
+  if(opts.highlights){
+    ctx.strokeStyle='rgba(0,0,255,0.55)'; ctx.lineWidth=3;
+    opts.highlights.forEach(path=>{
+      if(!path.length) return; const p0=path[0];
+      ctx.beginPath(); ctx.moveTo(pad+p0.c*cell+cell/2, pad+p0.r*cell+cell/2);
+      for(let i=1;i<path.length;i++){ const p=path[i]; ctx.lineTo(pad+p.c*cell+cell/2, pad+p.r*cell+cell/2); }
+      ctx.stroke();
+    });
+  }
+  return canvas.toDataURL('image/png');
+}
+
+function genSpiral(entries){
+  const total = entries.reduce((a,b)=>a+b.answer.length,0);
+  let n = Math.max(11, Math.ceil(Math.sqrt(total))+2); if(n%2===0) n++; n=Math.min(25,n);
+  const grid = makeGrid(n).map(row=>row.map(()=>'')); // boşlar: '' (falsy)
+  // spiral koordinat listesi
+  let top=0,left=0,bottom=n-1,right=n-1; const coords=[];
+  while(top<=bottom && left<=right){
+    for(let c=left;c<=right;c++) coords.push({r:top,c}); top++;
+    for(let r=top;r<=bottom;r++) coords.push({r,c:right}); right--;
+    if(top<=bottom){ for(let c=right;c>=left;c--) coords.push({r:bottom,c}); bottom--; }
+    if(left<=right){ for(let r=bottom;r>=top;r--) coords.push({r,c:left}); left++; }
+  }
+  const letters = entries.map(e=>e.answer).join('');
+  for(let i=0;i<Math.min(letters.length, coords.length);i++){ const p=coords[i]; grid[p.r][p.c]=letters[i]; }
+  const numbers = Array.from({length:n},()=>Array(n).fill(null));
+  const list = entries.map((e,i)=>({no:i+1, clue:e.clue, answer:e.answer}));
+  return {grid, numbers, across:list, down:[]};
+}
+
+function genWordSearch(entries){
+  const words = entries.map(e=>e.answer).filter(w=>w.length>1);
+  const maxLen = Math.max(3, ...words.map(w=>w.length));
+  let n = Math.max(12, maxLen+3, (Math.ceil(Math.sqrt(words.join('').length))*1.4|0)); n=Math.min(25,n);
+  const grid = Array.from({length:n},()=>Array(n).fill(''));
+  const dirs = [{dr:0,dc:1},{dr:1,dc:0},{dr:1,dc:1},{dr:-1,dc:1},{dr:0,dc:-1},{dr:-1,dc:0},{dr:-1,dc:-1},{dr:1,dc:-1}];
+  const paths=[];
+  function can(w,r,c,d){ if(r+d.dr*(w.length-1)<0||c+d.dc*(w.length-1)<0||r+d.dr*(w.length-1)>=n||c+d.dc*(w.length-1)>=n) return false; for(let i=0;i<w.length;i++){ const ch=grid[r+d.dr*i][c+d.dc*i]; if(ch && ch!==w[i]) return false; } return true; }
+  function place(w){ for(let t=0;t<400;t++){ const r=(Math.random()*n)|0, c=(Math.random()*n)|0, d=dirs[(Math.random()*dirs.length)|0]; if(can(w,r,c,d)){ const path=[]; for(let i=0;i<w.length;i++){ grid[r+d.dr*i][c+d.dc*i]=w[i]; path.push({r:r+d.dr*i,c:c+d.dc*i}); } paths.push(path); return true; } } return false; }
+  words.sort((a,b)=>b.length-a.length).forEach(w=>place(w));
+  const letters = TURKISH_ALPHABET;
+  for(let r=0;r<n;r++) for(let c=0;c<n;c++){ if(!grid[r][c]) grid[r][c] = letters[(Math.random()*letters.length)|0]; }
+  const numbers = Array.from({length:n},()=>Array(n).fill(null));
+  const list = entries.map((e,i)=>({no:i+1, clue:e.answer, answer:e.answer}));
+  return {grid, numbers, across:list, down:[], paths};
+}
+
+function genCengel(entries){
+  const words = entries.map(e=>e.answer);
+  let n = Math.max(13, Math.ceil(Math.sqrt(words.join('').length))*1.3|0); n=Math.min(25,n);
+  const grid = Array.from({length:n},()=>Array(n).fill(''));
+  const dirs = ['right','down','diag','diag2'];
+  const arrows=[]; const list=[]; let no=0;
+  function delta(dir){return dir==='right'?{dr:0,dc:1}:dir==='down'?{dr:1,dc:0}:dir==='diag'?{dr:1,dc:1}:{dr:1,dc:-1};}
+  function inb(r,c){return r>=0&&c>=0&&r<n&&c<n;}
+  function can(w,r,c,dir){ const d=delta(dir); for(let i=0;i<w.length;i++){ const rr=r+d.dr*i, cc=c+d.dc*i; if(!inb(rr,cc)) return false; if(grid[rr][cc] && grid[rr][cc]!==w[i]) return false; } return true; }
+  function place(word, clue){ for(let t=0;t<300;t++){ const dir=dirs[(Math.random()*dirs.length)|0]; const r=(Math.random()*n)|0, c=(Math.random()*n)|0; if(can(word,r,c,dir)){ const d=delta(dir); arrows.push({r,c,dir,no:++no}); list.push({no, clue, answer:word}); for(let i=0;i<word.length;i++){ const rr=r+d.dr*i, cc=c+d.dc*i; grid[rr][cc]=word[i]; } return true; } } return false; }
+  entries.slice().sort((a,b)=>b.answer.length-a.answer.length).forEach(e=>place(e.answer,e.clue));
+  // DOLUM YAPILMAYAN TÜM HÜCRELERİ SİYAH YAP
+  for(let r=0;r<n;r++) for(let c=0;c<n;c++){ if(!grid[r][c]) grid[r][c]=null; }
+  const numbers = Array.from({length:n},()=>Array(n).fill(null));
+  return {grid, numbers, across:list, down:[], arrows};
+}
+
+// --- Yeni Oyun: Anagram Şifre ---
+function makeAnagramImages(entries, seed){
+  const words = entries.map(e=>e.answer);
+  const rng = rnd(seed||0);
+  const scrambled = words.map(w=>{
+    const arr=w.split('');
+    for(let i=arr.length-1;i>0;i--){ const j=Math.floor(rng()*(i+1)); [arr[i],arr[j]]=[arr[j],arr[i]]; }
+    const s=arr.join('');
+    return (s===w && w.length>1) ? (w.slice(1)+w[0]) : s;
+  });
+  const acrostic = words.map(w=>w[0]).join('');
+  function draw(showSolved){
+    const lineH=48, pad=24; const W=1100; const H= pad*2 + lineH*(words.length+3);
+    const canvas=document.createElement('canvas'); canvas.width=W; canvas.height=H; const ctx=canvas.getContext('2d');
+    ctx.fillStyle='#fff'; ctx.fillRect(0,0,W,H); ctx.fillStyle='#000';
+    ctx.font=`bold 24px ${TURKISH_FONT_STACK}`; ctx.fillText('ANAGRAM ŞİFRE', pad, pad+8);
+    ctx.font=`20px ${TURKISH_FONT_STACK}`;
+    words.forEach((w,i)=>{
+      const y=pad+40 + i*lineH;
+      const left = (i+1)+'. '+ (showSolved? w : scrambled[i]);
+      ctx.fillText(left, pad, y);
+    });
+    // acrostic kutuları
+    const box=36; const startX=pad; const y0 = pad+40 + words.length*lineH + 20;
+    ctx.font=`16px ${TURKISH_FONT_STACK}`; ctx.fillText('ŞİFRE:', startX, y0);
+    let x=startX+70;
+    for(let i=0;i<words.length;i++){
+      ctx.strokeStyle='#000'; ctx.strokeRect(x+0.5, y0-20, box, box);
+      if(showSolved){ ctx.font=`24px ${TURKISH_FONT_STACK}`; ctx.fillStyle='#000'; ctx.textAlign='center'; ctx.textBaseline='middle'; ctx.fillText(acrostic[i]||'', x+box/2+0.5, y0-20+box/2); ctx.textAlign='start'; ctx.textBaseline='alphabetic'; }
+      x+=box+6;
+    }
+    return canvas.toDataURL('image/png');
+  }
+  return {blank: draw(false), solved: draw(true), words, scrambled, acrostic};
+}
+
+function makeAcrosticGame(entries){
+  const answers = entries.map(e=>e.answer);
+  const firstLetters = answers.map(a=>a[0]||'').join('');
+  const maxLen = Math.max(3, ...answers.map(a=>a.length));
+  const box = 30, pad=24; const clueWidth = 420; const lineH=46;
+  const W = Math.min(1200, pad*2 + clueWidth + maxLen*(box+4));
+  const H = pad*3 + lineH*answers.length + 90;
+  function draw(showSolved){
+    const canvas=document.createElement('canvas'); canvas.width=W; canvas.height=H; const ctx=canvas.getContext('2d');
+    ctx.fillStyle='#fff'; ctx.fillRect(0,0,W,H);
+    ctx.fillStyle='#000'; ctx.font=`bold 24px ${TURKISH_FONT_STACK}`; ctx.fillText('AKROSTİŞ / KRİPTO AKRANI', pad, pad+4);
+    ctx.font=`18px ${TURKISH_FONT_STACK}`;
+    entries.forEach((entry, idx)=>{
+      const y = pad+40 + idx*lineH;
+      ctx.fillText(`${idx+1}. ${entry.clue}`, pad, y);
+      let x = pad + clueWidth;
+      for(let i=0;i<answers[idx].length;i++){
+        ctx.strokeStyle='#111'; ctx.strokeRect(x+0.5, y-32, box, box);
+        if(i===0){ ctx.font=`10px ${TURKISH_FONT_STACK}`; ctx.fillStyle='#333'; ctx.fillText(String(idx+1), x+4, y-22); ctx.font=`18px ${TURKISH_FONT_STACK}`; }
+        if(showSolved){ ctx.fillStyle='#000'; ctx.textAlign='center'; ctx.textBaseline='middle'; ctx.fillText(answers[idx][i], x+box/2, y-32+box/2); ctx.textAlign='start'; ctx.textBaseline='alphabetic'; }
+        x += box+4;
+      }
+    });
+    // Mesaj kutuları
+    const msgY = pad+40 + answers.length*lineH + 20;
+    ctx.font=`bold 18px ${TURKISH_FONT_STACK}`; ctx.fillStyle='#000'; ctx.fillText('Gizli Mesaj:', pad, msgY);
+    let x = pad + 170;
+    for(let i=0;i<firstLetters.length;i++){
+      ctx.strokeStyle='#000'; ctx.strokeRect(x+0.5, msgY-22, box, box);
+      ctx.font=`12px ${TURKISH_FONT_STACK}`; ctx.fillText(String(i+1), x+4, msgY-12);
+      if(showSolved){ ctx.font=`20px ${TURKISH_FONT_STACK}`; ctx.textAlign='center'; ctx.textBaseline='middle'; ctx.fillText(firstLetters[i]||'', x+box/2, msgY-22+box/2); ctx.textAlign='start'; ctx.textBaseline='alphabetic'; }
+      x+=box+6;
+    }
+    return canvas.toDataURL('image/png');
+  }
+  return {blank: draw(false), solved: draw(true), firstLetters};
+}
+
+function makeCryptogram(entries, seed){
+  const alphabet=TURKISH_ALPHABET.split('');
+  const rng=rnd(seed||0);
+  let shuffled=alphabet.slice();
+  for(let i=shuffled.length-1;i>0;i--){ const j=Math.floor(rng()*(i+1)); [shuffled[i],shuffled[j]]=[shuffled[j],shuffled[i]]; }
+  // yeniden karıştır, eşleşmelerde aynı harf olmasın
+  for(let i=0;i<shuffled.length;i++){
+    if(shuffled[i]===alphabet[i]){
+      const swap=(i+1)%shuffled.length; [shuffled[i], shuffled[swap]]=[shuffled[swap], shuffled[i]];
+    }
+  }
+  const cipherMap={}; const decodeMap={};
+  alphabet.forEach((ch,idx)=>{ cipherMap[ch]=shuffled[idx]; decodeMap[shuffled[idx]]=ch; });
+  const plain = entries.map((e,i)=> `${i+1}. ${e.clue}`).join(' ');
+  const normalized = plain.toLocaleUpperCase('tr-TR').replace(LETTERS_WITH_PUNCT_REGEX,'');
+  const encodeRegex = new RegExp(`[${TURKISH_ALPHABET}]`, 'g');
+  const encode = (txt)=> txt.replace(encodeRegex, ch=>cipherMap[ch]||ch);
+  const cipher = encode(normalized);
+  function wrap(text, max){
+    const words=text.split(/\s+/); const lines=[]; let cur='';
+    words.forEach(w=>{
+      const cand = cur? cur+' '+w : w;
+      if(cand.length>max){ if(cur) lines.push(cur); cur=w; } else cur=cand;
+    });
+    if(cur) lines.push(cur);
+    return lines;
+  }
+  const box=28, pad=24, lineH=32, maxChars=42;
+  function draw(showSolved){
+    const text=showSolved? normalized : cipher;
+    const lines=wrap(text, maxChars);
+    const rows=2; const tableH = rows*(box+10)+30;
+    const H = pad*2 + lines.length*lineH + tableH;
+    const W = 1100;
+    const canvas=document.createElement('canvas'); canvas.width=W; canvas.height=H; const ctx=canvas.getContext('2d');
+    ctx.fillStyle='#fff'; ctx.fillRect(0,0,W,H);
+    ctx.fillStyle='#000'; ctx.font=`bold 24px ${TURKISH_FONT_STACK}`; ctx.fillText('ŞİFRELİ ALFABE', pad, pad+4);
+    ctx.font='20px "Courier New", Courier, monospace';
+    lines.forEach((line,i)=>{ ctx.fillText(line, pad, pad+40 + i*lineH); });
+    const tableY = pad+40 + lines.length*lineH + 20;
+    ctx.font=`14px ${TURKISH_FONT_STACK}`;
+    ctx.fillText('Kod', pad, tableY+box/2);
+    ctx.fillText('Çözüm', pad, tableY+box+18+box/2);
+    alphabet.forEach((ch,idx)=>{
+      const x = pad+50 + idx*(box+4);
+      ctx.strokeStyle='#222'; ctx.strokeRect(x, tableY, box, box);
+      ctx.font=`18px ${TURKISH_FONT_STACK}`; ctx.textAlign='center'; ctx.textBaseline='middle';
+      ctx.fillStyle='#000'; ctx.fillText(cipherMap[ch], x+box/2, tableY+box/2);
+      ctx.strokeRect(x, tableY+box+18, box, box);
+      if(showSolved){ ctx.fillText(ch, x+box/2, tableY+box+18+box/2); }
+      else{ ctx.font=`14px ${TURKISH_FONT_STACK}`; ctx.fillText('?', x+box/2, tableY+box+18+box/2); }
+      ctx.textAlign='start'; ctx.textBaseline='alphabetic';
+    });
+    return canvas.toDataURL('image/png');
+  }
+  return {blank: draw(false), solved: draw(true), cipher};
+}
+
+function buildWordLadder(entries){
+  if(entries.length<2) return {steps:[], start:null, end:null};
+  let pair=null;
+  for(let i=0;i<entries.length;i++){
+    for(let j=i+1;j<entries.length;j++){
+      if(entries[i].answer.length>=3 && entries[i].answer.length===entries[j].answer.length){ pair=[entries[i], entries[j]]; break; }
+    }
+    if(pair) break;
+  }
+  if(!pair) pair=[entries[0], entries[entries.length-1]||entries[0]];
+  const start = pair[0]; const end = pair[1];
+  const len = Math.max(start.answer.length, end.answer.length);
+  const padWord=(w)=>{
+    if(w.length===len) return w;
+    const fill = w[w.length-1] || 'X';
+    return (w + fill.repeat(len - w.length)).slice(0,len);
+  };
+  let current = padWord(start.answer);
+  const target = padWord(end.answer);
+  const steps=[current];
+  for(let i=0;i<len;i++){
+    if(current[i]!==target[i]){
+      current = current.slice(0,i)+target[i]+current.slice(i+1);
+      if(steps[steps.length-1]!==current) steps.push(current);
+    }
+  }
+  if(steps[steps.length-1]!==target) steps.push(target);
+  const uniq=[]; steps.forEach(w=>{ if(!uniq.includes(w)) uniq.push(w); });
+  function draw(showSolved){
+    const pad=30, rowH=60, W=900; const H = pad*2 + uniq.length*rowH + 40;
+    const canvas=document.createElement('canvas'); canvas.width=W; canvas.height=H; const ctx=canvas.getContext('2d');
+    ctx.fillStyle='#fff'; ctx.fillRect(0,0,W,H);
+    ctx.fillStyle='#000'; ctx.font=`bold 24px ${TURKISH_FONT_STACK}`; ctx.fillText('SÖZ ZİNCİRİ / KELİME MERDİVENİ', pad, pad+4);
+    ctx.font=`20px ${TURKISH_FONT_STACK}`;
+    uniq.forEach((w,i)=>{
+      const y=pad+40+i*rowH;
+      ctx.fillStyle='#666'; ctx.fillText(`${i+1}. adım`, pad, y);
+      ctx.strokeStyle='#222'; ctx.strokeRect(pad+150, y-32, 360, 42);
+      ctx.textAlign='center'; ctx.textBaseline='middle';
+      ctx.fillStyle='#000';
+      const showWord = (i===0 || i===uniq.length-1 || showSolved)? w : ''.padEnd(w.length,'_');
+      ctx.fillText(showWord, pad+150+180, y-32+21);
+      ctx.textAlign='start'; ctx.textBaseline='alphabetic';
+    });
+    return canvas.toDataURL('image/png');
+  }
+  return {blank: draw(false), solved: draw(true), steps:uniq, start:start.answer, end:end.answer};
+}
+
+function renderByMode(mode, entries){
+  const titleMap={
+    kare:'Kare Bulmaca',
+    kareplus:'Güncellenmiş Kare Bulmaca',
+    sarmal:'Şifreli Sarmal Bulmaca',
+    sozluk:'Sözlük Avı',
+    anagram:'Anagram Şifre',
+    cengel:'Çengel Bulmaca',
+    akrostis:'Akrostiş / Kripto Akrani',
+    cryptogram:'Şifreli Alfabe',
+    ladder:'Söz Zinciri'
+  };
+  document.getElementById('modeTitle').textContent = titleMap[mode]||'—';
+  const playCard=document.getElementById('playCard');
+  if(playCard) playCard.classList.toggle('active', mode==='kareplus');
+  if(mode==='kare' || mode==='kareplus'){
+    const res = build(entries, document.getElementById('size').value, Number(document.getElementById('seed').value||0));
+    render(res);
+    const cb=document.getElementById('imgCipherBlank'); const cs=document.getElementById('imgCipherSolved'); if(cb) cb.src=''; if(cs) cs.src='';
+    if(mode==='kareplus') renderInteractiveCrossword(res); else if(playGridEl){ playGridEl.innerHTML=''; }
+    return;
+  }
+  if(playGridEl){ playGridEl.innerHTML=''; }
+  if(mode==='sarmal'){
+    const out = makeSpiralCircleImages(entries, Number(document.getElementById('seed').value||0));
+    const prev = document.getElementById('grid'); prev.innerHTML='';
+    const im=document.createElement('img'); im.src = out.boardSolved; im.style.maxWidth='420px'; prev.appendChild(im);
+    fillList('across', entries.map((e,i)=>({no:i+1, clue:e.clue}))); fillList('down', []);
+    document.getElementById('imgBlank').src = out.boardBlank;
+    document.getElementById('imgSolved').src = out.boardSolved;
+    const cb = document.getElementById('imgCipherBlank'); const cs=document.getElementById('imgCipherSolved');
+    if(cb) cb.src = out.cipherBlank; if(cs) cs.src = out.cipherSolved;
+    document.getElementById('stats').textContent = `Sarmal: halkalar=${out.rings} • Hücre=${out.totalCells} • Harf=${out.letters.length}`;
+    return;
+  }
+  if(mode==='sozluk'){
+    const res = genWordSearch(entries);
+    renderGrid('grid', res.grid, res.numbers, true);
+    fillList('across', res.across); fillList('down', []);
+    document.getElementById('imgBlank').src = gridToDataURLGeneric(res.grid, res.numbers, {showLetters:true});
+    document.getElementById('imgSolved').src = gridToDataURLGeneric(res.grid, res.numbers, {showLetters:true, highlights: res.paths});
+    fillList('acrossBlank', res.across); fillList('downBlank', []);
+    fillList('acrossSolved', res.across, true); fillList('downSolved', []);
+    const cb=document.getElementById('imgCipherBlank'); const cs=document.getElementById('imgCipherSolved'); if(cb) cb.src=''; if(cs) cs.src='';
+    document.getElementById('stats').textContent = `Sözlük Avı: ${res.grid.length}×${res.grid.length} • Kelime: ${res.across.length}`; return;
+  }
+  if(mode==='anagram'){
+    const out = makeAnagramImages(entries, Number(document.getElementById('seed').value||0));
+    const prev = document.getElementById('grid'); prev.innerHTML=''; const im=document.createElement('img'); im.src = out.blank; im.style.maxWidth='520px'; prev.appendChild(im);
+    document.getElementById('imgBlank').src = out.blank; document.getElementById('imgSolved').src = out.solved;
+    ['across','down','acrossBlank','downBlank','acrossSolved','downSolved'].forEach(id=>{ const el=document.getElementById(id); if(el) el.innerHTML=''; });
+    const cb=document.getElementById('imgCipherBlank'); const cs=document.getElementById('imgCipherSolved'); if(cb) cb.src=''; if(cs) cs.src='';
+    document.getElementById('stats').textContent = `Anagram Şifre: sözcük=${out.words.length}`; return;
+  }
+  if(mode==='akrostis'){
+    const out = makeAcrosticGame(entries);
+    const prev = document.getElementById('grid'); prev.innerHTML='';
+    const im=document.createElement('img'); im.src=out.blank; im.style.maxWidth='560px'; prev.appendChild(im);
+    document.getElementById('imgBlank').src = out.blank; document.getElementById('imgSolved').src = out.solved;
+    fillList('across', entries.map((e,i)=>({no:i+1, clue:e.clue}))); fillList('down', []);
+    fillList('acrossBlank', entries.map((e,i)=>({no:i+1, clue:e.clue}))); fillList('downBlank', []);
+    fillList('acrossSolved', entries.map((e,i)=>({no:i+1, clue:e.clue, answer:e.answer})), true); fillList('downSolved', []);
+    const cb=document.getElementById('imgCipherBlank'); const cs=document.getElementById('imgCipherSolved'); if(cb) cb.src=''; if(cs) cs.src='';
+    document.getElementById('stats').textContent = `Akrostiş: ipucu=${entries.length} • Mesaj harfi=${out.firstLetters.length}`; return;
+  }
+  if(mode==='cryptogram'){
+    const out = makeCryptogram(entries, Number(document.getElementById('seed').value||0));
+    const prev = document.getElementById('grid'); prev.innerHTML=''; const im=document.createElement('img'); im.src=out.blank; im.style.maxWidth='560px'; prev.appendChild(im);
+    document.getElementById('imgBlank').src = out.blank; document.getElementById('imgSolved').src = out.solved;
+    ['across','down','acrossBlank','downBlank','acrossSolved','downSolved'].forEach(id=>{ const el=document.getElementById(id); if(el) el.innerHTML=''; });
+    document.getElementById('stats').textContent = `Şifreli Alfabe: satır=${entries.length} • Harf=${out.cipher.length}`;
+    const cb=document.getElementById('imgCipherBlank'); const cs=document.getElementById('imgCipherSolved'); if(cb) cb.src=''; if(cs) cs.src='';
+    return;
+  }
+  if(mode==='ladder'){
+    const out = buildWordLadder(entries);
+    const prev = document.getElementById('grid'); prev.innerHTML='';
+    const im=document.createElement('img'); im.src=out.blank; im.style.maxWidth='520px'; prev.appendChild(im);
+    document.getElementById('imgBlank').src = out.blank; document.getElementById('imgSolved').src = out.solved;
+    const list = out.steps.map((w,i)=>({no:i+1, clue:(i===0?`Başlangıç (${entries[0]?.clue||'—'})`:i===out.steps.length-1?`Bitiş (${entries.at(-1)?.clue||'—'})`:`Ara adım ${i}`), answer:w}));
+    fillList('across', list); fillList('down', []);
+    fillList('acrossBlank', list); fillList('downBlank', []);
+    fillList('acrossSolved', list, true); fillList('downSolved', []);
+    const cb=document.getElementById('imgCipherBlank'); const cs=document.getElementById('imgCipherSolved'); if(cb) cb.src=''; if(cs) cs.src='';
+    document.getElementById('stats').textContent = `Söz Zinciri: adım=${out.steps.length} • ${out.start||''}→${out.end||''}`;
+    return;
+  }
+  if(mode==='cengel'){
+    const res = genCengel(entries);
+    const prev = document.getElementById('grid'); prev.innerHTML=''; const im=document.createElement('img'); im.src = gridToDataURLGeneric(res.grid.map(row=>row.map(v=>v===null?null:'')), res.numbers, {showLetters:false, arrows:res.arrows}); im.style.maxWidth='420px'; prev.appendChild(im);
+    fillList('across', res.across); fillList('down', []);
+    document.getElementById('imgBlank').src = gridToDataURLGeneric(res.grid.map(row=>row.map(v=>v===null?null:'')), res.numbers, {showLetters:false, arrows:res.arrows});
+    document.getElementById('imgSolved').src = gridToDataURLGeneric(res.grid, res.numbers, {showLetters:true, arrows:res.arrows});
+    fillList('acrossBlank', res.across); fillList('downBlank', []);
+    fillList('acrossSolved', res.across, true); fillList('downSolved', []);
+    const cb=document.getElementById('imgCipherBlank'); const cs=document.getElementById('imgCipherSolved'); if(cb) cb.src=''; if(cs) cs.src='';
+    document.getElementById('stats').textContent = `Çengel: ${res.grid.length}×${res.grid.length} • Başlangıç: ${res.across.length}`; return;
+  }
+}
+
+// --- İnteraktif Kare Bulmaca ---
+const playGridEl=document.getElementById('playGrid');
+const playDirBadge=document.getElementById('playDir');
+let playDirection='across';
+let playGridData=null;
+
+function updatePlayDirBadge(){ if(playDirBadge) playDirBadge.textContent = `Yön: ${playDirection==='across'?'Yatay':'Dikey'}`; }
+
+function renderInteractiveCrossword(result){
+  if(!playGridEl) return;
+  playGridData=result.grid;
+  playDirection='across';
+  updatePlayDirBadge();
+  playGridEl.innerHTML='';
+  const n=result.grid.length;
+  playGridEl.style.gridTemplateColumns=`repeat(${n}, var(--cell))`;
+  playGridEl.style.gridTemplateRows=`repeat(${n}, var(--cell))`;
+  for(let r=0;r<n;r++) for(let c=0;c<n;c++){
+    const val=result.grid[r][c];
+    if(val){
+      const input=document.createElement('input');
+      input.maxLength=1; input.dataset.r=r; input.dataset.c=c; input.dataset.answer=val; input.dataset.pos=`${r}-${c}`;
+      input.className='cell-input'; input.autocomplete='off'; input.spellcheck=false;
+      input.addEventListener('input', handlePlayInput);
+      input.addEventListener('keydown', handlePlayKey);
+      playGridEl.appendChild(input);
+    }else{
+      const div=document.createElement('div'); div.className='cell black'; playGridEl.appendChild(div);
+    }
+  }
+}
+
+function cleanChar(ch){
+  if(!ch) return '';
+  return normalize(ch).slice(0,1);
+}
+
+function findNext(r,c,dir,backwards=false){
+  if(!playGridData) return null;
+  const n=playGridData.length;
+  const step=backwards?-1:1;
+  const dr=dir==='across'?0:1, dc=dir==='across'?1:0;
+  let nr=r+dr*step, nc=c+dc*step;
+  while(nr>=0&&nc>=0&&nr<n&&nc<n){
+    if(playGridData[nr][nc]) return {r:nr,c:nc};
+    nr+=dr*step; nc+=dc*step;
+  }
+  return null;
+}
+
+function focusCell(pos){
+  if(!playGridEl) return;
+  const el=playGridEl.querySelector(`input[data-pos="${pos}"]`);
+  if(el) el.focus();
+}
+
+function handlePlayInput(e){
+  const letter=cleanChar(e.target.value);
+  e.target.value=letter;
+  if(letter) moveSmart(e.target.dataset.r, e.target.dataset.c, false);
+}
+
+function moveSmart(r,c,backwards){
+  r=Number(r); c=Number(c);
+  let next=findNext(r,c,playDirection,backwards);
+  if(!next && !backwards){
+    playDirection = playDirection==='across'?'down':'across';
+    updatePlayDirBadge();
+    next=findNext(r,c,playDirection,false);
+  }
+  if(next) focusCell(`${next.r}-${next.c}`);
+}
+
+function handlePlayKey(e){
+  const r=Number(e.target.dataset.r); const c=Number(e.target.dataset.c);
+  if(['ArrowRight','ArrowDown','ArrowLeft','ArrowUp'].includes(e.key)){
+    e.preventDefault();
+    const dir=e.key==='ArrowRight'||e.key==='ArrowLeft'?'across':'down';
+    playDirection=dir; updatePlayDirBadge();
+    moveSmart(r,c, e.key==='ArrowLeft'||e.key==='ArrowUp');
+    return;
+  }
+  if(e.key==='Backspace' && !e.target.value){
+    e.preventDefault();
+    moveSmart(r,c,true);
+    return;
+  }
+  if(e.key===' '){ e.preventDefault(); togglePlayDirection(); }
+}
+
+function togglePlayDirection(){
+  playDirection = playDirection==='across'?'down':'across';
+  updatePlayDirBadge();
+}
+
+if(document.getElementById('toggleDir')) document.getElementById('toggleDir').addEventListener('click', togglePlayDirection);
+if(document.getElementById('clearPlay')) document.getElementById('clearPlay').addEventListener('click', ()=>{
+  if(!playGridEl) return;
+  playGridEl.querySelectorAll('input').forEach(inp=>inp.value='');
+  const first=playGridEl.querySelector('input'); if(first) first.focus();
+});
+
+// --- UI ---
+const inputEl = document.getElementById('input');
+const sizeEl = document.getElementById('size');
+const seedEl = document.getElementById('seed');
+
+function buildFromUI(){
+  const entries = parseInput(inputEl.value);
+  if(entries.length===0){
+    document.getElementById('stats').textContent = 'Lütfen en az bir satır girin.';
+    return;
+  }
+  const mode = document.getElementById('mode').value;
+  renderByMode(mode, entries);
+}
+
+document.getElementById('build').addEventListener('click', buildFromUI);
+
+document.getElementById('mode').addEventListener('change', buildFromUI);
+
+document.getElementById('print').addEventListener('click', async ()=> {
+  const imgs = [
+    document.getElementById('imgBlank'),
+    document.getElementById('imgSolved'),
+    document.getElementById('imgCipherBlank'),
+    document.getElementById('imgCipherSolved')
+  ].filter(Boolean);
+  try { await Promise.all(imgs.map(img=> (img && img.decode) ? img.decode() : Promise.resolve())); } catch(e) {}
+  window.print();
+});
+
+// örnek veri
+const SAMPLE=`ANKARA | Türkiye'nin başkenti nedir?
+KEDILER | Miyavlayan evcil hayvanlar? (çoğul)
+ALGORITMA | Programlamada işlem adımlarının adı ne?
+GALATASARAY | Rengi sarı-kırmızı olan İstanbul takımı?
+KAVUN | Yaz meyvesi, kabakgillerden.
+MAVI | Gök yüzünün rengi.
+ISTANBUL | Türkiye'nin en kalabalık şehri?
+SUBAT | Yılın 2. ayı?
+TULUM | Ege'de sevilen bir peynir türü?
+ULUDAG | Bursa'nın ünlü dağı?`;
+
+document.getElementById('sample').addEventListener('click', ()=>{
+  inputEl.value = SAMPLE; buildFromUI();
+});
+
+// Basit dahili testler (parse & build)
+function runTests(){
+  const status=document.getElementById('testStatus');
+  status.textContent='Test: çalışıyor…';
+  const results=[]; function assert(name, cond){ results.push({name, pass: !!cond}); if(!cond) throw new Error(name); }
+  try{
+    const t1 = `  TÜRKİYE | Soru A  \n\n  çiçek | Soru B  \n  A | kısa`;
+    const e1 = parseInput(t1);
+    assert('Satıra bölme', e1.length===2);
+    assert('Normalize 1', e1.some(e=>e.answer==='TÜRKİYE'));
+    assert('Normalize 2', e1.some(e=>e.answer==='ÇİÇEK'));
+
+    const res = build(e1, 'auto', 0);
+    assert('Izgara boyutu', res.grid.length>=11);
+    assert('İpucu üretimi', (res.across.length + res.down.length) >= 2);
+
+    const dataUrl = gridToDataURL(res.grid, res.numbers, false);
+    assert('PNG URL (klasik)', /^data:image\/png;base64,/.test(dataUrl));
+
+    const sRes = genSpiral(e1);
+    assert('Sarmal grid', sRes.grid.length>=11);
+
+    const wz = genWordSearch(e1);
+    assert('Sözlük grid', wz.grid.length>=12);
+    const validLetter = new RegExp(`^[${TURKISH_ALPHABET}]$`);
+    let allLetters=true; outer: for(let r=0;r<wz.grid.length;r++){ for(let c=0;c<wz.grid.length;c++){ const ch=wz.grid[r][c]; if(!(typeof ch==='string' && ch.length===1 && validLetter.test(ch))){ allLetters=false; break outer; } } }
+    assert('Sözlük harf dolgusu', allLetters);
+
+    const cg = genCengel(e1);
+    let hasBlack=false; for(let r=0;r<cg.grid.length;r++){ for(let c=0;c<cg.grid.length;c++){ if(cg.grid[r][c]===null){ hasBlack=true; break; } } if(hasBlack) break; }
+    assert('Çengel siyah kare', hasBlack);
+
+    const ana = makeAnagramImages(e1, 1);
+    assert('Anagram görseli', /^data:image\/png;base64,/.test(ana.blank));
+    const acro = makeAcrosticGame(e1);
+    assert('Akrostiş görseli', /^data:image\/png;base64,/.test(acro.blank));
+    const cry = makeCryptogram(e1, 2);
+    assert('Cryptogram görseli', /^data:image\/png;base64,/.test(cry.blank));
+    const ladder = buildWordLadder(e1);
+    assert('Söz zinciri adım', ladder.steps.length>=2);
+
+    status.textContent = 'Test: ✓ Başarılı ('+results.length+' adım)';
+    status.style.background = '#1f6f43';
+  }catch(err){
+    console.error('Test hatası:', err);
+    status.textContent = 'Test: ✗ Hata ('+err.message+')';
+    status.style.background = '#7a2530';
+  }
+}
+
+document.getElementById('runTests').addEventListener('click', runTests);
+
+// ilk ekran boş gelmesin
+inputEl.value = SAMPLE; buildFromUI();
+</script>
+</body>
+</html>
