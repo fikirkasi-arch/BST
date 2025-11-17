@@ -51,8 +51,10 @@ durdurur.
    ```
    > İsterseniz komutu `packaging\build_exe.bat C:\Python311\python.exe` şeklinde belirli bir
    > Python yolu vererek de çalıştırabilirsiniz.
-3. Betik, `requirements.txt` içindeki bütün paketleri indirir ve eksikse güncel FFmpeg/FFprobe
-   ikililerini otomatik olarak download edip `packaging\ffmpeg-bin` klasörüne çıkarır.
+3. Betik, `requirements.txt` içindeki bütün paketleri indirir ve eksikse Python ile çalışan
+   `packaging/get_ffmpeg.py` yardımcı programını kullanarak FFmpeg/FFprobe ikililerini indirip
+   `packaging\ffmpeg-bin` klasörüne çıkarır. Böylece PowerShell erişimi kısıtlı sistemlerde bile
+   indirme işlemi sorunsuz yürür.
 4. PyInstaller çağrısı, program kodu ile birlikte bu FFmpeg dosyalarını da `dist/OkulZilAsistani/ffmpeg`
    klasörüne gömerek tek başına çalışabilen bir çıktı üretir; hedef bilgisayarda ek DLL veya modül
    kurmanıza gerek kalmaz.

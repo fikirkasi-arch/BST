@@ -22,7 +22,8 @@ paketleyip kurulabilir bir `Setup.exe` dosyası çıkarmasını sağlar.
 4. Betik otomatik olarak
    - `pip`i günceller,
    - `requirements.txt` içindeki **mutagen, pydub, simpleaudio, yt_dlp** gibi tüm paketleri indirir,
-   - Eksikse güncel **FFmpeg** ve **FFprobe** dosyalarını download edip `packaging\ffmpeg-bin`
+   - PowerShell gerektirmeden çalışan `packaging\get_ffmpeg.py` yardımcısını çağırıp eksikse
+     güncel **FFmpeg** ve **FFprobe** dosyalarını download eder ve `packaging\ffmpeg-bin`
      klasörüne çıkarır,
    - PyInstaller'ı çağırarak program dosyalarını, bağımlılıkları ve `ffmpeg` klasörünü
      `dist/OkulZilAsistani` klasörünün içine kopyalar.
