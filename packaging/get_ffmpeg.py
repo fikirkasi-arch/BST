@@ -7,6 +7,7 @@ from __future__ import annotations
 
 import os
 import shutil
+import socket
 import sys
 import tempfile
 import urllib.request
@@ -21,6 +22,7 @@ FFMPEG_URLS = (
     ("ffmpeg-master-latest-win64-gpl.zip", "https://github.com/BtbN/FFmpeg-Builds/releases/download/latest/ffmpeg-master-latest-win64-gpl.zip"),
 )
 LOCAL_ARCHIVE_NAMES = ("ffmpeg-offline.zip", "ffmpeg.zip")
+DOWNLOAD_TIMEOUT = int(os.environ.get("FFMPEG_TIMEOUT", "45"))
 
 
 def log(message: str) -> None:
@@ -54,9 +56,11 @@ def download_archive(zip_path: Path) -> None:
     for label, url in FFMPEG_URLS:
         log(f"FFmpeg paketi indirilmeye çalışılıyor: {label} ({url})")
         try:
-            with urllib.request.urlopen(url) as response, open(zip_path, "wb") as dst:
+            with urllib.request.urlopen(url, timeout=DOWNLOAD_TIMEOUT) as response, open(
+                zip_path, "wb"
+            ) as dst:
                 shutil.copyfileobj(response, dst)
-        except URLError as exc:
+        except (URLError, TimeoutError, socket.timeout) as exc:
             errors.append(f"{label}: {exc}")
             log(f"İndirme başarısız ({label}): {exc}")
             continue

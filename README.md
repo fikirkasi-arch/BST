@@ -56,7 +56,8 @@ durdurur.
 3. Betik, `requirements.txt` içindeki bütün paketleri indirir ve eksikse Python ile çalışan
    `packaging/get_ffmpeg.py` yardımcı programını kullanarak FFmpeg/FFprobe ikililerini indirip
    `packaging\ffmpeg-bin` klasörüne çıkarır. Böylece PowerShell erişimi kısıtlı sistemlerde bile
-   indirme işlemi sorunsuz yürür.
+   indirme işlemi sorunsuz yürür. Her URL denemesi varsayılan olarak en fazla 45 saniye sürer;
+   daha uzun beklemek isterseniz `set FFMPEG_TIMEOUT=90` gibi bir ayar yapabilirsiniz.
    - Bilgisayar internete çıkamıyorsa betik sırasıyla `ffmpeg-7.0.1-essentials_build.zip`,
      `ffmpeg-7.0-essentials_build.zip`, `ffmpeg-release-essentials.zip` ve
      `ffmpeg-master-latest-win64-gpl.zip` paketlerini deneyecek; bu dosyalardan herhangi birini

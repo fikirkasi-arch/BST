@@ -26,7 +26,8 @@ paketleyip kurulabilir bir `Setup.exe` dosyası çıkarmasını sağlar.
    - `requirements.txt` içindeki **mutagen, pydub, simpleaudio, yt_dlp** gibi tüm paketleri indirir,
    - PowerShell gerektirmeden çalışan `packaging\get_ffmpeg.py` yardımcısını çağırıp eksikse
      güncel **FFmpeg** ve **FFprobe** dosyalarını download eder ve `packaging\ffmpeg-bin`
-     klasörüne çıkarır,
+     klasörüne çıkarır (her bağlantı en fazla 45 saniye denenir; gerekirse `set FFMPEG_TIMEOUT=90`
+     diyerek süreyi uzatabilirsiniz),
    - PyInstaller'ı çağırarak program dosyalarını, bağımlılıkları ve `ffmpeg` klasörünü
      `dist/JinniBellPro` klasörünün içine kopyalar.
   > **İpucu:** Okul ağında internet engelli veya sertifika hatası varsa,
