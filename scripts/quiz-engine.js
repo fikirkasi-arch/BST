@@ -291,6 +291,15 @@ const QuizEngine = {
             window.opener.BSTDailyGoals.completeQuiz();
         }
 
+        // İlerleme takibine quiz tamamlandı bilgisini gönder
+        if (this.currentQuiz && this.currentQuiz.quizId) {
+            if (typeof BSTProgress !== 'undefined') {
+                BSTProgress.markQuizCompleted(this.currentQuiz.quizId, correct, total);
+            } else if (window.opener && window.opener.BSTProgress) {
+                window.opener.BSTProgress.markQuizCompleted(this.currentQuiz.quizId, correct, total);
+            }
+        }
+
         // Timer'ı durdur
         if (this.timerInterval) {
             clearInterval(this.timerInterval);

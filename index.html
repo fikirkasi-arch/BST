@@ -2341,6 +2341,16 @@
                     </button>
                 `;
                 modalBody.appendChild(pdfButton);
+
+                // Son açtıklara ekle
+                if (typeof BSTRecent !== 'undefined') {
+                    BSTRecent.addRecentItem({
+                        title: lessonTitles[content],
+                        url: '#' + content,
+                        emoji: content.startsWith('lesson-5-') ? '📘' : '📗',
+                        category: 'lesson'
+                    });
+                }
             }
 
             modal.style.display = 'block';

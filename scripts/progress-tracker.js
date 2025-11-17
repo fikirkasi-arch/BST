@@ -153,16 +153,16 @@ const BSTProgress = {
 
     // Ünite kartlarına ilerleme göstergesi ekle
     updateUnitCards() {
-        // 5. sınıf üniteleri
-        const grade5Units = document.querySelectorAll('#grade-5-content .unit-card');
+        // 5. sınıf üniteleri - Dersler sekmesindeki ders anlatımları
+        const grade5Units = document.querySelectorAll('#ders-anlatim .resource-card[data-sinif="5"][data-tur="anlatim"]');
         grade5Units.forEach((card, index) => {
             const unitNumber = index + 1;
             const progress = this.calculateUnitProgress('5', unitNumber);
             this.addProgressBadge(card, progress);
         });
 
-        // 6. sınıf üniteleri
-        const grade6Units = document.querySelectorAll('#grade-6-content .unit-card');
+        // 6. sınıf üniteleri - Dersler sekmesindeki ders anlatımları
+        const grade6Units = document.querySelectorAll('#ders-anlatim .resource-card[data-sinif="6"][data-tur="anlatim"]');
         grade6Units.forEach((card, index) => {
             const unitNumber = index + 1;
             const progress = this.calculateUnitProgress('6', unitNumber);

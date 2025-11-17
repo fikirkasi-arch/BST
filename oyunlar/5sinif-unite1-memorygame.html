@@ -351,6 +351,11 @@
                 window.opener.BSTDailyGoals.completeGame();
             }
 
+            // İlerleme takibine oyun tamamlandı bilgisini gönder
+            if (window.opener && window.opener.BSTProgress) {
+                window.opener.BSTProgress.markGameCompleted('5-1-memory');
+            }
+
             setTimeout(() => {
                 document.getElementById('winModal').classList.add('active');
             }, 500);
