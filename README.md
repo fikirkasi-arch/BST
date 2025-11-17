@@ -6,15 +6,21 @@ haftanın her günü için farklı ders giriş/çıkış saatleri ayarlayabilir,
 başlatabilirsiniz.
 
 ## Özellikler
-- Her gün için sınırsız sayıda zil olayı ekleme/silme
+- Her gün için sınırsız sayıda zil olayı ekleme/silme; saat, kategori ve açıklama sütunlarıyla modern
+  bir tablo üzerinden düzenleme
+- Saat girişleri 00-23 / 00-59 aralığında otomatik doğrulandığı için yanlış saat yazımının önüne
+  geçme
 - Öğrenci girişi, öğretmen girişi, ders sonu ve teneffüs müziği için ayrı ses dosyaları
+- Ses dosyalarını arayüzden seçtikten sonra aynı satırdaki **Test** butonuyla anında dinleyebilme
 - İstiklal Marşı, siren ve saygı duruşu kombinasyonları için tek tuşlu manuel tetikleme
 - Tören programı için bilgisayardan veya YouTube bağlantısından müzik listesi oluşturma
-  - Seçilen müzikleri istenen dakikadan itibaren başlatma
-  - Müziğin toplam süresini gösterme
+  - YouTube linkleri eklendiğinde video başlığı otomatik olarak alınır
+  - Başlangıç ve opsiyonel bitiş süreleri MM:SS formatında girilebilir; her parça sırasını
+    yukarı/aşağı tuşlarıyla değiştirebilirsiniz
+  - Seçilen müzikleri istenen dakikadan itibaren başlatma ve toplam süresini gösterme
 - Teneffüslerde otomatik müzik yayını
 - Belirlenen saatte bilgisayarı otomatik kapatma
-- Tek tuşla gün programını farklı günlere kopyalama
+- Tek tuşla programı başka günlere aktarma veya aynı planı birden fazla güne topluca uygulama
 - Tatil günlerini tanımlayıp belirtilen tarihlerde zilleri otomatik devre dışı bırakma
 - Kontrol sekmesinde bugünkü tatil durumu ve sıradaki zil bilgisini görme
 - Tören moduna alınca otomatik zilleri geçici olarak kapatma

@@ -33,7 +33,8 @@ class CeremonyItem(TypedDict, total=False):
     label: str
     source: str  # "file" or "youtube"
     location: str
-    start_minute: int
+    start_ms: int
+    end_ms: Optional[int]
     duration_sec: Optional[int]
 
 
@@ -77,6 +78,30 @@ class BellConfig:
                 day: [BellEvent(**event) for event in events]
                 for day, events in data.get("daily_schedule", {}).items()
             }
+            playlist: List[CeremonyItem] = []
+            for raw in data.get("ceremony_playlist", []):
+                start_ms = raw.get("start_ms")
+                if start_ms is None:
+                    # eski sürümlerde dakika tutuluyordu
+                    minute_val = raw.get("start_minute")
+                    if minute_val is not None:
+                        start_ms = int(minute_val) * 60 * 1000
+                    else:
+                        start_ms = 0
+                item: CeremonyItem = {
+                    "label": raw.get("label", "Tören Parçası"),
+                    "source": raw.get("source", "file"),
+                    "location": raw.get("location", ""),
+                    "start_ms": int(start_ms),
+                    "duration_sec": raw.get("duration_sec"),
+                }
+                end_ms = raw.get("end_ms")
+                if end_ms is None and raw.get("end_minute") is not None:
+                    end_ms = int(raw["end_minute"]) * 60 * 1000
+                if end_ms is not None:
+                    item["end_ms"] = int(end_ms)
+                playlist.append(item)
+
             instance = cls(
                 daily_schedule={**{day: [] for day in WEEKDAYS}, **schedule},
                 sound_files=data.get("sound_files", {}),
@@ -84,7 +109,7 @@ class BellConfig:
                 muted=data.get("muted", False),
                 auto_shutdown_enabled=data.get("auto_shutdown_enabled", False),
                 auto_shutdown_time=data.get("auto_shutdown_time"),
-                ceremony_playlist=data.get("ceremony_playlist", []),
+                ceremony_playlist=playlist,
                 recess_music_enabled=data.get("recess_music_enabled", False),
                 holidays=data.get("holidays", {}),
             )
@@ -120,6 +145,13 @@ class BellConfig:
             self.daily_schedule[day].pop(index)
             self.save()
 
+    def update_event(self, day: str, index: int, label: str, clock: str, sound_type: str) -> None:
+        events = self.daily_schedule.setdefault(day, [])
+        if 0 <= index < len(events):
+            events[index] = BellEvent(label=label, clock=clock, sound_type=sound_type)
+            events.sort(key=lambda evt: evt.clock)
+            self.save()
+
     def copy_day_schedule(self, source_day: str, target_day: str) -> None:
         """Copy all bell events from source day to target day."""
         events = [
@@ -128,6 +160,12 @@ class BellConfig:
         ]
         self.daily_schedule[target_day] = events
         self.save()
+
+    def copy_day_schedule_to_many(self, source_day: str, target_days: List[str]) -> None:
+        for day in target_days:
+            if day == source_day:
+                continue
+            self.copy_day_schedule(source_day, day)
 
     def add_holiday(self, date_str: str, description: str) -> None:
         self.holidays[date_str] = description

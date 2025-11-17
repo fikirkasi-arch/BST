@@ -61,6 +61,10 @@ paketleyip kurulabilir bir `Setup.exe` dosyası çıkarmasını sağlar.
   `C:\Program Files\JinniBellPro` dizinini kullanır ve Başlat menüsüne kısayol ekler.
 - Masaüstündeki veya Başlat menüsündeki kısayola çift tıklayıp programı çalıştırarak her şeyin doğru
   paketlendiğini doğrulayın.
+- Ana ekrandaki **Ders Programı** sekmesinde saat/kategori tablosuna yeni satırlar ekleyebildiğinizi,
+  "Diğer Günlere Uygula" butonuyla planı başka günlere kopyalayabildiğinizi kontrol edin. **Tören**
+  sekmesinde YouTube linkleri eklediğinizde başlığın otomatik geldiğini ve başlangıç/bitiş dakikalarını
+  girerek listedeki parçaları yukarı/aşağı taşıyabildiğinizi doğrulayın.
 
 Bu adımları izlediğinizde, programlama bilmeden bile tüm paketleri içinde barındıran taşınabilir bir
 EXE ve kurulabilir bir Setup dosyası elde etmiş olursunuz.
