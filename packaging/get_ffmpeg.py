@@ -14,7 +14,12 @@ import zipfile
 from pathlib import Path
 from urllib.error import URLError
 
-FFMPEG_URL = "https://www.gyan.dev/ffmpeg/builds/packages/ffmpeg-6.0-essentials_build.zip"
+FFMPEG_URLS = (
+    ("ffmpeg-7.0.1-essentials_build.zip", "https://www.gyan.dev/ffmpeg/builds/packages/ffmpeg-7.0.1-essentials_build.zip"),
+    ("ffmpeg-7.0-essentials_build.zip", "https://www.gyan.dev/ffmpeg/builds/packages/ffmpeg-7.0-essentials_build.zip"),
+    ("ffmpeg-release-essentials.zip", "https://www.gyan.dev/ffmpeg/builds/ffmpeg-release-essentials.zip"),
+    ("ffmpeg-master-latest-win64-gpl.zip", "https://github.com/BtbN/FFmpeg-Builds/releases/download/latest/ffmpeg-master-latest-win64-gpl.zip"),
+)
 LOCAL_ARCHIVE_NAMES = ("ffmpeg-offline.zip", "ffmpeg.zip")
 
 
@@ -42,6 +47,34 @@ def find_local_archive() -> Path | None:
     return None
 
 
+def download_archive(zip_path: Path) -> None:
+    """Try downloading FFmpeg from known mirrors before failing."""
+
+    errors: list[str] = []
+    for label, url in FFMPEG_URLS:
+        log(f"FFmpeg paketi indirilmeye çalışılıyor: {label} ({url})")
+        try:
+            with urllib.request.urlopen(url) as response, open(zip_path, "wb") as dst:
+                shutil.copyfileobj(response, dst)
+        except URLError as exc:
+            errors.append(f"{label}: {exc}")
+            log(f"İndirme başarısız ({label}): {exc}")
+            continue
+
+        log(f"İndirme tamamlandı: {label}")
+        return
+
+    error_lines = " ; ".join(errors) if errors else "Bilinmeyen hata"
+    raise RuntimeError(
+        "FFmpeg indirilemedi. Bilgisayarınız internete çıkamıyorsa veya SSL doğrulaması"
+        " engelleniyorsa, https://www.gyan.dev/ffmpeg/builds/ ya da"
+        " https://github.com/BtbN/FFmpeg-Builds/releases adreslerinden"
+        " listelenen paketlerden birini indirip 'ffmpeg-offline.zip' adıyla"
+        " packaging klasörüne kopyalayın veya FFMPEG_ZIP_PATH değişkeniyle yol gösterin."
+        f" Denenen URL'ler: {error_lines}"
+    )
+
+
 def ensure_binaries(target_dir: Path) -> None:
     target_dir.mkdir(parents=True, exist_ok=True)
     ffmpeg_path = target_dir / "ffmpeg.exe"
@@ -58,18 +91,7 @@ def ensure_binaries(target_dir: Path) -> None:
             log(f"Yerel FFmpeg arşivi bulundu: {local_archive}")
             shutil.copy2(local_archive, zip_path)
         else:
-            log(f"Downloading FFmpeg package to {zip_path}")
-            try:
-                with urllib.request.urlopen(FFMPEG_URL) as response, open(zip_path, "wb") as dst:
-                    shutil.copyfileobj(response, dst)
-            except URLError as exc:
-                raise RuntimeError(
-                    "FFmpeg indirilemedi. İnternet bağlantısı kısıtlıysa veya sertifika"
-                    " doğrulanamıyorsa, https://www.gyan.dev/ffmpeg/builds/ adresinden"
-                    " ffmpeg-6.0-essentials_build.zip dosyasını indirip packaging"
-                    " klasörüne 'ffmpeg-offline.zip' adıyla koyabilir ya da"
-                    " FFMPEG_ZIP_PATH değişkeniyle yol gösterebilirsiniz."
-                ) from exc
+            download_archive(zip_path)
 
         extract_dir = Path(tmp_dir) / "extract"
         log(f"Extracting archive into {extract_dir}")

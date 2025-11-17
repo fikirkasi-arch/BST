@@ -57,11 +57,13 @@ durdurur.
    `packaging/get_ffmpeg.py` yardımcı programını kullanarak FFmpeg/FFprobe ikililerini indirip
    `packaging\ffmpeg-bin` klasörüne çıkarır. Böylece PowerShell erişimi kısıtlı sistemlerde bile
    indirme işlemi sorunsuz yürür.
-   - Eğer bulunduğunuz bilgisayar internete çıkamıyor ya da SSL doğrulama hatası alıyorsanız,
-     [gyan.dev](https://www.gyan.dev/ffmpeg/builds/) adresindeki `ffmpeg-6.0-essentials_build.zip`
-     arşivini manuel indirip proje içindeki `packaging` klasörüne `ffmpeg-offline.zip` adıyla
-     kopyalayın. Alternatif olarak zip dosyasının yolunu `FFMPEG_ZIP_PATH` ortam değişkeniyle
-     belirtebilirsiniz. Betik önce bu yerel arşive bakar, bulursa indirme yapmaz.
+   - Bilgisayar internete çıkamıyorsa betik sırasıyla `ffmpeg-7.0.1-essentials_build.zip`,
+     `ffmpeg-7.0-essentials_build.zip`, `ffmpeg-release-essentials.zip` ve
+     `ffmpeg-master-latest-win64-gpl.zip` paketlerini deneyecek; bu dosyalardan herhangi birini
+     [gyan.dev](https://www.gyan.dev/ffmpeg/builds/) ya da
+     [BtbN/FFmpeg-Builds](https://github.com/BtbN/FFmpeg-Builds/releases) sayfasından indirip
+     `packaging` klasörüne `ffmpeg-offline.zip` (veya `FFMPEG_ZIP_PATH` ile gösterdiğiniz herhangi
+     bir isim) olarak kopyalarsanız indirme adımı atlanır.
 4. Betik tüm komutların çıktısını `packaging\build_exe.log` dosyasına yazar. Konsolda hata
    mesajı görürseniz ayrıntılı sebebi bu logda bulabilirsiniz.
 5. PyInstaller çağrısı, program kodu ile birlikte bu FFmpeg dosyalarını da `dist/JinniBellPro/ffmpeg`

@@ -29,12 +29,14 @@ paketleyip kurulabilir bir `Setup.exe` dosyası çıkarmasını sağlar.
      klasörüne çıkarır,
    - PyInstaller'ı çağırarak program dosyalarını, bağımlılıkları ve `ffmpeg` klasörünü
      `dist/JinniBellPro` klasörünün içine kopyalar.
-   > **İpucu:** Okul ağında internet engelli veya sertifika hatası varsa,
-   > [gyan.dev](https://www.gyan.dev/ffmpeg/builds/) üzerindeki `ffmpeg-6.0-essentials_build.zip`
-   > dosyasını başka bir yerden indirip `packaging` klasörüne `ffmpeg-offline.zip` olarak kopyalayın.
-   > İsterseniz zip dosyasının tam yolunu `set FFMPEG_ZIP_PATH=C:\Dosyalar\ffmpeg.zip` komutuyla
-   > ortam değişkeni olarak da gösterebilirsiniz. Betik önce yerel dosyaya bakar, bulursa
-   > indirme yapmadan devam eder.
+  > **İpucu:** Okul ağında internet engelli veya sertifika hatası varsa,
+  > [gyan.dev](https://www.gyan.dev/ffmpeg/builds/) ya da
+  > [BtbN/FFmpeg-Builds](https://github.com/BtbN/FFmpeg-Builds/releases) sayfasından
+  > `ffmpeg-7.0.1-essentials_build.zip`, `ffmpeg-release-essentials.zip` veya
+  > `ffmpeg-master-latest-win64-gpl.zip` dosyalarından herhangi birini indirip `packaging`
+  > klasörüne `ffmpeg-offline.zip` adıyla kopyalayın. İsterseniz zip dosyasının tam yolunu
+  > `set FFMPEG_ZIP_PATH=C:\Dosyalar\ffmpeg.zip` komutuyla ortam değişkeni olarak da
+  > gösterebilirsiniz. Betik önce yerel dosyaya bakar, bulursa indirme yapmadan devam eder.
 5. Betik tüm ayrıntıları `packaging\build_exe.log` dosyasına yazar. Herhangi bir hata oluşursa
    komut penceresi kapanmadan önce bu log dosyasına bakıp hatanın tam mesajını görebilirsiniz.
 6. Komut isteminde işlemler bittikten sonra `dist/JinniBellPro/JinniBellPro.exe` dosyası oluşur.

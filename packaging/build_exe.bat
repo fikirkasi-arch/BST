@@ -1,7 +1,8 @@
 @echo off
 setlocal EnableExtensions EnableDelayedExpansion
 set "SCRIPT_DIR=%~dp0"
-pushd "%SCRIPT_DIR%.." >nul
+for %%I in ("%SCRIPT_DIR%..") do set "PROJECT_ROOT=%%~fI"
+pushd "%PROJECT_ROOT%" >nul
 
 if "%~1"=="" (
     set "PY=python"
@@ -25,10 +26,10 @@ echo [+] pip güncelleniyor...
 call :run "%PY%" -m pip install --upgrade pip
 
 echo [+] Gerekli Python paketleri indiriliyor...
-call :run "%PY%" -m pip install -r requirements.txt pyinstaller
+call :run "%PY%" -m pip install -r "%PROJECT_ROOT%\requirements.txt" pyinstaller
 
 echo [+] PyInstaller ile JinniBell Pro oluşturuluyor...
-call :run pyinstaller --noconfirm --noconsole --name "JinniBellPro" --add-data "bell_app;bell_app" --add-binary "packaging\ffmpeg-bin\ffmpeg.exe;ffmpeg" --add-binary "packaging\ffmpeg-bin\ffprobe.exe;ffmpeg" main.py
+call :run pyinstaller --noconfirm --noconsole --name "JinniBellPro" --add-data "%PROJECT_ROOT%\bell_app;bell_app" --add-binary "%FFMPEG_CACHE%\ffmpeg.exe;ffmpeg" --add-binary "%FFMPEG_CACHE%\ffprobe.exe;ffmpeg" "%PROJECT_ROOT%\main.py"
 
 echo [✓] Derleme tamamlandı. Ayrıntılı günlük: "%LOGFILE%"
 goto :finish
