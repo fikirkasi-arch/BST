@@ -1,5 +1,5 @@
 @echo off
-setlocal
+setlocal EnableExtensions EnableDelayedExpansion
 set "SCRIPT_DIR=%~dp0"
 pushd "%SCRIPT_DIR%.." >nul
 
@@ -13,16 +13,45 @@ set "FFMPEG_CACHE=%SCRIPT_DIR%ffmpeg-bin"
 if not exist "%FFMPEG_CACHE%" (
     mkdir "%FFMPEG_CACHE%"
 )
+
+set "LOGFILE=%SCRIPT_DIR%build_exe.log"
+type nul >"%LOGFILE%"
+echo === JinniBell Pro derleme kaydı: %DATE% %TIME% ===>>"%LOGFILE%"
+
 echo [+] FFmpeg denetlemesi yapılıyor (Python tabanlı)...
-%PY% packaging\get_ffmpeg.py "%FFMPEG_CACHE%"
+call :run "%PY%" packaging\get_ffmpeg.py "%FFMPEG_CACHE%"
 
-%PY% -m pip install --upgrade pip
-%PY% -m pip install -r requirements.txt pyinstaller
-pyinstaller --noconfirm --noconsole --name "JinniBellPro" ^
-    --add-data "bell_app;bell_app" ^
-    --add-binary "packaging\ffmpeg-bin\ffmpeg.exe;ffmpeg" ^
-    --add-binary "packaging\ffmpeg-bin\ffprobe.exe;ffmpeg" ^
-    main.py
+echo [+] pip güncelleniyor...
+call :run "%PY%" -m pip install --upgrade pip
 
+echo [+] Gerekli Python paketleri indiriliyor...
+call :run "%PY%" -m pip install -r requirements.txt pyinstaller
+
+echo [+] PyInstaller ile JinniBell Pro oluşturuluyor...
+call :run pyinstaller --noconfirm --noconsole --name "JinniBellPro" --add-data "bell_app;bell_app" --add-binary "packaging\ffmpeg-bin\ffmpeg.exe;ffmpeg" --add-binary "packaging\ffmpeg-bin\ffprobe.exe;ffmpeg" main.py
+
+echo [✓] Derleme tamamlandı. Ayrıntılı günlük: "%LOGFILE%"
+goto :finish
+
+:run
+set "CMD=%*"
+echo     komut: %CMD%
+echo --- %DATE% %TIME% : %CMD% --- >>"%LOGFILE%"
+%CMD% >>"%LOGFILE%" 2>&1
+if errorlevel 1 goto :fail
+exit /b 0
+
+:fail
+echo [X] Hata oluştu. Ayrıntılar için "%LOGFILE%" dosyasına bakın.
+set "BUILD_ERROR=1"
+goto :finish
+
+:finish
 popd >nul
-endlocal
+endlocal & set "BUILD_ERROR=%BUILD_ERROR%"
+if defined BUILD_ERROR (
+    if not "%NOPAUSE%"=="1" pause
+    exit /b 1
+)
+if not "%NOPAUSE%"=="1" pause
+exit /b 0

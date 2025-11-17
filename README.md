@@ -51,6 +51,8 @@ durdurur.
    ```
    > İsterseniz komutu `packaging\build_exe.bat C:\Python311\python.exe` şeklinde belirli bir
    > Python yolu vererek de çalıştırabilirsiniz.
+   > Betik hata verirse pencere kapanmasın diye otomatik olarak `pause` komutunu uygular. Scripti
+   > otomatik süreçlerde kullanmak isterseniz `set NOPAUSE=1` deyip ardından çalıştırabilirsiniz.
 3. Betik, `requirements.txt` içindeki bütün paketleri indirir ve eksikse Python ile çalışan
    `packaging/get_ffmpeg.py` yardımcı programını kullanarak FFmpeg/FFprobe ikililerini indirip
    `packaging\ffmpeg-bin` klasörüne çıkarır. Böylece PowerShell erişimi kısıtlı sistemlerde bile
@@ -60,10 +62,12 @@ durdurur.
      arşivini manuel indirip proje içindeki `packaging` klasörüne `ffmpeg-offline.zip` adıyla
      kopyalayın. Alternatif olarak zip dosyasının yolunu `FFMPEG_ZIP_PATH` ortam değişkeniyle
      belirtebilirsiniz. Betik önce bu yerel arşive bakar, bulursa indirme yapmaz.
-4. PyInstaller çağrısı, program kodu ile birlikte bu FFmpeg dosyalarını da `dist/JinniBellPro/ffmpeg`
+4. Betik tüm komutların çıktısını `packaging\build_exe.log` dosyasına yazar. Konsolda hata
+   mesajı görürseniz ayrıntılı sebebi bu logda bulabilirsiniz.
+5. PyInstaller çağrısı, program kodu ile birlikte bu FFmpeg dosyalarını da `dist/JinniBellPro/ffmpeg`
    klasörüne gömerek tek başına çalışabilen bir çıktı üretir; hedef bilgisayarda ek DLL veya modül
    kurmanıza gerek kalmaz.
-5. İşlem sonunda `dist/JinniBellPro/JinniBellPro.exe` dosyası oluşturulur. Bu klasörü tek
+6. İşlem sonunda `dist/JinniBellPro/JinniBellPro.exe` dosyası oluşturulur. Bu klasörü tek
    başına başka bilgisayarlara kopyalayarak da uygulamayı taşıyabilirsiniz.
 
 ## Kurulum Dosyası (Setup EXE) Oluşturma

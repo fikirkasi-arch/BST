@@ -19,6 +19,8 @@ paketleyip kurulabilir bir `Setup.exe` dosyası çıkarmasını sağlar.
    ```bat
    packaging\build_exe.bat
    ```
+   > Pencere otomatik kapanmasın diye betik sonunda duraklar. Eğer hiç durmadan çalışmasını
+   > isterseniz komuttan önce `set NOPAUSE=1` yazabilirsiniz.
 4. Betik otomatik olarak
    - `pip`i günceller,
    - `requirements.txt` içindeki **mutagen, pydub, simpleaudio, yt_dlp** gibi tüm paketleri indirir,
@@ -33,10 +35,12 @@ paketleyip kurulabilir bir `Setup.exe` dosyası çıkarmasını sağlar.
    > İsterseniz zip dosyasının tam yolunu `set FFMPEG_ZIP_PATH=C:\Dosyalar\ffmpeg.zip` komutuyla
    > ortam değişkeni olarak da gösterebilirsiniz. Betik önce yerel dosyaya bakar, bulursa
    > indirme yapmadan devam eder.
-5. Komut isteminde `BUILDING EXE` benzeri satırlar bittikten sonra `dist/JinniBellPro/JinniBellPro.exe`
-   dosyası oluşur. Klasörde ayrıca `ffmpeg` isimli bir alt klasör göreceksiniz; burada gömülü gelen
-   `ffmpeg.exe` ve `ffprobe.exe` dosyaları bulunur. Bu klasörü tek başına USB belleğe atıp başka
-   bilgisayarda çalıştırabilirsiniz.
+5. Betik tüm ayrıntıları `packaging\build_exe.log` dosyasına yazar. Herhangi bir hata oluşursa
+   komut penceresi kapanmadan önce bu log dosyasına bakıp hatanın tam mesajını görebilirsiniz.
+6. Komut isteminde işlemler bittikten sonra `dist/JinniBellPro/JinniBellPro.exe` dosyası oluşur.
+   Klasörde ayrıca `ffmpeg` isimli bir alt klasör göreceksiniz; burada gömülü gelen `ffmpeg.exe` ve
+   `ffprobe.exe` dosyaları bulunur. Bu klasörü tek başına USB belleğe atıp başka bilgisayarda
+   çalıştırabilirsiniz.
 
 ## 3. Kurulum sihirbazı (Setup.exe) üretmek
 1. [Inno Setup](https://jrsoftware.org/isdl.php) programını indirin ve varsayılan ayarlarla kurun.
