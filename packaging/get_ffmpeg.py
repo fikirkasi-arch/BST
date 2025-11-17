@@ -1,4 +1,4 @@
-"""Download and extract FFmpeg/FFprobe binaries for packaging.
+"""Download and extract FFmpeg/FFprobe/FFplay binaries for packaging.
 
 This helper avoids relying on PowerShell so that the Windows build
 script works on every edition/architecture supported by Python.
@@ -83,8 +83,9 @@ def ensure_binaries(target_dir: Path) -> None:
     target_dir.mkdir(parents=True, exist_ok=True)
     ffmpeg_path = target_dir / "ffmpeg.exe"
     ffprobe_path = target_dir / "ffprobe.exe"
+    ffplay_path = target_dir / "ffplay.exe"
 
-    if ffmpeg_path.exists() and ffprobe_path.exists():
+    if ffmpeg_path.exists() and ffprobe_path.exists() and ffplay_path.exists():
         log("FFmpeg already cached, skipping download")
         return
 
@@ -106,8 +107,16 @@ def ensure_binaries(target_dir: Path) -> None:
         if bin_dir is None:
             raise RuntimeError("FFmpeg archive format not recognized; bin folder missing")
 
-        shutil.copy2(bin_dir / "ffmpeg.exe", ffmpeg_path)
-        shutil.copy2(bin_dir / "ffprobe.exe", ffprobe_path)
+        required = {
+            "ffmpeg.exe": ffmpeg_path,
+            "ffprobe.exe": ffprobe_path,
+            "ffplay.exe": ffplay_path,
+        }
+        for name, destination in required.items():
+            source = bin_dir / name
+            if not source.exists():
+                raise RuntimeError(f"FFmpeg arşivinde {name} bulunamadı. Lütfen ffplay içeren bir paket kullanın.")
+            shutil.copy2(source, destination)
         log(f"Binaries copied into {target_dir}")
 
 

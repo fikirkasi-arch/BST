@@ -29,7 +29,7 @@ echo [+] Gerekli Python paketleri indiriliyor...
 call :run "%PY%" -m pip install -r "%PROJECT_ROOT%\requirements.txt" pyinstaller
 
 echo [+] PyInstaller ile JinniBell Pro oluşturuluyor...
-call :run pyinstaller --noconfirm --noconsole --name "JinniBellPro" --add-data "%PROJECT_ROOT%\bell_app;bell_app" --add-binary "%FFMPEG_CACHE%\ffmpeg.exe;ffmpeg" --add-binary "%FFMPEG_CACHE%\ffprobe.exe;ffmpeg" "%PROJECT_ROOT%\main.py"
+call :run pyinstaller --noconfirm --noconsole --name "JinniBellPro" --add-data "%PROJECT_ROOT%\bell_app;bell_app" --add-binary "%FFMPEG_CACHE%\ffmpeg.exe;ffmpeg" --add-binary "%FFMPEG_CACHE%\ffprobe.exe;ffmpeg" --add-binary "%FFMPEG_CACHE%\ffplay.exe;ffmpeg" "%PROJECT_ROOT%\main.py"
 
 echo [✓] Derleme tamamlandı. Ayrıntılı günlük: "%LOGFILE%"
 goto :finish

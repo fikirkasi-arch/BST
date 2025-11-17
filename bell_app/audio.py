@@ -2,18 +2,23 @@
 from __future__ import annotations
 
 import os
+import shutil
+import subprocess
 import sys
+import tempfile
 import threading
 import time
 from pathlib import Path
 from typing import Callable, Dict, Optional
 
 from pydub import AudioSegment
-from pydub.playback import _play_with_simpleaudio  # type: ignore
+
+
+FFPLAY_PATH: Optional[Path] = None
 
 
 def _configure_external_binaries() -> None:
-    """Point pydub to bundled ffmpeg/ffprobe if they exist."""
+    """Point pydub to bundled ffmpeg/ffprobe and locate ffplay."""
 
     def _resolve_binary(name: str) -> Optional[Path]:
         # explicit env override
@@ -33,10 +38,16 @@ def _configure_external_binaries() -> None:
             binary = root / "ffmpeg" / (name + (".exe" if os.name == "nt" else ""))
             if binary.exists():
                 return binary
+        system_path = shutil.which(name)
+        if system_path:
+            return Path(system_path)
         return None
+
+    global FFPLAY_PATH
 
     ffmpeg_path = _resolve_binary("ffmpeg")
     ffprobe_path = _resolve_binary("ffprobe")
+    FFPLAY_PATH = _resolve_binary("ffplay")
     if ffmpeg_path:
         AudioSegment.converter = str(ffmpeg_path)
     if ffprobe_path:
@@ -78,7 +89,7 @@ class AudioController:
 
     def preload(self, label: str, file_path: str) -> None:
         if file_path and Path(file_path).exists():
-            self._cache[label] = AudioSegment.from_file(file_path)
+            self._cache[file_path] = AudioSegment.from_file(file_path)
 
     def play_file(self, file_path: str, label: str = "") -> None:
         if not file_path:
@@ -120,7 +131,7 @@ class AudioController:
                 if self._current_play_obj is not None:
                     self._current_play_obj.stop()
                 self._notify(f"Çalıyor: {label}")
-                self._current_play_obj = _play_with_simpleaudio(segment)
+                self._current_play_obj = _play_with_ffplay(segment)
             self._current_play_obj.wait_done()
             with self._lock:
                 self._current_play_obj = None
@@ -139,5 +150,51 @@ class AudioController:
             if not playing:
                 break
             time.sleep(0.1)
+
+
+class _FFplayHandle:
+    def __init__(self, process: subprocess.Popen, temp_file: Path) -> None:
+        self._process = process
+        self._temp_file = temp_file
+
+    def stop(self) -> None:
+        if self._process.poll() is None:
+            self._process.terminate()
+            try:
+                self._process.wait(timeout=2)
+            except subprocess.TimeoutExpired:
+                self._process.kill()
+        self._cleanup()
+
+    def wait_done(self) -> None:
+        try:
+            self._process.wait()
+        finally:
+            self._cleanup()
+
+    def _cleanup(self) -> None:
+        if self._temp_file.exists():
+            try:
+                self._temp_file.unlink()
+            except OSError:
+                pass
+
+
+def _play_with_ffplay(segment: AudioSegment) -> _FFplayHandle:
+    if FFPLAY_PATH is None:
+        raise RuntimeError("ffplay bulunamadı; lütfen FFmpeg paketinin ffplay.exe içeren bir sürümünü kullanın")
+
+    fd, tmp_path = tempfile.mkstemp(suffix=".wav")
+    os.close(fd)
+    tmp_file = Path(tmp_path)
+    segment.export(tmp_file, format="wav")
+
+    process = subprocess.Popen(
+        [str(FFPLAY_PATH), "-nodisp", "-autoexit", "-loglevel", "error", str(tmp_file)],
+        stdin=subprocess.DEVNULL,
+        stdout=subprocess.DEVNULL,
+        stderr=subprocess.DEVNULL,
+    )
+    return _FFplayHandle(process, tmp_file)
 
 

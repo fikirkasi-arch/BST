@@ -23,13 +23,15 @@ paketleyip kurulabilir bir `Setup.exe` dosyası çıkarmasını sağlar.
    > isterseniz komuttan önce `set NOPAUSE=1` yazabilirsiniz.
 4. Betik otomatik olarak
    - `pip`i günceller,
-   - `requirements.txt` içindeki **mutagen, pydub, simpleaudio, yt_dlp** gibi tüm paketleri indirir,
+   - `requirements.txt` içindeki **mutagen, pydub, yt_dlp** gibi tüm paketleri indirir,
    - PowerShell gerektirmeden çalışan `packaging\get_ffmpeg.py` yardımcısını çağırıp eksikse
-     güncel **FFmpeg** ve **FFprobe** dosyalarını download eder ve `packaging\ffmpeg-bin`
+     güncel **FFmpeg**, **FFprobe** ve **FFplay** dosyalarını download eder ve `packaging\ffmpeg-bin`
      klasörüne çıkarır (her bağlantı en fazla 45 saniye denenir; gerekirse `set FFMPEG_TIMEOUT=90`
      diyerek süreyi uzatabilirsiniz),
    - PyInstaller'ı çağırarak program dosyalarını, bağımlılıkları ve `ffmpeg` klasörünü
      `dist/JinniBellPro` klasörünün içine kopyalar.
+  > **Not:** Ses çalma işlemi artık FFmpeg'in `ffplay.exe` aracıyla yapıldığı için ek olarak
+  > Microsoft Visual C++ Build Tools yüklemeniz gerekmez.
   > **İpucu:** Okul ağında internet engelli veya sertifika hatası varsa,
   > [gyan.dev](https://www.gyan.dev/ffmpeg/builds/) ya da
   > [BtbN/FFmpeg-Builds](https://github.com/BtbN/FFmpeg-Builds/releases) sayfasından
@@ -41,9 +43,9 @@ paketleyip kurulabilir bir `Setup.exe` dosyası çıkarmasını sağlar.
 5. Betik tüm ayrıntıları `packaging\build_exe.log` dosyasına yazar. Herhangi bir hata oluşursa
    komut penceresi kapanmadan önce bu log dosyasına bakıp hatanın tam mesajını görebilirsiniz.
 6. Komut isteminde işlemler bittikten sonra `dist/JinniBellPro/JinniBellPro.exe` dosyası oluşur.
-   Klasörde ayrıca `ffmpeg` isimli bir alt klasör göreceksiniz; burada gömülü gelen `ffmpeg.exe` ve
-   `ffprobe.exe` dosyaları bulunur. Bu klasörü tek başına USB belleğe atıp başka bilgisayarda
-   çalıştırabilirsiniz.
+   Klasörde ayrıca `ffmpeg` isimli bir alt klasör göreceksiniz; burada gömülü gelen `ffmpeg.exe`,
+   `ffprobe.exe` ve `ffplay.exe` dosyaları bulunur. Bu klasörü tek başına USB belleğe atıp başka
+   bilgisayarda çalıştırabilirsiniz.
 
 ## 3. Kurulum sihirbazı (Setup.exe) üretmek
 1. [Inno Setup](https://jrsoftware.org/isdl.php) programını indirin ve varsayılan ayarlarla kurun.

@@ -27,11 +27,10 @@ source .venv/bin/activate  # Windows için .venv\Scripts\activate
 pip install -r requirements.txt
 ```
 
-> **Not:** `pydub` kütüphanesi MP3 gibi dosyaları çalabilmek için FFmpeg gerektirir.
-Bilgisayarınızda FFmpeg kurulu olduğundan emin olun. Windows için hazırladığınız EXE/kurulum
-paketlerinde FFmpeg ve FFprobe dosyaları otomatik olarak gömüldüğünden, başka bilgisayarlarda
-ayrıca kurulmasına gerek kalmaz. YouTube bağlantılarından ses almak isterseniz `yt-dlp`
-paketinin kurulması gerekir (requirements dosyasında mevcuttur).
+> **Not:** `pydub` kütüphanesi MP3 gibi dosyaları çalabilmek için FFmpeg araçlarını kullanır. Bu
+araçlar (ffmpeg.exe, ffprobe.exe, ffplay.exe) paketleme sırasında otomatik olarak uygulamanın yanına
+kopyalanır; ayrıca Visual C++ derleyicisi yüklemeniz gerekmez. YouTube bağlantılarından ses almak
+isterseniz `yt-dlp` paketinin kurulması gerekir (requirements dosyasında mevcuttur).
 
 ## Çalıştırma
 ```bash
@@ -54,7 +53,7 @@ durdurur.
    > Betik hata verirse pencere kapanmasın diye otomatik olarak `pause` komutunu uygular. Scripti
    > otomatik süreçlerde kullanmak isterseniz `set NOPAUSE=1` deyip ardından çalıştırabilirsiniz.
 3. Betik, `requirements.txt` içindeki bütün paketleri indirir ve eksikse Python ile çalışan
-   `packaging/get_ffmpeg.py` yardımcı programını kullanarak FFmpeg/FFprobe ikililerini indirip
+   `packaging/get_ffmpeg.py` yardımcı programını kullanarak FFmpeg/FFprobe/FFplay araçlarını indirip
    `packaging\ffmpeg-bin` klasörüne çıkarır. Böylece PowerShell erişimi kısıtlı sistemlerde bile
    indirme işlemi sorunsuz yürür. Her URL denemesi varsayılan olarak en fazla 45 saniye sürer;
    daha uzun beklemek isterseniz `set FFMPEG_TIMEOUT=90` gibi bir ayar yapabilirsiniz.
@@ -67,11 +66,13 @@ durdurur.
      bir isim) olarak kopyalarsanız indirme adımı atlanır.
 4. Betik tüm komutların çıktısını `packaging\build_exe.log` dosyasına yazar. Konsolda hata
    mesajı görürseniz ayrıntılı sebebi bu logda bulabilirsiniz.
-5. PyInstaller çağrısı, program kodu ile birlikte bu FFmpeg dosyalarını da `dist/JinniBellPro/ffmpeg`
+5. PyInstaller çağrısı, program kodu ile birlikte bu FFmpeg araçlarını da `dist/JinniBellPro/ffmpeg`
    klasörüne gömerek tek başına çalışabilen bir çıktı üretir; hedef bilgisayarda ek DLL veya modül
    kurmanıza gerek kalmaz.
 6. İşlem sonunda `dist/JinniBellPro/JinniBellPro.exe` dosyası oluşturulur. Bu klasörü tek
-   başına başka bilgisayarlara kopyalayarak da uygulamayı taşıyabilirsiniz.
+   başına başka bilgisayarlara kopyalayarak da uygulamayı taşıyabilirsiniz. Klasörün içinde yer alan
+   `ffmpeg` alt klasörü (ffmpeg.exe, ffprobe.exe, ffplay.exe) ses çalma için zorunludur; aynı dizinle
+   birlikte dağıtmayı unutmayın.
 
 ## Kurulum Dosyası (Setup EXE) Oluşturma
 1. Yukarıdaki PyInstaller adımlarını tamamlayarak `dist/JinniBellPro` klasörünü üretin.
@@ -80,7 +81,7 @@ durdurur.
 4. Inno Setup içinden **Build ➜ Compile** seçeneğini çalıştırın. Oluşan `Output/JinniBellPro-Setup.exe`
    dosyası, istediğiniz bilgisayarlara kurulabilir bir sihirbaz sunar.
 5. Kurulum dosyası, PyInstaller'ın çıkardığı tüm paketleri, `bell_app` klasörünü ve
-   `dist/JinniBellPro/ffmpeg` altındaki FFmpeg/FFprobe dosyalarını otomatik olarak
+   `dist/JinniBellPro/ffmpeg` altındaki FFmpeg/FFprobe/FFplay dosyalarını otomatik olarak
    içerdiğinden ek bağımlılık kurulumu istemez.
 6. Kurulum dosyasını dağıttığınızda program `C:\Program Files\JinniBellPro` klasörüne kurulur ve
    Başlat menüsüne kısayol ekler.

@@ -29,6 +29,7 @@ Name: "desktopicon"; Description: "\"{#MyAppName}\" için masaüstü kısayolu o
 [Files]
 Source: "dist\JinniBellPro\{#MyAppExeName}"; DestDir: "{app}"; Flags: ignoreversion
 Source: "dist\JinniBellPro\bell_app\*"; DestDir: "{app}\bell_app"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "dist\JinniBellPro\ffmpeg\*"; DestDir: "{app}\ffmpeg"; Flags: ignoreversion recursesubdirs createallsubdirs
 
 [Icons]
 Name: "{autoprograms}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"
