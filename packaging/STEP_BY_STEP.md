@@ -27,6 +27,12 @@ paketleyip kurulabilir bir `Setup.exe` dosyası çıkarmasını sağlar.
      klasörüne çıkarır,
    - PyInstaller'ı çağırarak program dosyalarını, bağımlılıkları ve `ffmpeg` klasörünü
      `dist/OkulZilAsistani` klasörünün içine kopyalar.
+   > **İpucu:** Okul ağında internet engelli veya sertifika hatası varsa,
+   > [gyan.dev](https://www.gyan.dev/ffmpeg/builds/) üzerindeki `ffmpeg-6.0-essentials_build.zip`
+   > dosyasını başka bir yerden indirip `packaging` klasörüne `ffmpeg-offline.zip` olarak kopyalayın.
+   > İsterseniz zip dosyasının tam yolunu `set FFMPEG_ZIP_PATH=C:\Dosyalar\ffmpeg.zip` komutuyla
+   > ortam değişkeni olarak da gösterebilirsiniz. Betik önce yerel dosyaya bakar, bulursa
+   > indirme yapmadan devam eder.
 5. Komut isteminde `BUILDING EXE` benzeri satırlar bittikten sonra `dist/OkulZilAsistani/OkulZilAsistani.exe`
    dosyası oluşur. Klasörde ayrıca `ffmpeg` isimli bir alt klasör göreceksiniz; burada gömülü gelen
    `ffmpeg.exe` ve `ffprobe.exe` dosyaları bulunur. Bu klasörü tek başına USB belleğe atıp başka

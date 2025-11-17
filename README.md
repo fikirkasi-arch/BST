@@ -55,6 +55,11 @@ durdurur.
    `packaging/get_ffmpeg.py` yardımcı programını kullanarak FFmpeg/FFprobe ikililerini indirip
    `packaging\ffmpeg-bin` klasörüne çıkarır. Böylece PowerShell erişimi kısıtlı sistemlerde bile
    indirme işlemi sorunsuz yürür.
+   - Eğer bulunduğunuz bilgisayar internete çıkamıyor ya da SSL doğrulama hatası alıyorsanız,
+     [gyan.dev](https://www.gyan.dev/ffmpeg/builds/) adresindeki `ffmpeg-6.0-essentials_build.zip`
+     arşivini manuel indirip proje içindeki `packaging` klasörüne `ffmpeg-offline.zip` adıyla
+     kopyalayın. Alternatif olarak zip dosyasının yolunu `FFMPEG_ZIP_PATH` ortam değişkeniyle
+     belirtebilirsiniz. Betik önce bu yerel arşive bakar, bulursa indirme yapmaz.
 4. PyInstaller çağrısı, program kodu ile birlikte bu FFmpeg dosyalarını da `dist/OkulZilAsistani/ffmpeg`
    klasörüne gömerek tek başına çalışabilen bir çıktı üretir; hedef bilgisayarda ek DLL veya modül
    kurmanıza gerek kalmaz.

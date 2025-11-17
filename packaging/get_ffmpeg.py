@@ -5,18 +5,41 @@ script works on every edition/architecture supported by Python.
 """
 from __future__ import annotations
 
+import os
 import shutil
 import sys
 import tempfile
 import urllib.request
 import zipfile
 from pathlib import Path
+from urllib.error import URLError
 
 FFMPEG_URL = "https://www.gyan.dev/ffmpeg/builds/packages/ffmpeg-6.0-essentials_build.zip"
+LOCAL_ARCHIVE_NAMES = ("ffmpeg-offline.zip", "ffmpeg.zip")
 
 
 def log(message: str) -> None:
     print(f"[get_ffmpeg] {message}")
+
+
+def find_local_archive() -> Path | None:
+    """Return a user supplied FFmpeg archive if one exists."""
+
+    candidates: list[Path] = []
+    env_path = os.environ.get("FFMPEG_ZIP_PATH")
+    if env_path:
+        candidates.append(Path(env_path))
+
+    script_dir = Path(__file__).parent
+    for name in LOCAL_ARCHIVE_NAMES:
+        candidates.append(script_dir / name)
+        candidates.append(script_dir / "cache" / name)
+        candidates.append(script_dir / "assets" / name)
+
+    for candidate in candidates:
+        if candidate.is_file():
+            return candidate
+    return None
 
 
 def ensure_binaries(target_dir: Path) -> None:
@@ -30,9 +53,23 @@ def ensure_binaries(target_dir: Path) -> None:
 
     with tempfile.TemporaryDirectory() as tmp_dir:
         zip_path = Path(tmp_dir) / "ffmpeg.zip"
-        log(f"Downloading FFmpeg package to {zip_path}")
-        with urllib.request.urlopen(FFMPEG_URL) as response, open(zip_path, "wb") as dst:
-            shutil.copyfileobj(response, dst)
+        local_archive = find_local_archive()
+        if local_archive:
+            log(f"Yerel FFmpeg arşivi bulundu: {local_archive}")
+            shutil.copy2(local_archive, zip_path)
+        else:
+            log(f"Downloading FFmpeg package to {zip_path}")
+            try:
+                with urllib.request.urlopen(FFMPEG_URL) as response, open(zip_path, "wb") as dst:
+                    shutil.copyfileobj(response, dst)
+            except URLError as exc:
+                raise RuntimeError(
+                    "FFmpeg indirilemedi. İnternet bağlantısı kısıtlıysa veya sertifika"
+                    " doğrulanamıyorsa, https://www.gyan.dev/ffmpeg/builds/ adresinden"
+                    " ffmpeg-6.0-essentials_build.zip dosyasını indirip packaging"
+                    " klasörüne 'ffmpeg-offline.zip' adıyla koyabilir ya da"
+                    " FFMPEG_ZIP_PATH değişkeniyle yol gösterebilirsiniz."
+                ) from exc
 
         extract_dir = Path(tmp_dir) / "extract"
         log(f"Extracting archive into {extract_dir}")
