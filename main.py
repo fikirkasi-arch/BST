@@ -135,7 +135,12 @@ class BellApplication:
     def __init__(self, root: tk.Tk) -> None:
         self.root = root
         self.root.title("JinniBell Pro")
-        self.root.option_add("*Font", "Segoe UI 10")
+        # Tk, özellikle gömülü Tcl sürümlerinde boşluk içeren yazı tiplerini
+        # doğru okumak için aile adını süslü parantez içinde bekler; aksi halde
+        # "Segoe"yi aile, "UI"yi ise sayı gibi yorumlayarak "expected integer"
+        # hatası üretir. Bu nedenle varsayılan yazı tipini {Segoe UI} şeklinde
+        # tanımlıyoruz.
+        self.root.option_add("*Font", "{Segoe UI} 10")
         style = ttk.Style(self.root)
         try:
             style.theme_use("clam")
