@@ -15,6 +15,8 @@ import zipfile
 from pathlib import Path
 from urllib.error import URLError
 
+_console_fallback = None
+
 FFMPEG_URLS = (
     ("ffmpeg-7.0.1-essentials_build.zip", "https://www.gyan.dev/ffmpeg/builds/packages/ffmpeg-7.0.1-essentials_build.zip"),
     ("ffmpeg-7.0-essentials_build.zip", "https://www.gyan.dev/ffmpeg/builds/packages/ffmpeg-7.0-essentials_build.zip"),
@@ -25,8 +27,38 @@ LOCAL_ARCHIVE_NAMES = ("ffmpeg-offline.zip", "ffmpeg.zip")
 DOWNLOAD_TIMEOUT = int(os.environ.get("FFMPEG_TIMEOUT", "45"))
 
 
+def _write_console(line: str) -> None:
+    """Best-effort mirror of log lines to the visible console on Windows."""
+
+    global _console_fallback  # noqa: PLW0603 - cache handle for reuse
+
+    if os.name != "nt":  # Only Windows exposes CONOUT$
+        return
+
+    try:
+        is_tty = sys.stdout.isatty()
+    except Exception:  # pragma: no cover - very unlikely on Windows
+        is_tty = False
+
+    if is_tty:
+        return
+
+    if _console_fallback is None:
+        try:
+            _console_fallback = open("CONOUT$", "w", encoding="utf-8", errors="ignore")
+        except OSError:
+            _console_fallback = False
+            return
+
+    if _console_fallback:
+        _console_fallback.write(line + "\n")
+        _console_fallback.flush()
+
+
 def log(message: str) -> None:
-    print(f"[get_ffmpeg] {message}")
+    line = f"[get_ffmpeg] {message}"
+    print(line, flush=True)
+    _write_console(line)
 
 
 def find_local_archive() -> Path | None:
