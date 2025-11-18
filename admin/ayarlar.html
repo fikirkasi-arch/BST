@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ayarlar - Admin Paneli</title>
+    <link rel="stylesheet" href="css/admin.css">
+</head>
+<body>
+    <div class="admin-wrapper">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h2><span>🎓</span> <span>BST Admin</span></h2>
+                <small>Yönetim Paneli</small>
+            </div>
+            <nav class="sidebar-menu">
+                <a href="index.html" class="menu-item">
+                    <span>📊</span> <span>Dashboard</span>
+                </a>
+                <a href="kullanicilar.html" class="menu-item">
+                    <span>👥</span> <span>Kullanıcılar</span>
+                </a>
+                <a href="icerikler.html" class="menu-item">
+                    <span>📚</span> <span>İçerikler</span>
+                </a>
+                <a href="istatistikler.html" class="menu-item">
+                    <span>📈</span> <span>İstatistikler</span>
+                </a>
+                <div class="menu-divider"></div>
+                <a href="ayarlar.html" class="menu-item active">
+                    <span>⚙️</span> <span>Ayarlar</span>
+                </a>
+                <a href="#" class="menu-item" onclick="AdminAuth.logout(); return false;">
+                    <span>🚪</span> <span>Çıkış</span>
+                </a>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="admin-header">
+                <h1>⚙️ Sistem Ayarları</h1>
+            </div>
+
+            <div class="grid-2">
+                <!-- Site Settings -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3><span>🌐</span> Site Ayarları</h3>
+                    </div>
+                    <div class="card-body">
+                        <form id="siteSettingsForm">
+                            <div class="form-group">
+                                <label>Site Başlığı</label>
+                                <input type="text" class="form-control" id="siteTitle" value="BST Eğitim Portalı">
+                            </div>
+                            <div class="form-group">
+                                <label>Site Açıklaması</label>
+                                <textarea class="form-control" id="siteDescription" rows="2">Bilişim Teknolojileri ve Yazılım dersi eğitim portalı</textarea>
+                            </div>
+                            <div class="form-group">
+                                <label>İletişim E-posta</label>
+                                <input type="email" class="form-control" id="contactEmail" value="admin@bst.edu.tr">
+                            </div>
+                            <div class="form-group">
+                                <label>Bakım Modu</label>
+                                <select class="form-control" id="maintenanceMode">
+                                    <option value="off">Kapalı</option>
+                                    <option value="on">Açık</option>
+                                </select>
+                            </div>
+                            <button type="button" class="btn btn-primary" onclick="saveSiteSettings()">
+                                💾 Kaydet
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Security Settings -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3><span>🔐</span> Güvenlik Ayarları</h3>
+                    </div>
+                    <div class="card-body">
+                        <form id="securitySettingsForm">
+                            <div class="form-group">
+                                <label>Mevcut Şifre</label>
+                                <input type="password" class="form-control" id="currentPassword">
+                            </div>
+                            <div class="form-group">
+                                <label>Yeni Şifre</label>
+                                <input type="password" class="form-control" id="newPassword">
+                            </div>
+                            <div class="form-group">
+                                <label>Yeni Şifre (Tekrar)</label>
+                                <input type="password" class="form-control" id="confirmPassword">
+                            </div>
+                            <div class="form-group">
+                                <label>Oturum Süresi</label>
+                                <select class="form-control" id="sessionDuration">
+                                    <option value="1">1 Saat</option>
+                                    <option value="6">6 Saat</option>
+                                    <option value="24" selected>24 Saat</option>
+                                    <option value="168">1 Hafta</option>
+                                </select>
+                            </div>
+                            <button type="button" class="btn btn-primary" onclick="saveSecuritySettings()">
+                                🔒 Güvenlik Ayarlarını Kaydet
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid-2">
+                <!-- Backup & Restore -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3><span>💾</span> Yedekleme & Geri Yükleme</h3>
+                    </div>
+                    <div class="card-body">
+                        <div style="margin-bottom: 20px;">
+                            <h4 style="margin-bottom: 10px;">Yedek Al</h4>
+                            <p style="font-size: 13px; color: #666; margin-bottom: 15px;">
+                                Tüm verilerinizi JSON formatında indirin.
+                            </p>
+                            <button class="btn btn-primary" onclick="backupData()">
+                                📥 Yedek İndir
+                            </button>
+                        </div>
+
+                        <div style="padding-top: 20px; border-top: 2px solid #f0f0f0;">
+                            <h4 style="margin-bottom: 10px;">Geri Yükle</h4>
+                            <p style="font-size: 13px; color: #666; margin-bottom: 15px;">
+                                Daha önce aldığınız yedeği geri yükleyin.
+                            </p>
+                            <input type="file" id="restoreFile" accept=".json" style="margin-bottom: 10px;">
+                            <button class="btn btn-warning" onclick="restoreData()">
+                                📤 Geri Yükle
+                            </button>
+                        </div>
+
+                        <div style="padding-top: 20px; border-top: 2px solid #f0f0f0; margin-top: 20px;">
+                            <h4 style="margin-bottom: 10px; color: #dc3545;">Tehlikeli Bölge</h4>
+                            <p style="font-size: 13px; color: #666; margin-bottom: 15px;">
+                                Tüm verileri sıfırla. Bu işlem geri alınamaz!
+                            </p>
+                            <button class="btn btn-danger" onclick="resetAllData()">
+                                🗑️ Tüm Verileri Sil
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- System Info -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3><span>ℹ️</span> Sistem Bilgisi</h3>
+                    </div>
+                    <div class="card-body">
+                        <div style="display: grid; gap: 15px;">
+                            <div style="display: flex; justify-content: space-between; padding: 10px; background: #f8f9fa; border-radius: 8px;">
+                                <span>Versiyon</span>
+                                <strong>1.0.0</strong>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; padding: 10px; background: #f8f9fa; border-radius: 8px;">
+                                <span>Son Güncelleme</span>
+                                <strong id="lastUpdate">-</strong>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; padding: 10px; background: #f8f9fa; border-radius: 8px;">
+                                <span>LocalStorage Kullanımı</span>
+                                <strong id="storageUsage">0 KB</strong>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; padding: 10px; background: #f8f9fa; border-radius: 8px;">
+                                <span>Tarayıcı</span>
+                                <strong id="browserInfo">-</strong>
+                            </div>
+                        </div>
+
+                        <div style="margin-top: 20px; padding-top: 20px; border-top: 2px solid #f0f0f0;">
+                            <h4 style="margin-bottom: 15px;">📊 Veri Özeti</h4>
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                                <div style="text-align: center; padding: 15px; background: #f8f9fa; border-radius: 8px;">
+                                    <div style="font-size: 24px; font-weight: bold; color: #667eea;" id="totalUsers">0</div>
+                                    <div style="font-size: 12px; color: #666;">Öğrenci</div>
+                                </div>
+                                <div style="text-align: center; padding: 15px; background: #f8f9fa; border-radius: 8px;">
+                                    <div style="font-size: 24px; font-weight: bold; color: #28a745;" id="totalContent">0</div>
+                                    <div style="font-size: 12px; color: #666;">İçerik</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Activity Log -->
+            <div class="card">
+                <div class="card-header">
+                    <h3><span>📋</span> Aktivite Günlüğü</h3>
+                    <button class="btn btn-secondary" style="padding: 8px 15px; font-size: 13px;" onclick="clearLogs()">
+                        🗑️ Günlüğü Temizle
+                    </button>
+                </div>
+                <div class="card-body">
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Tarih</th>
+                                    <th>İşlem</th>
+                                </tr>
+                            </thead>
+                            <tbody id="activityLogTable">
+                                <!-- Dinamik olarak doldurulacak -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="js/admin-auth.js"></script>
+    <script>
+        // Sayfa yüklendiğinde
+        document.addEventListener('DOMContentLoaded', () => {
+            loadSystemInfo();
+            loadActivityLog();
+            loadSettings();
+        });
+
+        // Sistem bilgisi
+        function loadSystemInfo() {
+            // LocalStorage kullanımı
+            let totalSize = 0;
+            for (let key in localStorage) {
+                if (localStorage.hasOwnProperty(key)) {
+                    totalSize += localStorage[key].length * 2; // UTF-16
+                }
+            }
+            document.getElementById('storageUsage').textContent = (totalSize / 1024).toFixed(2) + ' KB';
+
+            // Tarayıcı bilgisi
+            document.getElementById('browserInfo').textContent = navigator.userAgent.split(' ').slice(-1)[0];
+
+            // Son güncelleme
+            document.getElementById('lastUpdate').textContent = new Date().toLocaleDateString('tr-TR');
+
+            // Veri özeti
+            const users = JSON.parse(localStorage.getItem('bstUsers') || '[]');
+            const lessons = JSON.parse(localStorage.getItem('bstLessons') || '[]');
+            const quizzes = JSON.parse(localStorage.getItem('bstQuizzes') || '[]');
+            const games = JSON.parse(localStorage.getItem('bstGames') || '[]');
+
+            document.getElementById('totalUsers').textContent = users.length;
+            document.getElementById('totalContent').textContent = lessons.length + quizzes.length + games.length;
+        }
+
+        // Aktivite günlüğü
+        function loadActivityLog() {
+            const logs = AdminAuth.getActivityLogs();
+            const tbody = document.getElementById('activityLogTable');
+
+            if (logs.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="2" style="text-align: center;">Günlük boş</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = logs.map(log => `
+                <tr>
+                    <td style="white-space: nowrap;">${log.date}</td>
+                    <td>${log.action}</td>
+                </tr>
+            `).join('');
+        }
+
+        // Ayarları yükle
+        function loadSettings() {
+            const settings = JSON.parse(localStorage.getItem('bstSettings') || '{}');
+
+            if (settings.siteTitle) document.getElementById('siteTitle').value = settings.siteTitle;
+            if (settings.siteDescription) document.getElementById('siteDescription').value = settings.siteDescription;
+            if (settings.contactEmail) document.getElementById('contactEmail').value = settings.contactEmail;
+            if (settings.maintenanceMode) document.getElementById('maintenanceMode').value = settings.maintenanceMode;
+        }
+
+        // Site ayarlarını kaydet
+        function saveSiteSettings() {
+            const settings = {
+                siteTitle: document.getElementById('siteTitle').value,
+                siteDescription: document.getElementById('siteDescription').value,
+                contactEmail: document.getElementById('contactEmail').value,
+                maintenanceMode: document.getElementById('maintenanceMode').value
+            };
+
+            localStorage.setItem('bstSettings', JSON.stringify(settings));
+            AdminAuth.logActivity('Site ayarları güncellendi');
+            alert('Site ayarları kaydedildi!');
+            loadActivityLog();
+        }
+
+        // Güvenlik ayarlarını kaydet
+        function saveSecuritySettings() {
+            const currentPassword = document.getElementById('currentPassword').value;
+            const newPassword = document.getElementById('newPassword').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+
+            if (!currentPassword || !newPassword || !confirmPassword) {
+                alert('Lütfen tüm alanları doldurun!');
+                return;
+            }
+
+            if (currentPassword !== AdminAuth.ADMIN_PASSWORD) {
+                alert('Mevcut şifre yanlış!');
+                return;
+            }
+
+            if (newPassword !== confirmPassword) {
+                alert('Yeni şifreler eşleşmiyor!');
+                return;
+            }
+
+            if (newPassword.length < 6) {
+                alert('Şifre en az 6 karakter olmalıdır!');
+                return;
+            }
+
+            // Not: Gerçek uygulamada şifre sunucuda değiştirilmeli
+            alert('Şifre değiştirme özelliği demo modunda devre dışı.\nGerçek uygulamada sunucu tarafında yapılmalıdır.');
+
+            AdminAuth.logActivity('Şifre değiştirme denendi');
+            loadActivityLog();
+
+            // Formu temizle
+            document.getElementById('currentPassword').value = '';
+            document.getElementById('newPassword').value = '';
+            document.getElementById('confirmPassword').value = '';
+        }
+
+        // Yedek al
+        function backupData() {
+            const backup = {
+                timestamp: new Date().toISOString(),
+                version: '1.0.0',
+                data: {
+                    users: JSON.parse(localStorage.getItem('bstUsers') || '[]'),
+                    lessons: JSON.parse(localStorage.getItem('bstLessons') || '[]'),
+                    quizzes: JSON.parse(localStorage.getItem('bstQuizzes') || '[]'),
+                    games: JSON.parse(localStorage.getItem('bstGames') || '[]'),
+                    questions: JSON.parse(localStorage.getItem('bstQuestions') || '[]'),
+                    settings: JSON.parse(localStorage.getItem('bstSettings') || '{}'),
+                    logs: JSON.parse(localStorage.getItem('bst_admin_logs') || '[]')
+                }
+            };
+
+            const blob = new Blob([JSON.stringify(backup, null, 2)], { type: 'application/json' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = `bst_backup_${new Date().toISOString().split('T')[0]}.json`;
+            link.click();
+
+            AdminAuth.logActivity('Yedek alındı');
+            loadActivityLog();
+        }
+
+        // Geri yükle
+        function restoreData() {
+            const fileInput = document.getElementById('restoreFile');
+            const file = fileInput.files[0];
+
+            if (!file) {
+                alert('Lütfen bir yedek dosyası seçin!');
+                return;
+            }
+
+            if (!confirm('Mevcut tüm veriler silinip yedek geri yüklenecek. Emin misiniz?')) {
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const backup = JSON.parse(e.target.result);
+
+                    if (!backup.data) {
+                        throw new Error('Geçersiz yedek dosyası!');
+                    }
+
+                    // Verileri geri yükle
+                    if (backup.data.users) localStorage.setItem('bstUsers', JSON.stringify(backup.data.users));
+                    if (backup.data.lessons) localStorage.setItem('bstLessons', JSON.stringify(backup.data.lessons));
+                    if (backup.data.quizzes) localStorage.setItem('bstQuizzes', JSON.stringify(backup.data.quizzes));
+                    if (backup.data.games) localStorage.setItem('bstGames', JSON.stringify(backup.data.games));
+                    if (backup.data.questions) localStorage.setItem('bstQuestions', JSON.stringify(backup.data.questions));
+                    if (backup.data.settings) localStorage.setItem('bstSettings', JSON.stringify(backup.data.settings));
+
+                    AdminAuth.logActivity('Yedek geri yüklendi');
+                    alert('Yedek başarıyla geri yüklendi!');
+                    location.reload();
+                } catch (err) {
+                    alert('Yedek dosyası okunamadı: ' + err.message);
+                }
+            };
+            reader.readAsText(file);
+        }
+
+        // Tüm verileri sil
+        function resetAllData() {
+            if (!confirm('TÜM VERİLER SİLİNECEK! Bu işlem geri alınamaz. Emin misiniz?')) {
+                return;
+            }
+
+            if (!confirm('Son kez soruyorum: Gerçekten tüm verileri silmek istiyor musunuz?')) {
+                return;
+            }
+
+            // Admin oturumu hariç tüm verileri sil
+            const keysToDelete = ['bstUsers', 'bstLessons', 'bstQuizzes', 'bstGames', 'bstQuestions', 'bstSettings', 'bstProgress', 'bstUserData'];
+            keysToDelete.forEach(key => localStorage.removeItem(key));
+
+            AdminAuth.logActivity('Tüm veriler sıfırlandı');
+            alert('Tüm veriler silindi!');
+            location.reload();
+        }
+
+        // Günlüğü temizle
+        function clearLogs() {
+            if (!confirm('Aktivite günlüğü temizlenecek. Emin misiniz?')) {
+                return;
+            }
+
+            localStorage.setItem('bst_admin_logs', '[]');
+            AdminAuth.logActivity('Aktivite günlüğü temizlendi');
+            loadActivityLog();
+        }
+    </script>
+</body>
+</html>
