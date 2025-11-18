@@ -14,7 +14,7 @@
   h1{margin:0 0 8px 0; font-size:28px; color:white}
   main{display:grid; grid-template-columns: 450px 1fr; gap:25px; padding:25px; max-width:1400px; margin:0 auto}
   .card{background:white; border:none; border-radius:20px; box-shadow:0 4px 15px rgba(0,0,0,0.08)}
-  .card header{padding:18px 20px; text-align:left; font-weight:600; border-bottom:2px solid #f0f0f0; font-size:16px; color:#667eea}
+  .card header{padding:18px 20px; text-align:left; font-weight:600; border-bottom:2px solid #f0f0f0; font-size:16px; color:#2c3e50}
   .card section{padding:20px}
   textarea{width:100%; min-height:280px; resize:vertical; border-radius:12px; padding:14px; border:2px solid #e0e0e0; background:white; color:#333; font-family:inherit; font-size:14px}
   textarea:focus{outline:none; border-color:#667eea}
@@ -161,7 +161,7 @@ TURKIYE | Başkenti neresi? (ANKARA)"></textarea>
     <!-- Oyun açıklamaları ve öneriler -->
     <div class="card no-print">
       <header>Oyun Özeti & İpuçları</header>
-      <section>
+      <section style="max-height: 400px; overflow-y: auto;">
         <p style="margin-top:0">Her oyun tipi kısacık kurallarla oynanır. Aşağıdaki özetler hangi modda ne yapmanız gerektiğini hatırlatır:</p>
         <ul class="guide-list">
           <li><strong>Kare Bulmaca:</strong> Standart kare şablonda cevaplar yatay ve dikey yerleşir. Soruları listeden okuyup aynı numaralı hücrelere harfleri yazın.</li>
@@ -631,7 +631,7 @@ function genCengel(entries){
   const arrows=[]; const list=[]; let no=0;
   function delta(dir){return dir==='right'?{dr:0,dc:1}:dir==='down'?{dr:1,dc:0}:dir==='diag'?{dr:1,dc:1}:{dr:1,dc:-1};}
   function inb(r,c){return r>=0&&c>=0&&r<n&&c<n;}
-  function can(w,r,c,dir){ const d=delta(dir); for(let i=0;i<w.length;i++){ const rr=r+d.dr*i, cc=c+d.dc*i; if(!inb(rr,cc)) return false; if(grid[rr][cc] && grid[rr][cc]!==w[i]) return false; } return true; }
+  function can(w,r,c,dir){ const d=delta(dir); for(let i=0;i<w.length;i++){ const rr=r+d.dr*i, cc=c+d.dc*i; if(!inb(rr,cc)) return false; if(grid[rr][cc]) return false; /* Çarpraz kelime olmaması için herhangi bir dolu hücreyi reddet */ } return true; }
   function place(word, clue){ for(let t=0;t<300;t++){ const dir=dirs[(Math.random()*dirs.length)|0]; const r=(Math.random()*n)|0, c=(Math.random()*n)|0; if(can(word,r,c,dir)){ const d=delta(dir); arrows.push({r,c,dir,no:++no}); list.push({no, clue, answer:word}); for(let i=0;i<word.length;i++){ const rr=r+d.dr*i, cc=c+d.dc*i; grid[rr][cc]=word[i]; } return true; } } return false; }
   entries.slice().sort((a,b)=>b.answer.length-a.answer.length).forEach(e=>place(e.answer,e.clue));
   // DOLUM YAPILMAYAN TÜM HÜCRELERİ SİYAH YAP
