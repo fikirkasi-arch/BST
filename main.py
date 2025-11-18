@@ -167,9 +167,14 @@ class BellApplication:
         countdown_frame = ttk.LabelFrame(frame, text="Geri Sayım ve Bildirim")
         countdown_frame.pack(fill=tk.X, padx=10, pady=5)
         self.countdown_var = tk.StringVar(value="Sonraki zil hesaplanıyor...")
-        ttk.Label(countdown_frame, textvariable=self.countdown_var, font=("Segoe UI", 14, "bold"), foreground="#0b5394").pack(
-            fill=tk.X, padx=6, pady=4
-        )
+        countdown_bg = countdown_frame.cget("background")
+        tk.Label(
+            countdown_frame,
+            textvariable=self.countdown_var,
+            font=("Segoe UI", 14, "bold"),
+            fg="#0b5394",
+            bg=countdown_bg,
+        ).pack(fill=tk.X, padx=6, pady=4)
         self.pause_badge = tk.Label(
             countdown_frame,
             text="Tören modu kapalı",
