@@ -80,6 +80,7 @@ class BellConfig:
     recess_music_enabled: bool = False
     holidays: Dict[str, str] = field(default_factory=dict)
     sound_library: List[SoundAsset] = field(default_factory=list)
+    launch_on_boot: bool = False
 
     @classmethod
     def load(cls) -> "BellConfig":
@@ -138,6 +139,7 @@ class BellConfig:
                 recess_music_enabled=data.get("recess_music_enabled", False),
                 holidays=data.get("holidays", {}),
                 sound_library=library,
+                launch_on_boot=data.get("launch_on_boot", False),
             )
             return instance
         return cls()

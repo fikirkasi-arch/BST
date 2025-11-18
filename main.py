@@ -4,6 +4,7 @@ from __future__ import annotations
 import calendar
 import os
 import subprocess
+import sys
 import tempfile
 import threading
 import time
@@ -51,6 +52,57 @@ SCHEDULE_SOUND_CHOICES = [
 ]
 
 SOUND_DISPLAY = {value: label for label, value in SCHEDULE_SOUND_CHOICES}
+
+STARTUP_SCRIPT_NAME = "JinniBellPro-AutoStart.bat"
+
+
+def _is_windows() -> bool:
+    return os.name == "nt"
+
+
+def _startup_script_path() -> Path:
+    appdata = os.environ.get("APPDATA")
+    if not appdata:
+        raise RuntimeError("APPDATA değişkeni bulunamadı")
+    return (
+        Path(appdata)
+        / "Microsoft"
+        / "Windows"
+        / "Start Menu"
+        / "Programs"
+        / "Startup"
+        / STARTUP_SCRIPT_NAME
+    )
+
+
+def _startup_launch_command() -> str:
+    if getattr(sys, "frozen", False):
+        exe_path = Path(sys.executable).resolve()
+        return f'"{exe_path}" --autostart'
+    python_exe = Path(sys.executable).resolve()
+    script_path = Path(__file__).resolve()
+    return f'"{python_exe}" "{script_path}" --autostart'
+
+
+def enable_windows_startup() -> None:
+    script_path = _startup_script_path()
+    script_path.parent.mkdir(parents=True, exist_ok=True)
+    command = _startup_launch_command()
+    content = "\r\n".join(
+        [
+            "@echo off",
+            "set \"JINNIBELL_AUTOSTART=1\"",
+            f"start \"\" {command}",
+            "",
+        ]
+    )
+    script_path.write_text(content, encoding="utf-8")
+
+
+def disable_windows_startup() -> None:
+    script_path = _startup_script_path()
+    if script_path.exists():
+        script_path.unlink()
 
 
 def _format_mmss(total_ms: Optional[int]) -> str:
@@ -105,6 +157,9 @@ class BellApplication:
         self._schedule_selection: Optional[int] = None
         self._suppress_day_event = False
         self._dragging_ceremony: Optional[int] = None
+        self._launched_from_startup = ("--autostart" in sys.argv) or os.environ.get(
+            "JINNIBELL_AUTOSTART"
+        ) == "1"
 
         self.scheduler = ScheduleRunner(
             self.config,
@@ -116,6 +171,7 @@ class BellApplication:
         self._build_ui()
         self.root.protocol("WM_DELETE_WINDOW", self._minimize_to_tray)
         self._schedule_countdown_refresh()
+        self.root.after(1200, self._auto_minimize_if_needed)
 
     # region UI
     def _build_ui(self) -> None:
@@ -211,6 +267,21 @@ class BellApplication:
             variable=self.pause_var,
             command=self._toggle_pause,
         ).pack(side=tk.LEFT, padx=5)
+
+        startup_frame = ttk.LabelFrame(frame, text="Başlangıç / Arka Plan")
+        startup_frame.pack(fill=tk.X, padx=10, pady=5)
+        self.autostart_var = tk.BooleanVar(value=self.config.launch_on_boot)
+        ttk.Checkbutton(
+            startup_frame,
+            text="Windows açıldığında JinniBell Pro otomatik başlasın (sisteme küçült)",
+            variable=self.autostart_var,
+            command=self._toggle_autostart,
+        ).pack(fill=tk.X, padx=6, pady=(4, 2))
+        ttk.Label(
+            startup_frame,
+            text="Bu seçenek yalnızca Windows'ta kullanılabilir ve oturum açıldığında programı arka plana alır.",
+            wraplength=360,
+        ).pack(fill=tk.X, padx=6, pady=(0, 4))
 
         ttk.Button(frame, text="Arka Plana Al", command=self._minimize_to_tray).pack(pady=5)
 
@@ -565,6 +636,32 @@ class BellApplication:
         else:
             self._update_status("Hazır")
         self._update_pause_badge()
+
+    def _toggle_autostart(self) -> None:
+        desired = self.autostart_var.get()
+        if desired == self.config.launch_on_boot:
+            return
+        if not _is_windows():
+            messagebox.showwarning(
+                "Başlangıç Ayarı",
+                "Bu özellik yalnızca Windows işletim sisteminde kullanılabilir.",
+            )
+            self.autostart_var.set(False)
+            return
+        try:
+            if desired:
+                enable_windows_startup()
+            else:
+                disable_windows_startup()
+        except Exception as exc:  # pragma: no cover - ortam bağımlı
+            messagebox.showerror(
+                "Başlangıç Ayarı",
+                f"Windows başlangıç ayarı uygulanamadı: {exc}",
+            )
+            self.autostart_var.set(self.config.launch_on_boot)
+            return
+        self.config.launch_on_boot = desired
+        self.config.save()
 
     def _toggle_shutdown(self) -> None:
         self.config.auto_shutdown_enabled = self.shutdown_var.get()
@@ -1548,6 +1645,12 @@ class BellApplication:
     def _minimize_to_tray(self) -> None:
         self.root.iconify()
         self._update_status("Arka planda çalışıyor")
+
+    def _auto_minimize_if_needed(self) -> None:
+        if getattr(self, "root", None) is None:
+            return
+        if self.config.launch_on_boot and self._launched_from_startup:
+            self._minimize_to_tray()
 
     # endregion
 

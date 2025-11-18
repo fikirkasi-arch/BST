@@ -21,6 +21,8 @@ başlatabilirsiniz.
   tören anonslarına tam zamanında başlama
 - Kontrol sekmesindeki geri sayım paneli ile sıradaki zili HH:MM:SS formatında ve tören modu
   uyarısıyla takip etme
+- Windows oturumu açıldığında uygulamayı otomatik başlatıp sistem durumuna küçülten isteğe bağlı
+  başlangıç seçeneği
 - Tören programı için bilgisayardan veya YouTube bağlantısından müzik listesi oluşturma
   - YouTube linkleri eklendiğinde video başlığı otomatik olarak alınır
   - Başlangıç ve opsiyonel bitiş süreleri MM:SS formatında girilebilir; her parça sırasını
