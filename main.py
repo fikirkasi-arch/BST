@@ -225,7 +225,7 @@ class BellApplication:
         ttk.Label(status_frame, text="Durum:").pack(side=tk.LEFT)
         ttk.Label(status_frame, textvariable=self.status_var).pack(side=tk.LEFT, padx=5)
 
-        countdown_frame = ttk.LabelFrame(frame, text="Geri Sayım ve Bildirim")
+        countdown_frame = tk.LabelFrame(frame, text="Geri Sayım ve Bildirim")
         countdown_frame.pack(fill=tk.X, padx=10, pady=5)
         self.countdown_var = tk.StringVar(value="Sonraki zil hesaplanıyor...")
         countdown_bg = countdown_frame.cget("background")
