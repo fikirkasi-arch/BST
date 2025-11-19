@@ -1,3 +1,6 @@
 mutagen
 pydub
 yt_dlp
+pystray
+pillow
+plyer

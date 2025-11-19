@@ -87,11 +87,14 @@ class BellConfig:
     muted: bool = False
     auto_shutdown_enabled: bool = False
     auto_shutdown_time: Optional[str] = None
+    auto_shutdown_mode: str = "disabled"
+    auto_shutdown_delay_minutes: int = 10
     ceremony_playlist: List[CeremonyItem] = field(default_factory=list)
     recess_music_enabled: bool = False
     holidays: Dict[str, str] = field(default_factory=dict)
     sound_library: List[SoundAsset] = field(default_factory=list)
     launch_on_boot: bool = False
+    launch_on_boot_service: bool = False
     announcement_settings: Dict[str, Dict[str, object]] = field(
         default_factory=_default_announcement_settings
     )
@@ -157,11 +160,15 @@ class BellConfig:
                 muted=data.get("muted", False),
                 auto_shutdown_enabled=data.get("auto_shutdown_enabled", False),
                 auto_shutdown_time=data.get("auto_shutdown_time"),
+                auto_shutdown_mode=data.get("auto_shutdown_mode")
+                or ("time" if data.get("auto_shutdown_enabled") else "disabled"),
+                auto_shutdown_delay_minutes=data.get("auto_shutdown_delay_minutes", 10),
                 ceremony_playlist=playlist,
                 recess_music_enabled=data.get("recess_music_enabled", False),
                 holidays=data.get("holidays", {}),
                 sound_library=library,
                 launch_on_boot=data.get("launch_on_boot", False),
+                launch_on_boot_service=data.get("launch_on_boot_service", False),
                 announcement_settings=announcement_settings,
             )
             return instance

@@ -22,6 +22,7 @@ class ScheduleRunner:
         self._thread: Optional[threading.Thread] = None
         self._stop_event = threading.Event()
         self._last_triggered: dict[str, str] = {}
+        self._last_bell_ts: Optional[dt.datetime] = None
 
     def start(self) -> None:
         if self._thread and self._thread.is_alive():
@@ -39,6 +40,8 @@ class ScheduleRunner:
         while not self._stop_event.is_set():
             now = dt.datetime.now()
             weekday = WEEKDAYS[now.weekday()]
+            if self._last_bell_ts and self._last_bell_ts.date() != now.date():
+                self._last_bell_ts = None
             holiday = self.config.holiday_for(now.date())
             if holiday:
                 self._last_triggered.pop(weekday, None)
@@ -55,28 +58,50 @@ class ScheduleRunner:
                 if event.clock == current_clock and not self.override_predicate():
                     self._last_triggered[weekday] = current_clock
                     self.trigger_callback(event)
+                    self._last_bell_ts = now
                     break
 
             self._handle_auto_shutdown(now)
             time.sleep(1)
 
     def _handle_auto_shutdown(self, now: dt.datetime) -> None:
-        if not self.config.auto_shutdown_enabled:
+        mode = self.config.auto_shutdown_mode or ("time" if self.config.auto_shutdown_enabled else "disabled")
+        if mode == "disabled":
             return
-        if not self.config.auto_shutdown_time:
-            return
-        if now.strftime("%H:%M") != self.config.auto_shutdown_time:
-            return
-        # Only shutdown once per day
-        key = now.strftime("%Y-%m-%d")
-        if self._last_triggered.get("shutdown") == key:
-            return
-        self._last_triggered["shutdown"] = key
-        if now.strftime("%H:%M") == self.config.auto_shutdown_time:
+
+        if mode == "time":
+            target = self.config.auto_shutdown_time
+            if not target:
+                return
+            if now.strftime("%H:%M") != target:
+                return
+            key = f"time:{now.strftime('%Y-%m-%d')}"
+            if self._last_triggered.get("shutdown") == key:
+                return
+            self._last_triggered["shutdown"] = key
             self.trigger_callback(
                 BellEvent(
                     label="Bilgisayar Kapanışı",
-                    clock=self.config.auto_shutdown_time,
+                    clock=target,
+                    sound_type="auto_shutdown",
+                )
+            )
+            return
+
+        if mode == "after_last_bell":
+            if not self._last_bell_ts:
+                return
+            delay = max(1, int(self.config.auto_shutdown_delay_minutes or 5))
+            if now - self._last_bell_ts < dt.timedelta(minutes=delay):
+                return
+            key = f"after:{self._last_bell_ts.strftime('%Y-%m-%d')}"
+            if self._last_triggered.get("shutdown") == key:
+                return
+            self._last_triggered["shutdown"] = key
+            self.trigger_callback(
+                BellEvent(
+                    label=f"Son zil sonrası {delay} dk", 
+                    clock=self._last_bell_ts.strftime("%H:%M"),
                     sound_type="auto_shutdown",
                 )
             )

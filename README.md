@@ -25,9 +25,15 @@ başlatabilirsiniz.
 - Manuel butonların çalma zamanını **Hemen / 3 / 5 / 7 / 10 / 15 sn sonra** seçenekleriyle ayarlayarak
   tören anonslarına tam zamanında başlama
 - Kontrol sekmesindeki geri sayım paneli ile sıradaki zili HH:MM:SS formatında ve tören modu
-  uyarısıyla takip etme
+  uyarısıyla takip etme, aynı zamanda masaüstü bildirimleriyle (Windows Notification Center)
+  yaklaşan ve çalan zilleri haber verme
+- Ses kaydırıcısı yüzde etiketi ile seviyeyi tek bakışta görme ve tek tuşla zili susturma
 - Windows oturumu açıldığında uygulamayı otomatik başlatıp sistem durumuna küçülten isteğe bağlı
-  başlangıç seçeneği
+  başlangıç seçeneği ile Görev Zamanlayıcısı üzerinden servis modunda (arayüz olmadan) açılma
+- Pystray tabanlı sistem tepsisi simgesi sayesinde "Göster / Tören Modu / Çıkış" kısayollarına
+  saat yanındaki küçük menüden erişme
+- Servis modu (`python main.py --service`) ile bilgisayar açılır açılmaz kullanıcı oturumuna gerek
+  kalmadan zillerin devreye girmesi; okul kasalarındaki bilgisayarlar için ideal
 - Tören programı için bilgisayardan veya YouTube bağlantısından müzik listesi oluşturma
   - YouTube linkleri eklendiğinde video başlığı otomatik olarak alınır
   - Başlangıç ve opsiyonel bitiş süreleri MM:SS formatında girilebilir; her parça sırasını
@@ -38,12 +44,12 @@ başlatabilirsiniz.
 - Tören listesinde her satır için **Hazır / Bekliyor / İndiriliyor** durumunu ve olası hata mesajını
   görebilme; YouTube indirmeleri tamamlandığında durum otomatik güncellenir
 - Teneffüslerde otomatik müzik yayını
-- Belirlenen saatte bilgisayarı otomatik kapatma
+- Otomatik kapanış için iki mod: Belirlenen saatte kapatma veya son zil çaldıktan sonra belirlenen
+  dakikada kapanma
 - Tek tuşla programı başka günlere aktarma veya aynı planı birden fazla güne topluca uygulama
 - Tatil günlerini tanımlayıp belirtilen tarihlerde zilleri otomatik devre dışı bırakma
 - Kontrol sekmesinde bugünkü tatil durumu ve sıradaki zil bilgisini görme
 - Tören moduna alınca otomatik zilleri geçici olarak kapatma
-- Ses seviyesi ayarı ve tek tuşla zili susturma
 - Tüm kritik ayar/butonların yanında imleci bekleterek görülebilen Türkçe ipucu balonları
 - "Zil Testi Simülasyonu" paneli ile herhangi bir günü hızlandırılmış olarak oynatıp olası saat
   çakışmalarını rapor hâlinde görme
@@ -65,9 +71,18 @@ isterseniz `yt-dlp` paketinin kurulması gerekir (requirements dosyasında mevcu
 python main.py
 ```
 
-Uygulama arka plana alınsa bile (simge durumuna küçültülerek) ziller çalışmaya devam eder.
-Manuel butonlar aynı anda zil çalıyor olsa bile öncelik kazanır ve çalarken otomatik zilleri
-durdurur.
+Uygulama arka plana alındığında sistem tepsisine taşınır; simgeye tıklayıp "Göster" diyerek pencereyi
+geri çağırabilir veya "Çıkış" diyerek tamamen kapatabilirsiniz. Manuel butonlar aynı anda zil çalıyor
+olsa bile öncelik kazanır ve çalarken otomatik zilleri durdurur.
+
+Arayüz göstermeden servis olarak çalıştırmak isterseniz:
+
+```bash
+python main.py --service
+```
+
+Bu kip, Görev Zamanlayıcı kayıtları tarafından da kullanılır ve bilgisayar açıldığında otomatik olarak
+simge durumunda (veya tamamen arka planda) çalışmaya başlar.
 
 ## Windows için EXE Paketleme
 1. Windows 10/11 üzerinde bir komut istemcisi açın ve projeyi içeren klasöre gidin.

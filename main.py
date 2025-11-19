@@ -1,8 +1,10 @@
 """JinniBell Pro okul zil ve tören programı yöneticisi."""
 from __future__ import annotations
 
+import argparse
 import calendar
 import os
+import signal
 import shutil
 import subprocess
 import sys
@@ -14,7 +16,7 @@ import tkinter.font as tkfont
 from datetime import datetime, date
 from pathlib import Path
 from tkinter import filedialog, messagebox, simpledialog, ttk
-from typing import Dict, List, Optional, Tuple
+from typing import Callable, Dict, List, Optional, Tuple
 
 from mutagen import File as MutagenFile
 from pydub import AudioSegment
@@ -27,6 +29,19 @@ try:  # pragma: no cover - opsiyonel
     import yt_dlp  # type: ignore
 except Exception:  # pragma: no cover - opsiyonel
     yt_dlp = None
+
+try:  # pragma: no cover - sistem tepsisi için gerekli
+    import pystray  # type: ignore
+    from PIL import Image, ImageDraw  # type: ignore
+except Exception:  # pragma: no cover - tepsi desteği opsiyonel
+    pystray = None
+    Image = None  # type: ignore
+    ImageDraw = None  # type: ignore
+
+try:  # pragma: no cover - bildirimler için
+    from plyer import notification as plyer_notification  # type: ignore
+except Exception:  # pragma: no cover - opsiyonel
+    plyer_notification = None
 
 MANUAL_BUTTONS = {
     "İstiklal Marşı": "istiklal",
@@ -66,7 +81,14 @@ SOUND_HINTS = {
 }
 
 STARTUP_SCRIPT_NAME = "JinniBellPro-AutoStart.bat"
+SERVICE_TASK_NAME = "JinniBellProService"
 MEDIA_DIR = ensure_media_dir()
+
+SHUTDOWN_MODES: List[Tuple[str, str]] = [
+    ("Kapalı", "disabled"),
+    ("Belirli Saatte Kapat", "time"),
+    ("Son zil sonrası kapat", "after_last_bell"),
+]
 
 
 def _is_windows() -> bool:
@@ -130,6 +152,15 @@ def _startup_launch_command() -> str:
     return f'"{python_exe}" "{script_path}" --autostart'
 
 
+def _service_task_command() -> str:
+    if getattr(sys, "frozen", False):
+        exe_path = Path(sys.executable).resolve()
+        return f'"{exe_path}" --service'
+    python_exe = Path(sys.executable).resolve()
+    script_path = Path(__file__).resolve()
+    return f'"{python_exe}" "{script_path}" --service'
+
+
 class ToolTip:
     def __init__(self, widget: tk.Widget, text: str):
         self.widget = widget
@@ -187,6 +218,37 @@ def disable_windows_startup() -> None:
         script_path.unlink()
 
 
+def enable_windows_service_start() -> None:
+    if not _is_windows():
+        raise RuntimeError("Bu özellik yalnızca Windows'ta kullanılabilir")
+    command = _service_task_command()
+    result = subprocess.run(
+        [
+            "schtasks",
+            "/Create",
+            "/SC",
+            "ONSTART",
+            "/RL",
+            "HIGHEST",
+            "/TN",
+            SERVICE_TASK_NAME,
+            "/TR",
+            command,
+            "/F",
+        ],
+        capture_output=True,
+        text=True,
+    )
+    if result.returncode != 0:
+        raise RuntimeError(result.stderr.strip() or result.stdout.strip())
+
+
+def disable_windows_service_start() -> None:
+    if not _is_windows():
+        return
+    subprocess.run(["schtasks", "/Delete", "/TN", SERVICE_TASK_NAME, "/F"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+
+
 def _format_mmss(total_ms: Optional[int]) -> str:
     if total_ms is None:
         return "-"
@@ -213,6 +275,171 @@ def _parse_minute_second(value: str) -> Optional[int]:
     return total_seconds * 1000
 
 
+class Notifier:
+    def __init__(self) -> None:
+        self._available = plyer_notification is not None
+
+    def notify(self, title: str, message: str) -> None:
+        if not self._available:
+            return
+        try:  # pragma: no cover - işletim sistemi bağımlı
+            plyer_notification.notify(title=title, message=message, app_name="JinniBell Pro", timeout=5)
+        except Exception:
+            pass
+
+
+class TrayController:
+    def __init__(self, app: "BellApplication") -> None:
+        self.app = app
+        self.icon: Optional[pystray.Icon] = None
+        self._thread: Optional[threading.Thread] = None
+
+    def ensure(self) -> None:
+        if pystray is None or Image is None or ImageDraw is None:
+            return
+        if self.icon:
+            return
+        image = self._create_icon()
+        menu = pystray.Menu(
+            pystray.MenuItem("Göster", self._menu_callback(self.app._restore_from_tray)),
+            pystray.MenuItem(
+                "Tören Modu",
+                self._menu_callback(self.app._toggle_pause_from_tray),
+                checked=lambda item: self.app.is_ceremony_mode_active(),
+            ),
+            pystray.MenuItem("Çıkış", self._menu_callback(self.app._quit_from_tray)),
+        )
+        self.icon = pystray.Icon("JinniBellPro", image, "JinniBell Pro", menu)
+        self._thread = threading.Thread(target=self.icon.run, daemon=True)
+        self._thread.start()
+
+    def hide_if_visible(self) -> None:
+        if self.icon:
+            self.icon.stop()
+            self.icon = None
+            self._thread = None
+
+    def _menu_callback(self, func: Callable[[], None]) -> Callable[[object, object], None]:
+        def wrapper(_icon: object, _item: object) -> None:
+            if getattr(self.app, "root", None):
+                self.app.root.after(0, func)
+            else:
+                func()
+
+        return wrapper
+
+    @staticmethod
+    def _create_icon() -> "Image.Image":  # type: ignore[name-defined]
+        image = Image.new("RGB", (64, 64), color="#0b5394")  # type: ignore[name-defined]
+        draw = ImageDraw.Draw(image)  # type: ignore[name-defined]
+        draw.rectangle((8, 40, 56, 56), fill="#ffffff")
+        draw.rectangle((20, 20, 44, 44), outline="#ffffff", width=3)
+        draw.ellipse((28, 10, 36, 18), fill="#ffffff")
+        return image
+
+
+def _execute_bell_event(
+    config: BellConfig,
+    audio: AudioController,
+    notifier: Optional[Notifier],
+    event: BellEvent,
+    play_recess: Callable[[], None],
+    run_shutdown: Callable[[], None],
+) -> None:
+    if event.sound_type == "auto_shutdown":
+        run_shutdown()
+        if notifier:
+            notifier.notify("JinniBell Pro", "Otomatik kapanış başlatıldı")
+        return
+
+    file_path = config.sound_files.get(event.sound_type, "")
+    if not file_path:
+        if notifier:
+            notifier.notify("Ses atanmadı", f"{event.label} için ses bulunamadı")
+        return
+
+    if notifier:
+        notifier.notify("Zil Başladı", f"{event.clock} - {event.label}")
+
+    announcement = config.announcement_for(event.sound_type)
+    if announcement:
+        steps = [("sound", file_path), ("sound", announcement["path"])]
+
+        def after_sequence() -> None:
+            if event.sound_type == "lesson_exit" and config.recess_music_enabled:
+                play_recess()
+
+        audio.play_sequence(steps, on_complete=after_sequence)
+    else:
+        audio.play_file(file_path, event.label)
+        if event.sound_type == "lesson_exit" and config.recess_music_enabled:
+            play_recess()
+
+
+class HeadlessBellService:
+    def __init__(self) -> None:
+        self.config = BellConfig.load()
+        self.audio = AudioController()
+        self.notifier = Notifier()
+        self._recess_thread: Optional[threading.Thread] = None
+        self.scheduler = ScheduleRunner(self.config, self._handle_event, lambda: False)
+        self._running = False
+
+    def run(self) -> None:
+        self._running = True
+        for sig in (getattr(signal, "SIGINT", None), getattr(signal, "SIGTERM", None)):
+            if sig is not None:
+                signal.signal(sig, lambda *_args: self.stop())
+        self.scheduler.start()
+        self.notifier.notify("JinniBell Pro", "Servis modu başlatıldı")
+        try:
+            while self._running:
+                time.sleep(1)
+        finally:
+            self.scheduler.stop()
+            self.audio.stop()
+
+    def stop(self) -> None:
+        self._running = False
+
+    def _handle_event(self, event: BellEvent) -> None:
+        _execute_bell_event(
+            self.config,
+            self.audio,
+            self.notifier,
+            event,
+            self._play_recess_music,
+            self._run_shutdown,
+        )
+
+    def _play_recess_music(self) -> None:
+        path = self.config.sound_files.get("recess_music")
+        if not path:
+            return
+        if self._recess_thread and self._recess_thread.is_alive():
+            return
+
+        def worker() -> None:
+            start = time.time()
+            duration = 5 * 60
+            while time.time() - start < duration and self._running:
+                self.audio.play_file(path, "Teneffüs Müziği")
+                time.sleep(1)
+
+        self._recess_thread = threading.Thread(target=worker, daemon=True)
+        self._recess_thread.start()
+
+    def _run_shutdown(self) -> None:
+        mode = self.config.auto_shutdown_mode or ("time" if self.config.auto_shutdown_enabled else "disabled")
+        if mode == "disabled":
+            return
+        self.notifier.notify("JinniBell Pro", "Servis modunda otomatik kapanış başlatılıyor")
+        if os.name == "nt":
+            subprocess.Popen(["shutdown", "/s", "/t", "0"])
+        else:
+            subprocess.Popen(["shutdown", "-h", "now"])
+
+
 class BellApplication:
     def __init__(self, root: tk.Tk) -> None:
         self.root = root
@@ -229,6 +456,8 @@ class BellApplication:
         self.config = BellConfig.load()
         self.audio = AudioController()
         self.audio.set_state_callback(self._update_status)
+        self.notifier = Notifier()
+        self.tray = TrayController(self)
         self.manual_override = False
         self.bells_paused = False
         self.status_var = tk.StringVar(value="Hazır")
@@ -253,7 +482,7 @@ class BellApplication:
         self.scheduler.start()
 
         self._build_ui()
-        self.root.protocol("WM_DELETE_WINDOW", self._minimize_to_tray)
+        self.root.protocol("WM_DELETE_WINDOW", self._on_close_request)
         self._schedule_countdown_refresh()
         self.root.after(1200, self._auto_minimize_if_needed)
 
@@ -388,14 +617,18 @@ class BellApplication:
         volume_frame = ttk.LabelFrame(frame, text="Ses")
         volume_frame.pack(fill=tk.X, padx=10, pady=5)
         self.volume_var = tk.DoubleVar(value=self.config.volume)
-        ttk.Scale(
+        self.volume_percent_var = tk.StringVar(value=self._format_volume_percent(self.config.volume))
+        slider = ttk.Scale(
             volume_frame,
             from_=0,
             to=1,
             orient=tk.HORIZONTAL,
             variable=self.volume_var,
             command=lambda _: self._change_volume(),
-        ).pack(fill=tk.X, padx=5, pady=5)
+        )
+        slider.pack(fill=tk.X, padx=5, pady=5)
+        ttk.Label(volume_frame, textvariable=self.volume_percent_var, anchor=tk.E).pack(fill=tk.X, padx=6, pady=(0, 4))
+        self._add_hint(slider, "Zil sesini yüzde cinsinden ayarlar.")
 
         toggle_frame = ttk.Frame(frame)
         toggle_frame.pack(fill=tk.X, padx=10, pady=5)
@@ -422,26 +655,68 @@ class BellApplication:
         )
         autostart_chk.pack(fill=tk.X, padx=6, pady=(4, 2))
         self._add_hint(autostart_chk, "Oturum açıldığında programı arka plana gönderir.")
+        self.service_autostart_var = tk.BooleanVar(value=self.config.launch_on_boot_service)
+        service_chk = ttk.Checkbutton(
+            startup_frame,
+            text="Windows açılır açılmaz (Görev Zamanlayıcı ile) servis modunda başlat",
+            variable=self.service_autostart_var,
+            command=self._toggle_service_autostart,
+        )
+        service_chk.pack(fill=tk.X, padx=6, pady=2)
+        self._add_hint(
+            service_chk,
+            "Görev Zamanlayıcı kaydı oluşturur. Yönetici izinleri gerekebilir ve program arayüz göstermeden çalışır.",
+        )
         ttk.Label(
             startup_frame,
-            text="Bu seçenek yalnızca Windows'ta kullanılabilir ve oturum açıldığında programı arka plana alır.",
+            text="Her iki seçenek birlikte kullanılabilir. Servis modu arayüzü açmadan yalnızca zilleri çalıştırır.",
             wraplength=360,
         ).pack(fill=tk.X, padx=6, pady=(0, 4))
 
         ttk.Button(frame, text="Arka Plana Al", command=self._minimize_to_tray).pack(pady=5)
+        ttk.Button(frame, text="Programı Kapat", command=self._cleanup_and_exit).pack(pady=(0, 5))
 
         shutdown_frame = ttk.LabelFrame(frame, text="Otomatik Kapatma")
         shutdown_frame.pack(fill=tk.X, padx=10, pady=5)
-        self.shutdown_var = tk.BooleanVar(value=self.config.auto_shutdown_enabled)
-        ttk.Checkbutton(
+        mode_label = self._get_shutdown_mode_label(
+            self.config.auto_shutdown_mode or ("time" if self.config.auto_shutdown_enabled else "disabled")
+        )
+        self.shutdown_mode_var = tk.StringVar(value=mode_label)
+        ttk.Label(shutdown_frame, text="Kural:").grid(row=0, column=0, padx=4, pady=4, sticky=tk.W)
+        mode_combo = ttk.Combobox(
             shutdown_frame,
-            text="Bilgisayarı belirtilen saatte kapat",
-            variable=self.shutdown_var,
-            command=self._toggle_shutdown,
-        ).pack(side=tk.LEFT, padx=5)
-        self.shutdown_entry = ttk.Entry(shutdown_frame, width=8)
-        self.shutdown_entry.insert(0, self.config.auto_shutdown_time or "20:00")
-        self.shutdown_entry.pack(side=tk.LEFT, padx=5)
+            state="readonly",
+            values=[label for label, _ in SHUTDOWN_MODES],
+            textvariable=self.shutdown_mode_var,
+            width=28,
+        )
+        mode_combo.grid(row=0, column=1, padx=4, pady=4, sticky=tk.W)
+        mode_combo.bind("<<ComboboxSelected>>", lambda _e: self._apply_shutdown_settings())
+        self._add_hint(mode_combo, "Belirli saatte veya son zil sonrası otomatik kapanışı seçin.")
+
+        ttk.Label(shutdown_frame, text="Saat:").grid(row=1, column=0, padx=4, pady=2, sticky=tk.W)
+        self.shutdown_time_var = tk.StringVar(value=self.config.auto_shutdown_time or "20:00")
+        self.shutdown_entry = ttk.Entry(shutdown_frame, textvariable=self.shutdown_time_var, width=10)
+        self.shutdown_entry.grid(row=1, column=1, padx=4, pady=2, sticky=tk.W)
+        self.shutdown_entry.bind("<FocusOut>", lambda _e: self._apply_shutdown_settings())
+
+        ttk.Label(shutdown_frame, text="Son zil sonrası (dk):").grid(row=2, column=0, padx=4, pady=2, sticky=tk.W)
+        self.shutdown_delay_var = tk.IntVar(value=int(self.config.auto_shutdown_delay_minutes or 10))
+        self.shutdown_delay_spin = ttk.Spinbox(
+            shutdown_frame, from_=1, to=120, textvariable=self.shutdown_delay_var, width=8
+        )
+        self.shutdown_delay_spin.grid(row=2, column=1, padx=4, pady=2, sticky=tk.W)
+        self.shutdown_delay_spin.bind("<FocusOut>", lambda _e: self._apply_shutdown_settings())
+        self.shutdown_delay_spin.bind("<Return>", lambda _e: self._apply_shutdown_settings())
+
+        ttk.Label(
+            shutdown_frame,
+            text="'Son zil' modu seçiliyse belirtilen dakika dolunca bilgisayar kapanır.",
+            foreground="#555",
+            wraplength=360,
+        ).grid(row=3, column=0, columnspan=2, padx=4, pady=(2, 4), sticky=tk.W)
+
+        self._update_shutdown_inputs()
 
         today_frame = ttk.LabelFrame(frame, text="Bugünkü Ziller")
         today_frame.pack(fill=tk.BOTH, expand=True, padx=10, pady=5)
@@ -895,6 +1170,12 @@ class BellApplication:
         self.config.volume = value
         self.config.save()
         self.audio.set_volume(value)
+        if hasattr(self, "volume_percent_var"):
+            self.volume_percent_var.set(self._format_volume_percent(value))
+
+    @staticmethod
+    def _format_volume_percent(value: float) -> str:
+        return f"%{int(round(value * 100))}"
 
     def _toggle_mute(self) -> None:
         state = self.mute_var.get()
@@ -909,6 +1190,16 @@ class BellApplication:
         else:
             self._update_status("Hazır")
         self._update_pause_badge()
+
+    def _toggle_pause_from_tray(self) -> None:
+        if hasattr(self, "pause_var"):
+            self.pause_var.set(not self.pause_var.get())
+            self._toggle_pause()
+
+    def is_ceremony_mode_active(self) -> bool:
+        if hasattr(self, "pause_var"):
+            return bool(self.pause_var.get())
+        return False
 
     def _toggle_autostart(self) -> None:
         desired = self.autostart_var.get()
@@ -936,10 +1227,67 @@ class BellApplication:
         self.config.launch_on_boot = desired
         self.config.save()
 
-    def _toggle_shutdown(self) -> None:
-        self.config.auto_shutdown_enabled = self.shutdown_var.get()
-        self.config.auto_shutdown_time = self.shutdown_entry.get()
+    def _toggle_service_autostart(self) -> None:
+        desired = self.service_autostart_var.get()
+        if desired == self.config.launch_on_boot_service:
+            return
+        if not _is_windows():
+            messagebox.showwarning(
+                "Servis Modu",
+                "Görev Zamanlayıcı kaydı yalnızca Windows'ta oluşturulabilir.",
+            )
+            self.service_autostart_var.set(False)
+            return
+        try:
+            if desired:
+                enable_windows_service_start()
+            else:
+                disable_windows_service_start()
+        except Exception as exc:  # pragma: no cover - ortam bağımlı
+            messagebox.showerror(
+                "Servis Modu",
+                f"Görev Zamanlayıcı kaydı güncellenemedi: {exc}",
+            )
+            self.service_autostart_var.set(self.config.launch_on_boot_service)
+            return
+        self.config.launch_on_boot_service = desired
         self.config.save()
+
+    def _apply_shutdown_settings(self) -> None:
+        mode = self._current_shutdown_mode()
+        self._update_shutdown_inputs()
+        time_value = self.shutdown_time_var.get().strip() or "20:00"
+        delay_value = max(1, int(self.shutdown_delay_var.get() or 1))
+        self.shutdown_time_var.set(time_value)
+        self.shutdown_delay_var.set(delay_value)
+        self.config.auto_shutdown_mode = mode
+        self.config.auto_shutdown_enabled = mode != "disabled"
+        self.config.auto_shutdown_time = time_value
+        self.config.auto_shutdown_delay_minutes = delay_value
+        self.config.save()
+
+    def _update_shutdown_inputs(self) -> None:
+        if not hasattr(self, "shutdown_entry"):
+            return
+        mode = self._current_shutdown_mode()
+        time_state = tk.NORMAL if mode == "time" else tk.DISABLED
+        delay_state = tk.NORMAL if mode == "after_last_bell" else tk.DISABLED
+        self.shutdown_entry.configure(state=time_state)
+        if hasattr(self, "shutdown_delay_spin"):
+            self.shutdown_delay_spin.configure(state=delay_state)
+
+    def _get_shutdown_mode_label(self, value: str) -> str:
+        for label, mode in SHUTDOWN_MODES:
+            if mode == value:
+                return label
+        return SHUTDOWN_MODES[0][0]
+
+    def _current_shutdown_mode(self) -> str:
+        current = getattr(self, "shutdown_mode_var", tk.StringVar(value=SHUTDOWN_MODES[0][0])).get()
+        for label, value in SHUTDOWN_MODES:
+            if label == current:
+                return value
+        return "disabled"
 
     def _toggle_recess_music(self) -> None:
         self.config.recess_music_enabled = self.recess_var.get()
@@ -1619,26 +1967,14 @@ class BellApplication:
             self.today_list.insert(tk.END, "Bugün kalan zil yok")
 
     def _handle_event(self, event: BellEvent) -> None:
-        if event.sound_type == "auto_shutdown":
-            self._run_shutdown()
-            return
-        file_path = self.config.sound_files.get(event.sound_type, "")
-        if not file_path:
-            self._update_status(f"Ses atanmadı: {event.label}")
-            return
-        announcement = self.config.announcement_for(event.sound_type)
-        if announcement:
-            steps = [("sound", file_path), ("sound", announcement["path"])]
-
-            def after_sequence() -> None:
-                if event.sound_type == "lesson_exit" and self.config.recess_music_enabled:
-                    self._play_recess_music()
-
-            self.audio.play_sequence(steps, on_complete=after_sequence)
-        else:
-            self.audio.play_file(file_path, event.label)
-            if event.sound_type == "lesson_exit" and self.config.recess_music_enabled:
-                self._play_recess_music()
+        _execute_bell_event(
+            self.config,
+            self.audio,
+            self.notifier,
+            event,
+            self._play_recess_music,
+            self._run_shutdown,
+        )
 
     def _trigger_manual(self, key: str) -> None:
         sequences = self._build_manual_sequences()
@@ -1648,6 +1984,7 @@ class BellApplication:
             return
         self.manual_override = True
         delay_seconds = self._get_manual_delay_seconds()
+        self.notifier.notify("Manuel Çalma", f"{self.manual_delay_var.get()} sonra seçilen tören başlatılacak")
         if delay_seconds > 0:
             self._update_status(f"Manuel çalma {delay_seconds} sn sonra başlayacak")
             self.root.after(delay_seconds * 1000, lambda: self._execute_manual_sequence(steps))
@@ -2118,16 +2455,45 @@ class BellApplication:
         return None
 
     def _run_shutdown(self) -> None:
-        if not self.config.auto_shutdown_enabled:
+        mode = self.config.auto_shutdown_mode or ("time" if self.config.auto_shutdown_enabled else "disabled")
+        if mode == "disabled":
             return
+        if self.notifier:
+            self.notifier.notify("JinniBell Pro", "Otomatik kapanış başlatılıyor")
         if os.name == "nt":
             subprocess.Popen(["shutdown", "/s", "/t", "0"])
         else:
             subprocess.Popen(["shutdown", "-h", "now"])
 
     def _minimize_to_tray(self) -> None:
-        self.root.iconify()
+        self.root.withdraw()
+        if self.tray:
+            self.tray.ensure()
         self._update_status("Arka planda çalışıyor")
+
+    def _restore_from_tray(self) -> None:
+        self.root.deiconify()
+        self.root.after(0, self.root.lift)
+        self.root.after(0, self.root.focus_force)
+
+    def _quit_from_tray(self) -> None:
+        self._cleanup_and_exit()
+
+    def _cleanup_and_exit(self) -> None:
+        try:
+            self.scheduler.stop()
+        except Exception:
+            pass
+        try:
+            self.audio.stop()
+        except Exception:
+            pass
+        if self.tray:
+            self.tray.hide_if_visible()
+        self.root.destroy()
+
+    def _on_close_request(self) -> None:
+        self._minimize_to_tray()
 
     def _auto_minimize_if_needed(self) -> None:
         if getattr(self, "root", None) is None:
@@ -2193,7 +2559,22 @@ class BellApplication:
             self.pause_badge.configure(text="Tören modu kapalı", bg="#2e7d32")
 
 
-if __name__ == "__main__":
+def _parse_args() -> argparse.Namespace:
+    parser = argparse.ArgumentParser(description="JinniBell Pro")
+    parser.add_argument("--autostart", action="store_true", help="Windows başlangıcında arayüzü gizler")
+    parser.add_argument("--service", action="store_true", help="Arayüz açmadan servis modunda çalıştır")
+    return parser.parse_args()
+
+
+def main() -> None:
+    args = _parse_args()
+    if args.service:
+        HeadlessBellService().run()
+        return
     root = tk.Tk()
     app = BellApplication(root)
     root.mainloop()
+
+
+if __name__ == "__main__":
+    main()
