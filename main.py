@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import calendar
 import os
+import shutil
 import subprocess
 import sys
 import tempfile
@@ -19,7 +20,7 @@ from mutagen import File as MutagenFile
 from pydub import AudioSegment
 
 from bell_app.audio import AudioController
-from bell_app.config import BellConfig, BellEvent, WEEKDAYS, SoundAsset
+from bell_app.config import BellConfig, BellEvent, WEEKDAYS, ensure_media_dir
 from bell_app.scheduler import ScheduleRunner
 
 try:  # pragma: no cover - opsiyonel
@@ -53,12 +54,56 @@ SCHEDULE_SOUND_CHOICES = [
 ]
 
 SOUND_DISPLAY = {value: label for label, value in SCHEDULE_SOUND_CHOICES}
+TABLE_SOUND_TYPES = ["student_entry", "teacher_entry", "lesson_exit"]
+SOUND_HINTS = {
+    "student_entry": "Öğrencilerin sınıfa giriş zili. Ders başlamadan hemen önce çalar.",
+    "teacher_entry": "Öğretmen yoklaması ya da ders başlangıcı duyurusu olarak kullanılır.",
+    "lesson_exit": "Ders bitişi/teneffüs başlangıcında çalar.",
+    "recess_music": "Teneffüs boyunca döngüye alınacak isteğe bağlı müzik.",
+    "istiklal": "İstiklal Marşı butonları ve tören listesinde kullanılır.",
+    "siren": "Siren + İstiklal seçenekleri için zorunlu değildir ama tavsiye edilir.",
+    "moment_of_silence": "1 dk / 2 dk saygı duruşu tuşları bu dosyayı kullanır; boşsa sessiz bekler.",
+}
 
 STARTUP_SCRIPT_NAME = "JinniBellPro-AutoStart.bat"
+MEDIA_DIR = ensure_media_dir()
 
 
 def _is_windows() -> bool:
     return os.name == "nt"
+
+
+def _slugify(value: str) -> str:
+    cleaned = []
+    for char in value.strip().lower():
+        if char.isalnum():
+            cleaned.append(char)
+        elif char in {" ", "-", "_"}:
+            cleaned.append("-")
+    slug = "".join(cleaned).strip("-")
+    return slug or "ses"
+
+
+def _copy_into_media(source_path: str, name_hint: str = "") -> str:
+    path = Path(source_path)
+    if not path.exists():
+        raise FileNotFoundError(source_path)
+    ensure_media_dir()
+    base_name = _slugify(name_hint or path.stem)
+    suffix = path.suffix.lower()
+    candidate = MEDIA_DIR / f"{base_name}{suffix}"
+    counter = 1
+    while True:
+        try:
+            if candidate.exists() and path.samefile(candidate):
+                return str(candidate)
+        except OSError:
+            pass
+        if not candidate.exists():
+            shutil.copy2(path, candidate)
+            return str(candidate)
+        candidate = MEDIA_DIR / f"{base_name}-{counter}{suffix}"
+        counter += 1
 
 
 def _startup_script_path() -> Path:
@@ -83,6 +128,42 @@ def _startup_launch_command() -> str:
     python_exe = Path(sys.executable).resolve()
     script_path = Path(__file__).resolve()
     return f'"{python_exe}" "{script_path}" --autostart'
+
+
+class ToolTip:
+    def __init__(self, widget: tk.Widget, text: str):
+        self.widget = widget
+        self.text = text
+        self.tip: Optional[tk.Toplevel] = None
+        widget.bind("<Enter>", self._show)
+        widget.bind("<Leave>", self._hide)
+        widget.bind("<ButtonPress>", self._hide)
+
+    def _show(self, _event: object) -> None:
+        if self.tip or not self.text:
+            return
+        x = self.widget.winfo_rootx() + 20
+        y = self.widget.winfo_rooty() + 25
+        self.tip = tk.Toplevel(self.widget)
+        self.tip.wm_overrideredirect(True)
+        self.tip.wm_geometry(f"+{x}+{y}")
+        label = tk.Label(
+            self.tip,
+            text=self.text,
+            justify=tk.LEFT,
+            background="#ffffe0",
+            relief=tk.SOLID,
+            borderwidth=1,
+            font=("Segoe UI", 9),
+            padx=6,
+            pady=4,
+        )
+        label.pack()
+
+    def _hide(self, _event: object) -> None:
+        if self.tip:
+            self.tip.destroy()
+            self.tip = None
 
 
 def enable_windows_startup() -> None:
@@ -161,6 +242,8 @@ class BellApplication:
         self._launched_from_startup = ("--autostart" in sys.argv) or os.environ.get(
             "JINNIBELL_AUTOSTART"
         ) == "1"
+        self._tooltips: List[ToolTip] = []
+        self._announcement_vars: Dict[str, Dict[str, tk.Variable]] = {}
 
         self.scheduler = ScheduleRunner(
             self.config,
@@ -239,25 +322,40 @@ class BellApplication:
         self._build_ceremony_tab(ceremony_frame)
         self._refresh_holidays()
 
+    def _add_hint(self, widget: tk.Widget, text: str) -> None:
+        self._tooltips.append(ToolTip(widget, text))
+
     def _build_control_tab(self, frame: ttk.Frame) -> None:
         button_frame = ttk.LabelFrame(frame, text="Manuel Butonlar")
         button_frame.pack(fill=tk.X, padx=10, pady=5)
         for label, key in MANUAL_BUTTONS.items():
-            ttk.Button(button_frame, text=label, command=lambda k=key: self._trigger_manual(k)).pack(
-                fill=tk.X, padx=5, pady=2
+            btn = ttk.Button(button_frame, text=label, command=lambda k=key: self._trigger_manual(k))
+            btn.pack(fill=tk.X, padx=5, pady=2)
+            hint = (
+                "Seçtiğiniz tören sesleri öncelikli çalar. 1 dk/2 dk butonları 'Saygı Duruşu' "
+                "dosyasını kullanır, boşsa sessiz bekler."
             )
+            self._add_hint(btn, hint)
+
+        ttk.Label(
+            button_frame,
+            text="Not: Saygı duruşu dosyası seçiliyse butonlar bu kaydı çalar, aksi hâlde sessizlik uygulanır.",
+            wraplength=360,
+        ).pack(fill=tk.X, padx=6, pady=(2, 4))
 
         delay_row = ttk.Frame(button_frame)
         delay_row.pack(fill=tk.X, padx=5, pady=(4, 2))
         ttk.Label(delay_row, text="Başlatma süresi:").pack(side=tk.LEFT)
         self.manual_delay_var = tk.StringVar(value=MANUAL_DELAY_CHOICES[0][0])
-        ttk.Combobox(
+        delay_combo = ttk.Combobox(
             delay_row,
             state="readonly",
             textvariable=self.manual_delay_var,
             values=[label for label, _ in MANUAL_DELAY_CHOICES],
             width=12,
-        ).pack(side=tk.LEFT, padx=6)
+        )
+        delay_combo.pack(side=tk.LEFT, padx=6)
+        self._add_hint(delay_combo, "Tören butonunun kaç saniye sonra devreye gireceğini seçin.")
         ttk.Label(delay_row, text="(Tören butonları için)").pack(side=tk.LEFT)
 
         status_frame = ttk.Frame(frame)
@@ -316,12 +414,14 @@ class BellApplication:
         startup_frame = ttk.LabelFrame(frame, text="Başlangıç / Arka Plan")
         startup_frame.pack(fill=tk.X, padx=10, pady=5)
         self.autostart_var = tk.BooleanVar(value=self.config.launch_on_boot)
-        ttk.Checkbutton(
+        autostart_chk = ttk.Checkbutton(
             startup_frame,
             text="Windows açıldığında JinniBell Pro otomatik başlasın (sisteme küçült)",
             variable=self.autostart_var,
             command=self._toggle_autostart,
-        ).pack(fill=tk.X, padx=6, pady=(4, 2))
+        )
+        autostart_chk.pack(fill=tk.X, padx=6, pady=(4, 2))
+        self._add_hint(autostart_chk, "Oturum açıldığında programı arka plana gönderir.")
         ttk.Label(
             startup_frame,
             text="Bu seçenek yalnızca Windows'ta kullanılabilir ve oturum açıldığında programı arka plana alır.",
@@ -428,6 +528,43 @@ class BellApplication:
         self.event_list.tag_configure("lesson_exit", background="#fff7ed")
         self.event_list.bind("<<TreeviewSelect>>", self._on_schedule_select)
 
+        quick_frame = ttk.LabelFrame(right_panel, text="Tablo Halinde Zil Girişi")
+        quick_frame.pack(fill=tk.X, padx=12, pady=(4, 6))
+        info_lbl = ttk.Label(
+            quick_frame,
+            text="Saatleri HH:MM formatında girin. Boş hücreler atlanır, istisnalar için aşağıdaki listeyi kullanabilirsiniz.",
+            wraplength=520,
+        )
+        info_lbl.pack(anchor=tk.W, padx=6, pady=(4, 2))
+        self._add_hint(info_lbl, "Tabloyu doldurduktan sonra 'Tabloyu Güne Kaydet' butonuna basın.")
+
+        header_row = ttk.Frame(quick_frame)
+        header_row.pack(fill=tk.X, padx=6)
+        ttk.Label(header_row, text="Ders").grid(row=0, column=0, padx=4, sticky=tk.W)
+        for idx, (title, key) in enumerate(
+            [("Öğrenci", "student_entry"), ("Öğretmen", "teacher_entry"), ("Teneffüs", "lesson_exit")]
+        ):
+            ttk.Label(header_row, text=title).grid(row=0, column=idx + 1, padx=12)
+
+        self.table_rows_frame = ttk.Frame(quick_frame)
+        self.table_rows_frame.pack(fill=tk.X, padx=6, pady=(2, 4))
+        self._table_rows: List[Dict[str, object]] = []
+        for _ in range(4):
+            self._add_schedule_table_row()
+
+        quick_btns = ttk.Frame(quick_frame)
+        quick_btns.pack(fill=tk.X, padx=6, pady=(2, 4))
+        ttk.Button(quick_btns, text="Satır Ekle", command=self._add_schedule_table_row).pack(side=tk.LEFT, padx=2)
+        ttk.Button(quick_btns, text="Son Satırı Sil", command=self._remove_schedule_table_row).pack(
+            side=tk.LEFT, padx=2
+        )
+        ttk.Button(quick_btns, text="Günü Tabloya Aktar", command=self._load_day_into_table).pack(
+            side=tk.RIGHT, padx=2
+        )
+        ttk.Button(quick_btns, text="Tabloyu Güne Kaydet", command=self._apply_table_to_day).pack(
+            side=tk.RIGHT, padx=2
+        )
+
         form = ttk.LabelFrame(right_panel, text="Yeni/Seçili Zil")
         form.pack(fill=tk.X, padx=12, pady=8)
         self.hour_var = tk.StringVar(value="08")
@@ -506,9 +643,15 @@ class BellApplication:
 
         self._render_calendar()
         self._refresh_event_list()
+        self._load_day_into_table()
 
     def _build_sound_tab(self, frame: ttk.Frame) -> None:
-        ttk.Label(frame, text="Her ses için dosya seçin").pack(anchor=tk.W, padx=10, pady=5)
+        ttk.Label(frame, text="Her ses için dosya seçin").pack(anchor=tk.W, padx=10, pady=(5, 0))
+        ttk.Label(
+            frame,
+            text="Seçtiğiniz her dosya JinniBell ses klasörüne kopyalanır ve Kitaplık menüsüne eklenir.",
+            foreground="#555",
+        ).pack(anchor=tk.W, padx=10, pady=(0, 5))
         self.recess_var = tk.BooleanVar(value=self.config.recess_music_enabled)
         self._sound_path_vars: Dict[str, tk.StringVar] = {}
         self._library_comboboxes: List[ttk.Combobox] = []
@@ -535,46 +678,115 @@ class BellApplication:
         self._refresh_sound_library()
 
     def _build_sound_row(self, frame: ttk.Frame, key: str, label: str) -> None:
-        row = ttk.Frame(frame)
-        row.pack(fill=tk.X, padx=10, pady=2)
-        ttk.Label(row, text=label, width=28).pack(side=tk.LEFT)
+        row = ttk.LabelFrame(frame, text=label)
+        row.pack(fill=tk.X, padx=10, pady=4)
+        row.columnconfigure(1, weight=1)
         path_var = tk.StringVar(value=self.config.sound_files.get(key, ""))
         self._sound_path_vars[key] = path_var
+
+        ttk.Label(row, text="Dosya:").grid(row=0, column=0, padx=4, pady=2, sticky=tk.W)
         entry = ttk.Entry(row, textvariable=path_var)
-        entry.pack(side=tk.LEFT, fill=tk.X, expand=True, padx=5)
+        entry.grid(row=0, column=1, padx=4, pady=2, sticky=tk.EW)
 
         def choose() -> None:
             file_path = filedialog.askopenfilename(title=label)
-            if file_path:
-                path_var.set(file_path)
-                self.config.sound_files[key] = file_path
-                self.config.save()
+            if not file_path:
+                return
+            stored = self._import_user_media(file_path, label)
+            if stored:
+                path_var.set(stored)
+                self._save_sound_path(key, stored, show_message=False)
 
-        ttk.Button(row, text="Seç", command=choose).pack(side=tk.LEFT)
-        ttk.Button(row, text="Kaydet", command=lambda k=key, var=path_var: self._save_sound_path(k, var.get())).pack(
-            side=tk.LEFT, padx=2
-        )
-        ttk.Button(row, text="Test", command=lambda var=path_var: self.audio.play_file(var.get(), label)).pack(
-            side=tk.LEFT, padx=2
-        )
+        btn = ttk.Button(row, text="Seç", command=choose)
+        btn.grid(row=0, column=2, padx=4, pady=2)
+        self._add_hint(btn, "Dosyayı seçtiğinizde otomatik olarak JinniBell klasörüne kopyalanır.")
 
-        lib_combo = ttk.Combobox(row, state="readonly", width=18)
-        lib_combo.pack(side=tk.LEFT, padx=(6, 2))
+        save_btn = ttk.Button(
+            row,
+            text="Kaydet",
+            command=lambda k=key, var=path_var: self._save_sound_path(k, var.get()),
+        )
+        save_btn.grid(row=0, column=3, padx=2, pady=2)
+        self._add_hint(save_btn, "Girilen yolu kalıcı olarak kaydeder ve zillere uygular.")
+
+        test_btn = ttk.Button(row, text="Test", command=lambda var=path_var: self.audio.play_file(var.get(), label))
+        test_btn.grid(row=0, column=4, padx=2, pady=2)
+        self._add_hint(test_btn, "Seçilen sesi hemen dinleyebilirsiniz.")
+
+        ttk.Label(row, text="Kitaplıktan:").grid(row=1, column=0, padx=4, pady=2, sticky=tk.W)
+        lib_combo = ttk.Combobox(row, state="readonly", width=22)
+        lib_combo.grid(row=1, column=1, padx=4, pady=2, sticky=tk.W)
         self._library_comboboxes.append(lib_combo)
         ttk.Button(
             row,
-            text="Kitaplıktan",
+            text="Uygula",
             command=lambda c=lib_combo, sound_key=key, var=path_var: self._apply_library_selection(sound_key, var, c.get()),
-        ).pack(side=tk.LEFT, padx=2)
+        ).grid(row=1, column=2, padx=4, pady=2, sticky=tk.W)
 
-        def preview() -> None:
-            file_path = path_var.get()
+        info = SOUND_HINTS.get(key)
+        if info:
+            ttk.Label(row, text=info, wraplength=420, foreground="#555").grid(
+                row=1, column=3, columnspan=2, padx=4, pady=2, sticky=tk.W
+            )
+
+        announce_frame = ttk.Frame(row)
+        announce_frame.grid(row=2, column=0, columnspan=5, sticky=tk.EW, padx=4, pady=(4, 2))
+        announce_frame.columnconfigure(2, weight=1)
+        config_ann = self.config.announcement_settings.get(key, {"enabled": False, "path": ""})
+        enabled_var = tk.BooleanVar(value=bool(config_ann.get("enabled")))
+        path_ann_var = tk.StringVar(value=config_ann.get("path", ""))
+        self._announcement_vars[key] = {"enabled": enabled_var, "path": path_ann_var}
+
+        chk = ttk.Checkbutton(
+            announce_frame,
+            text="Anons ekle (zil bittikten sonra çalsın)",
+            variable=enabled_var,
+            command=lambda k=key: self._save_announcement_settings(k),
+        )
+        chk.grid(row=0, column=0, padx=4, pady=2, sticky=tk.W)
+        self._add_hint(chk, "Bu ders tipinden sonra seçtiğiniz anons otomatik oynatılır.")
+
+        ann_entry = ttk.Entry(announce_frame, textvariable=path_ann_var)
+        ann_entry.grid(row=0, column=2, padx=4, pady=2, sticky=tk.EW)
+
+        def choose_ann() -> None:
+            file_path = filedialog.askopenfilename(title=f"{label} için anons seç")
             if not file_path:
-                messagebox.showinfo("Ses seçin", f"Önce {label} için bir dosya belirleyin")
                 return
-            self.audio.play_file(file_path, label)
+            stored = self._import_user_media(file_path, f"anons-{label}")
+            if stored:
+                path_ann_var.set(stored)
+                self._save_announcement_settings(key)
 
-        ttk.Button(row, text="Test", command=preview).pack(side=tk.LEFT, padx=2)
+        ttk.Button(announce_frame, text="Seç", command=choose_ann).grid(row=0, column=3, padx=2, pady=2)
+
+        ann_combo = ttk.Combobox(announce_frame, state="readonly", width=18)
+        ann_combo.grid(row=1, column=2, padx=4, pady=2, sticky=tk.W)
+        self._library_comboboxes.append(ann_combo)
+        ttk.Button(
+            announce_frame,
+            text="Kitaplıktan",
+            command=lambda c=ann_combo, sound_key=key, var=path_ann_var: self._apply_library_selection(
+                sound_key, var, c.get(), is_announcement=True
+            ),
+        ).grid(row=1, column=3, padx=2, pady=2)
+        ttk.Button(
+            announce_frame,
+            text="Kaydet",
+            command=lambda k=key: self._save_announcement_settings(k),
+        ).grid(row=1, column=4, padx=2, pady=2)
+        ttk.Button(
+            announce_frame,
+            text="Test",
+            command=lambda: self.audio.play_file(path_ann_var.get(), f"{label} anons")
+        ).grid(row=1, column=5, padx=2, pady=2)
+
+        if key == "moment_of_silence":
+            ttk.Label(
+                row,
+                text="Bu kayıt 1 dk/2 dk saygı duruşu butonlarında kullanılacaktır.",
+                foreground="#0b5394",
+            ).grid(row=3, column=0, columnspan=5, padx=4, pady=(2, 4), sticky=tk.W)
 
     def _build_ceremony_tab(self, frame: ttk.Frame) -> None:
         container = ttk.Frame(frame)
@@ -606,11 +818,27 @@ class BellApplication:
 
         tree_btns = ttk.Frame(tree_frame)
         tree_btns.pack(fill=tk.X, pady=6)
-        ttk.Button(tree_btns, text="Yukarı", command=lambda: self._move_ceremony_item(-1)).pack(side=tk.LEFT, padx=2)
-        ttk.Button(tree_btns, text="Aşağı", command=lambda: self._move_ceremony_item(1)).pack(side=tk.LEFT, padx=2)
-        ttk.Button(tree_btns, text="Sil", command=self._delete_ceremony_item).pack(side=tk.LEFT, padx=2)
-        ttk.Button(tree_btns, text="Seçileni Çal", command=self._play_selected_ceremony).pack(side=tk.RIGHT, padx=2)
-        ttk.Button(tree_btns, text="Sıradaki", command=self._play_next_ceremony).pack(side=tk.RIGHT, padx=2)
+        up_btn = ttk.Button(tree_btns, text="Yukarı", command=lambda: self._move_ceremony_item(-1))
+        up_btn.pack(side=tk.LEFT, padx=2)
+        self._add_hint(up_btn, "Seçili parçayı bir üst sıraya taşır.")
+        down_btn = ttk.Button(tree_btns, text="Aşağı", command=lambda: self._move_ceremony_item(1))
+        down_btn.pack(side=tk.LEFT, padx=2)
+        self._add_hint(down_btn, "Seçili parçayı bir alt sıraya taşır.")
+        del_btn = ttk.Button(tree_btns, text="Sil", command=self._delete_ceremony_item)
+        del_btn.pack(side=tk.LEFT, padx=2)
+        self._add_hint(del_btn, "Listeden tamamen kaldırır.")
+        file_btn = ttk.Button(tree_btns, text="Dosya Ekle", command=self._quick_add_ceremony_file)
+        file_btn.pack(side=tk.LEFT, padx=2)
+        self._add_hint(file_btn, "Dosya seçip listeye otomatik ekler.")
+        yt_btn = ttk.Button(tree_btns, text="YouTube Ekle", command=self._quick_add_ceremony_youtube)
+        yt_btn.pack(side=tk.LEFT, padx=2)
+        self._add_hint(yt_btn, "YouTube linkini ve başlangıç/bitişi sorarak listeye ekler.")
+        play_btn = ttk.Button(tree_btns, text="Seçileni Çal", command=self._play_selected_ceremony)
+        play_btn.pack(side=tk.RIGHT, padx=2)
+        self._add_hint(play_btn, "Listeden seçtiğiniz parçayı hemen çalar.")
+        next_btn = ttk.Button(tree_btns, text="Sıradaki", command=self._play_next_ceremony)
+        next_btn.pack(side=tk.RIGHT, padx=2)
+        self._add_hint(next_btn, "Sıradaki parçayı çalar ve durum sütununu günceller.")
 
         form = ttk.LabelFrame(container, text="Parça Detayı")
         form.pack(side=tk.RIGHT, fill=tk.Y, padx=10, pady=4)
@@ -737,15 +965,26 @@ class BellApplication:
         ttk.Button(btns, text="Sil", command=self._remove_sound_asset).pack(side=tk.LEFT, padx=2)
         ttk.Button(btns, text="Test", command=self._play_selected_library_asset).pack(side=tk.RIGHT, padx=2)
 
-    def _save_sound_path(self, key: str, value: str) -> None:
+    def _save_sound_path(self, key: str, value: str, show_message: bool = True) -> None:
         if not value:
             messagebox.showwarning("Ses", "Lütfen dosya yolunu girin")
             return
-        self.config.sound_files[key] = value
+        stored = value
+        path_obj = Path(value)
+        if path_obj.exists() and MEDIA_DIR not in path_obj.parents:
+            stored_path = self._import_user_media(value, SOUND_DISPLAY.get(key, key))
+            if not stored_path:
+                return
+            stored = stored_path
+        self.config.sound_files[key] = stored
         self.config.save()
-        messagebox.showinfo("Ses", "Dosya kaydedildi")
+        self._ensure_library_entry(stored, SOUND_DISPLAY.get(key, key))
+        if show_message:
+            messagebox.showinfo("Ses", "Dosya kaydedildi")
 
-    def _apply_library_selection(self, sound_key: str, var: tk.StringVar, asset_name: str) -> None:
+    def _apply_library_selection(
+        self, sound_key: str, var: tk.StringVar, asset_name: str, *, is_announcement: bool = False
+    ) -> None:
         if not asset_name:
             messagebox.showinfo("Ses", "Önce kütüphaneden bir isim seçin")
             return
@@ -753,8 +992,16 @@ class BellApplication:
         if not asset:
             messagebox.showerror("Ses", "Seçilen ses kütüphanede bulunamadı")
             return
-        var.set(asset.get("path", ""))
-        self._save_sound_path(sound_key, asset.get("path", ""))
+        path = asset.get("path", "")
+        var.set(path)
+        if is_announcement:
+            if sound_key not in self.config.announcement_settings:
+                self.config.announcement_settings[sound_key] = {"enabled": True, "path": path}
+            self.config.announcement_settings[sound_key]["path"] = path
+            self.config.announcement_settings[sound_key]["enabled"] = True
+            self.config.save()
+        else:
+            self._save_sound_path(sound_key, path, show_message=False)
 
     def _refresh_sound_library(self) -> None:
         if not hasattr(self, "library_tree"):
@@ -785,7 +1032,10 @@ class BellApplication:
             return
         tag_text = simpledialog.askstring("Etiketler", "Virgülle ayırın", initialvalue="")
         tags = [tag.strip() for tag in (tag_text or "").split(",") if tag.strip()]
-        self.config.add_sound_asset(name, file_path, tags)
+        stored = self._import_user_media(file_path, name)
+        if not stored:
+            return
+        self.config.add_sound_asset(name, stored, tags)
         self._refresh_sound_library()
 
     def _edit_sound_asset(self) -> None:
@@ -838,6 +1088,38 @@ class BellApplication:
         if not selection:
             return None
         return selection[0]
+
+    def _import_user_media(self, file_path: str, label: str, *, add_to_library: bool = True) -> Optional[str]:
+        try:
+            stored = _copy_into_media(file_path, label)
+        except FileNotFoundError:
+            messagebox.showerror("Ses", "Dosya bulunamadı")
+            return None
+        except Exception as exc:  # pragma: no cover - dosya sistemi
+            messagebox.showerror("Ses", f"Dosya kopyalanamadı: {exc}")
+            return None
+        if add_to_library:
+            self._ensure_library_entry(stored, label)
+        return stored
+
+    def _ensure_library_entry(self, path: str, name_hint: str) -> None:
+        if not path:
+            return
+        if self.config.find_sound_asset_by_path(path):
+            return
+        self.config.add_sound_asset(name_hint or Path(path).stem, path)
+        self._refresh_sound_library()
+
+    def _save_announcement_settings(self, sound_key: str) -> None:
+        vars_map = self._announcement_vars.get(sound_key)
+        if not vars_map:
+            return
+        enabled = bool(vars_map["enabled"].get())
+        path = str(vars_map["path"].get()).strip()
+        data = self.config.announcement_settings.setdefault(sound_key, {"enabled": False, "path": ""})
+        data["enabled"] = enabled and bool(path)
+        data["path"] = path
+        self.config.save()
 
     def _collect_schedule_form(self) -> Optional[tuple[str, str, str]]:
         try:
@@ -950,6 +1232,7 @@ class BellApplication:
         if getattr(self, "_suppress_day_event", False):
             return
         self._refresh_event_list()
+        self._load_day_into_table()
         if hasattr(self, "sim_day_var"):
             self.sim_day_var.set(self.day_var.get())
         self._focus_calendar_to_weekday(self.day_var.get())
@@ -1156,6 +1439,119 @@ class BellApplication:
         if hasattr(self, "event_list"):
             self.event_list.selection_remove(self.event_list.selection())
 
+    def _add_schedule_table_row(self) -> None:
+        if not hasattr(self, "table_rows_frame"):
+            return
+        row_index = len(getattr(self, "_table_rows", []))
+        row_frame = ttk.Frame(self.table_rows_frame)
+        row_frame.grid(row=row_index, column=0, sticky="ew", pady=1)
+        ttk.Label(row_frame, text=f"{row_index + 1}. Ders").grid(row=0, column=0, padx=4, sticky=tk.W)
+        row_data: Dict[str, object] = {"frame": row_frame}
+        for col, sound_key in enumerate(TABLE_SOUND_TYPES, start=1):
+            var = tk.StringVar()
+            entry = ttk.Entry(row_frame, textvariable=var, width=7, justify=tk.CENTER)
+            entry.grid(row=0, column=col, padx=4)
+            self._add_hint(entry, f"{SOUND_DISPLAY.get(sound_key)} saatini HH:MM olarak girin")
+            row_data[sound_key] = var
+        self._table_rows.append(row_data)
+
+    def _remove_schedule_table_row(self) -> None:
+        if not getattr(self, "_table_rows", []):
+            return
+        if len(self._table_rows) == 1:
+            for key in TABLE_SOUND_TYPES:
+                cast_var = self._table_rows[0].get(key)
+                if isinstance(cast_var, tk.StringVar):
+                    cast_var.set("")
+            return
+        row = self._table_rows.pop()
+        frame = row.get("frame")
+        if isinstance(frame, (ttk.Frame, tk.Frame)):
+            frame.destroy()
+
+    def _clear_schedule_table(self) -> None:
+        for row in getattr(self, "_table_rows", []):
+            for key in TABLE_SOUND_TYPES:
+                var = row.get(key)
+                if isinstance(var, tk.StringVar):
+                    var.set("")
+
+    def _load_day_into_table(self) -> None:
+        if not hasattr(self, "_table_rows"):
+            return
+        day = self.day_var.get()
+        events = sorted(self.config.daily_schedule.get(day, []), key=lambda evt: evt.clock)
+        self._clear_schedule_table()
+        pointer = 0
+        for event in events:
+            if event.sound_type not in TABLE_SOUND_TYPES:
+                continue
+            while len(self._table_rows) <= pointer:
+                self._add_schedule_table_row()
+            target_var = self._table_rows[pointer].get(event.sound_type)
+            if isinstance(target_var, tk.StringVar) and target_var.get():
+                pointer += 1
+                while len(self._table_rows) <= pointer:
+                    self._add_schedule_table_row()
+                target_var = self._table_rows[pointer].get(event.sound_type)
+            if isinstance(target_var, tk.StringVar):
+                target_var.set(event.clock)
+            if event.sound_type == "lesson_exit":
+                pointer += 1
+
+    def _apply_table_to_day(self) -> None:
+        if not hasattr(self, "_table_rows"):
+            return
+        day = self.day_var.get()
+        base_events = [
+            event
+            for event in self.config.daily_schedule.get(day, [])
+            if event.sound_type not in TABLE_SOUND_TYPES
+        ]
+        new_events: List[BellEvent] = []
+        for idx, row in enumerate(getattr(self, "_table_rows", [])):
+            for sound_key in TABLE_SOUND_TYPES:
+                var = row.get(sound_key)
+                if not isinstance(var, tk.StringVar):
+                    continue
+                value = var.get().strip()
+                if not value:
+                    continue
+                try:
+                    clock = self._normalize_clock(value)
+                except ValueError as exc:
+                    messagebox.showerror(
+                        "Saat formatı",
+                        f"{idx + 1}. satır {SOUND_DISPLAY.get(sound_key)} için hata: {exc}",
+                    )
+                    return
+                label = f"{idx + 1}. Ders {SOUND_DISPLAY.get(sound_key)}"
+                new_events.append(BellEvent(label=label, clock=clock, sound_type=sound_key))
+        combined = base_events + new_events
+        combined.sort(key=lambda evt: evt.clock)
+        self.config.daily_schedule[day] = combined
+        self.config.save()
+        self._refresh_event_list()
+        messagebox.showinfo("Tablo", f"{day} için tablo kaydedildi. Farklı günlere kopyalayabilirsiniz.")
+
+    @staticmethod
+    def _normalize_clock(value: str) -> str:
+        text = value.strip()
+        if not text:
+            raise ValueError("Saat girilmedi")
+        if text.isdigit() and len(text) in {3, 4}:
+            text = text.zfill(4)
+            hour = int(text[:2])
+            minute = int(text[2:])
+        else:
+            parts = text.split(":")
+            if len(parts) != 2:
+                raise ValueError("HH:MM formatı kullanılmalı")
+            hour, minute = int(parts[0]), int(parts[1])
+        if hour < 0 or hour > 23 or minute < 0 or minute > 59:
+            raise ValueError("Saat 00-23, dakika 00-59 aralığında olmalı")
+        return f"{hour:02d}:{minute:02d}"
+
     def _refresh_holidays(self) -> None:
         if not hasattr(self, "holiday_list"):
             return
@@ -1230,9 +1626,19 @@ class BellApplication:
         if not file_path:
             self._update_status(f"Ses atanmadı: {event.label}")
             return
-        self.audio.play_file(file_path, event.label)
-        if event.sound_type == "lesson_exit" and self.config.recess_music_enabled:
-            self._play_recess_music()
+        announcement = self.config.announcement_for(event.sound_type)
+        if announcement:
+            steps = [("sound", file_path), ("sound", announcement["path"])]
+
+            def after_sequence() -> None:
+                if event.sound_type == "lesson_exit" and self.config.recess_music_enabled:
+                    self._play_recess_music()
+
+            self.audio.play_sequence(steps, on_complete=after_sequence)
+        else:
+            self.audio.play_file(file_path, event.label)
+            if event.sound_type == "lesson_exit" and self.config.recess_music_enabled:
+                self._play_recess_music()
 
     def _trigger_manual(self, key: str) -> None:
         sequences = self._build_manual_sequences()
@@ -1277,13 +1683,45 @@ class BellApplication:
             "silence120_istiklal": [silence_two, ("sound", sounds.get("istiklal"))],
         }
 
+    def _quick_add_ceremony_file(self) -> None:
+        old_source = self.ceremony_source_var.get()
+        old_location = self.ceremony_location_var.get()
+        old_title = self.ceremony_title_var.get()
+        self._choose_ceremony_file()
+        if not self.ceremony_location_var.get():
+            self.ceremony_source_var.set(old_source)
+            self.ceremony_location_var.set(old_location)
+            self.ceremony_title_var.set(old_title)
+            return
+        self._save_ceremony_item()
+        self._clear_ceremony_form()
+
+    def _quick_add_ceremony_youtube(self) -> None:
+        url = simpledialog.askstring("YouTube", "Video bağlantısı")
+        if not url:
+            return
+        start = simpledialog.askstring("Başlangıç", "MM:SS formatında (opsiyonel)", initialvalue="00:00")
+        end = simpledialog.askstring("Bitiş", "MM:SS formatında (opsiyonel)", initialvalue="")
+        self.ceremony_source_var.set("youtube")
+        self.ceremony_location_var.set(url.strip())
+        if start:
+            self.ceremony_start_var.set(start)
+        if end is not None:
+            self.ceremony_end_var.set(end)
+        self._fetch_ceremony_metadata(auto=True)
+        self._save_ceremony_item()
+        self._clear_ceremony_form()
+
     def _choose_ceremony_file(self) -> None:
         path = filedialog.askopenfilename(title="Müzik seç")
         if not path:
             return
+        stored = self._import_user_media(path, Path(path).stem, add_to_library=False)
+        if not stored:
+            return
         self.ceremony_source_var.set("file")
-        self.ceremony_location_var.set(path)
-        self.ceremony_title_var.set(Path(path).stem)
+        self.ceremony_location_var.set(stored)
+        self.ceremony_title_var.set(Path(stored).stem)
         self.ceremony_start_var.set("00:00")
         self._fetch_ceremony_metadata(auto=True)
 

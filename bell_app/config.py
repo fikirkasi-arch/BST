@@ -9,6 +9,7 @@ from typing import Dict, List, Optional, TypedDict
 from uuid import uuid4
 
 CONFIG_PATH = Path("config.json")
+MEDIA_DIR = CONFIG_PATH.parent / "JinniBellSesler"
 
 WEEKDAYS = [
     "Pazartesi",
@@ -30,6 +31,11 @@ def time_to_str(value: time) -> str:
     return value.strftime("%H:%M")
 
 
+def ensure_media_dir() -> Path:
+    MEDIA_DIR.mkdir(parents=True, exist_ok=True)
+    return MEDIA_DIR
+
+
 class CeremonyItem(TypedDict, total=False):
     label: str
     source: str  # "file" or "youtube"
@@ -47,6 +53,11 @@ class SoundAsset(TypedDict, total=False):
     name: str
     path: str
     tags: List[str]
+
+
+def _default_announcement_settings() -> Dict[str, Dict[str, object]]:
+    keys = ["student_entry", "teacher_entry", "lesson_exit", "recess_music"]
+    return {key: {"enabled": False, "path": ""} for key in keys}
 
 
 @dataclass
@@ -81,6 +92,9 @@ class BellConfig:
     holidays: Dict[str, str] = field(default_factory=dict)
     sound_library: List[SoundAsset] = field(default_factory=list)
     launch_on_boot: bool = False
+    announcement_settings: Dict[str, Dict[str, object]] = field(
+        default_factory=_default_announcement_settings
+    )
 
     @classmethod
     def load(cls) -> "BellConfig":
@@ -128,6 +142,14 @@ class BellConfig:
                 }
                 library.append(asset)
 
+            announcement_settings = _default_announcement_settings()
+            raw_announcements = data.get("announcement_settings") or {}
+            for key, value in raw_announcements.items():
+                if key not in announcement_settings:
+                    announcement_settings[key] = {"enabled": False, "path": ""}
+                announcement_settings[key]["enabled"] = bool(value.get("enabled", False))
+                announcement_settings[key]["path"] = value.get("path", "")
+
             instance = cls(
                 daily_schedule={**{day: [] for day in WEEKDAYS}, **schedule},
                 sound_files=data.get("sound_files", {}),
@@ -140,6 +162,7 @@ class BellConfig:
                 holidays=data.get("holidays", {}),
                 sound_library=library,
                 launch_on_boot=data.get("launch_on_boot", False),
+                announcement_settings=announcement_settings,
             )
             return instance
         return cls()
@@ -246,6 +269,22 @@ class BellConfig:
                 return asset
         return None
 
+    def find_sound_asset_by_path(self, path: str) -> Optional[SoundAsset]:
+        normalized = str(Path(path))
+        for asset in self.sound_library:
+            if str(Path(asset.get("path", ""))) == normalized:
+                return asset
+        return None
+
+    def announcement_for(self, sound_key: str) -> Optional[Dict[str, str]]:
+        data = self.announcement_settings.get(sound_key)
+        if not data or not data.get("enabled"):
+            return None
+        path = data.get("path", "")
+        if not path:
+            return None
+        return {"path": path}
+
     # endregion
 
 
@@ -256,4 +295,6 @@ __all__ = [
     "parse_time",
     "time_to_str",
     "SoundAsset",
+    "MEDIA_DIR",
+    "ensure_media_dir",
 ]

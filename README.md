@@ -10,12 +10,17 @@ başlatabilirsiniz.
   programını düzenleme
 - Her gün için sınırsız sayıda zil olayı ekleme/silme; saat, kategori ve açıklama sütunlarıyla modern
   bir tablo üzerinden düzenleme
+- Öğrenci / öğretmen / teneffüs kolonlarından oluşan hızlı giriş tablosu sayesinde saatleri HH:MM
+  formatında tek satırda girip tek tıkla ilgili güne uygulama
 - Saat girişleri 00-23 / 00-59 aralığında otomatik doğrulandığı için yanlış saat yazımının önüne
   geçme
 - Öğrenci girişi, öğretmen girişi, ders sonu ve teneffüs müziği için ayrı ses dosyaları
-- Ses dosyalarını arayüzden seçtikten sonra aynı satırdaki **Test** butonuyla anında dinleyebilme
+- Ses dosyalarını arayüzden seçtiğiniz anda JinniBell klasörüne otomatik kopyalama, Kitaplık
+  menüsüne ekleme ve aynı satırdaki **Test** butonuyla anında dinleyebilme
 - Etiketlenebilir **Ses Kütüphanesi** sayesinde sık kullanılan dosyaları kaydedip ders zil türlerine tek
   tıkla atayabilme
+- Her zil türü için "Anons ekle" seçeneği ile zil bittikten hemen sonra çalınacak duyuruyu seçme ve
+  kitaplıktan bağlama
 - İstiklal Marşı, siren ve saygı duruşu kombinasyonları için tek tuşlu manuel tetikleme
 - Manuel butonların çalma zamanını **Hemen / 3 / 5 / 7 / 10 / 15 sn sonra** seçenekleriyle ayarlayarak
   tören anonslarına tam zamanında başlama
@@ -28,6 +33,8 @@ başlatabilirsiniz.
   - Başlangıç ve opsiyonel bitiş süreleri MM:SS formatında girilebilir; her parça sırasını
     yukarı/aşağı tuşlarıyla ya da sürükle-bırak yöntemiyle değiştirebilirsiniz
   - Seçilen müzikleri istenen dakikadan itibaren başlatma ve toplam süresini gösterme
+- Tören sekmesindeki "Dosya Ekle" ve "YouTube Ekle" kısayolları ile link/süre sorup parçayı otomatik
+  olarak playlist'e kaydetme
 - Tören listesinde her satır için **Hazır / Bekliyor / İndiriliyor** durumunu ve olası hata mesajını
   görebilme; YouTube indirmeleri tamamlandığında durum otomatik güncellenir
 - Teneffüslerde otomatik müzik yayını
@@ -37,6 +44,7 @@ başlatabilirsiniz.
 - Kontrol sekmesinde bugünkü tatil durumu ve sıradaki zil bilgisini görme
 - Tören moduna alınca otomatik zilleri geçici olarak kapatma
 - Ses seviyesi ayarı ve tek tuşla zili susturma
+- Tüm kritik ayar/butonların yanında imleci bekleterek görülebilen Türkçe ipucu balonları
 - "Zil Testi Simülasyonu" paneli ile herhangi bir günü hızlandırılmış olarak oynatıp olası saat
   çakışmalarını rapor hâlinde görme
 
