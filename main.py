@@ -268,13 +268,13 @@ class BellApplication:
         countdown_frame = tk.LabelFrame(frame, text="Geri Sayım ve Bildirim")
         countdown_frame.pack(fill=tk.X, padx=10, pady=5)
         self.countdown_var = tk.StringVar(value="Sonraki zil hesaplanıyor...")
-        countdown_bg = countdown_frame.cget("background")
+        default_bg = self.root.cget("bg")
         tk.Label(
             countdown_frame,
             textvariable=self.countdown_var,
             font=(self.ui_font_family, 14, "bold"),
             fg="#0b5394",
-            bg=countdown_bg,
+            bg=default_bg,
         ).pack(fill=tk.X, padx=6, pady=4)
         self.pause_badge = tk.Label(
             countdown_frame,
