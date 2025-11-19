@@ -70,6 +70,8 @@ SCHEDULE_SOUND_CHOICES = [
 
 SOUND_DISPLAY = {value: label for label, value in SCHEDULE_SOUND_CHOICES}
 TABLE_SOUND_TYPES = ["student_entry", "teacher_entry", "lesson_exit"]
+TABLE_DEFAULT_ROWS = 16
+TABLE_MAX_ROWS = 24
 SOUND_HINTS = {
     "student_entry": "Öğrencilerin sınıfa giriş zili. Ders başlamadan hemen önce çalar.",
     "teacher_entry": "Öğretmen yoklaması ya da ders başlangıcı duyurusu olarak kullanılır.",
@@ -361,19 +363,17 @@ def _execute_bell_event(
     if notifier:
         notifier.notify("Zil Başladı", f"{event.clock} - {event.label}")
 
+    steps: List[tuple[str, Optional[str]]] = [("sound", file_path)]
     announcement = config.announcement_for(event.sound_type)
     if announcement:
-        steps = [("sound", file_path), ("sound", announcement["path"])]
+        steps.append(("sound", announcement["path"]))
 
-        def after_sequence() -> None:
-            if event.sound_type == "lesson_exit" and config.recess_music_enabled:
-                play_recess()
-
-        audio.play_sequence(steps, on_complete=after_sequence)
-    else:
-        audio.play_file(file_path, event.label)
+    def after_sequence() -> None:
         if event.sound_type == "lesson_exit" and config.recess_music_enabled:
             play_recess()
+
+    callback = after_sequence if (event.sound_type == "lesson_exit" and config.recess_music_enabled) else None
+    audio.play_sequence(steps, on_complete=callback)
 
 
 class HeadlessBellService:
@@ -456,6 +456,7 @@ class BellApplication:
         self.config = BellConfig.load()
         self.audio = AudioController()
         self.audio.set_state_callback(self._update_status)
+        self.audio.set_error_callback(self._on_audio_error)
         self.notifier = Notifier()
         self.tray = TrayController(self)
         self.manual_override = False
@@ -473,6 +474,9 @@ class BellApplication:
         ) == "1"
         self._tooltips: List[ToolTip] = []
         self._announcement_vars: Dict[str, Dict[str, tk.Variable]] = {}
+        self._last_audio_error = ""
+        self._last_audio_error_time = 0.0
+        self._tray_hint_shown = False
 
         self.scheduler = ScheduleRunner(
             self.config,
@@ -805,39 +809,60 @@ class BellApplication:
 
         quick_frame = ttk.LabelFrame(right_panel, text="Tablo Halinde Zil Girişi")
         quick_frame.pack(fill=tk.X, padx=12, pady=(4, 6))
-        info_lbl = ttk.Label(
+        ttk.Label(
             quick_frame,
-            text="Saatleri HH:MM formatında girin. Boş hücreler atlanır, istisnalar için aşağıdaki listeyi kullanabilirsiniz.",
+            text="Aşağıdaki tablo 1. dersten 16. derse kadar tüm öğrenci/öğretmen giriş ve ders çıkışlarını"
+            " aynı anda düzenlemenizi sağlar.",
             wraplength=520,
-        )
-        info_lbl.pack(anchor=tk.W, padx=6, pady=(4, 2))
-        self._add_hint(info_lbl, "Tabloyu doldurduktan sonra 'Tabloyu Güne Kaydet' butonuna basın.")
+        ).pack(anchor=tk.W, padx=6, pady=(4, 2))
+        ttk.Label(
+            quick_frame,
+            text="HH:MM formatında saat girin. Bir hücre boş bırakılırsa o olay o gün için eklenmez.",
+            foreground="#555",
+        ).pack(anchor=tk.W, padx=6, pady=(0, 4))
 
         header_row = ttk.Frame(quick_frame)
         header_row.pack(fill=tk.X, padx=6)
-        ttk.Label(header_row, text="Ders").grid(row=0, column=0, padx=4, sticky=tk.W)
-        for idx, (title, key) in enumerate(
-            [("Öğrenci", "student_entry"), ("Öğretmen", "teacher_entry"), ("Teneffüs", "lesson_exit")]
+        ttk.Label(header_row, text="Menü", width=10).grid(row=0, column=0, padx=4, sticky=tk.W)
+        for idx, (title, _key) in enumerate(
+            [("Öğrenci Girişi", "student_entry"), ("Öğretmen Girişi", "teacher_entry"), ("Ders Çıkışı", "lesson_exit")]
         ):
-            ttk.Label(header_row, text=title).grid(row=0, column=idx + 1, padx=12)
+            ttk.Label(header_row, text=title, width=16).grid(row=0, column=idx + 1, padx=6)
 
+        self._table_rows: List[Dict[str, object]] = []
         self.table_rows_frame = ttk.Frame(quick_frame)
         self.table_rows_frame.pack(fill=tk.X, padx=6, pady=(2, 4))
-        self._table_rows: List[Dict[str, object]] = []
-        for _ in range(4):
+        for _ in range(TABLE_DEFAULT_ROWS):
             self._add_schedule_table_row()
 
         quick_btns = ttk.Frame(quick_frame)
         quick_btns.pack(fill=tk.X, padx=6, pady=(2, 4))
-        ttk.Button(quick_btns, text="Satır Ekle", command=self._add_schedule_table_row).pack(side=tk.LEFT, padx=2)
-        ttk.Button(quick_btns, text="Son Satırı Sil", command=self._remove_schedule_table_row).pack(
-            side=tk.LEFT, padx=2
-        )
+        ttk.Button(quick_btns, text="Tabloyu Temizle", command=self._clear_schedule_table).pack(side=tk.LEFT, padx=2)
         ttk.Button(quick_btns, text="Günü Tabloya Aktar", command=self._load_day_into_table).pack(
             side=tk.RIGHT, padx=2
         )
         ttk.Button(quick_btns, text="Tabloyu Güne Kaydet", command=self._apply_table_to_day).pack(
             side=tk.RIGHT, padx=2
+        )
+
+        row_control = ttk.Frame(quick_frame)
+        row_control.pack(fill=tk.X, padx=6, pady=(0, 4))
+        ttk.Label(row_control, text="Ders sayısı").pack(side=tk.LEFT)
+        self.table_row_target = tk.IntVar(value=TABLE_DEFAULT_ROWS)
+        row_spin = ttk.Spinbox(
+            row_control,
+            from_=4,
+            to=TABLE_MAX_ROWS,
+            textvariable=self.table_row_target,
+            width=5,
+            command=self._sync_schedule_table_rows,
+        )
+        row_spin.pack(side=tk.LEFT, padx=4)
+        row_spin.bind("<FocusOut>", lambda _e: self._sync_schedule_table_rows())
+        row_spin.bind("<Return>", lambda _e: self._sync_schedule_table_rows())
+        self._add_hint(row_spin, "Tabloda kaç ders satırı olacağını belirler.")
+        ttk.Label(row_control, text="(Tabloyu kaydetmeden önce satır sayısını ayarlayın)", foreground="#555").pack(
+            side=tk.LEFT, padx=6
         )
 
         form = ttk.LabelFrame(right_panel, text="Yeni/Seçili Zil")
@@ -927,6 +952,11 @@ class BellApplication:
             text="Seçtiğiniz her dosya JinniBell ses klasörüne kopyalanır ve Kitaplık menüsüne eklenir.",
             foreground="#555",
         ).pack(anchor=tk.W, padx=10, pady=(0, 5))
+        ttk.Label(
+            frame,
+            text="Kitaplıktaki isimleri görmek için aşağıdaki Ses Kütüphanesi bölümünden dosya ekleyin.",
+            foreground="#777",
+        ).pack(anchor=tk.W, padx=10, pady=(0, 6))
         self.recess_var = tk.BooleanVar(value=self.config.recess_music_enabled)
         self._sound_path_vars: Dict[str, tk.StringVar] = {}
         self._library_comboboxes: List[ttk.Combobox] = []
@@ -950,6 +980,7 @@ class BellApplication:
 
         ttk.Separator(frame).pack(fill=tk.X, padx=10, pady=8)
         self._build_sound_library_section(frame)
+        self._seed_library_from_config()
         self._refresh_sound_library()
 
     def _build_sound_row(self, frame: ttk.Frame, key: str, label: str) -> None:
@@ -988,6 +1019,10 @@ class BellApplication:
         test_btn.grid(row=0, column=4, padx=2, pady=2)
         self._add_hint(test_btn, "Seçilen sesi hemen dinleyebilirsiniz.")
 
+        clear_btn = ttk.Button(row, text="Temizle", command=lambda k=key: self._clear_sound_path(k))
+        clear_btn.grid(row=0, column=5, padx=2, pady=2)
+        self._add_hint(clear_btn, "Bu zilde kayıtlı dosya yolunu siler.")
+
         ttk.Label(row, text="Kitaplıktan:").grid(row=1, column=0, padx=4, pady=2, sticky=tk.W)
         lib_combo = ttk.Combobox(row, state="readonly", width=22)
         lib_combo.grid(row=1, column=1, padx=4, pady=2, sticky=tk.W)
@@ -1005,7 +1040,7 @@ class BellApplication:
             )
 
         announce_frame = ttk.Frame(row)
-        announce_frame.grid(row=2, column=0, columnspan=5, sticky=tk.EW, padx=4, pady=(4, 2))
+        announce_frame.grid(row=2, column=0, columnspan=6, sticky=tk.EW, padx=4, pady=(4, 2))
         announce_frame.columnconfigure(2, weight=1)
         config_ann = self.config.announcement_settings.get(key, {"enabled": False, "path": ""})
         enabled_var = tk.BooleanVar(value=bool(config_ann.get("enabled")))
@@ -1034,6 +1069,11 @@ class BellApplication:
                 self._save_announcement_settings(key)
 
         ttk.Button(announce_frame, text="Seç", command=choose_ann).grid(row=0, column=3, padx=2, pady=2)
+        ttk.Button(
+            announce_frame,
+            text="Temizle",
+            command=lambda k=key: self._clear_announcement_path(k),
+        ).grid(row=0, column=4, padx=2, pady=2)
 
         ann_combo = ttk.Combobox(announce_frame, state="readonly", width=18)
         ann_combo.grid(row=1, column=2, padx=4, pady=2, sticky=tk.W)
@@ -1061,7 +1101,7 @@ class BellApplication:
                 row,
                 text="Bu kayıt 1 dk/2 dk saygı duruşu butonlarında kullanılacaktır.",
                 foreground="#0b5394",
-            ).grid(row=3, column=0, columnspan=5, padx=4, pady=(2, 4), sticky=tk.W)
+            ).grid(row=3, column=0, columnspan=6, padx=4, pady=(2, 4), sticky=tk.W)
 
     def _build_ceremony_tab(self, frame: ttk.Frame) -> None:
         container = ttk.Frame(frame)
@@ -1102,10 +1142,10 @@ class BellApplication:
         del_btn = ttk.Button(tree_btns, text="Sil", command=self._delete_ceremony_item)
         del_btn.pack(side=tk.LEFT, padx=2)
         self._add_hint(del_btn, "Listeden tamamen kaldırır.")
-        file_btn = ttk.Button(tree_btns, text="Dosya Ekle", command=self._quick_add_ceremony_file)
+        file_btn = ttk.Button(tree_btns, text="Bilgisayardan Ekle", command=self._quick_add_ceremony_file)
         file_btn.pack(side=tk.LEFT, padx=2)
         self._add_hint(file_btn, "Dosya seçip listeye otomatik ekler.")
-        yt_btn = ttk.Button(tree_btns, text="YouTube Ekle", command=self._quick_add_ceremony_youtube)
+        yt_btn = ttk.Button(tree_btns, text="YouTube Linki Ekle", command=self._quick_add_ceremony_youtube)
         yt_btn.pack(side=tk.LEFT, padx=2)
         self._add_hint(yt_btn, "YouTube linkini ve başlangıç/bitişi sorarak listeye ekler.")
         play_btn = ttk.Button(tree_btns, text="Seçileni Çal", command=self._play_selected_ceremony)
@@ -1310,7 +1350,7 @@ class BellApplication:
         btns.pack(fill=tk.X, padx=6, pady=4)
         ttk.Button(btns, text="Dosya Ekle", command=self._add_sound_asset).pack(side=tk.LEFT, padx=2)
         ttk.Button(btns, text="Etiketleri Düzenle", command=self._edit_sound_asset).pack(side=tk.LEFT, padx=2)
-        ttk.Button(btns, text="Sil", command=self._remove_sound_asset).pack(side=tk.LEFT, padx=2)
+        ttk.Button(btns, text="Kitaplıktan Sil", command=self._remove_sound_asset).pack(side=tk.LEFT, padx=2)
         ttk.Button(btns, text="Test", command=self._play_selected_library_asset).pack(side=tk.RIGHT, padx=2)
 
     def _save_sound_path(self, key: str, value: str, show_message: bool = True) -> None:
@@ -1329,6 +1369,13 @@ class BellApplication:
         self._ensure_library_entry(stored, SOUND_DISPLAY.get(key, key))
         if show_message:
             messagebox.showinfo("Ses", "Dosya kaydedildi")
+
+    def _clear_sound_path(self, key: str) -> None:
+        var = self._sound_path_vars.get(key)
+        if var:
+            var.set("")
+        self.config.sound_files[key] = ""
+        self.config.save()
 
     def _apply_library_selection(
         self, sound_key: str, var: tk.StringVar, asset_name: str, *, is_announcement: bool = False
@@ -1350,6 +1397,14 @@ class BellApplication:
             self.config.save()
         else:
             self._save_sound_path(sound_key, path, show_message=False)
+
+    def _clear_announcement_path(self, sound_key: str) -> None:
+        vars_map = self._announcement_vars.get(sound_key)
+        if not vars_map:
+            return
+        vars_map["path"].set("")
+        vars_map["enabled"].set(False)
+        self._save_announcement_settings(sound_key)
 
     def _refresh_sound_library(self) -> None:
         if not hasattr(self, "library_tree"):
@@ -1457,6 +1512,11 @@ class BellApplication:
             return
         self.config.add_sound_asset(name_hint or Path(path).stem, path)
         self._refresh_sound_library()
+
+    def _seed_library_from_config(self) -> None:
+        for key, path in self.config.sound_files.items():
+            if path:
+                self._ensure_library_entry(path, SOUND_DISPLAY.get(key, Path(path).stem))
 
     def _save_announcement_settings(self, sound_key: str) -> None:
         vars_map = self._announcement_vars.get(sound_key)
@@ -1790,6 +1850,9 @@ class BellApplication:
     def _add_schedule_table_row(self) -> None:
         if not hasattr(self, "table_rows_frame"):
             return
+        if len(getattr(self, "_table_rows", [])) >= TABLE_MAX_ROWS:
+            messagebox.showinfo("Tablo", f"En fazla {TABLE_MAX_ROWS} ders satırı ekleyebilirsiniz.")
+            return
         row_index = len(getattr(self, "_table_rows", []))
         row_frame = ttk.Frame(self.table_rows_frame)
         row_frame.grid(row=row_index, column=0, sticky="ew", pady=1)
@@ -1797,16 +1860,16 @@ class BellApplication:
         row_data: Dict[str, object] = {"frame": row_frame}
         for col, sound_key in enumerate(TABLE_SOUND_TYPES, start=1):
             var = tk.StringVar()
-            entry = ttk.Entry(row_frame, textvariable=var, width=7, justify=tk.CENTER)
+            entry = ttk.Entry(row_frame, textvariable=var, width=8, justify=tk.CENTER)
             entry.grid(row=0, column=col, padx=4)
             self._add_hint(entry, f"{SOUND_DISPLAY.get(sound_key)} saatini HH:MM olarak girin")
             row_data[sound_key] = var
         self._table_rows.append(row_data)
 
-    def _remove_schedule_table_row(self) -> None:
+    def _remove_schedule_table_row(self, *, force: bool = False) -> None:
         if not getattr(self, "_table_rows", []):
             return
-        if len(self._table_rows) == 1:
+        if len(self._table_rows) == 1 and not force:
             for key in TABLE_SOUND_TYPES:
                 cast_var = self._table_rows[0].get(key)
                 if isinstance(cast_var, tk.StringVar):
@@ -1823,6 +1886,21 @@ class BellApplication:
                 var = row.get(key)
                 if isinstance(var, tk.StringVar):
                     var.set("")
+
+    def _sync_schedule_table_rows(self) -> None:
+        if not hasattr(self, "_table_rows"):
+            return
+        try:
+            desired = int(self.table_row_target.get())
+        except (tk.TclError, ValueError, AttributeError):
+            desired = len(self._table_rows)
+        desired = max(1, min(TABLE_MAX_ROWS, desired))
+        if hasattr(self, "table_row_target"):
+            self.table_row_target.set(desired)
+        while len(self._table_rows) < desired:
+            self._add_schedule_table_row()
+        while len(self._table_rows) > desired:
+            self._remove_schedule_table_row(force=True)
 
     def _load_day_into_table(self) -> None:
         if not hasattr(self, "_table_rows"):
@@ -2454,6 +2532,23 @@ class BellApplication:
             return None
         return None
 
+    def _on_audio_error(self, message: str) -> None:
+        now = time.time()
+        if message == getattr(self, "_last_audio_error", "") and (now - getattr(self, "_last_audio_error_time", 0)) < 10:
+            return
+        self._last_audio_error = message
+        self._last_audio_error_time = now
+
+        def show() -> None:
+            messagebox.showerror(
+                "Ses Çalma Hatası",
+                message
+                + "\n\nFFmpeg klasöründeki ffplay.exe ve SDL2.dll dosyalarını kontrol edin"
+                + " veya Ses sekmesinden yeni bir dosya seçerek tekrar deneyin.",
+            )
+
+        self.root.after(0, show)
+
     def _run_shutdown(self) -> None:
         mode = self.config.auto_shutdown_mode or ("time" if self.config.auto_shutdown_enabled else "disabled")
         if mode == "disabled":
@@ -2470,6 +2565,7 @@ class BellApplication:
         if self.tray:
             self.tray.ensure()
         self._update_status("Arka planda çalışıyor")
+        self._maybe_show_tray_hint()
 
     def _restore_from_tray(self) -> None:
         self.root.deiconify()
@@ -2500,6 +2596,22 @@ class BellApplication:
             return
         if self.config.launch_on_boot and self._launched_from_startup:
             self._minimize_to_tray()
+
+    def _maybe_show_tray_hint(self) -> None:
+        if self._tray_hint_shown:
+            return
+        if pystray is None:
+            return
+        self._tray_hint_shown = True
+
+        def show() -> None:
+            messagebox.showinfo(
+                "Sistem Tepsisi",
+                "Program kapanmadı; Windows saatinin yanındaki JinniBell Pro simgesine sağ tıklayarak"
+                " tekrar açabilir veya tamamen kapatabilirsiniz.",
+            )
+
+        self.root.after(0, show)
 
     # endregion
 

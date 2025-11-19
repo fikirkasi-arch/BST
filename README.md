@@ -12,6 +12,9 @@ başlatabilirsiniz.
   bir tablo üzerinden düzenleme
 - Öğrenci / öğretmen / teneffüs kolonlarından oluşan hızlı giriş tablosu sayesinde saatleri HH:MM
   formatında tek satırda girip tek tıkla ilgili güne uygulama
+- Standart görünümde 16 satırlık (1–16. ders) tablo sunulur; spinbox ile ders sayısını anında artırıp
+  azaltabilir, "Tabloyu Temizle" ve "Günü Tabloya Aktar" kısayollarıyla günler arasında hatasız kopya
+  alabilirsiniz
 - Saat girişleri 00-23 / 00-59 aralığında otomatik doğrulandığı için yanlış saat yazımının önüne
   geçme
 - Öğrenci girişi, öğretmen girişi, ders sonu ve teneffüs müziği için ayrı ses dosyaları
@@ -28,10 +31,18 @@ başlatabilirsiniz.
   uyarısıyla takip etme, aynı zamanda masaüstü bildirimleriyle (Windows Notification Center)
   yaklaşan ve çalan zilleri haber verme
 - Ses kaydırıcısı yüzde etiketi ile seviyeyi tek bakışta görme ve tek tuşla zili susturma
+- Dosya seçerken hepsi otomatik olarak `JinniBellSesler` klasörüne kopyalanır; her satırda "Temizle"
+  butonu ile o zilde kayıtlı yolu sıfırlayabilir, "Kitaplıktan Sil" ile kütüphane kayıtlarını
+  yönetebilirsiniz
+- Ses testlerinde ffplay.exe + SDL2.dll birlikte paketlenir; eksik olduğunda uygulama kullanıcıyı
+  uyarır ve Windows'un yerleşik `winsound` altyapısına otomatik geçer, böylece test butonları her
+  bilgisayarda çalışır
 - Windows oturumu açıldığında uygulamayı otomatik başlatıp sistem durumuna küçülten isteğe bağlı
   başlangıç seçeneği ile Görev Zamanlayıcısı üzerinden servis modunda (arayüz olmadan) açılma
 - Pystray tabanlı sistem tepsisi simgesi sayesinde "Göster / Tören Modu / Çıkış" kısayollarına
   saat yanındaki küçük menüden erişme
+- Pencereyi kapatırken uygulama otomatik olarak sistem tepsisine taşınır ve kullanıcı tek uyarı ile
+  simgenin nerede olduğunu görür; tepsi menüsündeki "Çıkış" seçeneği programı tamamen kapatır
 - Servis modu (`python main.py --service`) ile bilgisayar açılır açılmaz kullanıcı oturumuna gerek
   kalmadan zillerin devreye girmesi; okul kasalarındaki bilgisayarlar için ideal
 - Tören programı için bilgisayardan veya YouTube bağlantısından müzik listesi oluşturma
@@ -96,9 +107,10 @@ simge durumunda (veya tamamen arka planda) çalışmaya başlar.
    > Betik hata verirse pencere kapanmasın diye otomatik olarak `pause` komutunu uygular. Scripti
    > otomatik süreçlerde kullanmak isterseniz `set NOPAUSE=1` deyip ardından çalıştırabilirsiniz.
 3. Betik, `requirements.txt` içindeki bütün paketleri indirir ve eksikse Python ile çalışan
-   `packaging/get_ffmpeg.py` yardımcı programını kullanarak FFmpeg/FFprobe/FFplay araçlarını indirip
-   `packaging\ffmpeg-bin` klasörüne çıkarır. Böylece PowerShell erişimi kısıtlı sistemlerde bile
-   indirme işlemi sorunsuz yürür. Her URL denemesi varsayılan olarak en fazla 45 saniye sürer;
+   `packaging/get_ffmpeg.py` yardımcı programını kullanarak FFmpeg/FFprobe/FFplay araçlarının
+   bulunduğu **bin klasörünün tamamını** (SDL2.dll dahil) `packaging\ffmpeg-bin` klasörüne çıkarır.
+   Böylece PowerShell erişimi kısıtlı sistemlerde bile indirme işlemi sorunsuz yürür ve ses testleri
+   için gerekli tüm DLL'ler otomatik paketlenir. Her URL denemesi varsayılan olarak en fazla 45 saniye sürer;
    daha uzun beklemek isterseniz `set FFMPEG_TIMEOUT=90` gibi bir ayar yapabilirsiniz.
    - Bilgisayar internete çıkamıyorsa betik sırasıyla `ffmpeg-7.0.1-essentials_build.zip`,
      `ffmpeg-7.0-essentials_build.zip`, `ffmpeg-release-essentials.zip` ve
@@ -109,13 +121,13 @@ simge durumunda (veya tamamen arka planda) çalışmaya başlar.
      bir isim) olarak kopyalarsanız indirme adımı atlanır.
 4. Betik tüm komutların çıktısını `packaging\build_exe.log` dosyasına yazar. Konsolda hata
    mesajı görürseniz ayrıntılı sebebi bu logda bulabilirsiniz.
-5. PyInstaller çağrısı, program kodu ile birlikte bu FFmpeg araçlarını da `dist/JinniBellPro/ffmpeg`
-   klasörüne gömerek tek başına çalışabilen bir çıktı üretir; hedef bilgisayarda ek DLL veya modül
-   kurmanıza gerek kalmaz.
+5. PyInstaller çağrısı, program kodu ile birlikte bu FFmpeg araçlarını ve SDL2.dll gibi yardımcı
+   dosyaları `dist/JinniBellPro/ffmpeg` klasörüne gömerek tek başına çalışabilen bir çıktı üretir; hedef
+   bilgisayarda ek DLL veya modül kurmanıza gerek kalmaz.
 6. İşlem sonunda `dist/JinniBellPro/JinniBellPro.exe` dosyası oluşturulur. Bu klasörü tek
    başına başka bilgisayarlara kopyalayarak da uygulamayı taşıyabilirsiniz. Klasörün içinde yer alan
-   `ffmpeg` alt klasörü (ffmpeg.exe, ffprobe.exe, ffplay.exe) ses çalma için zorunludur; aynı dizinle
-   birlikte dağıtmayı unutmayın.
+   `ffmpeg` alt klasörü (ffmpeg.exe, ffprobe.exe, ffplay.exe, SDL2.dll ve diğer FFmpeg DLL'leri)
+   ses çalma için zorunludur; aynı dizinle birlikte dağıtmayı unutmayın.
 
 ## Kurulum Dosyası (Setup EXE) Oluşturma
 1. Yukarıdaki PyInstaller adımlarını tamamlayarak `dist/JinniBellPro` klasörünü üretin.

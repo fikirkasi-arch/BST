@@ -25,9 +25,9 @@ paketleyip kurulabilir bir `Setup.exe` dosyası çıkarmasını sağlar.
    - `pip`i günceller,
    - `requirements.txt` içindeki **mutagen, pydub, yt_dlp** gibi tüm paketleri indirir,
    - PowerShell gerektirmeden çalışan `packaging\get_ffmpeg.py` yardımcısını çağırıp eksikse
-     güncel **FFmpeg**, **FFprobe** ve **FFplay** dosyalarını download eder ve `packaging\ffmpeg-bin`
-     klasörüne çıkarır (her bağlantı en fazla 45 saniye denenir; gerekirse `set FFMPEG_TIMEOUT=90`
-     diyerek süreyi uzatabilirsiniz),
+     güncel **FFmpeg**, **FFprobe**, **FFplay** ve **SDL2.dll** içeren **bin klasörünün tamamını**
+     `packaging\ffmpeg-bin` dizinine çıkarır (her bağlantı en fazla 45 saniye denenir; gerekirse
+     `set FFMPEG_TIMEOUT=90` diyerek süreyi uzatabilirsiniz),
    - PyInstaller'ı çağırarak program dosyalarını, bağımlılıkları ve `ffmpeg` klasörünü
      `dist/JinniBellPro` klasörünün içine kopyalar.
   > **Not:** Ses çalma işlemi artık FFmpeg'in `ffplay.exe` aracıyla yapıldığı için ek olarak
@@ -44,8 +44,8 @@ paketleyip kurulabilir bir `Setup.exe` dosyası çıkarmasını sağlar.
    komut penceresi kapanmadan önce bu log dosyasına bakıp hatanın tam mesajını görebilirsiniz.
 6. Komut isteminde işlemler bittikten sonra `dist/JinniBellPro/JinniBellPro.exe` dosyası oluşur.
    Klasörde ayrıca `ffmpeg` isimli bir alt klasör göreceksiniz; burada gömülü gelen `ffmpeg.exe`,
-   `ffprobe.exe` ve `ffplay.exe` dosyaları bulunur. Bu klasörü tek başına USB belleğe atıp başka
-   bilgisayarda çalıştırabilirsiniz.
+   `ffprobe.exe`, `ffplay.exe`, `SDL2.dll` ve diğer FFmpeg DLL'leri bulunur. Bu klasörü tek başına USB
+   belleğe atıp başka bilgisayarda çalıştırabilirsiniz.
 
 ## 3. Kurulum sihirbazı (Setup.exe) üretmek
 1. [Inno Setup](https://jrsoftware.org/isdl.php) programını indirin ve varsayılan ayarlarla kurun.

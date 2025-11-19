@@ -11,6 +11,11 @@ import time
 from pathlib import Path
 from typing import Callable, Dict, Optional
 
+try:  # pragma: no cover - winsound yalnızca Windows'ta mevcut
+    import winsound
+except Exception:  # pragma: no cover - diğer platformlar
+    winsound = None
+
 from pydub import AudioSegment
 
 
@@ -67,9 +72,13 @@ class AudioController:
         self._muted = False
         self._volume = 0.8
         self._on_state_change: Optional[Callable[[str], None]] = None
+        self._on_error: Optional[Callable[[str], None]] = None
 
     def set_state_callback(self, callback: Callable[[str], None]) -> None:
         self._on_state_change = callback
+
+    def set_error_callback(self, callback: Callable[[str], None]) -> None:
+        self._on_error = callback
 
     def set_volume(self, value: float) -> None:
         self._volume = max(0.0, min(value, 1.0))
@@ -127,14 +136,25 @@ class AudioController:
 
     def _play_segment(self, segment: AudioSegment, label: str) -> None:
         def worker() -> None:
+            handle = None
+            try:
+                handle = _play_with_ffplay(segment)
+            except Exception as exc:
+                try:
+                    handle = _try_winsound(segment, exc)
+                except Exception as fallback_exc:
+                    self._notify_error(str(fallback_exc))
+                    return
             with self._lock:
                 if self._current_play_obj is not None:
                     self._current_play_obj.stop()
+                self._current_play_obj = handle
                 self._notify(f"Çalıyor: {label}")
-                self._current_play_obj = _play_with_ffplay(segment)
-            self._current_play_obj.wait_done()
-            with self._lock:
-                self._current_play_obj = None
+            try:
+                handle.wait_done()
+            finally:
+                with self._lock:
+                    self._current_play_obj = None
                 self._notify("Hazır")
 
         threading.Thread(target=worker, daemon=True).start()
@@ -142,6 +162,10 @@ class AudioController:
     def _notify(self, message: str) -> None:
         if self._on_state_change:
             self._on_state_change(message)
+
+    def _notify_error(self, message: str) -> None:
+        if self._on_error:
+            self._on_error(message)
 
     def _wait_until_idle(self) -> None:
         while True:
@@ -195,6 +219,59 @@ def _play_with_ffplay(segment: AudioSegment) -> _FFplayHandle:
         stdout=subprocess.DEVNULL,
         stderr=subprocess.DEVNULL,
     )
+    # SDL2.dll eksik gibi durumlarda süreç hemen kapanır; kısa bir süre gözlemleyelim.
+    time.sleep(0.2)
+    if process.poll() not in (None, 0):
+        process.communicate(timeout=0.1)
+        raise RuntimeError(
+            "Ses oynatılırken ffplay başlatılamadı. FFmpeg paketindeki SDL2.dll dosyasının"
+            " eksik olmadığından emin olun."
+        )
     return _FFplayHandle(process, tmp_file)
+
+
+class _WinsoundHandle:
+    def __init__(self, temp_file: Path, duration: float) -> None:
+        self._temp_file = temp_file
+        self._duration = max(duration, 0.1)
+        self._done = threading.Event()
+        self._cleaned = False
+        winsound.PlaySound(str(temp_file), winsound.SND_FILENAME | winsound.SND_ASYNC)  # type: ignore[arg-type]
+        threading.Thread(target=self._timer, daemon=True).start()
+
+    def _timer(self) -> None:
+        time.sleep(self._duration)
+        self._done.set()
+        self._cleanup()
+
+    def stop(self) -> None:
+        winsound.PlaySound(None, winsound.SND_PURGE)
+        self._done.set()
+        self._cleanup()
+
+    def wait_done(self) -> None:
+        self._done.wait()
+        self._cleanup()
+
+    def _cleanup(self) -> None:
+        if self._cleaned:
+            return
+        self._cleaned = True
+        if self._temp_file.exists():
+            try:
+                self._temp_file.unlink()
+            except OSError:
+                pass
+
+
+def _try_winsound(segment: AudioSegment, original_exc: Exception) -> Optional[object]:
+    if winsound is None or os.name != "nt":
+        raise original_exc
+    fd, tmp_path = tempfile.mkstemp(suffix=".wav")
+    os.close(fd)
+    tmp_file = Path(tmp_path)
+    segment.export(tmp_file, format="wav")
+    duration = len(segment) / 1000
+    return _WinsoundHandle(tmp_file, duration)
 
 

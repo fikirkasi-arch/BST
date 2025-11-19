@@ -113,11 +113,8 @@ def download_archive(zip_path: Path) -> None:
 
 def ensure_binaries(target_dir: Path) -> None:
     target_dir.mkdir(parents=True, exist_ok=True)
-    ffmpeg_path = target_dir / "ffmpeg.exe"
-    ffprobe_path = target_dir / "ffprobe.exe"
-    ffplay_path = target_dir / "ffplay.exe"
-
-    if ffmpeg_path.exists() and ffprobe_path.exists() and ffplay_path.exists():
+    required = ["ffmpeg.exe", "ffprobe.exe", "ffplay.exe", "SDL2.dll"]
+    if all((target_dir / name).exists() for name in required):
         log("FFmpeg already cached, skipping download")
         return
 
@@ -138,17 +135,22 @@ def ensure_binaries(target_dir: Path) -> None:
         bin_dir = next(extract_dir.glob("*/bin"), None)
         if bin_dir is None:
             raise RuntimeError("FFmpeg archive format not recognized; bin folder missing")
-
-        required = {
-            "ffmpeg.exe": ffmpeg_path,
-            "ffprobe.exe": ffprobe_path,
-            "ffplay.exe": ffplay_path,
-        }
-        for name, destination in required.items():
-            source = bin_dir / name
-            if not source.exists():
-                raise RuntimeError(f"FFmpeg arşivinde {name} bulunamadı. Lütfen ffplay içeren bir paket kullanın.")
-            shutil.copy2(source, destination)
+        for child in target_dir.iterdir():
+            if child.is_file():
+                child.unlink()
+            elif child.is_dir():
+                shutil.rmtree(child)
+        for item in bin_dir.iterdir():
+            destination = target_dir / item.name
+            if item.is_dir():
+                shutil.copytree(item, destination)
+            else:
+                shutil.copy2(item, destination)
+        missing = [name for name in required if not (target_dir / name).exists()]
+        if missing:
+            raise RuntimeError(
+                "FFmpeg arşivinde eksik dosyalar var: " + ", ".join(missing) + ". Lütfen tam paket indirin."
+            )
         log(f"Binaries copied into {target_dir}")
 
 
