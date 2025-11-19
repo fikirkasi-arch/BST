@@ -9,6 +9,7 @@ import tempfile
 import threading
 import time
 import tkinter as tk
+import tkinter.font as tkfont
 from datetime import datetime, date
 from pathlib import Path
 from tkinter import filedialog, messagebox, simpledialog, ttk
@@ -135,19 +136,14 @@ class BellApplication:
     def __init__(self, root: tk.Tk) -> None:
         self.root = root
         self.root.title("JinniBell Pro")
-        # Tk, özellikle gömülü Tcl sürümlerinde boşluk içeren yazı tiplerini
-        # doğru okumak için aile adını süslü parantez içinde bekler; aksi halde
-        # "Segoe"yi aile, "UI"yi ise sayı gibi yorumlayarak "expected integer"
-        # hatası üretir. Bu nedenle varsayılan yazı tipini {Segoe UI} şeklinde
-        # tanımlıyoruz.
-        self.root.option_add("*Font", "{Segoe UI} 10")
+        self.ui_font_family = self._init_default_font()
         style = ttk.Style(self.root)
         try:
             style.theme_use("clam")
         except tk.TclError:
             pass
         style.configure("Treeview", rowheight=26)
-        style.configure("Treeview.Heading", font=("Segoe UI", 10, "bold"))
+        style.configure("Treeview.Heading", font=(self.ui_font_family, 10, "bold"))
 
         self.config = BellConfig.load()
         self.audio = AudioController()
@@ -179,6 +175,50 @@ class BellApplication:
         self.root.after(1200, self._auto_minimize_if_needed)
 
     # region UI
+    def _init_default_font(self) -> str:
+        preferred = "Segoe UI"
+        fallback = "Arial"
+        try:
+            default_font = tkfont.nametofont("TkDefaultFont")
+            fallback = default_font.cget("family") or fallback
+        except tk.TclError:
+            pass
+
+        try:
+            families = {name.lower(): name for name in tkfont.families()}
+        except tk.TclError:
+            families = {}
+
+        chosen = preferred
+        if preferred.lower() not in families and not _is_windows():
+            if fallback.lower() in families:
+                chosen = families[fallback.lower()]
+            else:
+                chosen = fallback
+        elif preferred.lower() in families:
+            chosen = families[preferred.lower()]
+
+        spec = self._font_string(chosen, 10)
+        try:
+            self.root.option_add("*Font", spec)
+        except tk.TclError:
+            backup = self._font_string(fallback, 10)
+            self.root.option_add("*Font", backup)
+            chosen = fallback
+        return chosen
+
+    @staticmethod
+    def _font_string(family: str, size: int, weight: str | None = None, slant: str | None = None) -> str:
+        safe_family = family
+        if " " in safe_family and not safe_family.startswith("{"):
+            safe_family = f"{{{safe_family}}}"
+        parts = [safe_family, str(size)]
+        if weight:
+            parts.append(weight)
+        if slant:
+            parts.append(slant)
+        return " ".join(parts)
+
     def _build_ui(self) -> None:
         notebook = ttk.Notebook(self.root)
         notebook.pack(fill=tk.BOTH, expand=True)
@@ -232,7 +272,7 @@ class BellApplication:
         tk.Label(
             countdown_frame,
             textvariable=self.countdown_var,
-            font=("Segoe UI", 14, "bold"),
+            font=(self.ui_font_family, 14, "bold"),
             fg="#0b5394",
             bg=countdown_bg,
         ).pack(fill=tk.X, padx=6, pady=4)
@@ -241,7 +281,7 @@ class BellApplication:
             text="Tören modu kapalı",
             fg="#ffffff",
             bg="#2e7d32",
-            font=("Segoe UI", 10, "bold"),
+            font=(self.ui_font_family, 10, "bold"),
             padx=6,
             pady=2,
         )
@@ -312,7 +352,7 @@ class BellApplication:
         ttk.Label(
             frame,
             text="© 2026 Emre Esen tarafından kodlandı",
-            font=("Segoe UI", 9, "italic"),
+            font=(self.ui_font_family, 9, "italic"),
         ).pack(anchor=tk.W, padx=12, pady=(0, 10))
         self._update_pause_badge()
 
@@ -975,7 +1015,7 @@ class BellApplication:
                     (x0 + x1) / 2,
                     (y0 + y1) / 2,
                     text="\n".join(text_lines),
-                    font=("Segoe UI", 9),
+                    font=(self.ui_font_family, 9),
                 )
                 for item_id in (rect_id, text_id):
                     self._calendar_cells[item_id] = current
