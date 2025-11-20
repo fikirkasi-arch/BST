@@ -1,0 +1,867 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Otomatik Test Oluşturucu - BST Öğretmen Araçları</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        h1 {
+            text-align: center;
+            color: #43e97b;
+            margin-bottom: 10px;
+            font-size: 2.5em;
+        }
+        .subtitle { text-align: center; color: #666; margin-bottom: 30px; }
+
+        .workflow {
+            display: grid;
+            grid-template-columns: 400px 1fr;
+            gap: 30px;
+            margin: 20px 0;
+        }
+
+        .settings-panel {
+            background: #f5f5f5;
+            border-radius: 15px;
+            padding: 25px;
+            height: fit-content;
+            position: sticky;
+            top: 20px;
+        }
+
+        .panel-title {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1em;
+            transition: all 0.3s;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: #43e97b;
+            box-shadow: 0 0 0 3px rgba(67, 233, 123, 0.1);
+        }
+
+        .checkbox-group {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+        }
+
+        .checkbox-label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px;
+            background: white;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .checkbox-label:hover {
+            background: #e7f9ef;
+        }
+
+        .checkbox-label input {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
+
+        .difficulty-selector {
+            display: flex;
+            gap: 10px;
+        }
+
+        .difficulty-btn {
+            flex: 1;
+            padding: 10px;
+            border: 2px solid #e0e0e0;
+            background: white;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: bold;
+        }
+
+        .difficulty-btn:hover {
+            border-color: #43e97b;
+        }
+
+        .difficulty-btn.active {
+            background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+            color: white;
+            border-color: #43e97b;
+        }
+
+        .question-count {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .count-btn {
+            width: 40px;
+            height: 40px;
+            border: none;
+            background: #43e97b;
+            color: white;
+            border-radius: 50%;
+            font-size: 1.5em;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .count-btn:hover {
+            background: #38f9d7;
+            transform: scale(1.1);
+        }
+
+        .count-value {
+            font-size: 2em;
+            font-weight: bold;
+            color: #43e97b;
+            min-width: 60px;
+            text-align: center;
+        }
+
+        .preview-area {
+            background: #fafafa;
+            border-radius: 15px;
+            padding: 30px;
+            min-height: 800px;
+        }
+
+        .test-paper {
+            background: white;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .test-header {
+            text-align: center;
+            border-bottom: 3px solid #43e97b;
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+        }
+
+        .test-title {
+            font-size: 1.8em;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .test-info {
+            display: flex;
+            justify-content: space-around;
+            color: #666;
+            font-size: 0.95em;
+            margin-top: 15px;
+        }
+
+        .question-item {
+            margin-bottom: 30px;
+            padding: 20px;
+            background: #f9f9f9;
+            border-radius: 10px;
+            border-left: 4px solid #43e97b;
+            page-break-inside: avoid;
+        }
+
+        .answer-box {
+            margin-top: 15px;
+            padding: 15px;
+            border: 2px solid #43e97b;
+            border-radius: 8px;
+            min-height: 100px;
+            background: white;
+        }
+
+        .answer-box-label {
+            font-weight: bold;
+            color: #43e97b;
+            margin-bottom: 8px;
+            font-size: 0.9em;
+        }
+
+        .question-number {
+            font-weight: bold;
+            color: #43e97b;
+            font-size: 1.1em;
+            margin-bottom: 10px;
+        }
+
+        .question-text {
+            font-size: 1.05em;
+            color: #333;
+            margin-bottom: 15px;
+            line-height: 1.6;
+        }
+
+        .options {
+            margin-left: 20px;
+        }
+
+        .option {
+            padding: 8px 0;
+            color: #555;
+        }
+
+        .answer-key {
+            background: #e7f9ef;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 30px;
+            border: 2px solid #43e97b;
+        }
+
+        .answer-key-title {
+            font-size: 1.3em;
+            font-weight: bold;
+            color: #43e97b;
+            margin-bottom: 15px;
+        }
+
+        .answers-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 10px;
+        }
+
+        .answer-item {
+            background: white;
+            padding: 10px;
+            border-radius: 5px;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        .btn {
+            padding: 15px 30px;
+            font-size: 1.1em;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+            width: 100%;
+            margin-top: 10px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(67, 233, 123, 0.4);
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #5a6268;
+        }
+
+        .btn-success {
+            background: #28a745;
+            color: white;
+        }
+
+        .btn-info {
+            background: #17a2b8;
+            color: white;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 100px 20px;
+            color: #999;
+        }
+
+        .empty-icon {
+            font-size: 5em;
+            margin-bottom: 20px;
+        }
+
+        .stats {
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 20px;
+            border: 2px solid #e0e0e0;
+        }
+
+        .stat-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .stat-row:last-child {
+            border-bottom: none;
+        }
+
+        .stat-label {
+            color: #666;
+        }
+
+        .stat-value {
+            font-weight: bold;
+            color: #43e97b;
+        }
+
+        @media print {
+            body {
+                background: white;
+                padding: 0;
+                margin: 0;
+            }
+            .container {
+                box-shadow: none;
+                padding: 0;
+                margin: 0;
+            }
+            .workflow {
+                display: block;
+            }
+            .settings-panel {
+                display: none;
+            }
+            .btn {
+                display: none;
+            }
+            .preview-area {
+                padding: 0;
+                background: white;
+            }
+            .test-paper {
+                padding: 15px;
+                box-shadow: none;
+                border-radius: 0;
+            }
+            .test-header {
+                padding-bottom: 8px;
+                margin-bottom: 15px;
+                border-bottom: 2px solid #000;
+            }
+            .test-title {
+                font-size: 1.3em;
+                margin-bottom: 5px;
+            }
+            .test-info {
+                font-size: 0.85em;
+                margin-top: 8px;
+            }
+            .question-item {
+                margin-bottom: 20px;
+                padding: 12px;
+                background: white;
+                border: 1px solid #ddd;
+                border-left: 3px solid #000;
+                border-radius: 0;
+                page-break-inside: avoid;
+            }
+            .answer-box {
+                min-height: 120px;
+                border: 2px solid #000;
+                border-radius: 0;
+                background: white;
+            }
+            .answer-key {
+                page-break-before: always;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📝 Otomatik Test Oluşturucu</h1>
+        <p class="subtitle">Öğretmenler için Hızlı ve Kolay Test Hazırlama Aracı</p>
+
+        <div class="workflow">
+            <div class="settings-panel">
+                <div class="panel-title">⚙️ Test Ayarları</div>
+
+                <div class="form-group">
+                    <label class="form-label">🎓 Sınıf Seviyesi</label>
+                    <select class="form-control" id="gradeSelect" onchange="updateUnits()">
+                        <option value="5">5. Sınıf</option>
+                        <option value="6">6. Sınıf</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">📚 Üniteler</label>
+                    <div class="checkbox-group" id="unitCheckboxes"></div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">⭐ Zorluk Seviyesi</label>
+                    <div class="difficulty-selector">
+                        <button class="difficulty-btn active" onclick="selectDifficulty('kolay')">Kolay</button>
+                        <button class="difficulty-btn" onclick="selectDifficulty('orta')">Orta</button>
+                        <button class="difficulty-btn" onclick="selectDifficulty('zor')">Zor</button>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">🔢 Soru Sayısı</label>
+                    <div class="question-count">
+                        <button class="count-btn" onclick="changeCount(-5)">-</button>
+                        <div class="count-value" id="questionCount">10</div>
+                        <button class="count-btn" onclick="changeCount(5)">+</button>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">📄 Test Başlığı</label>
+                    <input type="text" class="form-control" id="testTitle" value="Bilişim Teknolojileri Yazılı Sınavı" placeholder="Test başlığı...">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">🏫 Okul Adı (Opsiyonel)</label>
+                    <input type="text" class="form-control" id="schoolName" placeholder="Okul adı...">
+                </div>
+
+                <div class="stats">
+                    <div class="stat-row">
+                        <span class="stat-label">📊 Toplam Soru Havuzu:</span>
+                        <span class="stat-value" id="totalQuestions">0</span>
+                    </div>
+                    <div class="stat-row">
+                        <span class="stat-label">✅ Seçilecek Soru:</span>
+                        <span class="stat-value" id="selectedCount">10</span>
+                    </div>
+                </div>
+
+                <button class="btn btn-primary" onclick="generateTest()">🎲 Test Oluştur</button>
+                <button class="btn btn-success" onclick="printTest()">🖨️ Yazdır / PDF</button>
+                <button class="btn btn-info" onclick="toggleAnswerKey()">🔑 Cevap Anahtarı</button>
+                <button class="btn btn-secondary" onclick="window.location.href='index.html'">🏠 Ana Sayfa</button>
+            </div>
+
+            <div class="preview-area">
+                <div id="testPreview">
+                    <div class="empty-state">
+                        <div class="empty-icon">📝</div>
+                        <h3>Henüz test oluşturulmadı</h3>
+                        <p>Soldaki ayarları yapıp "Test Oluştur" butonuna tıklayın</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentGrade = 5;
+        let currentDifficulty = 'kolay';
+        let questionCountValue = 10;
+        let selectedUnits = [];
+        let generatedTest = null;
+        let showAnswers = false;
+
+        const units = {
+            5: ['Bilişim Temelleri', 'Dijital Ürün', 'Ağlar İletişim', 'Etik Güvenlik', 'Yapay Zeka', 'Programlama'],
+            6: ['Bilişim Teknolojileri', 'Etik Güvenlik', 'İletişim İşbirliği', 'Ürün Oluşturma', 'Problem Çözme']
+        };
+
+        const questionBank = {
+            5: {
+                kolay: [
+                    { q: 'Bilgisayarın beyni olarak adlandırılan donanım parçası hangisidir?', o: ['A) RAM', 'B) Hard Disk', 'C) İşlemci (CPU)', 'D) Ekran Kartı'], a: 'C', unit: 'Bilişim Temelleri' },
+                    { q: 'Aşağıdakilerden hangisi giriş birimidir?', o: ['A) Monitör', 'B) Klavye', 'C) Hoparlör', 'D) Yazıcı'], a: 'B', unit: 'Bilişim Temelleri' },
+                    { q: 'İşletim sistemi aşağıdakilerden hangisidir?', o: ['A) Microsoft Word', 'B) Google Chrome', 'C) Windows 10', 'D) Adobe Photoshop'], a: 'C', unit: 'Bilişim Temelleri' },
+                    { q: 'Bilgisayarda verilerin kalıcı olarak saklandığı donanım hangisidir?', o: ['A) RAM', 'B) Hard Disk', 'C) İşlemci', 'D) Ekran Kartı'], a: 'B', unit: 'Bilişim Temelleri' },
+                    { q: 'Ağ üzerinden birbirine bağlı bilgisayarlar arasında veri aktarımını sağlayan cihaz hangisidir?', o: ['A) Monitör', 'B) Yazıcı', 'C) Router', 'D) Klavye'], a: 'C', unit: 'Ağlar İletişim' },
+                    { q: 'Güçlü bir şifre oluştururken hangisine dikkat edilmelidir?', o: ['A) Sadece küçük harf kullanılmalı', 'B) Kısa olmalı', 'C) Büyük-küçük harf, sayı ve özel karakter içermeli', 'D) Doğum tarihi kullanılmalı'], a: 'C', unit: 'Etik Güvenlik' },
+                    { q: 'E-posta adresi hangi karakterle ayrılır?', o: ['A) #', 'B) @', 'C) &', 'D) *'], a: 'B', unit: 'Ağlar İletişim' },
+                    { q: 'Yapay zeka hangi alanda kullanılmaz?', o: ['A) Sağlık', 'B) Eğitim', 'C) Ulaşım', 'D) Hiçbiri (hepsinde kullanılır)'], a: 'D', unit: 'Yapay Zeka' },
+                    { q: 'Scratch programında karakterlere ne ad verilir?', o: ['A) Sprite', 'B) Block', 'C) Stage', 'D) Script'], a: 'A', unit: 'Programlama' },
+                    { q: 'Dijital ürün tasarımında ilk adım nedir?', o: ['A) Kodlama', 'B) Planlama', 'C) Test etme', 'D) Yayınlama'], a: 'B', unit: 'Dijital Ürün' },
+                    { q: 'Microsoft Word hangi tür programdır?', o: ['A) İşletim sistemi', 'B) Kelime işlemci', 'C) Tarayıcı', 'D) Antivirüs'], a: 'B', unit: 'Dijital Ürün' },
+                    { q: 'Bilgisayar ağlarında veri paketleri hangi protokol ile taşınır?', o: ['A) HTTP', 'B) FTP', 'C) IP', 'D) DNS'], a: 'C', unit: 'Ağlar İletişim' },
+                    { q: 'Phishing saldırısı nedir?', o: ['A) Virüs bulaştırma', 'B) Sahte e-posta ile bilgi çalma', 'C) Bilgisayarı yavaşlatma', 'D) Ağ bağlantısını kesme'], a: 'B', unit: 'Etik Güvenlik' },
+                    { q: 'RAM\'in açılımı nedir?', o: ['A) Random Access Memory', 'B) Read All Memory', 'C) Run And Move', 'D) Rapid Access Mode'], a: 'A', unit: 'Bilişim Temelleri' },
+                    { q: 'Scratch\'te döngü bloğu ne işe yarar?', o: ['A) Ses çıkarmak', 'B) Renk değiştirmek', 'C) Komutları tekrar etmek', 'D) Sprite silmek'], a: 'C', unit: 'Programlama' },
+                    { q: 'USB bellekler hangi tür bellektir?', o: ['A) RAM', 'B) ROM', 'C) Flash Bellek', 'D) Cache'], a: 'C', unit: 'Bilişim Temelleri' },
+                    { q: 'Dijital vatandaşlık ne anlama gelir?', o: ['A) Sadece internette olmak', 'B) Dijital ortamlarda sorumlu davranmak', 'C) Sadece oyun oynamak', 'D) Bilgisayar kullanmak'], a: 'B', unit: 'Etik Güvenlik' },
+                    { q: 'İnternette güvenli alışveriş için sitelerin adresinde ne olmalıdır?', o: ['A) www', 'B) com', 'C) https', 'D) html'], a: 'C', unit: 'Ağlar İletişim' },
+                    { q: 'Siri ve Alexa hangi teknolojiye örnektir?', o: ['A) Donanım', 'B) Yapay Zeka Asistanları', 'C) İşletim Sistemi', 'D) Antivirüs'], a: 'B', unit: 'Yapay Zeka' },
+                    { q: 'Scratch\'te sahneye ne denir?', o: ['A) Block', 'B) Sprite', 'C) Stage', 'D) Script'], a: 'C', unit: 'Programlama' },
+                    { q: 'Bilgisayarın kalıcı hafızasına ne denir?', o: ['A) RAM', 'B) ROM', 'C) Cache', 'D) Register'], a: 'B', unit: 'Bilişim Temelleri' },
+                    { q: 'Ekran kartının temel görevi nedir?', o: ['A) İnternet bağlantısı', 'B) Görüntü işleme', 'C) Ses çıkışı', 'D) Veri saklama'], a: 'B', unit: 'Bilişim Temelleri' },
+                    { q: 'Bluetooth hangi tür bir bağlantıdır?', o: ['A) Kablolu', 'B) Kablosuz', 'C) Optik', 'D) Manyetik'], a: 'B', unit: 'Ağlar İletişim' },
+                    { q: 'Scratch\'te sprite hareketini durdurmak için hangi blok kullanılır?', o: ['A) Move', 'B) Stop', 'C) Pause', 'D) End'], a: 'B', unit: 'Programlama' },
+                    { q: 'Kişisel verilerin korunması neden önemlidir?', o: ['A) Hız için', 'B) Gizlilik için', 'C) Boyut için', 'D) Renk için'], a: 'B', unit: 'Etik Güvenlik' },
+                    { q: 'Wi-Fi bağlantısı için şifre kullanmanın amacı nedir?', o: ['A) Hız artışı', 'B) Güvenlik', 'C) Görsellik', 'D) Ses kalitesi'], a: 'B', unit: 'Ağlar İletişim' },
+                    { q: 'Scratch\'te arka plan değiştirmek için hangi kategori kullanılır?', o: ['A) Motion', 'B) Looks', 'C) Sound', 'D) Events'], a: 'B', unit: 'Programlama' },
+                    { q: 'Tarayıcı çerezleri (cookies) ne işe yarar?', o: ['A) Virüs bulaştırır', 'B) Kullanıcı bilgilerini saklar', 'C) Bilgisayarı yavaşlatır', 'D) İnterneti hızlandırır'], a: 'B', unit: 'Etik Güvenlik' },
+                    { q: 'Yapay zeka asistanlarına günlük hayattan örnek hangisidir?', o: ['A) Klavye', 'B) Mouse', 'C) Google Asistan', 'D) Monitör'], a: 'C', unit: 'Yapay Zeka' },
+                    { q: 'Dijital okuryazarlık ne demektir?', o: ['A) E-kitap okuma', 'B) Teknolojileri etkili kullanabilme', 'C) Hızlı yazma', 'D) Oyun oynama'], a: 'B', unit: 'Dijital Ürün' }
+                ],
+                orta: [
+                    { q: 'Cache bellek hangi donanım parçasında bulunur?', o: ['A) Hard Disk', 'B) RAM', 'C) İşlemci', 'D) Anakart'], a: 'C', unit: 'Bilişim Temelleri' },
+                    { q: 'LAN ağı neyi ifade eder?', o: ['A) Yerel Alan Ağı', 'B) Geniş Alan Ağı', 'C) Kablosuz Ağ', 'D) İnternet Ağı'], a: 'A', unit: 'Ağlar İletişim' },
+                    { q: 'Firewall (Güvenlik Duvarı) ne işe yarar?', o: ['A) Virüs temizler', 'B) Ağ trafiğini kontrol eder', 'C) Dosyaları şifreler', 'D) Bilgisayarı hızlandırır'], a: 'B', unit: 'Etik Güvenlik' },
+                    { q: 'Makine öğrenmesi hangi alanla ilgilidir?', o: ['A) Donanım', 'B) Yapay Zeka', 'C) Ağ Güvenliği', 'D) Ofis Programları'], a: 'B', unit: 'Yapay Zeka' },
+                    { q: 'Algoritma nedir?', o: ['A) Programlama dili', 'B) Problem çözme adımları', 'C) Bilgisayar oyunu', 'D) Donanım parçası'], a: 'B', unit: 'Programlama' },
+                    { q: 'HTTP protokolü ne için kullanılır?', o: ['A) E-posta gönderme', 'B) Web sayfalarını görüntüleme', 'C) Dosya aktarımı', 'D) Uzaktan bağlantı'], a: 'B', unit: 'Ağlar İletişim' },
+                    { q: 'SSD ve HDD arasındaki temel fark nedir?', o: ['A) SSD daha hızlıdır', 'B) HDD daha hızlıdır', 'C) Fark yoktur', 'D) SSD daha büyüktür'], a: 'A', unit: 'Bilişim Temelleri' },
+                    { q: 'İki faktörlü kimlik doğrulama neden önemlidir?', o: ['A) Daha hızlı giriş sağlar', 'B) Ekstra güvenlik katmanı ekler', 'C) Şifre gerektirmez', 'D) Ücretsizdir'], a: 'B', unit: 'Etik Güvenlik' },
+                    { q: 'Scratch\'te "eğer...ise" bloğu ne tür bir yapıdır?', o: ['A) Döngü', 'B) Koşul', 'C) Değişken', 'D) Operatör'], a: 'B', unit: 'Programlama' },
+                    { q: 'Bulut bilişim ne demektir?', o: ['A) Hava durumu tahmini', 'B) İnternet üzerinden veri depolama', 'C) Kablosuz bağlantı', 'D) Yeni işletim sistemi'], a: 'B', unit: 'Dijital Ürün' },
+                    { q: 'DNS sistemi ne işe yarar?', o: ['A) Antivirüs taraması', 'B) Domain adlarını IP\'ye çevirir', 'C) Dosya sıkıştırma', 'D) E-posta gönderme'], a: 'B', unit: 'Ağlar İletişim' },
+                    { q: 'Malware genel olarak neyi ifade eder?', o: ['A) Yararlı yazılım', 'B) Zararlı yazılım', 'C) İşletim sistemi', 'D) Oyun programı'], a: 'B', unit: 'Etik Güvenlik' },
+                    { q: 'Yapay sinir ağları neyi taklit eder?', o: ['A) Bilgisayar ağlarını', 'B) İnsan beynini', 'C) İnternet bağlantısını', 'D) Dosya sistemini'], a: 'B', unit: 'Yapay Zeka' },
+                    { q: 'Scratch\'te değişken ne için kullanılır?', o: ['A) Müzik çalmak', 'B) Veri saklamak', 'C) Renk değiştirmek', 'D) Hareket ettirmek'], a: 'B', unit: 'Programlama' },
+                    { q: 'Pixel nedir?', o: ['A) Ekran çözünürlüğü birimi', 'B) Ses dosyası formatı', 'C) Ağ protokolü', 'D) Programlama dili'], a: 'A', unit: 'Dijital Ürün' },
+                    { q: 'BIOS ne işe yarar?', o: ['A) Oyun oynamak', 'B) Donanımı başlatmak', 'C) İnternet bağlantısı', 'D) Yazı yazmak'], a: 'B', unit: 'Bilişim Temelleri' },
+                    { q: 'VPN kullanımının amacı nedir?', o: ['A) Daha hızlı internet', 'B) Güvenli ve gizli bağlantı', 'C) Virüs temizleme', 'D) Oyun oynamak'], a: 'B', unit: 'Etik Güvenlik' },
+                    { q: 'Scratch\'te liste (array) ne için kullanılır?', o: ['A) Renk değiştirmek', 'B) Birden fazla değer saklamak', 'C) Ses çalmak', 'D) Sahne değiştirmek'], a: 'B', unit: 'Programlama' },
+                    { q: 'Görüntü tanıma teknolojisi hangi alana aittir?', o: ['A) Ağ yönetimi', 'B) Yapay Zeka', 'C) Donanım', 'D) İşletim sistemi'], a: 'B', unit: 'Yapay Zeka' },
+                    { q: 'FTP protokolü ne için kullanılır?', o: ['A) E-posta', 'B) Web sayfası', 'C) Dosya aktarımı', 'D) Video izleme'], a: 'C', unit: 'Ağlar İletişim' },
+                    { q: 'Overclock ne anlama gelir?', o: ['A) Saati geri alma', 'B) Donanımı normalin üzerinde çalıştırma', 'C) Bilgisayarı kapatma', 'D) Virüs tarama'], a: 'B', unit: 'Bilişim Temelleri' },
+                    { q: 'NAT (Network Address Translation) ne işe yarar?', o: ['A) Virüs engelleme', 'B) IP adresi dönüşümü', 'C) Dosya paylaşımı', 'D) E-posta gönderme'], a: 'B', unit: 'Ağlar İletişim' },
+                    { q: 'Hash fonksiyonlarının güvenlik alanında kullanım amacı nedir?', o: ['A) Dosya sıkıştırma', 'B) Veri bütünlüğü kontrolü', 'C) Hız artırma', 'D) Renk kodlama'], a: 'B', unit: 'Etik Güvenlik' },
+                    { q: 'Doğal dil işleme (NLP) hangi alanda kullanılır?', o: ['A) Grafik tasarım', 'B) Metin ve dil analizi', 'C) Ses kayıt', 'D) Video düzenleme'], a: 'B', unit: 'Yapay Zeka' },
+                    { q: 'Scratch\'te "clone" özelliği ne işe yarar?', o: ['A) Dosya kopyalama', 'B) Sprite kopyası oluşturma', 'C) Kod silme', 'D) Renk değiştirme'], a: 'B', unit: 'Programlama' },
+                    { q: 'Bandwidth (bant genişliği) neyi belirtir?', o: ['A) Ekran boyutu', 'B) Veri transfer hızı', 'C) RAM miktarı', 'D) İşlemci hızı'], a: 'B', unit: 'Ağlar İletişim' },
+                    { q: 'Dual core işlemcide kaç çekirdek vardır?', o: ['A) 1', 'B) 2', 'C) 4', 'D) 8'], a: 'B', unit: 'Bilişim Temelleri' },
+                    { q: 'Cookies silmenin bir nedeni nedir?', o: ['A) Gizliliği korumak', 'B) Bilgisayarı hızlandırmak', 'C) Renk değiştirmek', 'D) Ses artırmak'], a: 'A', unit: 'Etik Güvenlik' },
+                    { q: 'Chatbot hangi teknolojiye dayanır?', o: ['A) Donanım', 'B) Yapay Zeka ve NLP', 'C) Sadece veritabanı', 'D) İşletim sistemi'], a: 'B', unit: 'Yapay Zeka' },
+                    { q: 'Scratch\'te "broadcast" mesajı ne için kullanılır?', o: ['A) Internet yayını', 'B) Sprite\'lar arası iletişim', 'C) Ses çalma', 'D) Ekran büyütme'], a: 'B', unit: 'Programlama' }
+                ],
+                zor: [
+                    { q: 'Von Neumann mimarisi hangi kavramı tanımlar?', o: ['A) Ağ yapısı', 'B) Bilgisayar mimarisi', 'C) Güvenlik protokolü', 'D) Programlama paradigması'], a: 'B', unit: 'Bilişim Temelleri' },
+                    { q: 'OSI modelinde kaç katman vardır?', o: ['A) 5', 'B) 6', 'C) 7', 'D) 8'], a: 'C', unit: 'Ağlar İletişim' },
+                    { q: 'End-to-end şifreleme ne anlama gelir?', o: ['A) Sadece gönderici şifreler', 'B) Sadece alıcı şifreler', 'C) Uçtan uca şifreleme', 'D) Sunucu şifreler'], a: 'C', unit: 'Etik Güvenlik' },
+                    { q: 'Derin öğrenme ve makine öğrenmesi arasındaki fark nedir?', o: ['A) Derin öğrenme daha fazla katman kullanır', 'B) Hiçbir fark yok', 'C) Makine öğrenmesi daha yenidir', 'D) Derin öğrenme donanım gerektirmez'], a: 'A', unit: 'Yapay Zeka' },
+                    { q: 'Recursive (özyinelemeli) fonksiyon ne demektir?', o: ['A) Hiç çalışmayan fonksiyon', 'B) Kendini çağıran fonksiyon', 'C) En hızlı fonksiyon', 'D) Döngü içermeyen fonksiyon'], a: 'B', unit: 'Programlama' },
+                    { q: 'Harvard mimarisi ve Von Neumann mimarisi arasındaki temel fark nedir?', o: ['A) Harvard\'da veri ve komut ayrı belleklerde', 'B) Fark yok', 'C) Harvard daha yavaş', 'D) Von Neumann daha pahalı'], a: 'A', unit: 'Bilişim Temelleri' },
+                    { q: 'TCP ve UDP protokolleri arasındaki temel fark nedir?', o: ['A) TCP güvenilirdir, UDP değil', 'B) UDP güvenilirdir, TCP değil', 'C) Hiçbir fark yok', 'D) Sadece hız farkı var'], a: 'A', unit: 'Ağlar İletişim' },
+                    { q: 'SQL Injection saldırısı nasıl gerçekleşir?', o: ['A) E-posta ile', 'B) Veritabanı sorgularına zararlı kod enjekte ederek', 'C) Fiziksel erişim ile', 'D) Sadece şifre kırarak'], a: 'B', unit: 'Etik Güvenlik' },
+                    { q: 'Backpropagation algoritması nerede kullanılır?', o: ['A) Ağ yönetiminde', 'B) Yapay sinir ağlarının eğitiminde', 'C) Dosya sıkıştırmada', 'D) İşletim sisteminde'], a: 'B', unit: 'Yapay Zeka' },
+                    { q: 'Bubble Sort algoritmasının en kötü durum zaman karmaşıklığı nedir?', o: ['A) O(n)', 'B) O(log n)', 'C) O(n²)', 'D) O(n log n)'], a: 'C', unit: 'Programlama' },
+                    { q: 'IPv6 adres uzunluğu kaç bittir?', o: ['A) 32 bit', 'B) 64 bit', 'C) 128 bit', 'D) 256 bit'], a: 'C', unit: 'Ağlar İletişim' },
+                    { q: 'RAID teknolojisinin amacı nedir?', o: ['A) Daha hızlı işlemci', 'B) Veri güvenliği ve performans artırma', 'C) Daha fazla RAM', 'D) Ağ hızlandırma'], a: 'B', unit: 'Bilişim Temelleri' },
+                    { q: 'Asymmetric encryption\'da hangi kavram kullanılır?', o: ['A) Tek anahtar', 'B) Public ve Private key çifti', 'C) Şifresiz sistem', 'D) Sadece hash'], a: 'B', unit: 'Etik Güvenlik' },
+                    { q: 'Turing Testi neyi ölçer?', o: ['A) Bilgisayar hızı', 'B) Makinenin insan gibi düşünme yeteneği', 'C) Ağ bant genişliği', 'D) Bellek kapasitesi'], a: 'B', unit: 'Yapay Zeka' },
+                    { q: 'Binary Search algoritması hangi durumda kullanılabilir?', o: ['A) Sıralanmamış dizi', 'B) Sıralanmış dizi', 'C) Her durumda', 'D) Hiçbir durumda'], a: 'B', unit: 'Programlama' },
+                    { q: 'Parity bit ne için kullanılır?', o: ['A) Veri sıkıştırma', 'B) Hata tespiti', 'C) Şifreleme', 'D) Sıralama'], a: 'B', unit: 'Bilişim Temelleri' },
+                    { q: 'SSL/TLS hangi OSI katmanında çalışır?', o: ['A) Physical', 'B) Data Link', 'C) Transport', 'D) Presentation'], a: 'D', unit: 'Ağlar İletişim' },
+                    { q: 'Zero Knowledge Proof nedir?', o: ['A) Hiçbir bilgi vermeden ispat etme', 'B) Sıfır güvenlik', 'C) Yeni bir donanım', 'D) Ağ protokolü'], a: 'A', unit: 'Etik Güvenlik' },
+                    { q: 'Convolutional Neural Networks (CNN) hangi alanda kullanılır?', o: ['A) Metin işleme', 'B) Görüntü işleme', 'C) Ses işleme', 'D) Hiçbiri'], a: 'B', unit: 'Yapay Zeka' },
+                    { q: 'Dijkstra algoritması ne için kullanılır?', o: ['A) Sıralama', 'B) En kısa yol bulma', 'C) Arama', 'D) Şifreleme'], a: 'B', unit: 'Programlama' },
+                    { q: 'Cache coherence problemi ne zaman ortaya çıkar?', o: ['A) Tek çekirdekli sistemlerde', 'B) Çok çekirdekli sistemlerde', 'C) Hiçbir zaman', 'D) Sadece sunucularda'], a: 'B', unit: 'Bilişim Temelleri' },
+                    { q: 'BGP (Border Gateway Protocol) ne için kullanılır?', o: ['A) E-posta', 'B) Internet yönlendirme', 'C) Dosya paylaşımı', 'D) Şifreleme'], a: 'B', unit: 'Ağlar İletişim' },
+                    { q: 'Rainbow table saldırısı hangi güvenlik mekanizmasını hedefler?', o: ['A) Firewall', 'B) Hash şifreler', 'C) Antivirüs', 'D) Fiziksel güvenlik'], a: 'B', unit: 'Etik Güvenlik' },
+                    { q: 'Transfer learning yapay zekada ne anlama gelir?', o: ['A) Dosya aktarımı', 'B) Öğrenilmiş bilgiyi yeni göreve aktarma', 'C) Veri transferi', 'D) Model silme'], a: 'B', unit: 'Yapay Zeka' },
+                    { q: 'Merge Sort algoritmasının zaman karmaşıklığı nedir?', o: ['A) O(n)', 'B) O(n²)', 'C) O(n log n)', 'D) O(log n)'], a: 'C', unit: 'Programlama' },
+                    { q: 'Virtual Memory (Sanal Bellek) ne sağlar?', o: ['A) Daha fazla RAM simülasyonu', 'B) Daha hızlı işlemci', 'C) Daha fazla disk', 'D) Daha iyi grafik'], a: 'A', unit: 'Bilişim Temelleri' },
+                    { q: 'DNS spoofing saldırısı nedir?', o: ['A) Sahte DNS yanıtları verme', 'B) E-posta spam', 'C) Virüs gönderme', 'D) Fiziksel saldırı'], a: 'A', unit: 'Ağlar İletişim' },
+                    { q: 'Digital signature nasıl doğrulanır?', o: ['A) Parola ile', 'B) Public key ile', 'C) Sadece gözle', 'D) Antivirüs ile'], a: 'B', unit: 'Etik Güvenlik' },
+                    { q: 'Gradient descent algoritması ne için kullanılır?', o: ['A) Grafik çizme', 'B) Model optimizasyonu', 'C) Veri silme', 'D) Dosya sıkıştırma'], a: 'B', unit: 'Yapay Zeka' },
+                    { q: 'Stack overflow hatası ne zaman oluşur?', o: ['A) RAM dolduğunda', 'B) Çağrı yığını taştığında', 'C) Disk dolduğunda', 'D) Internet kesildiğinde'], a: 'B', unit: 'Programlama' }
+                ]
+            },
+            6: {
+                kolay: [
+                    { q: 'Dosya uzantısı ".xlsx" hangi programa aittir?', o: ['A) Word', 'B) PowerPoint', 'C) Excel', 'D) Paint'], a: 'C', unit: 'Ürün Oluşturma' },
+                    { q: 'KVKK ne anlama gelir?', o: ['A) Kişisel Verileri Koruma Kanunu', 'B) Kamu Veri Kayıt Kurumu', 'C) Kontrol Ve Kayıt Kanunu', 'D) Koruma Vizyon Kanunu'], a: 'A', unit: 'Etik Güvenlik' },
+                    { q: 'HTML ne için kullanılır?', o: ['A) Veritabanı yönetimi', 'B) Web sayfası oluşturma', 'C) Fotoğraf düzenleme', 'D) Virüs temizleme'], a: 'B', unit: 'Ürün Oluşturma' },
+                    { q: 'Python\'da yorum satırı hangi karakterle başlar?', o: ['A) //', 'B) #', 'C) /*', 'D) --'], a: 'B', unit: 'Problem Çözme' },
+                    { q: 'Bulut depolama hizmetine örnek hangisidir?', o: ['A) Windows', 'B) Google Drive', 'C) Paint', 'D) Calculator'], a: 'B', unit: 'İletişim İşbirliği' },
+                    { q: 'Video düzenleme programına örnek hangisidir?', o: ['A) Notepad', 'B) Excel', 'C) Adobe Premiere', 'D) PowerPoint'], a: 'C', unit: 'Ürün Oluşturma' },
+                    { q: 'Akış diyagramında karar bloğu hangi şekildir?', o: ['A) Dikdörtgen', 'B) Baklava', 'C) Daire', 'D) Üçgen'], a: 'B', unit: 'Problem Çözme' },
+                    { q: 'Sosyal mühendislik saldırısı neyi hedefler?', o: ['A) Donanım', 'B) İnsan zayıflığı', 'C) Ağ kablosu', 'D) Yazıcı'], a: 'B', unit: 'Etik Güvenlik' },
+                    { q: 'Python\'da print() fonksiyonu ne işe yarar?', o: ['A) Dosya okur', 'B) Ekrana yazdırır', 'C) Hesaplama yapar', 'D) Değişken oluşturur'], a: 'B', unit: 'Problem Çözme' },
+                    { q: 'Dijital ayak izi nedir?', o: ['A) Parmak izi tarayıcı', 'B) İnternetteki izlerimiz', 'C) Ayak fotoğrafı', 'D) Yeni teknoloji'], a: 'B', unit: 'Etik Güvenlik' },
+                    { q: 'Excel\'de hücre adresi nasıl gösterilir?', o: ['A) 1A', 'B) A1', 'C) A-1', 'D) 1-A'], a: 'B', unit: 'Bilişim Teknolojileri' },
+                    { q: 'Google Docs hangi tür araçtır?', o: ['A) İşbirlikli döküman', 'B) Antivirüs', 'C) Oyun', 'D) İşletim sistemi'], a: 'A', unit: 'İletişim İşbirliği' },
+                    { q: 'Hangi dosya formatı video içindir?', o: ['A) .docx', 'B) .xlsx', 'C) .mp4', 'D) .txt'], a: 'C', unit: 'Ürün Oluşturma' },
+                    { q: 'Algoritma ne demektir?', o: ['A) Bilgisayar virüsü', 'B) Problem çözme adımları', 'C) Oyun', 'D) Web sitesi'], a: 'B', unit: 'Problem Çözme' },
+                    { q: 'SSL sertifikası ne sağlar?', o: ['A) Hızlı internet', 'B) Güvenli bağlantı', 'C) Ücretsiz hosting', 'D) Daha fazla RAM'], a: 'B', unit: 'Etik Güvenlik' },
+                    { q: 'PowerPoint hangi amaçla kullanılır?', o: ['A) Müzik dinlemek', 'B) Sunum hazırlamak', 'C) Virüs temizlemek', 'D) İnternet taramak'], a: 'B', unit: 'Ürün Oluşturma' },
+                    { q: 'Python\'da değişken tanımlamak için hangi anahtar kelime kullanılır?', o: ['A) var', 'B) let', 'C) Gerekli değil, direk atama yapılır', 'D) define'], a: 'C', unit: 'Problem Çözme' },
+                    { q: 'Siber zorbalık nedir?', o: ['A) Bilgisayar oyunu', 'B) Dijital ortamda taciz ve zorbalık', 'C) Antivirüs', 'D) Programlama dili'], a: 'B', unit: 'Etik Güvenlik' },
+                    { q: 'Zoom hangi tür uygulamadır?', o: ['A) Video oyun', 'B) Video konferans', 'C) Fotoğraf editörü', 'D) Antivirüs'], a: 'B', unit: 'İletişim İşbirliği' },
+                    { q: 'Dosya uzantısı ".pdf" neyin kısaltmasıdır?', o: ['A) Public Data File', 'B) Portable Document Format', 'C) Private Digital File', 'D) Print Data Format'], a: 'B', unit: 'Bilişim Teknolojileri' },
+                    { q: 'Tablet ve akıllı telefon hangi cihaz kategorisindedir?', o: ['A) Masaüstü', 'B) Mobil', 'C) Sunucu', 'D) Gömülü sistem'], a: 'B', unit: 'Bilişim Teknolojileri' },
+                    { q: 'QR kod ne işe yarar?', o: ['A) Müzik çalmak', 'B) Bilgi depolamak ve okutmak', 'C) Resim çekmek', 'D) Video oynatmak'], a: 'B', unit: 'İletişim İşbirliği' },
+                    { q: 'Spam e-posta nedir?', o: ['A) Önemli e-posta', 'B) İstenmeyen toplu e-posta', 'C) Güvenli e-posta', 'D) Resimli e-posta'], a: 'B', unit: 'Etik Güvenlik' },
+                    { q: 'Scratch\'te "wait" bloğu ne işe yarar?', o: ['A) Programı durdurur', 'B) Belirli süre bekletir', 'C) Sprite siler', 'D) Renk değiştirir'], a: 'B', unit: 'Problem Çözme' },
+                    { q: 'Open source (açık kaynak) yazılım ne demektir?', o: ['A) Ücretsiz oyun', 'B) Kaynak kodu açık yazılım', 'C) Virüslü program', 'D) Sadece Windows'], a: 'B', unit: 'Ürün Oluşturma' },
+                    { q: 'YouTube hangi tür bir platformdur?', o: ['A) E-ticaret', 'B) Video paylaşım', 'C) Oyun', 'D) Ofis programı'], a: 'B', unit: 'İletişim İşbirliği' },
+                    { q: 'Veri yedekleme neden önemlidir?', o: ['A) Hız için', 'B) Veri kaybını önlemek için', 'C) Görsel için', 'D) Ses için'], a: 'B', unit: 'Bilişim Teknolojileri' },
+                    { q: 'Email adresi kaç @ işareti içerir?', o: ['A) 0', 'B) 1', 'C) 2', 'D) 3'], a: 'B', unit: 'İletişim İşbirliği' },
+                    { q: 'Dijital sertifika ne sağlar?', o: ['A) Hız', 'B) Kimlik doğrulama', 'C) Renk', 'D) Ses'], a: 'B', unit: 'Etik Güvenlik' },
+                    { q: 'Scratch\'te "costume" ne demektir?', o: ['A) Arka plan', 'B) Sprite\'ın görünümü', 'C) Ses', 'D) Değişken'], a: 'B', unit: 'Problem Çözme' }
+                ],
+                orta: [
+                    { q: 'Excel\'de =SUM() fonksiyonu ne işe yarar?', o: ['A) Ortalama alır', 'B) Toplar', 'C) Çarpar', 'D) Sayar'], a: 'B', unit: 'Bilişim Teknolojileri' },
+                    { q: 'Phishing e-postalarını nasıl ayırt ederiz?', o: ['A) Şüpheli linkler', 'B) Acil dil', 'C) Sahte gönderici', 'D) Hepsi'], a: 'D', unit: 'Etik Güvenlik' },
+                    { q: 'HTML\'de başlık etiketi hangisidir?', o: ['A) <title>', 'B) <h1>', 'C) <head>', 'D) <header>'], a: 'B', unit: 'Ürün Oluşturma' },
+                    { q: 'Python\'da döngü için hangi anahtar kelime kullanılır?', o: ['A) loop', 'B) repeat', 'C) for', 'D) cycle'], a: 'C', unit: 'Problem Çözme' },
+                    { q: 'Version control (sürüm kontrol) ne işe yarar?', o: ['A) Virüs temizler', 'B) Kod değişikliklerini takip eder', 'C) Bilgisayarı hızlandırır', 'D) Dosya sıkıştırır'], a: 'B', unit: 'İletişim İşbirliği' },
+                    { q: 'Raster ve vektör grafik arasındaki fark nedir?', o: ['A) Raster pixel tabanlı', 'B) Vektör pixel tabanlı', 'C) Fark yok', 'D) Raster 3 boyutlu'], a: 'A', unit: 'Ürün Oluşturma' },
+                    { q: 'DDoS saldırısı ne yapar?', o: ['A) Virüs bulaştırır', 'B) Sunucuyu trafikle yavaşlatır', 'C) Dosyaları şifreler', 'D) Hesap çalar'], a: 'B', unit: 'Etik Güvenlik' },
+                    { q: 'Python\'da veri tipi kontrolü için hangi fonksiyon kullanılır?', o: ['A) check()', 'B) typeof()', 'C) type()', 'D) datatype()'], a: 'C', unit: 'Problem Çözme' },
+                    { q: 'Responsive tasarım ne demektir?', o: ['A) Hızlı açılan site', 'B) Mobil uyumlu tasarım', 'C) Renkli tasarım', 'D) Animasyonlu tasarım'], a: 'B', unit: 'Ürün Oluşturma' },
+                    { q: 'Git hangi alanda kullanılır?', o: ['A) Video düzenleme', 'B) Sürüm kontrolü', 'C) Antivirüs', 'D) Ses kayıt'], a: 'B', unit: 'İletişim İşbirliği' },
+                    { q: 'Excel\'de grafikte trendline ne gösterir?', o: ['A) Renk değişimi', 'B) Eğilim çizgisi', 'C) Veri sayısı', 'D) Tarih'], a: 'B', unit: 'Bilişim Teknolojileri' },
+                    { q: 'Ransomware ne tür bir tehdittir?', o: ['A) Spam e-posta', 'B) Fidye yazılımı', 'C) Oyun', 'D) İşletim sistemi'], a: 'B', unit: 'Etik Güvenlik' },
+                    { q: 'CSS ne için kullanılır?', o: ['A) Programlama', 'B) Stil verme', 'C) Veritabanı', 'D) Ağ yönetimi'], a: 'B', unit: 'Ürün Oluşturma' },
+                    { q: 'Debugging ne demektir?', o: ['A) Hata ayıklama', 'B) Program yazma', 'C) Test etme', 'D) Yayınlama'], a: 'A', unit: 'Problem Çözme' },
+                    { q: 'API nedir?', o: ['A) Uygulama Programlama Arayüzü', 'B) Antivirüs Programı', 'C) Ağ Protokolü', 'D) İşletim Sistemi'], a: 'A', unit: 'İletişim İşbirliği' },
+                    { q: 'Excel\'de =AVERAGE() fonksiyonu ne yapar?', o: ['A) Toplar', 'B) Ortalama alır', 'C) Sayar', 'D) Böler'], a: 'B', unit: 'Bilişim Teknolojileri' },
+                    { q: 'Two-factor authentication (2FA) neden önemlidir?', o: ['A) Hızlı giriş', 'B) Ekstra güvenlik katmanı', 'C) Ücretsiz', 'D) Kolay kullanım'], a: 'B', unit: 'Etik Güvenlik' },
+                    { q: 'JavaScript ne tür bir dildir?', o: ['A) Derlenen dil', 'B) Script dili', 'C) Donanım dili', 'D) İşletim sistemi'], a: 'B', unit: 'Ürün Oluşturma' },
+                    { q: 'Python\'da liste (list) tanımlamak için hangi parantez kullanılır?', o: ['A) ()', 'B) {}', 'C) []', 'D) <>'], a: 'C', unit: 'Problem Çözme' },
+                    { q: 'Trello hangi tür bir araçtır?', o: ['A) Antivirüs', 'B) Proje yönetimi', 'C) Oyun', 'D) Video editörü'], a: 'B', unit: 'İletişim İşbirliği' },
+                    { q: 'Excel\'de =MAX() fonksiyonu ne yapar?', o: ['A) En küçük değer', 'B) En büyük değer', 'C) Ortalama', 'D) Toplam'], a: 'B', unit: 'Bilişim Teknolojileri' },
+                    { q: 'Keylogger ne tür bir tehdit türüdür?', o: ['A) Yararlı program', 'B) Tuş kayıt eden zararlı yazılım', 'C) Oyun', 'D) İşletim sistemi'], a: 'B', unit: 'Etik Güvenlik' },
+                    { q: 'CSS\'de class selector nasıl gösterilir?', o: ['A) #', 'B) .', 'C) @', 'D) $'], a: 'B', unit: 'Ürün Oluşturma' },
+                    { q: 'Python\'da "if-elif-else" yapısı ne tür kontrol yapısıdır?', o: ['A) Döngü', 'B) Koşul', 'C) Fonksiyon', 'D) Değişken'], a: 'B', unit: 'Problem Çözme' },
+                    { q: 'Slack hangi amaçla kullanılır?', o: ['A) Video düzenleme', 'B) Takım iletişimi', 'C) Antivirüs', 'D) Oyun'], a: 'B', unit: 'İletişim İşbirliği' },
+                    { q: 'Excel\'de hücre birleştirme işlemine ne denir?', o: ['A) Join', 'B) Merge', 'C) Combine', 'D) Unite'], a: 'B', unit: 'Bilişim Teknolojileri' },
+                    { q: 'SSL sertifikasının göstergesi tarayıcıda nedir?', o: ['A) Kırmızı kilit', 'B) Yeşil kilit veya https', 'C) Sarı yıldız', 'D) Mavi daire'], a: 'B', unit: 'Etik Güvenlik' },
+                    { q: 'JSON ne için kullanılır?', o: ['A) Görsel tasarım', 'B) Veri formatı', 'C) Ses dosyası', 'D) Video editörü'], a: 'B', unit: 'Ürün Oluşturma' },
+                    { q: 'Python\'da "def" anahtar kelimesi ne için kullanılır?', o: ['A) Değişken', 'B) Fonksiyon tanımlama', 'C) Döngü', 'D) Koşul'], a: 'B', unit: 'Problem Çözme' },
+                    { q: 'GitHub ne tür bir platformdur?', o: ['A) Video paylaşım', 'B) Kod paylaşım ve sürüm kontrol', 'C) Sosyal medya', 'D) E-ticaret'], a: 'B', unit: 'İletişim İşbirliği' }
+                ],
+                zor: [
+                    { q: 'Normalizasyon veritabanında ne için yapılır?', o: ['A) Hızlandırma', 'B) Veri tekrarını önleme', 'C) Yedekleme', 'D) Şifreleme'], a: 'B', unit: 'Bilişim Teknolojileri' },
+                    { q: 'Zero-day açığı ne demektir?', o: ['A) Henüz keşfedilmemiş güvenlik açığı', 'B) Eski açık', 'C) Düzeltilmiş açık', 'D) Önemsiz açık'], a: 'A', unit: 'Etik Güvenlik' },
+                    { q: 'Big O notasyonu ne için kullanılır?', o: ['A) Kod güzelliği', 'B) Algoritma karmaşıklığı', 'C) Güvenlik seviyesi', 'D) Dosya boyutu'], a: 'B', unit: 'Problem Çözme' },
+                    { q: 'MVC pattern\'de "M" neyi temsil eder?', o: ['A) Main', 'B) Model', 'C) Method', 'D) Memory'], a: 'B', unit: 'Ürün Oluşturma' },
+                    { q: 'WebSocket TCP\'den nasıl farklıdır?', o: ['A) Çift yönlü iletişim sağlar', 'B) Daha yavaştır', 'C) Fark yoktur', 'D) Sadece video için'], a: 'A', unit: 'İletişim İşbirliği' },
+                    { q: 'ACID özellikleri neyle ilgilidir?', o: ['A) Ağ protokolleri', 'B) Veritabanı işlemleri', 'C) Güvenlik', 'D) Donanım'], a: 'B', unit: 'Bilişim Teknolojileri' },
+                    { q: 'Blockchain teknolojisinin temel özelliği nedir?', o: ['A) Merkezi yapı', 'B) Dağıtık ve değişmez kayıt', 'C) Hızlı işlem', 'D) Ücretsiz'], a: 'B', unit: 'Etik Güvenlik' },
+                    { q: 'Quick Sort algoritmasının ortalama zaman karmaşıklığı nedir?', o: ['A) O(n)', 'B) O(n²)', 'C) O(n log n)', 'D) O(log n)'], a: 'C', unit: 'Problem Çözme' },
+                    { q: 'RESTful API\'de HTTP metodlarından PUT ne için kullanılır?', o: ['A) Veri silme', 'B) Veri güncelleme', 'C) Veri okuma', 'D) Veri oluşturma'], a: 'B', unit: 'Ürün Oluşturma' },
+                    { q: 'Microservices mimarisi monolitik mimariden nasıl farklıdır?', o: ['A) Bağımsız servisler', 'B) Daha yavaş', 'C) Daha basit', 'D) Fark yok'], a: 'A', unit: 'İletişim İşbirliği' },
+                    { q: 'Foreign Key (Yabancı Anahtar) ne işe yarar?', o: ['A) Hızlandırma', 'B) Tablolar arası ilişki kurma', 'C) Şifreleme', 'D) Yedekleme'], a: 'B', unit: 'Bilişim Teknolojileri' },
+                    { q: 'Man-in-the-Middle (MITM) saldırısı nasıl çalışır?', o: ['A) İki taraf arasına girerek veri dinleme', 'B) Virüs gönderme', 'C) Sunucu kapatma', 'D) Şifre kırma'], a: 'A', unit: 'Etik Güvenlik' },
+                    { q: 'Dynamic Programming ne zaman kullanılır?', o: ['A) Rastgele problemler', 'B) Overlapping subproblems olan durumlarda', 'C) Her zaman', 'D) Hiçbir zaman'], a: 'B', unit: 'Problem Çözme' },
+                    { q: 'Single Page Application (SPA) nedir?', o: ['A) Tek sayfalık site', 'B) Dinamik içerik yükleme ile tek sayfa', 'C) Basit HTML', 'D) PDF döküman'], a: 'B', unit: 'Ürün Oluşturma' },
+                    { q: 'CI/CD pipeline\'ın amacı nedir?', o: ['A) Oyun oynamak', 'B) Otomatik test ve deployment', 'C) Virüs tarama', 'D) Veri yedekleme'], a: 'B', unit: 'İletişim İşbirliği' },
+                    { q: 'NoSQL veritabanları SQL\'den temel farkı nedir?', o: ['A) Schema-less yapı', 'B) Daha yavaş', 'C) Daha pahalı', 'D) Fark yok'], a: 'A', unit: 'Bilişim Teknolojileri' },
+                    { q: 'Cross-Site Scripting (XSS) saldırısı nedir?', o: ['A) Zararlı script enjekte etme', 'B) Ağ kesme', 'C) Dosya silme', 'D) E-posta spam'], a: 'A', unit: 'Etik Güvenlik' },
+                    { q: 'Greedy algoritma ne zaman optimal çözüm vermeyebilir?', o: ['A) Global optimum gerektiğinde', 'B) Her zaman verir', 'C) Hiçbir zaman vermez', 'D) Sadece sıralamada'], a: 'A', unit: 'Problem Çözme' },
+                    { q: 'Progressive Web App (PWA) ne sağlar?', o: ['A) Sadece web', 'B) Web ve native app özellikleri', 'C) Sadece mobil', 'D) Hiçbiri'], a: 'B', unit: 'Ürün Oluşturma' },
+                    { q: 'OAuth 2.0 protokolü ne için kullanılır?', o: ['A) Veri şifreleme', 'B) Yetkilendirme ve kimlik doğrulama', 'C) Dosya aktarımı', 'D) E-posta'], a: 'B', unit: 'İletişim İşbirliği' },
+                    { q: 'Indexing veritabanında ne sağlar?', o: ['A) Güvenlik', 'B) Hızlı arama', 'C) Yedekleme', 'D) Şifreleme'], a: 'B', unit: 'Bilişim Teknolojileri' },
+                    { q: 'Penetration testing (sızma testi) nedir?', o: ['A) Oyun testi', 'B) Güvenlik açığı testi', 'C) Hız testi', 'D) Renk testi'], a: 'B', unit: 'Etik Güvenlik' },
+                    { q: 'Heap Sort algoritmasının zaman karmaşıklığı nedir?', o: ['A) O(n)', 'B) O(n²)', 'C) O(n log n)', 'D) O(log n)'], a: 'C', unit: 'Problem Çözme' },
+                    { q: 'Virtual DOM React\'te ne sağlar?', o: ['A) Güvenlik', 'B) Performans optimizasyonu', 'C) Veri saklama', 'D) Renk yönetimi'], a: 'B', unit: 'Ürün Oluşturma' },
+                    { q: 'Agile metodolojisinin temel prensibi nedir?', o: ['A) Katı planlama', 'B) Yinelemeli ve esnek geliştirme', 'C) Tek seferde tamamlama', 'D) Dokümantasyon odaklı'], a: 'B', unit: 'İletişim İşbirliği' },
+                    { q: 'Pivot table Excel\'de ne sağlar?', o: ['A) Renk değişimi', 'B) Veri özetleme ve analiz', 'C) Ses ekleme', 'D) Görsel efekt'], a: 'B', unit: 'Bilişim Teknolojileri' },
+                    { q: 'Honeypot siber güvenlikte ne için kullanılır?', o: ['A) Hız artırma', 'B) Saldırganları tuzağa düşürme', 'C) Veri saklama', 'D) Dosya paylaşımı'], a: 'B', unit: 'Etik Güvenlik' },
+                    { q: 'Binary Search Tree\'de arama karmaşıklığı ideal durumda nedir?', o: ['A) O(n)', 'B) O(log n)', 'C) O(n²)', 'D) O(1)'], a: 'B', unit: 'Problem Çözme' },
+                    { q: 'Webpack ne tür bir araçtır?', o: ['A) Antivirüs', 'B) Module bundler', 'C) Veritabanı', 'D) Oyun motoru'], a: 'B', unit: 'Ürün Oluşturma' },
+                    { q: 'DevOps kültürünün amacı nedir?', o: ['A) Sadece geliştirme', 'B) Geliştirme ve operasyonun birleşimi', 'C) Sadece test', 'D) Sadece tasarım'], a: 'B', unit: 'İletişim İşbirliği' }
+                ]
+            }
+        };
+
+        function updateUnits() {
+            currentGrade = parseInt(document.getElementById('gradeSelect').value);
+            const unitList = units[currentGrade];
+            const container = document.getElementById('unitCheckboxes');
+            container.innerHTML = '';
+            selectedUnits = [];
+
+            unitList.forEach((unit, index) => {
+                container.innerHTML += `
+                    <label class="checkbox-label">
+                        <input type="checkbox" value="${unit}" onchange="toggleUnit('${unit}')" checked>
+                        <span>${unit}</span>
+                    </label>
+                `;
+                selectedUnits.push(unit);
+            });
+
+            updateQuestionPool();
+        }
+
+        function toggleUnit(unit) {
+            if (selectedUnits.includes(unit)) {
+                selectedUnits = selectedUnits.filter(u => u !== unit);
+            } else {
+                selectedUnits.push(unit);
+            }
+            updateQuestionPool();
+        }
+
+        function selectDifficulty(difficulty) {
+            currentDifficulty = difficulty;
+            document.querySelectorAll('.difficulty-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            updateQuestionPool();
+        }
+
+        function changeCount(delta) {
+            questionCountValue = Math.max(5, Math.min(50, questionCountValue + delta));
+            document.getElementById('questionCount').textContent = questionCountValue;
+            document.getElementById('selectedCount').textContent = questionCountValue;
+        }
+
+        function updateQuestionPool() {
+            const pool = questionBank[currentGrade][currentDifficulty].filter(q =>
+                selectedUnits.includes(q.unit)
+            );
+            document.getElementById('totalQuestions').textContent = pool.length;
+        }
+
+        function generateTest() {
+            const testTitle = document.getElementById('testTitle').value || 'Bilişim Teknolojileri Yazılı Sınavı';
+            const schoolName = document.getElementById('schoolName').value;
+
+            const pool = questionBank[currentGrade][currentDifficulty].filter(q =>
+                selectedUnits.includes(q.unit)
+            );
+
+            if (pool.length < questionCountValue) {
+                alert(`⚠️ Seçtiğiniz kriterlere göre yeterli soru yok! Maksimum ${pool.length} soru oluşturulabilir.`);
+                return;
+            }
+
+            // Rastgele soru seç
+            const shuffled = pool.sort(() => 0.5 - Math.random());
+            const selected = shuffled.slice(0, questionCountValue);
+
+            generatedTest = {
+                title: testTitle,
+                school: schoolName,
+                grade: currentGrade,
+                difficulty: currentDifficulty,
+                questions: selected,
+                date: new Date().toLocaleDateString('tr-TR')
+            };
+
+            renderTest();
+        }
+
+        function renderTest() {
+            if (!generatedTest) return;
+
+            const test = generatedTest;
+            let html = `
+                <div class="test-paper" id="testPaper">
+                    <div class="test-header">
+                        ${test.school ? `<div style="font-size: 1.2em; margin-bottom: 10px;">${test.school}</div>` : ''}
+                        <div class="test-title">${test.title}</div>
+                        <div style="font-size: 1.1em; color: #666; margin-top: 10px;">
+                            ${test.grade}. Sınıf - Zorluk: ${test.difficulty.charAt(0).toUpperCase() + test.difficulty.slice(1)}
+                        </div>
+                        <div class="test-info">
+                            <div>📅 Tarih: ${test.date}</div>
+                            <div>📊 Soru Sayısı: ${test.questions.length}</div>
+                            <div>✏️ Adı Soyadı: _________________</div>
+                        </div>
+                    </div>
+
+                    ${test.questions.map((q, index) => `
+                        <div class="question-item">
+                            <div class="question-number">Soru ${index + 1}</div>
+                            <div class="question-text">${q.q}</div>
+                            <div class="options">
+                                ${q.o.map(opt => `<div class="option">${opt}</div>`).join('')}
+                            </div>
+                            <div class="answer-box">
+                                <div class="answer-box-label">✏️ CEVAP:</div>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+
+            if (showAnswers) {
+                html += `
+                    <div class="answer-key">
+                        <div class="answer-key-title">🔑 CEVAP ANAHTARI</div>
+                        <div class="answers-grid">
+                            ${test.questions.map((q, index) => `
+                                <div class="answer-item">${index + 1}) ${q.a}</div>
+                            `).join('')}
+                        </div>
+                        <div style="margin-top: 20px; padding: 15px; background: white; border-radius: 5px;">
+                            <strong>Puanlama:</strong> Her soru ${(100 / test.questions.length).toFixed(1)} puan
+                        </div>
+                    </div>
+                `;
+            }
+
+            document.getElementById('testPreview').innerHTML = html;
+        }
+
+        function toggleAnswerKey() {
+            if (!generatedTest) {
+                alert('⚠️ Önce bir test oluşturun!');
+                return;
+            }
+            showAnswers = !showAnswers;
+            renderTest();
+        }
+
+        function printTest() {
+            if (!generatedTest) {
+                alert('⚠️ Önce bir test oluşturun!');
+                return;
+            }
+            window.print();
+        }
+
+        // Sayfa yüklendiğinde
+        updateUnits();
+    </script>
+</body>
+</html>

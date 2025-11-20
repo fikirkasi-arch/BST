@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>5. Sınıf Ünite 1 Quiz - Bilişim Temelleri</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .quiz-container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+        }
+        h1 {
+            text-align: center;
+            color: #667eea;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 1.2em;
+        }
+    </style>
+</head>
+<body>
+    <div class="quiz-container" style="text-align: center; padding: 60px 40px;">
+        <h1>📚 Bilişim Temelleri Quiz</h1>
+        <p class="subtitle">5. Sınıf - Ünite 1 | 10 Soru</p>
+
+        <div id="quiz-container" style="margin-top: 40px;">
+            <p style="color: #999; font-style: italic;">Quiz yükleniyor...</p>
+        </div>
+    </div>
+
+    <!-- JavaScript modülleri -->
+    <script src="scripts/storage.js"></script>
+    <script src="scripts/analytics.js"></script>
+    <script src="scripts/badge-system.js"></script>
+    <script src="scripts/quiz-engine.js"></script>
+
+    <script>
+        // Quiz verisi
+        const quizData = {
+            quizId: '5-1',
+            title: "5. Sınıf Ünite 1 - Bilişim Temelleri",
+            shuffle: false,
+            timerEnabled: false,
+            pointsPerQuestion: 10,
+            questions: [
+                {
+                    question: "Bilgisayarın beyni olarak adlandırılan parça hangisidir?",
+                    options: ["RAM", "İşlemci (CPU)", "Harddisk", "Ekran Kartı"],
+                    correct: 1
+                },
+                {
+                    question: "Aşağıdakilerden hangisi bir işletim sistemi DEĞİLDİR?",
+                    options: ["Windows", "Linux", "Microsoft Word", "macOS"],
+                    correct: 2
+                },
+                {
+                    question: "Bilgisayarda geçici olarak veri saklayan bellek hangisidir?",
+                    options: ["CPU", "RAM", "SSD", "Monitor"],
+                    correct: 1
+                },
+                {
+                    question: "Dosya isimlendirmede KULLANILMAMASI gereken karakter hangisidir?",
+                    options: ["- (tire)", "_ (alt tire)", "? (soru işareti)", "Rakamlar"],
+                    correct: 2
+                },
+                {
+                    question: "1 Byte kaç bit'tir?",
+                    options: ["4 bit", "8 bit", "16 bit", "32 bit"],
+                    correct: 1
+                },
+                {
+                    question: "Hangi depolama birimi en büyüktür?",
+                    options: ["1 KB", "1 GB", "1 MB", "1 Byte"],
+                    correct: 1
+                },
+                {
+                    question: "HDD'ye göre SSD'nin avantajı nedir?",
+                    options: ["Daha ucuz", "Daha hızlı", "Daha fazla depolama", "Daha eski teknoloji"],
+                    correct: 1
+                },
+                {
+                    question: "Hangi cihaz girdi cihazı değildir?",
+                    options: ["Klavye", "Mouse", "Monitör", "Mikrofon"],
+                    correct: 2
+                },
+                {
+                    question: "USB'nin açılımı nedir?",
+                    options: ["United System Bus", "Universal Serial Bus", "Unique Storage Box", "Ultra Speed Band"],
+                    correct: 1
+                },
+                {
+                    question: "Dosyaları organize etmek için kullanılan dijital kapsayıcıya ne denir?",
+                    options: ["Klasör", "Windows", "Dosya", "Program"],
+                    correct: 0
+                }
+            ]
+        };
+
+        // Quiz'i başlat
+        document.addEventListener('DOMContentLoaded', () => {
+            // Son açtıklara ekle (ana penceredeki BSTRecent'e kaydet)
+            if (window.opener && window.opener.BSTRecent) {
+                window.opener.BSTRecent.addRecentItem({
+                    title: quizData.title,
+                    url: window.location.pathname,
+                    emoji: '📝',
+                    category: 'quiz'
+                });
+            }
+
+            if (typeof QuizEngine !== 'undefined' && QuizEngine.validateQuizData(quizData)) {
+                QuizEngine.initQuiz(quizData);
+            } else {
+                document.getElementById('quiz-container').innerHTML =
+                    '<p style="color: #e74c3c;">Quiz yüklenirken hata oluştu. Lütfen sayfayı yenileyin.</p>';
+            }
+        });
+    </script>
+</body>
+</html>

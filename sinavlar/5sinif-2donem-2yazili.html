@@ -1,0 +1,676 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>5. Sınıf 2. Dönem 2. Yazılı</title>
+    <style>
+        @media print {
+            .no-print { display: none !important; }
+            body { background: white; padding: 20px; }
+            .exam-container { box-shadow: none; padding: 0; }
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .exam-container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+        }
+
+        .exam-header {
+            text-align: center;
+            border-bottom: 3px solid #667eea;
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+        }
+
+        .exam-header h1 {
+            color: #667eea;
+            font-size: 2em;
+            margin-bottom: 10px;
+        }
+
+        .exam-info {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin: 20px 0;
+            padding: 15px;
+            background: #f5f7fa;
+            border-radius: 8px;
+        }
+
+        .exam-info div {
+            text-align: center;
+            padding: 10px;
+        }
+
+        .exam-info strong {
+            color: #667eea;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .student-info {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+
+        .student-info div {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .student-info strong {
+            color: #555;
+        }
+
+        .student-info input {
+            flex: 1;
+            border: none;
+            border-bottom: 2px solid #667eea;
+            padding: 8px;
+            background: transparent;
+            font-size: 1em;
+        }
+
+        .question {
+            margin: 25px 0;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            border-left: 4px solid #667eea;
+        }
+
+        .question-header {
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 12px;
+            font-size: 1.1em;
+        }
+
+        .question-text {
+            color: #333;
+            line-height: 1.8;
+            margin-bottom: 15px;
+        }
+
+        .options {
+            margin-left: 20px;
+        }
+
+        .option {
+            margin: 10px 0;
+            padding: 10px;
+            background: white;
+            border-radius: 5px;
+        }
+
+        .section-title {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin: 30px 0 20px 0;
+            font-size: 1.3em;
+            font-weight: bold;
+        }
+
+        .answer-key {
+            margin-top: 40px;
+            padding: 30px;
+            background: #e7f3ff;
+            border-radius: 10px;
+            border: 2px solid #0066cc;
+        }
+
+        .answer-key h3 {
+            color: #0066cc;
+            margin-bottom: 20px;
+            font-size: 1.5em;
+        }
+
+        .answer-item {
+            padding: 8px;
+            margin: 5px 0;
+            background: white;
+            border-radius: 5px;
+        }
+
+        .buttons {
+            display: flex;
+            gap: 15px;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 25px;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-print {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-answers {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+        }
+
+        .btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+
+        .code-block {
+            background: #2d3748;
+            color: #68d391;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            margin: 15px 0;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="exam-container">
+        <div class="exam-header">
+            <h1>📝 BİLİŞİM TEKNOLOJİLERİ VE YAZILIM DERSİ</h1>
+            <h2 style="color: #764ba2; margin-top: 10px;">5. SINIF - 2. DÖNEM 2. YAZILI SINAVI</h2>
+            <div class="exam-info">
+                <div>
+                    <strong>📅 Dönem</strong>
+                    <span>2. Dönem</span>
+                </div>
+                <div>
+                    <strong>⏰ Süre</strong>
+                    <span>40 Dakika</span>
+                </div>
+                <div>
+                    <strong>💯 Toplam Puan</strong>
+                    <span>100 Puan</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="student-info no-print">
+            <div>
+                <strong>Adı Soyadı:</strong>
+                <input type="text" placeholder="Adınızı yazınız">
+            </div>
+            <div>
+                <strong>Sınıf/No:</strong>
+                <input type="text" placeholder="Örn: 5-A / 12">
+            </div>
+            <div>
+                <strong>Tarih:</strong>
+                <input type="date">
+            </div>
+        </div>
+
+        <div class="buttons no-print">
+            <button class="btn btn-print" onclick="window.print()">🖨️ Sınavı Yazdır (PDF)</button>
+            <button class="btn btn-answers" onclick="document.getElementById('answers').style.display='block'">📖 Cevap Anahtarını Göster</button>
+        </div>
+
+        <!-- BÖLÜM 1: ÇOKTAN SEÇMELİ SORULAR -->
+        <div class="section-title">📚 BÖLÜM 1: ÇOKTAN SEÇMELİ SORULAR (Her biri 3 puan - 45 puan)</div>
+
+        <div class="question">
+            <div class="question-header">SORU 1:</div>
+            <div class="question-text">
+                Yapay zeka ile ilgili aşağıdaki ifadelerden hangisi DOĞRUDUR?
+            </div>
+            <div class="options">
+                <div class="option">A) Yapay zeka uygulamaları verilerden öğrenemez</div>
+                <div class="option">B) ChatGPT ve Google Gemini yapay zeka örnekleridir</div>
+                <div class="option">C) Yapay zeka sadece robotlarda kullanılır</div>
+                <div class="option">D) Yapay zeka insanları tamamen kontrol eder</div>
+            </div>
+        </div>
+
+        <div class="question">
+            <div class="question-header">SORU 2:</div>
+            <div class="question-text">
+                Kelime işlemci programlarında hangi özellik YOKTUR?
+            </div>
+            <div class="options">
+                <div class="option">A) Yazı tipi değiştirme</div>
+                <div class="option">B) Tablo ekleme</div>
+                <div class="option">C) 3D modelleme yapma</div>
+                <div class="option">D) Resim ekleme</div>
+            </div>
+        </div>
+
+        <div class="question">
+            <div class="question-header">SORU 3:</div>
+            <div class="question-text">
+                PowerPoint gibi sunu programlarında slaytlar arasında geçişleri daha etkileyici yapmak için ne kullanılır?
+            </div>
+            <div class="options">
+                <div class="option">A) Yazı tipi</div>
+                <div class="option">B) Geçiş efektleri</div>
+                <div class="option">C) Resim ekleme</div>
+                <div class="option">D) Metin kutusu</div>
+            </div>
+        </div>
+
+        <div class="question">
+            <div class="question-header">SORU 4:</div>
+            <div class="question-text">
+                Bilgisayar ağlarında LAN kısaltması neyi ifade eder?
+            </div>
+            <div class="options">
+                <div class="option">A) Geniş Alan Ağı</div>
+                <div class="option">B) Yerel Alan Ağı</div>
+                <div class="option">C) Metropol Alan Ağı</div>
+                <div class="option">D) Kablosuz Ağ</div>
+            </div>
+        </div>
+
+        <div class="question">
+            <div class="question-header">SORU 5:</div>
+            <div class="question-text">
+                İnternet üzerinde güvenli şifre oluştururken aşağıdakilerden hangisi YAPILMAMALIDIR?
+            </div>
+            <div class="options">
+                <div class="option">A) Büyük ve küçük harf kullanma</div>
+                <div class="option">B) Rakam ve sembol ekleme</div>
+                <div class="option">C) Doğum tarihini şifre yapma</div>
+                <div class="option">D) En az 8 karakter kullanma</div>
+            </div>
+        </div>
+
+        <div class="question">
+            <div class="question-header">SORU 6:</div>
+            <div class="question-text">
+                Algoritma ile ilgili aşağıdaki ifadelerden hangisi YANLIŞTIR?
+            </div>
+            <div class="options">
+                <div class="option">A) Algoritma, problemin çözüm adımlarıdır</div>
+                <div class="option">B) Algoritma sıralı bir şekilde ilerler</div>
+                <div class="option">C) Algoritma sadece bilgisayar programlarında kullanılır</div>
+                <div class="option">D) Algoritma açık ve net olmalıdır</div>
+            </div>
+        </div>
+
+        <div class="question">
+            <div class="question-header">SORU 7:</div>
+            <div class="question-text">
+                Akış şemasında "karar verme" işlemi hangi şekille gösterilir?
+            </div>
+            <div class="options">
+                <div class="option">A) Dikdörtgen</div>
+                <div class="option">B) Baklava (Eşkenar dörtgen)</div>
+                <div class="option">C) Oval</div>
+                <div class="option">D) Paralelkenar</div>
+            </div>
+        </div>
+
+        <div class="question">
+            <div class="question-header">SORU 8:</div>
+            <div class="question-text">
+                Scratch programında bir karakteri hareket ettirmek için hangi blok kategorisi kullanılır?
+            </div>
+            <div class="options">
+                <div class="option">A) Görünümler</div>
+                <div class="option">B) Hareket</div>
+                <div class="option">C) Ses</div>
+                <div class="option">D) Kalem</div>
+            </div>
+        </div>
+
+        <div class="question">
+            <div class="question-header">SORU 9:</div>
+            <div class="question-text">
+                Scratch'te bir komutun sürekli tekrar etmesi için hangi döngü bloğu kullanılır?
+            </div>
+            <div class="options">
+                <div class="option">A) 10 kez tekrarla</div>
+                <div class="option">B) Sürekli tekrarla</div>
+                <div class="option">C) Eğer...ise</div>
+                <div class="option">D) Bekle</div>
+            </div>
+        </div>
+
+        <div class="question">
+            <div class="question-header">SORU 10:</div>
+            <div class="question-text">
+                Scratch'te "eğer (koşul) ise" bloğu hangi programlama yapısına örnektir?
+            </div>
+            <div class="options">
+                <div class="option">A) Döngü</div>
+                <div class="option">B) Değişken</div>
+                <div class="option">C) Koşul (Karar yapısı)</div>
+                <div class="option">D) Fonksiyon</div>
+            </div>
+        </div>
+
+        <div class="question">
+            <div class="question-header">SORU 11:</div>
+            <div class="question-text">
+                Scratch'te değişkenler ne işe yarar?
+            </div>
+            <div class="options">
+                <div class="option">A) Sadece renk değiştirmek için</div>
+                <div class="option">B) Bilgileri saklamak ve değiştirmek için</div>
+                <div class="option">C) Sadece ses çalmak için</div>
+                <div class="option">D) Programı durdurmak için</div>
+            </div>
+        </div>
+
+        <div class="question">
+            <div class="question-header">SORU 12:</div>
+            <div class="question-text">
+                Hata ayıklama (debugging) nedir?
+            </div>
+            <div class="options">
+                <div class="option">A) Program yazmak</div>
+                <div class="option">B) Programdaki hataları bulup düzeltmek</div>
+                <div class="option">C) Programı silmek</div>
+                <div class="option">D) Yeni karakter eklemek</div>
+            </div>
+        </div>
+
+        <div class="question">
+            <div class="question-header">SORU 13:</div>
+            <div class="question-text">
+                Telif hakları ile ilgili aşağıdaki ifadelerden hangisi DOĞRUDUR?
+            </div>
+            <div class="options">
+                <div class="option">A) İnternetteki tüm içerikler serbestçe kullanılabilir</div>
+                <div class="option">B) Müzik ve videoların izinsiz paylaşılması yasaldır</div>
+                <div class="option">C) Başkalarının eserlerini izinsiz kullanmak yasaktır</div>
+                <div class="option">D) Telif hakkı sadece kitaplar için geçerlidir</div>
+            </div>
+        </div>
+
+        <div class="question">
+            <div class="question-header">SORU 14:</div>
+            <div class="question-text">
+                Scratch'te "Fare işaretçisine git" bloğu hangi kategoridedir?
+            </div>
+            <div class="options">
+                <div class="option">A) Görünümler</div>
+                <div class="option">B) Hareket</div>
+                <div class="option">C) Algılama</div>
+                <div class="option">D) Olaylar</div>
+            </div>
+        </div>
+
+        <div class="question">
+            <div class="question-header">SORU 15:</div>
+            <div class="question-text">
+                Aşağıdakilerden hangisi BİR GİRDİ-ÇIKTI örneğidir?
+            </div>
+            <div class="options">
+                <div class="option">A) Hesap makinesiyle işlem yapmak</div>
+                <div class="option">B) Sadece monitöre bakmak</div>
+                <div class="option">C) Bilgisayarı kapatmak</div>
+                <div class="option">D) Sabit diski silmek</div>
+            </div>
+        </div>
+
+        <!-- BÖLÜM 2: DOĞRU-YANLIŞ -->
+        <div class="section-title">✓✗ BÖLÜM 2: DOĞRU-YANLIŞ SORULARI (Her biri 2 puan - 20 puan)</div>
+
+        <div class="question">
+            <div class="question-header">SORU 16:</div>
+            <div class="question-text">
+                Scratch blok tabanlı bir programlama dilidir. ( )
+            </div>
+        </div>
+
+        <div class="question">
+            <div class="question-header">SORU 17:</div>
+            <div class="question-text">
+                Yapay zeka uygulamaları sadece gelecekte kullanılacaktır. ( )
+            </div>
+        </div>
+
+        <div class="question">
+            <div class="question-header">SORU 18:</div>
+            <div class="question-text">
+                Döngüler, belirli komutların tekrar edilmesini sağlar. ( )
+            </div>
+        </div>
+
+        <div class="question">
+            <div class="question-header">SORU 19:</div>
+            <div class="question-text">
+                Bilgisayar ağları sayesinde dosya paylaşımı yapılabilir. ( )
+            </div>
+        </div>
+
+        <div class="question">
+            <div class="question-header">SORU 20:</div>
+            <div class="question-text">
+                Algoritma sadece bir çözüm yolu olmalıdır, alternatif yollar olamaz. ( )
+            </div>
+        </div>
+
+        <div class="question">
+            <div class="question-header">SORU 21:</div>
+            <div class="question-text">
+                Sunu programlarında animasyon eklenemez. ( )
+            </div>
+        </div>
+
+        <div class="question">
+            <div class="question-header">SORU 22:</div>
+            <div class="question-text">
+                Dijital ayak izi kalıcıdır ve silinmesi zordur. ( )
+            </div>
+        </div>
+
+        <div class="question">
+            <div class="question-header">SORU 23:</div>
+            <div class="question-text">
+                Scratch'te bir karaktere birden fazla kostüm eklenebilir. ( )
+            </div>
+        </div>
+
+        <div class="question">
+            <div class="question-header">SORU 24:</div>
+            <div class="question-text">
+                Görsel işleme programları sadece fotoğraf çekmek için kullanılır. ( )
+            </div>
+        </div>
+
+        <div class="question">
+            <div class="question-header">SORU 25:</div>
+            <div class="question-text">
+                Değişkenler programlama sırasında değeri değişebilen bilgi kutularıdır. ( )
+            </div>
+        </div>
+
+        <!-- BÖLÜM 3: BOŞLUK DOLDURMA -->
+        <div class="section-title">✍️ BÖLÜM 3: BOŞLUK DOLDURMA (Her biri 2 puan - 14 puan)</div>
+
+        <div class="question">
+            <div class="question-header">SORU 26:</div>
+            <div class="question-text">
+                Scratch'te bir kuklanın görünümünü değiştirmek için _____________ kullanılır.
+            </div>
+        </div>
+
+        <div class="question">
+            <div class="question-header">SORU 27:</div>
+            <div class="question-text">
+                Problemin çözümü için yazılan adım adım talimatlar _____________ olarak adlandırılır.
+            </div>
+        </div>
+
+        <div class="question">
+            <div class="question-header">SORU 28:</div>
+            <div class="question-text">
+                İnternette kişisel bilgilerimizi korumak için _____________ şifre kullanmalıyız.
+            </div>
+        </div>
+
+        <div class="question">
+            <div class="question-header">SORU 29:</div>
+            <div class="question-text">
+                Bilgisayar ağlarında birden fazla bilgisayarı birbirine bağlayan cihaza _____________ denir.
+            </div>
+        </div>
+
+        <div class="question">
+            <div class="question-header">SORU 30:</div>
+            <div class="question-text">
+                Scratch programında kukla ve sahnelerin bulunduğu alan _____________ olarak adlandırılır.
+            </div>
+        </div>
+
+        <div class="question">
+            <div class="question-header">SORU 31:</div>
+            <div class="question-text">
+                Yapay zekanın öğrenmesi için büyük miktarda _____________ gerekmektedir.
+            </div>
+        </div>
+
+        <div class="question">
+            <div class="question-header">SORU 32:</div>
+            <div class="question-text">
+                Dijital ortamda sorumlu ve güvenli davranışa _____________ denir.
+            </div>
+        </div>
+
+        <!-- BÖLÜM 4: AÇIK UÇLU -->
+        <div class="section-title">✍️ BÖLÜM 4: AÇIK UÇLU SORULAR (21 puan)</div>
+
+        <div class="question">
+            <div class="question-header">SORU 33 (10 puan):</div>
+            <div class="question-text">
+                <strong>Scratch'te basit bir oyun tasarlarken kullanmanız gereken 3 temel programlama yapısını yazınız ve her birinin oyunda nasıl kullanılacağını örnek vererek açıklayınız.</strong>
+                <div style="margin-top: 20px; padding: 20px; background: white; min-height: 150px; border: 1px dashed #667eea; border-radius: 8px;">
+                    <em style="color: #999;">Cevabınızı buraya yazınız...</em>
+                </div>
+            </div>
+        </div>
+
+        <div class="question">
+            <div class="question-header">SORU 34 (11 puan):</div>
+            <div class="question-text">
+                <strong>Aşağıdaki problemi çözecek bir algoritma oluşturunuz:</strong><br><br>
+                <em>"Sabah okula hazırlanma" algoritmasını yazınız. En az 5 adım olmalı ve mantıklı bir sıra takip etmelidir.</em>
+                <div style="margin-top: 20px; padding: 20px; background: white; min-height: 150px; border: 1px dashed #667eea; border-radius: 8px;">
+                    <em style="color: #999;">Algoritmanızı buraya yazınız...</em>
+                </div>
+            </div>
+        </div>
+
+        <!-- CEVAP ANAHTARI -->
+        <div id="answers" class="answer-key no-print" style="display: none;">
+            <h3>📖 CEVAP ANAHTARI VE PUANLAMA</h3>
+
+            <div style="background: white; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
+                <h4 style="color: #667eea; margin-bottom: 15px;">BÖLÜM 1: Çoktan Seçmeli (45 puan)</h4>
+                <div class="answer-item"><strong>1.</strong> B (3 puan)</div>
+                <div class="answer-item"><strong>2.</strong> C (3 puan)</div>
+                <div class="answer-item"><strong>3.</strong> B (3 puan)</div>
+                <div class="answer-item"><strong>4.</strong> B (3 puan)</div>
+                <div class="answer-item"><strong>5.</strong> C (3 puan)</div>
+                <div class="answer-item"><strong>6.</strong> C (3 puan)</div>
+                <div class="answer-item"><strong>7.</strong> B (3 puan)</div>
+                <div class="answer-item"><strong>8.</strong> B (3 puan)</div>
+                <div class="answer-item"><strong>9.</strong> B (3 puan)</div>
+                <div class="answer-item"><strong>10.</strong> C (3 puan)</div>
+                <div class="answer-item"><strong>11.</strong> B (3 puan)</div>
+                <div class="answer-item"><strong>12.</strong> B (3 puan)</div>
+                <div class="answer-item"><strong>13.</strong> C (3 puan)</div>
+                <div class="answer-item"><strong>14.</strong> B (3 puan)</div>
+                <div class="answer-item"><strong>15.</strong> A (3 puan)</div>
+            </div>
+
+            <div style="background: white; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
+                <h4 style="color: #667eea; margin-bottom: 15px;">BÖLÜM 2: Doğru-Yanlış (20 puan)</h4>
+                <div class="answer-item"><strong>16.</strong> DOĞRU (2 puan)</div>
+                <div class="answer-item"><strong>17.</strong> YANLIŞ (Günümüzde kullanılıyor) (2 puan)</div>
+                <div class="answer-item"><strong>18.</strong> DOĞRU (2 puan)</div>
+                <div class="answer-item"><strong>19.</strong> DOĞRU (2 puan)</div>
+                <div class="answer-item"><strong>20.</strong> YANLIŞ (Alternatif yollar olabilir) (2 puan)</div>
+                <div class="answer-item"><strong>21.</strong> YANLIŞ (Animasyon eklenebilir) (2 puan)</div>
+                <div class="answer-item"><strong>22.</strong> DOĞRU (2 puan)</div>
+                <div class="answer-item"><strong>23.</strong> DOĞRU (2 puan)</div>
+                <div class="answer-item"><strong>24.</strong> YANLIŞ (Fotoğraf düzenleme, çizim vb. de yapılır) (2 puan)</div>
+                <div class="answer-item"><strong>25.</strong> DOĞRU (2 puan)</div>
+            </div>
+
+            <div style="background: white; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
+                <h4 style="color: #667eea; margin-bottom: 15px;">BÖLÜM 3: Boşluk Doldurma (14 puan)</h4>
+                <div class="answer-item"><strong>26.</strong> kostüm (2 puan)</div>
+                <div class="answer-item"><strong>27.</strong> algoritma (2 puan)</div>
+                <div class="answer-item"><strong>28.</strong> güçlü/karmaşık (2 puan)</div>
+                <div class="answer-item"><strong>29.</strong> switch/anahtar/router (2 puan)</div>
+                <div class="answer-item"><strong>30.</strong> sahne (2 puan)</div>
+                <div class="answer-item"><strong>31.</strong> veri (2 puan)</div>
+                <div class="answer-item"><strong>32.</strong> dijital vatandaşlık (2 puan)</div>
+            </div>
+
+            <div style="background: white; padding: 20px; border-radius: 8px;">
+                <h4 style="color: #667eea; margin-bottom: 15px;">BÖLÜM 4: Açık Uçlu (21 puan)</h4>
+                <div class="answer-item">
+                    <strong>33.</strong> Örnek Cevap (10 puan):<br>
+                    1. <strong>Döngü:</strong> Karakterin sürekli hareket etmesi için "sürekli tekrarla" bloğu kullanılır. (3 puan)<br>
+                    2. <strong>Koşul:</strong> Karakterin bir nesneye çarpması durumunda "eğer...ise" bloğu ile oyunu bitirmek. (3 puan)<br>
+                    3. <strong>Değişken:</strong> Oyundaki puanı saklamak için değişken oluşturulur ve her doğru harekette artırılır. (4 puan)
+                </div>
+                <div class="answer-item" style="margin-top: 15px;">
+                    <strong>34.</strong> Örnek Algoritma (11 puan):<br>
+                    Başla<br>
+                    1. Alarmı kur ve uyan (2 puan)<br>
+                    2. Yüzünü yıka ve dişlerini fırçala (2 puan)<br>
+                    3. Okul kıyafetlerini giy (2 puan)<br>
+                    4. Kahvaltı yap (2 puan)<br>
+                    5. Çantanı al ve okula git (2 puan)<br>
+                    Bitir (1 puan - Mantıksal sıra)
+                </div>
+            </div>
+        </div>
+
+        <div style="margin-top: 40px; padding: 20px; background: #f8f9fa; border-radius: 10px; text-align: center;">
+            <p style="color: #667eea; font-weight: bold; font-size: 1.2em;">BAŞARILAR DİLERİZ! 🎉</p>
+            <p style="color: #666; margin-top: 10px;">Yıl boyunca öğrendiklerinizi unutmayın!</p>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const today = new Date().toISOString().split('T')[0];
+            const dateInputs = document.querySelectorAll('input[type="date"]');
+            dateInputs.forEach(input => input.value = today);
+        });
+    </script>
+</body>
+</html>

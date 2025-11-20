@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Admin Paneli</title>
+    <link rel="stylesheet" href="css/admin.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="admin-wrapper">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h2><span>🎓</span> <span>BST Admin</span></h2>
+                <small>Yönetim Paneli</small>
+            </div>
+            <nav class="sidebar-menu">
+                <a href="index.html" class="menu-item active">
+                    <span>📊</span> <span>Dashboard</span>
+                </a>
+                <a href="kullanicilar.html" class="menu-item">
+                    <span>👥</span> <span>Kullanıcılar</span>
+                </a>
+                <a href="icerikler.html" class="menu-item">
+                    <span>📚</span> <span>İçerikler</span>
+                </a>
+                <a href="istatistikler.html" class="menu-item">
+                    <span>📈</span> <span>İstatistikler</span>
+                </a>
+                <div class="menu-divider"></div>
+                <a href="ayarlar.html" class="menu-item">
+                    <span>⚙️</span> <span>Ayarlar</span>
+                </a>
+                <a href="#" class="menu-item" onclick="AdminAuth.logout(); return false;">
+                    <span>🚪</span> <span>Çıkış</span>
+                </a>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="admin-header">
+                <h1>📊 Dashboard</h1>
+                <div class="header-actions">
+                    <span id="currentDate"></span>
+                    <button class="btn btn-secondary" onclick="location.reload()">
+                        🔄 Yenile
+                    </button>
+                </div>
+            </div>
+
+            <!-- Stats Grid -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon blue">👥</div>
+                    <div class="stat-info">
+                        <h4 id="totalUsers">0</h4>
+                        <p>Toplam Öğrenci</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon green">📝</div>
+                    <div class="stat-info">
+                        <h4 id="totalQuizzes">11</h4>
+                        <p>Toplam Quiz</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon orange">🎮</div>
+                    <div class="stat-info">
+                        <h4 id="totalGames">8</h4>
+                        <p>Toplam Oyun</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon purple">📚</div>
+                    <div class="stat-info">
+                        <h4 id="totalLessons">12</h4>
+                        <p>Toplam Ders</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Grid 2 Column -->
+            <div class="grid-2">
+                <!-- Quiz Performance Chart -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3><span>📈</span> Quiz Performansı</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="chart-container">
+                            <canvas id="quizChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Activity Distribution -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3><span>🎯</span> Aktivite Dağılımı</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="chart-container">
+                            <canvas id="activityChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Activity & Quick Stats -->
+            <div class="grid-2">
+                <!-- Recent Activity -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3><span>⏱️</span> Son Aktiviteler</h3>
+                    </div>
+                    <div class="card-body">
+                        <ul class="activity-list" id="activityList">
+                            <!-- Dinamik olarak doldurulacak -->
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Quick Actions & Info -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3><span>⚡</span> Hızlı İşlemler</h3>
+                    </div>
+                    <div class="card-body">
+                        <div style="display: grid; gap: 15px;">
+                            <a href="icerikler.html" class="btn btn-primary" style="justify-content: center; text-decoration: none;">
+                                ➕ Yeni İçerik Ekle
+                            </a>
+                            <a href="kullanicilar.html" class="btn btn-secondary" style="justify-content: center; text-decoration: none;">
+                                👥 Kullanıcıları Görüntüle
+                            </a>
+                            <a href="istatistikler.html" class="btn btn-secondary" style="justify-content: center; text-decoration: none;">
+                                📊 Detaylı İstatistikler
+                            </a>
+                            <a href="../index.html" target="_blank" class="btn btn-secondary" style="justify-content: center; text-decoration: none;">
+                                🌐 Siteyi Görüntüle
+                            </a>
+                        </div>
+
+                        <div style="margin-top: 25px; padding-top: 20px; border-top: 2px solid #f0f0f0;">
+                            <h4 style="margin-bottom: 15px; color: #333;">📋 Sistem Özeti</h4>
+                            <div style="display: grid; gap: 10px; font-size: 14px;">
+                                <div style="display: flex; justify-content: space-between;">
+                                    <span>Ortalama Quiz Puanı:</span>
+                                    <strong id="avgQuizScore">0%</strong>
+                                </div>
+                                <div style="display: flex; justify-content: space-between;">
+                                    <span>Tamamlanan Quiz:</span>
+                                    <strong id="completedQuizzes">0</strong>
+                                </div>
+                                <div style="display: flex; justify-content: space-between;">
+                                    <span>Oynanan Oyun:</span>
+                                    <strong id="playedGames">0</strong>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- System Alerts -->
+            <div class="card">
+                <div class="card-header">
+                    <h3><span>🔔</span> Sistem Bildirimleri</h3>
+                </div>
+                <div class="card-body" id="systemAlerts">
+                    <!-- Dinamik olarak doldurulacak -->
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="js/admin-auth.js"></script>
+    <script>
+        // Tarih göster
+        document.getElementById('currentDate').textContent = new Date().toLocaleDateString('tr-TR', {
+            weekday: 'long',
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+        });
+
+        // LocalStorage'dan veri çek
+        function loadDashboardData() {
+            // Kullanıcı verileri
+            const userData = JSON.parse(localStorage.getItem('bstUserData') || '{}');
+            const progress = JSON.parse(localStorage.getItem('bstProgress') || '{}');
+
+            // İstatistikleri güncelle
+            document.getElementById('totalUsers').textContent = userData.totalUsers || 1;
+            document.getElementById('completedQuizzes').textContent = progress.completed?.quizzes?.length || 0;
+            document.getElementById('playedGames').textContent = progress.completed?.games?.length || 0;
+
+            // Ortalama quiz puanı
+            let avgScore = 0;
+            if (progress.scores) {
+                const scores = Object.values(progress.scores);
+                if (scores.length > 0) {
+                    avgScore = Math.round(scores.reduce((a, b) => a + (b.percentage || 0), 0) / scores.length);
+                }
+            }
+            document.getElementById('avgQuizScore').textContent = avgScore + '%';
+
+            // Son aktiviteler
+            loadActivityList();
+
+            // Sistem bildirimleri
+            loadSystemAlerts();
+        }
+
+        // Aktivite listesi
+        function loadActivityList() {
+            const logs = AdminAuth.getActivityLogs();
+            const activityList = document.getElementById('activityList');
+
+            if (logs.length === 0) {
+                activityList.innerHTML = `
+                    <div class="empty-state" style="padding: 20px;">
+                        <span style="font-size: 40px;">📭</span>
+                        <p>Henüz aktivite yok</p>
+                    </div>
+                `;
+                return;
+            }
+
+            activityList.innerHTML = logs.slice(0, 5).map(log => `
+                <li class="activity-item">
+                    <div class="activity-icon" style="background: rgba(102,126,234,0.15);">
+                        ${log.action.includes('Giriş') ? '🔑' : log.action.includes('Çıkış') ? '🚪' : '📝'}
+                    </div>
+                    <div class="activity-content">
+                        <strong>${log.action}</strong>
+                        <div class="activity-time">${log.date}</div>
+                    </div>
+                </li>
+            `).join('');
+        }
+
+        // Sistem bildirimleri
+        function loadSystemAlerts() {
+            const alerts = document.getElementById('systemAlerts');
+            const progress = JSON.parse(localStorage.getItem('bstProgress') || '{}');
+
+            let alertsHtml = '';
+
+            // Başarı kontrolü
+            const completedQuizzes = progress.completed?.quizzes?.length || 0;
+            if (completedQuizzes >= 5) {
+                alertsHtml += `
+                    <div class="alert alert-success">
+                        <span>🎉</span> Tebrikler! ${completedQuizzes} quiz tamamlandı.
+                    </div>
+                `;
+            }
+
+            // Bilgi mesajı
+            alertsHtml += `
+                <div class="alert alert-info">
+                    <span>ℹ️</span> Sistem sorunsuz çalışıyor. Son güncelleme: ${new Date().toLocaleString('tr-TR')}
+                </div>
+            `;
+
+            alerts.innerHTML = alertsHtml;
+        }
+
+        // Quiz Performans Grafiği
+        function createQuizChart() {
+            const ctx = document.getElementById('quizChart').getContext('2d');
+            const progress = JSON.parse(localStorage.getItem('bstProgress') || '{}');
+
+            // Quiz verilerini hazırla
+            const labels = ['Ünite 1', 'Ünite 2', 'Ünite 3', 'Ünite 4', 'Ünite 5'];
+            const data = [0, 0, 0, 0, 0];
+
+            if (progress.scores) {
+                for (const [quizId, score] of Object.entries(progress.scores)) {
+                    const unitIndex = parseInt(quizId.split('-')[1]) - 1;
+                    if (unitIndex >= 0 && unitIndex < 5) {
+                        data[unitIndex] = Math.max(data[unitIndex], score.percentage || 0);
+                    }
+                }
+            }
+
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Quiz Başarı Oranı (%)',
+                        data: data,
+                        backgroundColor: [
+                            'rgba(102, 126, 234, 0.7)',
+                            'rgba(118, 75, 162, 0.7)',
+                            'rgba(40, 167, 69, 0.7)',
+                            'rgba(255, 193, 7, 0.7)',
+                            'rgba(220, 53, 69, 0.7)'
+                        ],
+                        borderColor: [
+                            'rgb(102, 126, 234)',
+                            'rgb(118, 75, 162)',
+                            'rgb(40, 167, 69)',
+                            'rgb(255, 193, 7)',
+                            'rgb(220, 53, 69)'
+                        ],
+                        borderWidth: 2,
+                        borderRadius: 8
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 100
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    }
+                }
+            });
+        }
+
+        // Aktivite Dağılımı Grafiği
+        function createActivityChart() {
+            const ctx = document.getElementById('activityChart').getContext('2d');
+            const progress = JSON.parse(localStorage.getItem('bstProgress') || '{}');
+
+            const quizCount = progress.completed?.quizzes?.length || 0;
+            const gameCount = progress.completed?.games?.length || 0;
+            const lessonCount = progress.completed?.lessons?.length || 0;
+
+            new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Quiz', 'Oyun', 'Ders'],
+                    datasets: [{
+                        data: [quizCount || 1, gameCount || 1, lessonCount || 1],
+                        backgroundColor: [
+                            'rgba(102, 126, 234, 0.8)',
+                            'rgba(40, 167, 69, 0.8)',
+                            'rgba(255, 193, 7, 0.8)'
+                        ],
+                        borderColor: [
+                            'rgb(102, 126, 234)',
+                            'rgb(40, 167, 69)',
+                            'rgb(255, 193, 7)'
+                        ],
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
+                        }
+                    }
+                }
+            });
+        }
+
+        // Sayfa yüklendiğinde
+        document.addEventListener('DOMContentLoaded', () => {
+            loadDashboardData();
+            createQuizChart();
+            createActivityChart();
+        });
+    </script>
+</body>
+</html>

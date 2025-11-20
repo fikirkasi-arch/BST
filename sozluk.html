@@ -1,0 +1,802 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bilişim Sözlüğü - BST Eğitim Portalı</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f8f9fa;
+        }
+
+        .glossary-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .glossary-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            text-align: center;
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.2);
+        }
+
+        .glossary-header h1 {
+            font-size: 2.2em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .glossary-header p {
+            font-size: 1.1em;
+            opacity: 0.95;
+        }
+
+        .controls {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .search-box {
+            margin-bottom: 20px;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 15px 20px;
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            font-size: 1.1em;
+            transition: all 0.3s;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .search-box input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .filters {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            padding: 10px 20px;
+            border: 2px solid #e9ecef;
+            background: white;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 0.95em;
+            font-weight: 600;
+            transition: all 0.3s;
+            color: #555;
+        }
+
+        .filter-btn:hover {
+            border-color: #667eea;
+            color: #667eea;
+        }
+
+        .filter-btn.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-color: #667eea;
+        }
+
+        .glossary-list {
+            display: grid;
+            gap: 15px;
+        }
+
+        .glossary-item {
+            background: white;
+            border: 2px solid #f0f0f0;
+            border-radius: 12px;
+            overflow: hidden;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .glossary-item:hover {
+            border-color: #667eea;
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.15);
+            transform: translateY(-2px);
+        }
+
+        .glossary-item.expanded {
+            border-color: #667eea;
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.15);
+        }
+
+        .glossary-header-btn {
+            padding: 20px;
+            background: #f8f9fa;
+            border: none;
+            cursor: pointer;
+            width: 100%;
+            text-align: left;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s;
+            font-size: 1em;
+        }
+
+        .glossary-item:hover .glossary-header-btn {
+            background: #f0f0f0;
+        }
+
+        .glossary-item.expanded .glossary-header-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .term-info {
+            flex: 1;
+        }
+
+        .term-name {
+            font-size: 1.2em;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .term-en {
+            font-size: 0.95em;
+            opacity: 0.7;
+            font-style: italic;
+        }
+
+        .term-unit {
+            display: inline-block;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: 600;
+            margin-left: 15px;
+            margin-top: 5px;
+        }
+
+        .glossary-item.expanded .term-unit {
+            background: rgba(255,255,255,0.3);
+        }
+
+        .toggle-icon {
+            font-size: 1.5em;
+            transition: transform 0.3s;
+            color: #667eea;
+        }
+
+        .glossary-item.expanded .toggle-icon {
+            transform: rotate(180deg);
+            color: white;
+        }
+
+        .glossary-body {
+            display: none;
+            padding: 25px;
+            border-top: 2px solid #f0f0f0;
+            background: white;
+        }
+
+        .glossary-item.expanded .glossary-body {
+            display: block;
+            animation: slideDown 0.3s ease-out;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .glossary-body p {
+            margin-bottom: 15px;
+            line-height: 1.7;
+            color: #333;
+        }
+
+        .definition-label {
+            font-weight: 700;
+            color: #667eea;
+            margin-bottom: 5px;
+            display: block;
+        }
+
+        .related-topics {
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.05) 0%, rgba(118, 75, 162, 0.05) 100%);
+            padding: 15px;
+            border-left: 4px solid #667eea;
+            border-radius: 8px;
+            margin: 15px 0;
+        }
+
+        .related-topics strong {
+            color: #667eea;
+            display: block;
+            margin-bottom: 10px;
+            font-size: 0.95em;
+        }
+
+        .topic-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .topic-tag {
+            background: white;
+            border: 1px solid #ddd;
+            padding: 5px 12px;
+            border-radius: 15px;
+            font-size: 0.9em;
+            color: #666;
+            transition: all 0.3s;
+        }
+
+        .topic-tag:hover {
+            border-color: #667eea;
+            color: #667eea;
+            background: #f8f9fa;
+        }
+
+        .links-section {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid #f0f0f0;
+        }
+
+        .link-btn {
+            padding: 10px 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-size: 0.9em;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 500;
+        }
+
+        .link-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+        }
+
+        .no-results {
+            text-align: center;
+            padding: 60px 20px;
+            background: white;
+            border-radius: 15px;
+            color: #999;
+        }
+
+        .no-results h3 {
+            margin-bottom: 10px;
+            color: #667eea;
+            font-size: 1.3em;
+        }
+
+        .stats {
+            text-align: center;
+            padding: 20px;
+            color: #999;
+            font-size: 0.95em;
+            background: white;
+            border-radius: 15px;
+            margin-top: 20px;
+        }
+
+        .grade-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+        }
+
+        .grade-tab {
+            padding: 10px 20px;
+            border: 2px solid #e9ecef;
+            background: white;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .grade-tab.grade-5 {
+            color: #f5576c;
+            border-color: #f5576c;
+        }
+
+        .grade-tab.grade-6 {
+            color: #4facfe;
+            border-color: #4facfe;
+        }
+
+        .grade-tab.all {
+            color: #667eea;
+            border-color: #667eea;
+        }
+
+        .grade-tab.active.grade-5 {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            border-color: transparent;
+        }
+
+        .grade-tab.active.grade-6 {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            border-color: transparent;
+        }
+
+        .grade-tab.active.all {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-color: transparent;
+        }
+
+        @media (max-width: 600px) {
+            .glossary-header h1 {
+                font-size: 1.8em;
+            }
+
+            .glossary-header-btn {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .term-unit {
+                margin-left: 0;
+                margin-top: 10px;
+            }
+
+            .filters {
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="glossary-container">
+        <div class="glossary-header">
+            <h1>📖 Bilişim Terim Sözlüğü</h1>
+            <p>5. ve 6. Sınıf Bilişim Teknolojileri Ders Terimleri</p>
+        </div>
+
+        <div class="controls">
+            <div class="search-box">
+                <input type="text" id="searchInput" placeholder="🔍 Terim ara (Türkçe veya English)...">
+            </div>
+            <div class="grade-tabs">
+                <button class="grade-tab all active" data-grade="all">Tümü</button>
+                <button class="grade-tab grade-5" data-grade="5-sinif">5. Sınıf</button>
+                <button class="grade-tab grade-6" data-grade="6-sinif">6. Sınıf</button>
+            </div>
+            <div class="filters" id="filterContainer">
+                <!-- Filters will be generated by JavaScript -->
+            </div>
+        </div>
+
+        <!-- Flashcards Section -->
+        <div style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); color: white; padding: 25px; border-radius: 15px; margin-bottom: 20px; text-align: center;">
+            <h2 style="margin-bottom: 10px;">🎴 Çalışma Kartları (Flashcards)</h2>
+            <p style="font-size: 1.05em; margin-bottom: 20px; opacity: 0.95;">Terimleri çalış, ezberle, bilgini pekiştir!</p>
+            <a href="flashcards.html" target="_blank" style="text-decoration: none;">
+                <button style="background: white; color: #00f2fe; padding: 18px 40px; border: none; border-radius: 12px; font-weight: 700; cursor: pointer; font-size: 1.2em; transition: all 0.3s; box-shadow: 0 6px 15px rgba(0,0,0,0.3);" onmouseover="this.style.transform='translateY(-5px) scale(1.05)'" onmouseout="this.style.transform='translateY(0) scale(1)'">
+                    🚀 Çalışmaya Başla
+                </button>
+            </a>
+        </div>
+
+        <!-- Quiz Games Section -->
+        <div style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white; padding: 30px; border-radius: 15px; margin-bottom: 30px; text-align: center;">
+            <h2 style="margin-bottom: 15px;">🎮 Ünite Quiz Oyunları</h2>
+            <p style="font-size: 1.1em; margin-bottom: 25px; opacity: 0.95;">Öğrendiğin terimleri test et, bilgini pekiştir!</p>
+
+            <!-- 5. Sınıf Quizleri -->
+            <h3 style="margin: 25px 0 15px 0; font-size: 1.3em;">📚 5. Sınıf Quiz Oyunları</h3>
+            <div style="display: flex; flex-wrap: wrap; gap: 15px; justify-content: center; margin-bottom: 30px;">
+                <a href="quiz-5-unite1.html" target="_blank" style="text-decoration: none;">
+                    <button style="background: white; color: #f5576c; padding: 15px 25px; border: none; border-radius: 10px; font-weight: 600; cursor: pointer; font-size: 1em; transition: all 0.3s; box-shadow: 0 4px 10px rgba(0,0,0,0.2);" onmouseover="this.style.transform='translateY(-3px)'" onmouseout="this.style.transform='translateY(0)'">
+                        📚 Ünite 1: Bilişim Temelleri
+                    </button>
+                </a>
+                <a href="quiz-5-unite2.html" target="_blank" style="text-decoration: none;">
+                    <button style="background: white; color: #fa709a; padding: 15px 25px; border: none; border-radius: 10px; font-weight: 600; cursor: pointer; font-size: 1em; transition: all 0.3s; box-shadow: 0 4px 10px rgba(0,0,0,0.2);" onmouseover="this.style.transform='translateY(-3px)'" onmouseout="this.style.transform='translateY(0)'">
+                        🎨 Ünite 2: Dijital Ürün
+                    </button>
+                </a>
+                <a href="quiz-5-unite3.html" target="_blank" style="text-decoration: none;">
+                    <button style="background: white; color: #4facfe; padding: 15px 25px; border: none; border-radius: 10px; font-weight: 600; cursor: pointer; font-size: 1em; transition: all 0.3s; box-shadow: 0 4px 10px rgba(0,0,0,0.2);" onmouseover="this.style.transform='translateY(-3px)'" onmouseout="this.style.transform='translateY(0)'">
+                        🌐 Ünite 3: Ağlar ve İletişim
+                    </button>
+                </a>
+                <a href="quiz-5-unite4.html" target="_blank" style="text-decoration: none;">
+                    <button style="background: white; color: #667eea; padding: 15px 25px; border: none; border-radius: 10px; font-weight: 600; cursor: pointer; font-size: 1em; transition: all 0.3s; box-shadow: 0 4px 10px rgba(0,0,0,0.2);" onmouseover="this.style.transform='translateY(-3px)'" onmouseout="this.style.transform='translateY(0)'">
+                        🔐 Ünite 4: Etik ve Güvenlik
+                    </button>
+                </a>
+                <a href="quiz-5-unite5.html" target="_blank" style="text-decoration: none;">
+                    <button style="background: white; color: #38f9d7; padding: 15px 25px; border: none; border-radius: 10px; font-weight: 600; cursor: pointer; font-size: 1em; transition: all 0.3s; box-shadow: 0 4px 10px rgba(0,0,0,0.2);" onmouseover="this.style.transform='translateY(-3px)'" onmouseout="this.style.transform='translateY(0)'">
+                        🤖 Ünite 5: Yapay Zeka
+                    </button>
+                </a>
+                <a href="quiz-5-unite6.html" target="_blank" style="text-decoration: none;">
+                    <button style="background: white; color: #7928ca; padding: 15px 25px; border: none; border-radius: 10px; font-weight: 600; cursor: pointer; font-size: 1em; transition: all 0.3s; box-shadow: 0 4px 10px rgba(0,0,0,0.2);" onmouseover="this.style.transform='translateY(-3px)'" onmouseout="this.style.transform='translateY(0)'">
+                        💻 Ünite 6: Scratch
+                    </button>
+                </a>
+            </div>
+
+            <!-- 6. Sınıf Quizleri -->
+            <h3 style="margin: 25px 0 15px 0; font-size: 1.3em;">📗 6. Sınıf Quiz Oyunları</h3>
+            <div style="display: flex; flex-wrap: wrap; gap: 15px; justify-content: center;">
+                <a href="quiz-6-unite1.html" target="_blank" style="text-decoration: none;">
+                    <button style="background: white; color: #00f2fe; padding: 15px 25px; border: none; border-radius: 10px; font-weight: 600; cursor: pointer; font-size: 1em; transition: all 0.3s; box-shadow: 0 4px 10px rgba(0,0,0,0.2);" onmouseover="this.style.transform='translateY(-3px)'" onmouseout="this.style.transform='translateY(0)'">
+                        💾 Ünite 1: Bilişim Teknolojileri
+                    </button>
+                </a>
+                <a href="quiz-6-unite2.html" target="_blank" style="text-decoration: none;">
+                    <button style="background: white; color: #f5576c; padding: 15px 25px; border: none; border-radius: 10px; font-weight: 600; cursor: pointer; font-size: 1em; transition: all 0.3s; box-shadow: 0 4px 10px rgba(0,0,0,0.2);" onmouseover="this.style.transform='translateY(-3px)'" onmouseout="this.style.transform='translateY(0)'">
+                        🛡️ Ünite 2: Etik ve Güvenlik
+                    </button>
+                </a>
+                <a href="quiz-6-unite3.html" target="_blank" style="text-decoration: none;">
+                    <button style="background: white; color: #4facfe; padding: 15px 25px; border: none; border-radius: 10px; font-weight: 600; cursor: pointer; font-size: 1em; transition: all 0.3s; box-shadow: 0 4px 10px rgba(0,0,0,0.2);" onmouseover="this.style.transform='translateY(-3px)'" onmouseout="this.style.transform='translateY(0)'">
+                        🌐 Ünite 3: İletişim ve İşbirliği
+                    </button>
+                </a>
+                <a href="quiz-6-unite4.html" target="_blank" style="text-decoration: none;">
+                    <button style="background: white; color: #667eea; padding: 15px 25px; border: none; border-radius: 10px; font-weight: 600; cursor: pointer; font-size: 1em; transition: all 0.3s; box-shadow: 0 4px 10px rgba(0,0,0,0.2);" onmouseover="this.style.transform='translateY(-3px)'" onmouseout="this.style.transform='translateY(0)'">
+                        🎬 Ünite 4: Ürün Oluşturma
+                    </button>
+                </a>
+                <a href="quiz-6-unite5.html" target="_blank" style="text-decoration: none;">
+                    <button style="background: white; color: #38f9d7; padding: 15px 25px; border: none; border-radius: 10px; font-weight: 600; cursor: pointer; font-size: 1em; transition: all 0.3s; box-shadow: 0 4px 10px rgba(0,0,0,0.2);" onmouseover="this.style.transform='translateY(-3px)'" onmouseout="this.style.transform='translateY(0)'">
+                        🎮 Ünite 5: Problem Çözme
+                    </button>
+                </a>
+            </div>
+        </div>
+
+        <div class="glossary-list" id="glossaryContent">
+            <!-- Glossary items will be inserted here -->
+        </div>
+
+        <div class="stats">
+            <span id="resultCount">0 terim gösteriliyor</span>
+        </div>
+    </div>
+
+    <script>
+        // Glossary Data - Genişletilmiş Versiyon (100+ terim)
+        const glossaryData = [
+            // 5. SINIF - UNIT 1: Bilişim Temelleri
+            { tr: "Bilişim", en: "Information Technology (IT)", def: "Bilgi işleme ve iletişim teknolojilerinin bilimi. Bilgisayar, internet ve dijital araçlarla bilgi yönetimi.", grade: "5-sinif", unit: "U1", related: ["Teknoloji", "Bilgisayar"], video: "https://www.youtube.com/results?search_query=bilişim+teknolojileri+nedir+türkçe+anlatım", info: "https://tr.wikipedia.org/wiki/Bili%C5%9Fim" },
+            { tr: "Bilgisayar", en: "Computer", def: "Veri işleyen, saklayan ve sonuç üreten elektronik cihaz. Girdi-işlem-çıktı döngüsüyle çalışır.", grade: "5-sinif", unit: "U1", related: ["Donanım", "Yazılım"], video: "https://www.youtube.com/results?search_query=bilgisayar+nedir+nasıl+çalışır+türkçe", info: "https://tr.wikipedia.org/wiki/Bilgisayar" },
+            { tr: "Donanım", en: "Hardware", def: "Bilgisayarın fiziksel parçaları; görebildiğimiz, dokunabildiğimiz kısımlar. Örnek: Klavye, mouse, anakart, işlemci.", grade: "5-sinif", unit: "U1", related: ["Klavye", "Mouse", "Monitör"], video: "https://www.youtube.com/results?search_query=bilgisayar+donanımı+nedir+türkçe+anlatım", info: "https://www.eba.gov.tr" },
+            { tr: "Yazılım", en: "Software", def: "Bilgisayarı çalıştıran programlar; fiziksel olmayan dijital komutlar. İşletim sistemleri ve uygulamalar.", grade: "5-sinif", unit: "U1", related: ["Program", "İşletim Sistemi"], video: "https://www.youtube.com/results?search_query=yazılım+nedir+software+türkçe", info: "https://tr.wikipedia.org/wiki/Yaz%C4%B1l%C4%B1m" },
+            { tr: "İşletim Sistemi", en: "Operating System (OS)", def: "Bilgisayarı kontrol eden ve diğer programları çalıştıran temel yazılım. Windows, macOS, Linux örnekleridir.", grade: "5-sinif", unit: "U1", related: ["Windows", "macOS", "Linux"], video: "https://www.youtube.com/results?search_query=işletim+sistemi+nedir+windows+linux+türkçe", info: "https://tr.wikipedia.org/wiki/%C4%B0%C5%9Fletim_sistemi" },
+            { tr: "İşlemci (CPU)", en: "CPU (Central Processing Unit)", def: "Bilgisayarın beyni; tüm hesaplamaları yapan ve komutları işleyen parça. GHz ile hızı ölçülür.", grade: "5-sinif", unit: "U1", related: ["GHz", "Çekirdek"], video: "https://www.youtube.com/results?search_query=işlemci+cpu+nedir+nasıl+çalışır+türkçe", info: "https://tr.wikipedia.org/wiki/Merkezi_i%C5%9Flem_birimi" },
+            { tr: "Bellek (RAM)", en: "RAM (Random Access Memory)", def: "Kısa süreli hafıza; çalışma esnasında veri tutar, kapanınca silinir. Çalışma hızını etkiler.", grade: "5-sinif", unit: "U1", related: ["GB", "Hız"], video: "https://www.youtube.com/results?search_query=ram+bellek+nedir+türkçe+anlatım", info: "https://tr.wikipedia.org/wiki/Rasgele_eri%C5%9Fimli_bellek" },
+            { tr: "Sabit Disk (HDD)", en: "Hard Disk Drive (HDD)", def: "Uzun süreli depolama; mekanik, dönen diskler. Ucuz ama SSD'den yavaş.", grade: "5-sinif", unit: "U1", related: ["Depolama", "SSD"], video: "https://www.youtube.com/results?search_query=sabit+disk+hdd+nedir+türkçe", info: "https://tr.wikipedia.org/wiki/Sabit_disk" },
+            { tr: "SSD", en: "Solid State Drive", def: "Elektronik depolama; HDD'den çok daha hızlı ama pahalı. Hareketli parça yok.", grade: "5-sinif", unit: "U1", related: ["Sabit Disk", "Depolama"], video: "https://www.youtube.com/results?search_query=ssd+nedir+hdd+farkı+türkçe", info: "https://tr.wikipedia.org/wiki/Kat%C4%B1-hal_s%C3%BCr%C3%BCc%C3%BCs%C3%BC" },
+            { tr: "Anakart", en: "Motherboard", def: "Tüm donanım parçalarını birbirine bağlayan ana devre kartı.", grade: "5-sinif", unit: "U1", related: ["Donanım", "CPU"], video: "https://www.youtube.com/results?search_query=anakart+motherboard+nedir+türkçe", info: "https://tr.wikipedia.org/wiki/Anakart" },
+            { tr: "Klavye", en: "Keyboard", def: "Girdi cihazı; harf, sayı ve sembol girmek için kullanılır. Q-W-E-R-T-Y düzeni.", grade: "5-sinif", unit: "U1", related: ["Girdi", "Kontrol"], video: "https://www.youtube.com/results?search_query=Klavye+nedir+türkçe", info: "https://tr.wikipedia.org/wiki/Klavye" },
+            { tr: "Fare (Mouse)", en: "Mouse", def: "Girdi cihazı; imleç kontrolü, tıklama ve kaydırma için. Optik veya lazer sensörlü.", grade: "5-sinif", unit: "U1", related: ["Girdi", "Touchpad"], video: "https://www.youtube.com/results?search_query=Fare+Mouse+nedir+türkçe", info: "https://tr.wikipedia.org/wiki/Bilgisayar_faresi" },
+            { tr: "Monitör", en: "Monitor/Display", def: "Çıktı cihazı; bilgisayarın işlediği bilgiyi gösterir. LCD, LED, OLED teknolojileri.", grade: "5-sinif", unit: "U1", related: ["Çıktı", "Ekran"], video: "https://www.youtube.com/results?search_query=Monitör+nedir+türkçe", info: "https://tr.wikipedia.org/wiki/Bilgisayar_monit%C3%B6r%C3%BC" },
+            { tr: "Yazıcı", en: "Printer", def: "Çıktı cihazı; dijital dosyaları kağıda yazdırır. Mürekkep veya lazer teknolojili.", grade: "5-sinif", unit: "U1", related: ["Çıktı", "Mürekkep"], video: "https://www.youtube.com/results?search_query=Yazıcı+nedir+türkçe", info: "https://tr.wikipedia.org/wiki/Yaz%C4%B1c%C4%B1" },
+            { tr: "Dosya", en: "File", def: "Bilgisayarda saklanan bilgi; resim, metin, video, ses vb. Uzantılarla türü belirlenir.", grade: "5-sinif", unit: "U1", related: ["Klasör", "Depolama"], video: "https://www.youtube.com/results?search_query=Dosya+nedir+türkçe", info: "https://tr.wikipedia.org/wiki/Bilgisayar_dosyas%C4%B1" },
+            { tr: "Klasör", en: "Folder", def: "Dosyaları organize etmek için kullanılan dijital kapsayıcı. Hiyerarşik yapı oluşturur.", grade: "5-sinif", unit: "U1", related: ["Dosya", "Hiyerarşi"], video: "https://www.youtube.com/results?search_query=Klasör+nedir+türkçe", info: "https://support.microsoft.com/tr-tr/windows" },
+            { tr: "USB", en: "Universal Serial Bus", def: "Evrensel bağlantı standardı. Flash bellek, klavye, mouse bağlantısı için.", grade: "5-sinif", unit: "U1", related: ["Port", "Depolama"], video: "https://www.youtube.com/results?search_query=USB+nedir+türkçe", info: "https://tr.wikipedia.org/wiki/USB" },
+            { tr: "Bit", en: "Bit", def: "En küçük veri birimi; 0 veya 1 değerini alır. Binary sistemin temeli.", grade: "5-sinif", unit: "U1", related: ["Byte", "İkili Sistem"], video: "https://www.youtube.com/results?search_query=Bit+nedir+türkçe", info: "https://tr.wikipedia.org/wiki/Bit" },
+            { tr: "Byte", en: "Byte", def: "8 bit = 1 byte. Bir karakteri temsil eder. KB, MB, GB birimleri.", grade: "5-sinif", unit: "U1", related: ["Bit", "Depolama"], video: "https://www.youtube.com/results?search_query=Byte+nedir+türkçe", info: "https://tr.wikipedia.org/wiki/Bayt" },
+
+            // 5. SINIF - UNIT 2: Dijital Ürün
+            { tr: "Microsoft Word", en: "Microsoft Word", def: "Metin belgesi oluşturmak için profesyonel kelime işlemci. En yaygın belge düzenleme programı.", grade: "5-sinif", unit: "U2", related: ["Belge", "Biçimlendirme"], video: "https://www.youtube.com/results?search_query=Microsoft+Word+nedir+türkçe", info: "https://www.microsoft.com/tr-tr/microsoft-365/word" },
+            { tr: "PowerPoint", en: "PowerPoint", def: "Slayt sunumu hazırlama ve sunmak için kullanılan program. Görsel sunumların aracı.", grade: "5-sinif", unit: "U2", related: ["Sunum", "Slayt"], video: "https://www.youtube.com/results?search_query=PowerPoint+nedir+türkçe", info: "https://www.microsoft.com/tr-tr/microsoft-365/powerpoint" },
+            { tr: "Microsoft Excel", en: "Microsoft Excel", def: "Tablolama ve hesaplama programı. Formüller, grafikler ve veri analizi için.", grade: "5-sinif", unit: "U2", related: ["Tablo", "Formül"], video: "https://www.youtube.com/results?search_query=Microsoft+Excel+nedir+türkçe", info: "https://www.microsoft.com/tr-tr/microsoft-365/excel" },
+            { tr: "Sunum", en: "Presentation", def: "Bilginin slaytlar şeklinde görsel olarak sunulması. Etkili iletişim aracı.", grade: "5-sinif", unit: "U2", related: ["PowerPoint", "Slayt"], video: "https://www.youtube.com/results?search_query=Sunum+nedir+türkçe", info: "https://www.eba.gov.tr" },
+            { tr: "Slayt", en: "Slide", def: "PowerPoint'te bir sayfa; metin, resim, video içerebilir. Sunum temel birimi.", grade: "5-sinif", unit: "U2", related: ["Sunum", "PowerPoint"], video: "https://www.youtube.com/results?search_query=Slayt+nedir+türkçe", info: "https://support.microsoft.com/tr-tr/office" },
+            { tr: "Paint", en: "Paint", def: "Dijital resim çizme ve düzenleme programı. Basit grafik tasarım aracı.", grade: "5-sinif", unit: "U2", related: ["Grafik", "Tasarım"], video: "https://www.youtube.com/results?search_query=Paint+nedir+türkçe", info: "https://support.microsoft.com/tr-tr/windows/paint" },
+            { tr: "Yazı Tipi", en: "Font", def: "Metin karakterinin görünümü (Arial, Times New Roman vb.). Okunabilirlik ve estetik.", grade: "5-sinif", unit: "U2", related: ["Biçimlendirme", "Stil"], video: "https://www.youtube.com/results?search_query=Yazı+Tipi+nedir+türkçe", info: "https://tr.wikipedia.org/wiki/Yaz%C4%B1_tipi" },
+            { tr: "Kalın", en: "Bold", def: "Metni daha koyu göstermek (Ctrl+B kısayolu). Vurgu için kullanılır.", grade: "5-sinif", unit: "U2", related: ["Vurgu", "Biçimlendirme"], video: "https://www.youtube.com/results?search_query=Kalın+nedir+türkçe", info: "https://support.microsoft.com/tr-tr/office" },
+            { tr: "İtalik", en: "Italic", def: "Metni eğik yapmak (Ctrl+I kısayolu). Alıntı ve vurgu için.", grade: "5-sinif", unit: "U2", related: ["Vurgu", "Biçimlendirme"], video: "https://www.youtube.com/results?search_query=İtalik+nedir+türkçe", info: "https://support.microsoft.com/tr-tr/office" },
+            { tr: "Altı Çizili", en: "Underline", def: "Metnin altını çizmek (Ctrl+U kısayolu). Önemli noktalarda kullanılır.", grade: "5-sinif", unit: "U2", related: ["Vurgu", "Biçimlendirme"], video: "https://www.youtube.com/results?search_query=Altı+Çizili+nedir+türkçe", info: "https://support.microsoft.com/tr-tr/office" },
+            { tr: "Hizalama", en: "Alignment", def: "Metnin sola, sağa, ortaya veya iki yana yaslanması. Düzen için önemli.", grade: "5-sinif", unit: "U2", related: ["Biçimlendirme", "Paragraf"], video: "https://www.youtube.com/results?search_query=Hizalama+nedir+türkçe", info: "https://support.microsoft.com/tr-tr/office" },
+            { tr: "Resim Ekleme", en: "Insert Image", def: "Belgeye veya sunuma görsel ekleme. İletişimi güçlendirir.", grade: "5-sinif", unit: "U2", related: ["PowerPoint", "Word"], video: "https://www.youtube.com/results?search_query=Resim+Ekleme+nedir+türkçe", info: "https://support.microsoft.com/tr-tr/office" },
+
+            // 5. SINIF - UNIT 3: Ağlar ve İletişim
+            { tr: "Bilgisayar Ağı", en: "Computer Network", def: "Birbirine bağlı bilgisayarlar arasında veri paylaşımı. LAN, WAN, MAN türleri.", grade: "5-sinif", unit: "U3", related: ["LAN", "WAN", "İnternet"], video: "https://www.youtube.com/results?search_query=Bilgisayar+Ağı+nedir+türkçe", info: "https://tr.wikipedia.org/wiki/Bilgisayar_a%C4%9F%C4%B1" },
+            { tr: "İnternet", en: "Internet", def: "Dünya çapında milyonlarca bilgisayarı birbirine bağlayan ağ. World Wide Web.", grade: "5-sinif", unit: "U3", related: ["Web Sitesi", "WWW"], video: "https://www.youtube.com/results?search_query=İnternet+nedir+türkçe", info: "https://tr.wikipedia.org/wiki/%C4%B0nternet" },
+            { tr: "LAN", en: "Local Area Network", def: "Yerel alan ağı; ev veya okul gibi kısa mesafedeki ağ.", grade: "5-sinif", unit: "U3", related: ["Ağ", "Router"], video: "https://www.youtube.com/results?search_query=LAN+nedir+türkçe", info: "https://tr.wikipedia.org/wiki/Yerel_a%C4%9F" },
+            { tr: "WAN", en: "Wide Area Network", def: "Geniş alan ağı; şehirler ve ülkeler arası bağlantı. İnternet en büyük WAN.", grade: "5-sinif", unit: "U3", related: ["İnternet", "Ağ"], video: "https://www.youtube.com/results?search_query=WAN+nedir+türkçe", info: "https://tr.wikipedia.org/wiki/Geni%C5%9F_alan_a%C4%9F%C4%B1" },
+            { tr: "Router (Yönlendirici)", en: "Router", def: "Ağlar arası veri trafiğini yönlendiren cihaz. İnternet bağlantısı sağlar.", grade: "5-sinif", unit: "U3", related: ["Modem", "Ağ"], video: "https://www.youtube.com/results?search_query=Router+Yönlendirici+nedir+türkçe", info: "https://tr.wikipedia.org/wiki/Y%C3%B6nlendirici" },
+            { tr: "Modem", en: "Modem", def: "Dijital sinyalleri analog sinyallere çeviren cihaz. İnternet erişimi için.", grade: "5-sinif", unit: "U3", related: ["Router", "İnternet"], video: "https://www.youtube.com/results?search_query=Modem+nedir+türkçe", info: "https://tr.wikipedia.org/wiki/Modem" },
+            { tr: "Wi-Fi", en: "Wi-Fi", def: "Kablosuz internet bağlantısı; telsiz ağ. 2.4GHz ve 5GHz frekansları.", grade: "5-sinif", unit: "U3", related: ["İnternet", "Router"], video: "https://www.youtube.com/results?search_query=Wi-Fi+nedir+türkçe", info: "https://tr.wikipedia.org/wiki/Wi-Fi" },
+            { tr: "IP Adresi", en: "IP Address", def: "İnternetteki her cihazın benzersiz numarası. Örnek: 192.168.1.1", grade: "5-sinif", unit: "U3", related: ["İnternet", "Ağ"], video: "https://www.youtube.com/results?search_query=IP+Adresi+nedir+türkçe", info: "https://tr.wikipedia.org/wiki/IP_adresi" },
+            { tr: "E-posta", en: "Email", def: "Elektronik posta; dijital olarak mesaj göndermek ve almak. Gmail, Outlook örnekleri.", grade: "5-sinif", unit: "U3", related: ["İletişim", "İnternet"], video: "https://www.youtube.com/results?search_query=E-posta+nedir+türkçe", info: "https://tr.wikipedia.org/wiki/E-posta" },
+            { tr: "Web Sitesi", en: "Website", def: "İnternet üzerindeki sayfalar; google.com, wikipedia.org vb. HTML ile yazılır.", grade: "5-sinif", unit: "U3", related: ["İnternet", "Tarayıcı"], video: "https://www.youtube.com/results?search_query=Web+Sitesi+nedir+türkçe", info: "https://tr.wikipedia.org/wiki/Web_sitesi" },
+            { tr: "Tarayıcı", en: "Web Browser", def: "İnternette gezinmeye yarayan program (Chrome, Firefox, Edge, Safari).", grade: "5-sinif", unit: "U3", related: ["Web Sitesi", "İnternet"], video: "https://www.youtube.com/results?search_query=Tarayıcı+nedir+türkçe", info: "https://tr.wikipedia.org/wiki/Web_taray%C4%B1c%C4%B1s%C4%B1" },
+            { tr: "URL", en: "Uniform Resource Locator", def: "Web adresi; internet üzerindeki kaynakların konumu. Örnek: https://www.eba.gov.tr", grade: "5-sinif", unit: "U3", related: ["Web Sitesi", "İnternet"], video: "https://www.youtube.com/results?search_query=URL+nedir+türkçe", info: "https://tr.wikipedia.org/wiki/URL" },
+            { tr: "Download (İndirme)", en: "Download", def: "İnternetten bilgisayara dosya aktarma. Upload (Yükleme) tersi.", grade: "5-sinif", unit: "U3", related: ["İnternet", "Dosya"], video: "https://www.youtube.com/results?search_query=Download+İndirme+nedir+türkçe", info: "https://tr.wikipedia.org/wiki/%C4%B0ndirme" },
+
+            // 5. SINIF - UNIT 4: Etik ve Güvenlik
+            { tr: "Siber Güvenlik", en: "Cybersecurity", def: "Dijital dünyada kendini ve verilerini koruma. Virüs, hacker, phishing'e karşı savunma.", grade: "5-sinif", unit: "U4", related: ["Virüs", "Şifre", "Phishing"], video: "https://www.youtube.com/results?search_query=Siber+Güvenlik+nedir+türkçe", info: "https://tr.wikipedia.org/wiki/Siber_g%C3%BCvenlik" },
+            { tr: "Virüs", en: "Virus", def: "Bilgisayara zarar veren program; kendini kopyalar. Kötü amaçlı yazılım (Malware).", grade: "5-sinif", unit: "U4", related: ["Zararlı Yazılım", "Antivirüs"], video: "https://www.youtube.com/results?search_query=Virüs+nedir+türkçe", info: "https://tr.wikipedia.org/wiki/Bilgisayar_vir%C3%BCs%C3%BC" },
+            { tr: "Antivirüs", en: "Antivirus", def: "Virüsleri tespit edip temizleyen program. Bilgisayar koruma yazılımı.", grade: "5-sinif", unit: "U4", related: ["Virüs", "Güvenlik"], video: "https://www.youtube.com/results?search_query=Antivirüs+nedir+türkçe", info: "https://tr.wikipedia.org/wiki/Antivir%C3%BCs_yaz%C4%B1l%C4%B1m%C4%B1" },
+            { tr: "Güçlü Şifre", en: "Strong Password", def: "Güvenli şifre; en az 8 karakter, büyük-küçük harf, sayı, sembol. Örnek: M3rh@ba2025", grade: "5-sinif", unit: "U4", related: ["Koruma", "Gizlilik"], video: "https://www.youtube.com/results?search_query=Güçlü+Şifre+nedir+türkçe", info: "https://tr.wikipedia.org/wiki/%C5%9Eifre" },
+            { tr: "Phishing (Oltalama)", en: "Phishing", def: "Sahte e-posta/mesajla bilgi çalma tekniği. Kimlik hırsızlığı yöntemi.", grade: "5-sinif", unit: "U4", related: ["Dolandırıcılık", "İnternet Güvenliği"], video: "https://www.youtube.com/results?search_query=Phishing+Oltalama+nedir+türkçe", info: "https://tr.wikipedia.org/wiki/Oltalama" },
+            { tr: "Dijital Vatandaşlık", en: "Digital Citizenship", def: "İnternette sorumlu, etik ve saygılı davranmak. Online görgü kuralları.", grade: "5-sinif", unit: "U4", related: ["Etik", "İnternet Güvenliği"], video: "https://www.youtube.com/results?search_query=Dijital+Vatandaşlık+nedir+türkçe", info: "https://www.eba.gov.tr" },
+            { tr: "Siber Zorbalık", en: "Cyberbullying", def: "İnternet üzerinden yapılan zorbalık. Aşağılama, tehdit, taciz.", grade: "5-sinif", unit: "U4", related: ["Etik", "Sosyal Medya"], video: "https://www.youtube.com/results?search_query=Siber+Zorbalık+nedir+türkçe", info: "https://tr.wikipedia.org/wiki/Siber_zorbal%C4%B1k" },
+            { tr: "Telif Hakkı", en: "Copyright", def: "Yaratıcının eser üzerindeki hukuki hakları. İzinsiz kullanım yasaktır.", grade: "5-sinif", unit: "U4", related: ["Etik", "Lisans"], video: "https://www.youtube.com/results?search_query=Telif+Hakkı+nedir+türkçe", info: "https://tr.wikipedia.org/wiki/Telif_hakk%C4%B1" },
+            { tr: "Kişisel Bilgi", en: "Personal Information", def: "Seni tanımlayan veriler; ad, adres, telefon, TC kimlik. Korunmalıdır.", grade: "5-sinif", unit: "U4", related: ["Gizlilik", "KVKK"], video: "https://www.youtube.com/results?search_query=Kişisel+Bilgi+nedir+türkçe", info: "https://www.kvkk.gov.tr" },
+
+            // 5. SINIF - UNIT 5: Yapay Zeka
+            { tr: "Yapay Zeka (YZ/AI)", en: "Artificial Intelligence (AI)", def: "Makinelerin insan gibi düşünmesi, öğrenmesi ve karar vermesi. Gelecek teknolojisi.", grade: "5-sinif", unit: "U5", related: ["Makine Öğrenmesi", "Algoritma"], video: "https://www.youtube.com/results?search_query=Yapay+Zeka+YZAI+nedir+türkçe", info: "https://tr.wikipedia.org/wiki/Yapay_zeka" },
+            { tr: "Makine Öğrenmesi", en: "Machine Learning", def: "Yapay zekanın verilerden öğrenmesi ve geliştirmesi. Deneyimle gelişen sistemler.", grade: "5-sinif", unit: "U5", related: ["Yapay Zeka", "Veri"], video: "https://www.youtube.com/results?search_query=Makine+Öğrenmesi+nedir+türkçe", info: "https://tr.wikipedia.org/wiki/Makine_%C3%B6%C4%9Frenmesi" },
+            { tr: "Derin Öğrenme", en: "Deep Learning", def: "Yapay sinir ağları kullanarak karmaşık öğrenme. Makine öğrenmesinin alt dalı.", grade: "5-sinif", unit: "U5", related: ["Makine Öğrenmesi", "Yapay Zeka"], video: "https://www.youtube.com/results?search_query=Derin+Öğrenme+nedir+türkçe", info: "https://tr.wikipedia.org/wiki/Derin_%C3%B6%C4%9Frenme" },
+            { tr: "Siri", en: "Siri", def: "Apple'ın sesli yardımcısı; komut alan YZ. Sesle telefon kontrolü.", grade: "5-sinif", unit: "U5", related: ["Yapay Zeka", "Sesli Asistan"], video: "https://www.youtube.com/results?search_query=Siri+nedir+türkçe", info: "https://www.apple.com/tr/siri/" },
+            { tr: "Alexa", en: "Alexa", def: "Amazon'un sesli asistanı. Akıllı ev kontrolü ve bilgi sorgulama.", grade: "5-sinif", unit: "U5", related: ["Yapay Zeka", "Siri"], video: "https://www.youtube.com/results?search_query=Alexa+nedir+türkçe", info: "https://developer.amazon.com/en-US/alexa" },
+            { tr: "Google Assistant", en: "Google Assistant", def: "Google'ın yapay zeka asistanı. Android cihazlarda yerleşik.", grade: "5-sinif", unit: "U5", related: ["Yapay Zeka", "Siri"], video: "https://www.youtube.com/results?search_query=Google+Assistant+nedir+türkçe", info: "https://assistant.google.com/intl/tr/" },
+            { tr: "Yüz Tanıma", en: "Facial Recognition", def: "Yapay zekanın yüzü tanıyarak kimliği tespit etmesi. Telefon kilidi, güvenlik.", grade: "5-sinif", unit: "U5", related: ["Yapay Zeka", "Güvenlik"], video: "https://www.youtube.com/results?search_query=Yüz+Tanıma+nedir+türkçe", info: "https://tr.wikipedia.org/wiki/Y%C3%BCz_tan%C4%B1ma" },
+            { tr: "Chatbot", en: "Chatbot", def: "Sohbet eden yapay zeka robotları. Müşteri hizmetleri, asistan.", grade: "5-sinif", unit: "U5", related: ["Yapay Zeka", "İletişim"], video: "https://www.youtube.com/results?search_query=Chatbot+nedir+türkçe", info: "https://tr.wikipedia.org/wiki/Chatbot" },
+            { tr: "Otonom Araç", en: "Autonomous Vehicle", def: "Sürücüsüz, kendi kendine giden araç. Yapay zeka ile yol bulma.", grade: "5-sinif", unit: "U5", related: ["Yapay Zeka", "Tesla"], video: "https://www.youtube.com/results?search_query=Otonom+Araç+nedir+türkçe", info: "https://tr.wikipedia.org/wiki/Otonom_ara%C3%A7" },
+
+            // 5. SINIF - UNIT 6: Programlama (Scratch)
+            { tr: "Programlama", en: "Programming", def: "Bilgisayara ne yapmasını istediğimizi komutlarla söyleme. Kod yazma sanatı.", grade: "5-sinif", unit: "U6", related: ["Algoritma", "Kod", "Scratch"], video: "https://www.youtube.com/results?search_query=Programlama+nedir+türkçe", info: "https://tr.wikipedia.org/wiki/Programlama" },
+            { tr: "Algoritma", en: "Algorithm", def: "Bir işi yapmak için adım adım talimatlar dizisi. Reçete gibi yönergeler.", grade: "5-sinif", unit: "U6", related: ["Lojik", "Programlama"], video: "https://www.youtube.com/results?search_query=Algoritma+nedir+türkçe", info: "https://tr.wikipedia.org/wiki/Algoritma" },
+            { tr: "Scratch", en: "Scratch", def: "Çocuklar için blok tabanlı programlama dili (MIT). Sürükle-bırak ile kodlama.", grade: "5-sinif", unit: "U6", related: ["Programlama", "Blok"], video: "https://www.youtube.com/results?search_query=Scratch+nedir+türkçe", info: "https://scratch.mit.edu/" },
+            { tr: "Blok", en: "Block", def: "Scratch'teki sürükle-bırak komutları. Puzzle parçası gibi birleşir.", grade: "5-sinif", unit: "U6", related: ["Scratch", "Programlama"], video: "https://www.youtube.com/results?search_query=Blok+nedir+türkçe", info: "https://scratch.mit.edu/ideas" },
+            { tr: "Sprite", en: "Sprite", def: "Scratch'te karakter; kedi, araba, insan vb. Kostümleri değişir.", grade: "5-sinif", unit: "U6", related: ["Scratch", "Nesne"], video: "https://www.youtube.com/results?search_query=Sprite+nedir+türkçe", info: "https://scratch.mit.edu/projects/editor/?tutorial=getStarted" },
+            { tr: "Sahne (Stage)", en: "Stage", def: "Scratch'te arka plan. Sprite'ların hareket ettiği alan.", grade: "5-sinif", unit: "U6", related: ["Scratch", "Sprite"], video: "https://www.youtube.com/results?search_query=Sahne+Stage+nedir+türkçe", info: "https://scratch.mit.edu/" },
+            { tr: "Döngü", en: "Loop", def: "Bir işi tekrar tekrar yapma; Forever, Repeat 10 blokları. Verimli kod için.", grade: "5-sinif", unit: "U6", related: ["Programlama", "Kontrol"], video: "https://www.youtube.com/results?search_query=Döngü+nedir+türkçe", info: "https://scratch.mit.edu/ideas" },
+            { tr: "Koşul", en: "Condition", def: "Belirli bir durumda işi yapma; if-else yapısı. Karar mekanizması.", grade: "5-sinif", unit: "U6", related: ["Programlama", "Karar"], video: "https://www.youtube.com/results?search_query=Koşul+nedir+türkçe", info: "https://scratch.mit.edu/ideas" },
+            { tr: "Değişken", en: "Variable", def: "Değeri değişen bilgi saklama yeri; skor, yaş, isim. Veri kutusu.", grade: "5-sinif", unit: "U6", related: ["Programlama", "Veri"], video: "https://www.youtube.com/results?search_query=Değişken+nedir+türkçe", info: "https://scratch.mit.edu/ideas" },
+            { tr: "Olay (Event)", en: "Event", def: "Programı başlatan tetikleyici; bayrak tıklama, tuşa basma, sprite tıklama.", grade: "5-sinif", unit: "U6", related: ["Scratch", "Programlama"], video: "https://www.youtube.com/results?search_query=Olay+Event+nedir+türkçe", info: "https://scratch.mit.edu/ideas" },
+            { tr: "Klonlama", en: "Cloning", def: "Sprite kopyalarını oluşturma. Çoklu nesneler için.", grade: "5-sinif", unit: "U6", related: ["Scratch", "Sprite"], video: "https://www.youtube.com/results?search_query=Klonlama+nedir+türkçe", info: "https://scratch.mit.edu/ideas" },
+            { tr: "Liste", en: "List", def: "Birden fazla değeri saklama yapısı. Dizi, sıralı veri koleksiyonu.", grade: "5-sinif", unit: "U6", related: ["Değişken", "Programlama"], video: "https://www.youtube.com/results?search_query=Liste+nedir+türkçe", info: "https://scratch.mit.edu/ideas" },
+
+            // 6. SINIF - UNIT 1: Bilişim Teknolojileri
+            { tr: "Bilişim Tarihi", en: "History of Computing", def: "Bilgisayarların gelişim süreci. Abacus'tan günümüze teknoloji evrimi.", grade: "6-sinif", unit: "U1", related: ["Bilgisayar", "Teknoloji"], video: "https://www.youtube.com/results?search_query=Bilişim+Tarihi+nedir+türkçe", info: "https://tr.wikipedia.org/wiki/Bilgisayar%C4%B1n_tarihi" },
+            { tr: "İkili Sayı Sistemi", en: "Binary Number System", def: "0 ve 1'lerden oluşan sayı sistemi. Bilgisayarların dili.", grade: "6-sinif", unit: "U1", related: ["Bit", "Byte"], video: "https://www.youtube.com/results?search_query=İkili+Sayı+Sistemi+nedir+türkçe", info: "https://tr.wikipedia.org/wiki/%C4%B0kili_say%C4%B1_sistemi" },
+            { tr: "Grafik Tasarım", en: "Graphic Design", def: "Görsel ürün tasarımı; posterler, afişler, logo. Yaratıcı iletişim aracı.", grade: "6-sinif", unit: "U1", related: ["Tasarım", "Sanat"], video: "https://www.youtube.com/results?search_query=Grafik+Tasarım+nedir+türkçe", info: "https://tr.wikipedia.org/wiki/Grafik_tasar%C4%B1m" },
+            { tr: "Video Düzenleme", en: "Video Editing", def: "Video kesmek, birleştirmek, efekt ve müzik ekleme. İçerik üretimi.", grade: "6-sinif", unit: "U1", related: ["Multimedya", "Prodüksiyon"], video: "https://www.youtube.com/results?search_query=Video+Düzenleme+nedir+türkçe", info: "https://tr.wikipedia.org/wiki/Video_d%C3%BCzenleme" },
+            { tr: "Çoklu Ortam (Multimedya)", en: "Multimedia", def: "Video, ses, resim, metin birlikte kullanılması. Zengin içerik.", grade: "6-sinif", unit: "U1", related: ["İçerik", "Tasarım"], video: "https://www.youtube.com/results?search_query=Çoklu+Ortam+Multimedya+nedir+türkçe", info: "https://tr.wikipedia.org/wiki/%C3%87oklu_ortam" },
+            { tr: "Bulut Bilişim", en: "Cloud Computing", def: "İnternet üzerinden veri depolama ve işleme. Google Drive, OneDrive.", grade: "6-sinif", unit: "U1", related: ["İnternet", "Depolama"], video: "https://www.youtube.com/results?search_query=Bulut+Bilişim+nedir+türkçe", info: "https://tr.wikipedia.org/wiki/Bulut_bili%C5%9Fim" },
+            { tr: "Nesnelerin İnterneti (IoT)", en: "Internet of Things", def: "Akıllı cihazların internete bağlanması. Akıllı ev, giyilebilir teknoloji.", grade: "6-sinif", unit: "U1", related: ["İnternet", "Akıllı Cihaz"], video: "https://www.youtube.com/results?search_query=Nesnelerin+İnterneti+IoT+nedir+türkçe", info: "https://tr.wikipedia.org/wiki/Nesnelerin_%C4%B0nterneti" },
+
+            // 6. SINIF - UNIT 2: Etik ve Güvenlik
+            { tr: "KVKK", en: "Personal Data Protection Law", def: "Kişisel Verilerin Korunması Kanunu. Gizlilik hakları yasası.", grade: "6-sinif", unit: "U2", related: ["Kişisel Veri", "Gizlilik"], video: "https://www.youtube.com/results?search_query=KVKK+nedir+türkçe", info: "https://www.kvkk.gov.tr" },
+            { tr: "Kişisel Veri", en: "Personal Data", def: "Kimliğini tanımlayan bilgiler; ad, soyad, doğum tarihi, TC kimlik.", grade: "6-sinif", unit: "U2", related: ["Gizlilik", "Güvenlik"], video: "https://www.youtube.com/results?search_query=Kişisel+Veri+nedir+türkçe", info: "https://www.kvkk.gov.tr" },
+            { tr: "Gizlilik", en: "Privacy", def: "Kişisel bilgilerini koruma hakkı ve sorumluluğu. Mahrem alan.", grade: "6-sinif", unit: "U2", related: ["Veri", "Güvenlik"], video: "https://www.youtube.com/results?search_query=Gizlilik+nedir+türkçe", info: "https://www.kvkk.gov.tr" },
+            { tr: "Siber Tehdit", en: "Cyber Threat", def: "İnternette karşılaşılabilecek tehlikeler ve riskler. Hacker, virus, phishing.", grade: "6-sinif", unit: "U2", related: ["Siber Güvenlik", "Virüs"], video: "https://www.youtube.com/results?search_query=Siber+Tehdit+nedir+türkçe", info: "https://tr.wikipedia.org/wiki/Siber_sald%C4%B1r%C4%B1" },
+            { tr: "2FA (İki Faktörlü Doğrulama)", en: "Two-Factor Authentication", def: "Şifre + doğrulama kodu ile çift katmanlı güvenlik. SMS veya uygulama kodu.", grade: "6-sinif", unit: "U2", related: ["Güvenlik", "Şifre"], video: "https://www.youtube.com/results?search_query=2FA+İki+Faktörlü+Doğrulama+nedir+türkçe", info: "https://tr.wikipedia.org/wiki/%C4%B0ki_fakt%C3%B6rl%C3%BC_kimlik_do%C4%9Frulama" },
+            { tr: "Ransomware", en: "Ransomware", def: "Dosyalarını şifreleyen ve fidye isteyen zararlı yazılım.", grade: "6-sinif", unit: "U2", related: ["Virüs", "Siber Güvenlik"], video: "https://www.youtube.com/results?search_query=Ransomware+nedir+türkçe", info: "https://tr.wikipedia.org/wiki/Fidye_yaz%C4%B1l%C4%B1m%C4%B1" },
+            { tr: "VPN", en: "Virtual Private Network", def: "Sanal özel ağ. İnternet trafiğini şifreler, anonimlik sağlar.", grade: "6-sinif", unit: "U2", related: ["Güvenlik", "İnternet"], video: "https://www.youtube.com/results?search_query=VPN+nedir+türkçe", info: "https://tr.wikipedia.org/wiki/Sanal_%C3%B6zel_a%C4%9F" },
+
+            // 6. SINIF - UNIT 3: İletişim ve İşbirliği
+            { tr: "Bilgi Okuryazarlığı", en: "Information Literacy", def: "Bilgiyi bulma, değerlendirme ve doğru kullanma becerisi. Kritik düşünme.", grade: "6-sinif", unit: "U3", related: ["Araştırma", "Kritik Düşünme"], video: "https://www.youtube.com/results?search_query=Bilgi+Okuryazarlığı+nedir+türkçe", info: "https://tr.wikipedia.org/wiki/Bilgi_okuryazarl%C4%B1%C4%9F%C4%B1" },
+            { tr: "Araştırma", en: "Research", def: "Bilgi arama ve toplama; güvenilir kaynakları kullanma. Akademik yöntem.", grade: "6-sinif", unit: "U3", related: ["Bilgi Okuryazarlığı"], video: "https://www.youtube.com/results?search_query=Araştırma+nedir+türkçe", info: "https://tr.wikipedia.org/wiki/Ara%C5%9Ft%C4%B1rma" },
+            { tr: "Google Workspace", en: "Google Workspace", def: "Google'ın işbirliği araçları. Docs, Sheets, Slides, Drive.", grade: "6-sinif", unit: "U3", related: ["İşbirliği", "Bulut"], video: "https://www.youtube.com/results?search_query=Google+Workspace+nedir+türkçe", info: "https://workspace.google.com" },
+            { tr: "Microsoft 365", en: "Microsoft 365", def: "Microsoft'un bulut tabanlı ofis paketi. Word, Excel, PowerPoint online.", grade: "6-sinif", unit: "U3", related: ["İşbirliği", "Bulut"], video: "https://www.youtube.com/results?search_query=Microsoft+365+nedir+türkçe", info: "https://www.microsoft.com/tr-tr/microsoft-365" },
+            { tr: "Zoom", en: "Zoom", def: "Video konferans platformu. Uzaktan eğitim ve toplantı aracı.", grade: "6-sinif", unit: "U3", related: ["İletişim", "Online Eğitim"], video: "https://www.youtube.com/results?search_query=Zoom+nedir+türkçe", info: "https://zoom.us" },
+
+            // 6. SINIF - UNIT 4: Ürün Oluşturma
+            { tr: "Web Tasarım", en: "Web Design", def: "İnternet sitesi görsel ve yapısını tasarlama. UI/UX tasarımı.", grade: "6-sinif", unit: "U4", related: ["HTML", "CSS"], video: "https://www.youtube.com/results?search_query=Web+Tasarım+nedir+türkçe", info: "https://tr.wikipedia.org/wiki/Web_tasar%C4%B1m%C4%B1" },
+            { tr: "HTML", en: "HyperText Markup Language", def: "Web sayfalarının yapısını oluşturan işaretleme dili. İskelet.", grade: "6-sinif", unit: "U4", related: ["Web Tasarım", "CSS"], video: "https://www.youtube.com/results?search_query=HTML+nedir+türkçe", info: "https://tr.wikipedia.org/wiki/HTML" },
+            { tr: "CSS", en: "Cascading Style Sheets", def: "Web sayfalarının görünümünü düzenleyen stil dili. Renk, boyut, düzen.", grade: "6-sinif", unit: "U4", related: ["HTML", "Web Tasarım"], video: "https://www.youtube.com/results?search_query=CSS+nedir+türkçe", info: "https://tr.wikipedia.org/wiki/CSS" },
+            { tr: "Canva", en: "Canva", def: "Web tabanlı grafik tasarım aracı. Kolay ve ücretsiz tasarım.", grade: "6-sinif", unit: "U4", related: ["Grafik Tasarım", "Tasarım"], video: "https://www.youtube.com/results?search_query=Canva+nedir+türkçe", info: "https://www.canva.com" },
+            { tr: "Podcast", en: "Podcast", def: "Ses yayını. Dinlenebilir içerik üretimi.", grade: "6-sinif", unit: "U4", related: ["Ses", "İçerik"], video: "https://www.youtube.com/results?search_query=Podcast+nedir+türkçe", info: "https://tr.wikipedia.org/wiki/Podcast" },
+
+            // 6. SINIF - UNIT 5: Problem Çözme ve Programlama
+            { tr: "Problem Çözme", en: "Problem Solving", def: "Bir sorunu analiz edip çözüm bulmak. Algoritmik düşünme.", grade: "6-sinif", unit: "U5", related: ["Algoritma", "Lojik"], video: "https://www.youtube.com/results?search_query=Problem+Çözme+nedir+türkçe", info: "https://tr.wikipedia.org/wiki/Problem_%C3%A7%C3%B6zme" },
+            { tr: "Veri Analizi", en: "Data Analysis", def: "Toplanan verileri inceleyip anlamlandırma. İstatistik, grafikler.", grade: "6-sinif", unit: "U5", related: ["Bilgi", "İstatistik"], video: "https://www.youtube.com/results?search_query=Veri+Analizi+nedir+türkçe", info: "https://tr.wikipedia.org/wiki/Veri_analizi" },
+            { tr: "Python", en: "Python", def: "Öğrenmesi kolay, güçlü programlama dili. Yapay zeka, veri bilimi için.", grade: "6-sinif", unit: "U5", related: ["Programlama", "Kod"], video: "https://www.youtube.com/results?search_query=Python+nedir+türkçe", info: "https://www.python.org" },
+            { tr: "Fonksiyon", en: "Function", def: "Belirli bir işi yapan kod bloğu. Tekrar kullanılabilir.", grade: "6-sinif", unit: "U5", related: ["Programlama", "Python"], video: "https://www.youtube.com/results?search_query=Fonksiyon+nedir+türkçe", info: "https://tr.wikipedia.org/wiki/Fonksiyon_(programlama)" },
+            { tr: "Sözlük (Dictionary)", en: "Dictionary", def: "Anahtar-değer çiftleri ile veri saklama. Python veri yapısı.", grade: "6-sinif", unit: "U5", related: ["Python", "Veri"], video: "https://www.youtube.com/results?search_query=Sözlük+Dictionary+nedir+türkçe", info: "https://docs.python.org" },
+            { tr: "Hata Ayıklama (Debugging)", en: "Debugging", def: "Kodda hataları bulup düzeltme. Problem çözme süreci.", grade: "6-sinif", unit: "U5", related: ["Programlama", "Problem Çözme"], video: "https://www.youtube.com/results?search_query=Hata+Ayıklama+Debugging+nedir+türkçe", info: "https://tr.wikipedia.org/wiki/Hata_ay%C4%B1klama" }
+        ];
+
+        // DOM Elements
+        const searchInput = document.getElementById('searchInput');
+        const gradeTabsContainer = document.querySelector('.grade-tabs');
+        const filterContainer = document.getElementById('filterContainer');
+        const glossaryContent = document.getElementById('glossaryContent');
+        const resultCount = document.getElementById('resultCount');
+
+        let activeGrade = 'all';
+        let activeUnits = new Set();
+
+        // Initialize
+        function init() {
+            generateUnitFilters();
+            renderGlossary(glossaryData);
+            addEventListeners();
+        }
+
+        // Generate unit filters
+        function generateUnitFilters() {
+            const units = new Set();
+            glossaryData.forEach(item => units.add(item.unit));
+
+            [...units].sort().forEach(unit => {
+                const btn = document.createElement('button');
+                btn.className = 'filter-btn';
+                btn.textContent = unit;
+                btn.dataset.filter = unit;
+                btn.addEventListener('click', () => toggleFilter(btn, unit));
+                filterContainer.appendChild(btn);
+            });
+        }
+
+        // Toggle filter
+        function toggleFilter(btn, unit) {
+            btn.classList.toggle('active');
+            if (btn.classList.contains('active')) {
+                activeUnits.add(unit);
+            } else {
+                activeUnits.delete(unit);
+            }
+            filterAndSearch();
+        }
+
+        // Toggle grade
+        function toggleGrade(btn, grade) {
+            document.querySelectorAll('.grade-tab').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            activeGrade = grade;
+            activeUnits.clear();
+            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+            filterAndSearch();
+        }
+
+        // Render glossary
+        function renderGlossary(data) {
+            glossaryContent.innerHTML = '';
+
+            if (data.length === 0) {
+                glossaryContent.innerHTML = `
+                    <div class="no-results">
+                        <h3>😢 Sonuç bulunamadı</h3>
+                        <p>Arama kriterlerinize uygun terim yok.</p>
+                    </div>
+                `;
+                resultCount.textContent = '0 terim gösteriliyor';
+                return;
+            }
+
+            data.forEach((term, index) => {
+                const item = document.createElement('div');
+                item.className = 'glossary-item';
+                item.dataset.index = index;
+
+                const relatedHTML = term.related.length > 0
+                    ? `<div class="related-topics">
+                        <strong>📌 İlgili Konular:</strong>
+                        <div class="topic-list">
+                            ${term.related.map(t => `<span class="topic-tag">${t}</span>`).join('')}
+                        </div>
+                       </div>`
+                    : '';
+
+                const linksHTML = term.video || term.info
+                    ? `<div class="links-section">
+                        ${term.video ? `<a href="${term.video}" target="_blank" class="link-btn">🎥 Videoyu İzle</a>` : ''}
+                        ${term.info ? `<a href="${term.info}" target="_blank" class="link-btn">📖 Daha Fazla</a>` : ''}
+                       </div>`
+                    : '';
+
+                item.innerHTML = `
+                    <button class="glossary-header-btn">
+                        <div class="term-info">
+                            <div class="term-name">${term.tr}</div>
+                            <div class="term-en">${term.en}</div>
+                            <span class="term-unit">${term.unit}</span>
+                        </div>
+                        <span class="toggle-icon">▼</span>
+                    </button>
+                    <div class="glossary-body">
+                        <p>
+                            <span class="definition-label">📝 Tanım:</span>
+                            ${term.def}
+                        </p>
+                        ${relatedHTML}
+                        ${linksHTML}
+                    </div>
+                `;
+
+                item.querySelector('.glossary-header-btn').addEventListener('click', (e) => {
+                    e.preventDefault();
+                    toggleItem(item);
+                });
+
+                glossaryContent.appendChild(item);
+            });
+
+            resultCount.textContent = `${data.length} terim gösteriliyor`;
+        }
+
+        // Toggle item expand/collapse
+        function toggleItem(item) {
+            item.classList.toggle('expanded');
+        }
+
+        // Filter and search
+        function filterAndSearch() {
+            let filtered = glossaryData;
+
+            // Apply grade filter
+            if (activeGrade !== 'all') {
+                filtered = filtered.filter(term => term.grade === activeGrade);
+            }
+
+            // Apply unit filters
+            if (activeUnits.size > 0) {
+                filtered = filtered.filter(term => activeUnits.has(term.unit));
+            }
+
+            // Apply search
+            const searchTerm = searchInput.value.toLowerCase();
+            if (searchTerm) {
+                filtered = filtered.filter(term =>
+                    term.tr.toLowerCase().includes(searchTerm) ||
+                    term.en.toLowerCase().includes(searchTerm) ||
+                    term.def.toLowerCase().includes(searchTerm)
+                );
+            }
+
+            renderGlossary(filtered);
+        }
+
+        // Add event listeners
+        function addEventListeners() {
+            // Search
+            searchInput.addEventListener('input', filterAndSearch);
+
+            // Grade tabs
+            document.querySelectorAll('.grade-tab').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    toggleGrade(btn, btn.dataset.grade);
+                });
+            });
+
+            // Set first grade tab as active
+            document.querySelector('.grade-tab.all').classList.add('active');
+        }
+
+        // Initialize
+        init();
+    </script>
+</body>
+</html>

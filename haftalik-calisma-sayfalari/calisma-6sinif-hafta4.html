@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>6. Sınıf - Hafta 4 - Çoktan Seçmeli Quiz</title>
+    <style>
+        @media print {
+            body { margin: 0; padding: 20px; }
+            .no-print { display: none !important; }
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 30px;
+            background: white;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 3px solid #4facfe;
+        }
+        .header h1 { color: #4facfe; margin-bottom: 10px; }
+        .badges {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin: 15px 0;
+        }
+        .badge {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            font-weight: bold;
+        }
+        .student-info {
+            margin: 30px 0;
+            padding: 20px;
+            border: 2px dashed #4facfe;
+            border-radius: 10px;
+        }
+        .info-row {
+            margin: 10px 0;
+            display: flex;
+            align-items: center;
+        }
+        .info-label {
+            font-weight: bold;
+            margin-right: 10px;
+            min-width: 80px;
+        }
+        .info-line {
+            flex: 1;
+            border-bottom: 1px solid #333;
+            height: 1px;
+            margin-left: 10px;
+        }
+        .instructions {
+            background: #f0f0f0;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            border-left: 4px solid #4facfe;
+        }
+        .question {
+            margin: 25px 0;
+            padding: 20px;
+            background: #f9f9f9;
+            border-left: 4px solid #4facfe;
+            border-radius: 5px;
+        }
+        .question-text {
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 15px;
+        }
+        .option {
+            margin: 10px 0;
+            padding: 10px;
+            background: white;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .option:hover {
+            border-color: #4facfe;
+            background: #e3f2fd;
+        }
+        .checkbox {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 2px solid #4facfe;
+            border-radius: 3px;
+            margin-right: 10px;
+            vertical-align: middle;
+        }
+        button {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            padding: 15px 40px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1em;
+            cursor: pointer;
+            margin: 0 10px;
+            font-weight: bold;
+        }
+        button:hover { transform: scale(1.05); }
+        .controls { text-align: center; margin: 30px 0; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>📝 Çoktan Seçmeli Quiz</h1>
+        <div class="badges">
+            <span class="badge">6. SINIF</span>
+            <span class="badge">HAFTA 4</span>
+            <span class="badge">QUIZ</span>
+        </div>
+        <p style="margin-top: 10px; color: #666;">Veri Yönetimi Değerlendirme</p>
+    </div>
+
+    <div class="student-info">
+        <div class="info-row">
+            <span class="info-label">Adı Soyadı:</span>
+            <span class="info-line"></span>
+        </div>
+        <div class="info-row">
+            <span class="info-label">Sınıfı:</span>
+            <span class="info-line"></span>
+        </div>
+        <div class="info-row">
+            <span class="info-label">Numarası:</span>
+            <span class="info-line"></span>
+        </div>
+    </div>
+
+    <div class="instructions">
+        <strong>📌 Yönerge:</strong> Aşağıdaki soruları dikkatlice okuyun ve doğru cevabı işaretleyin.
+    </div>
+
+    <div class="question">
+        <div class="question-text">1. Aşağıdakilerden hangisi bir veri saklama birimi DEĞİLDİR?</div>
+        <div class="option"><span class="checkbox"></span> A) Kilobyte</div>
+        <div class="option"><span class="checkbox"></span> B) Megabyte</div>
+        <div class="option"><span class="checkbox"></span> C) Megahertz</div>
+        <div class="option"><span class="checkbox"></span> D) Gigabyte</div>
+    </div>
+
+    <div class="question">
+        <div class="question-text">2. Excel programında veriler hangi yapıda saklanır?</div>
+        <div class="option"><span class="checkbox"></span> A) Satır ve sütunlar</div>
+        <div class="option"><span class="checkbox"></span> B) Paragraflar</div>
+        <div class="option"><span class="checkbox"></span> C) Slaytlar</div>
+        <div class="option"><span class="checkbox"></span> D) Klasörler</div>
+    </div>
+
+    <div class="question">
+        <div class="question-text">3. Verileri kaybetmemek için ne yapmalıyız?</div>
+        <div class="option"><span class="checkbox"></span> A) Sadece bir yere kaydederiz</div>
+        <div class="option"><span class="checkbox"></span> B) Düzenli yedekleme yaparız</div>
+        <div class="option"><span class="checkbox"></span> C) Hiçbir şey yapmayız</div>
+        <div class="option"><span class="checkbox"></span> D) Bilgisayarı kapatırız</div>
+    </div>
+
+    <div class="question">
+        <div class="question-text">4. Google Drive, Dropbox gibi servisler hangi tür depolama sağlar?</div>
+        <div class="option"><span class="checkbox"></span> A) USB depolama</div>
+        <div class="option"><span class="checkbox"></span> B) Harici disk</div>
+        <div class="option"><span class="checkbox"></span> C) Bulut depolama</div>
+        <div class="option"><span class="checkbox"></span> D) CD/DVD</div>
+    </div>
+
+    <div class="question">
+        <div class="question-text">5. Bir tabloda verileri alfabetik sıralamak için hangi işlem yapılır?</div>
+        <div class="option"><span class="checkbox"></span> A) Filtreleme</div>
+        <div class="option"><span class="checkbox"></span> B) Kopyalama</div>
+        <div class="option"><span class="checkbox"></span> C) Sıralama</div>
+        <div class="option"><span class="checkbox"></span> D) Silme</div>
+    </div>
+
+    <div class="question">
+        <div class="question-text">6. 1 Gigabyte kaç Megabyte'tır?</div>
+        <div class="option"><span class="checkbox"></span> A) 100 MB</div>
+        <div class="option"><span class="checkbox"></span> B) 512 MB</div>
+        <div class="option"><span class="checkbox"></span> C) 1000 MB</div>
+        <div class="option"><span class="checkbox"></span> D) 1024 MB</div>
+    </div>
+
+    <div class="question">
+        <div class="question-text">7. Hangi dosya uzantısı bir resim dosyasıdır?</div>
+        <div class="option"><span class="checkbox"></span> A) .docx</div>
+        <div class="option"><span class="checkbox"></span> B) .jpg</div>
+        <div class="option"><span class="checkbox"></span> C) .xlsx</div>
+        <div class="option"><span class="checkbox"></span> D) .pptx</div>
+    </div>
+
+    <div class="question">
+        <div class="question-text">8. Veritabanı nedir?</div>
+        <div class="option"><span class="checkbox"></span> A) Sadece resim saklama yeri</div>
+        <div class="option"><span class="checkbox"></span> B) Yapılandırılmış verilerin saklandığı sistem</div>
+        <div class="option"><span class="checkbox"></span> C) Video oynatma programı</div>
+        <div class="option"><span class="checkbox"></span> D) Yazılım geliştirme aracı</div>
+    </div>
+
+    <div class="controls no-print">
+        <button onclick="window.print()">🖨️ Yazdır / PDF Kaydet</button>
+        <button onclick="window.location.href='../index.html'">🏠 Ana Sayfa</button>
+    </div>
+
+    <div style="margin-top: 40px; padding: 15px; background: #f0f0f0; border-radius: 8px;">
+        <strong>💯 Notlandırma:</strong> Doğru sayısı: _____ / 8 &nbsp;&nbsp; Not: _____
+    </div>
+</body>
+</html>

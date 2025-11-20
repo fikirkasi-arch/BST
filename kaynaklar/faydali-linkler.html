@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Faydalı Linkler - BTY</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            color: white;
+            padding: 40px 20px;
+            margin-bottom: 30px;
+        }
+
+        header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .section {
+            background: white;
+            border-radius: 15px;
+            padding: 40px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .section-title {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px 30px;
+            border-radius: 12px;
+            font-size: 1.8em;
+            margin-bottom: 30px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .link-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin-top: 25px;
+        }
+
+        .link-card {
+            border: 3px solid #667eea;
+            border-radius: 15px;
+            padding: 25px;
+            transition: all 0.3s;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        }
+
+        .link-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 15px 35px rgba(102, 126, 234, 0.4);
+        }
+
+        .link-icon {
+            font-size: 3em;
+            text-align: center;
+            margin-bottom: 15px;
+        }
+
+        .link-title {
+            font-size: 1.4em;
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+
+        .link-desc {
+            color: #555;
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+
+        .link-url {
+            background: white;
+            padding: 10px 15px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            color: #0066cc;
+            margin-bottom: 15px;
+            word-break: break-all;
+        }
+
+        .visit-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 25px;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            width: 100%;
+        }
+
+        .visit-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .info-box {
+            background: #e7f3ff;
+            border-left: 5px solid #0066cc;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+        }
+
+        .info-box h3 {
+            color: #0066cc;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🔗 Faydalı Linkler ve Kaynaklar</h1>
+            <p>Bilişim Teknolojileri Dersi için En İyi Eğitim Platformları</p>
+        </header>
+
+        <div class="info-box">
+            <h3>📚 Bu Kaynakları Nasıl Kullanmalıyım?</h3>
+            <p style="line-height: 1.8; color: #333;">
+                Aşağıdaki linkler, öğrencilerin derste öğrendikleri konuları pekiştirmeleri ve ekstra pratik yapmaları için özenle seçilmiştir.
+                Her platform farklı konulara odaklanır ve eğlenceli öğrenme deneyimi sunar.
+            </p>
+        </div>
+
+        <!-- PROGRAMLAMA VE KODLAMA -->
+        <div class="section">
+            <div class="section-title">💻 Programlama ve Kodlama Platformları</div>
+
+            <div class="link-grid">
+                <div class="link-card">
+                    <div class="link-icon">🎮</div>
+                    <div class="link-title">Scratch</div>
+                    <div class="link-desc">
+                        Blok tabanlı programlama platformu. Oyunlar, animasyonlar ve interaktif hikayeler oluşturun.
+                        5. ve 6. sınıf müfredatının temel platformu.
+                    </div>
+                    <div class="link-url">scratch.mit.edu</div>
+                    <a href="https://scratch.mit.edu" target="_blank">
+                        <button class="visit-btn">🌐 Siteyi Ziyaret Et</button>
+                    </a>
+                </div>
+
+                <div class="link-card">
+                    <div class="link-icon">🎯</div>
+                    <div class="link-title">Code.org</div>
+                    <div class="link-desc">
+                        Kodlama öğrenme platformu. Yüzlerce ücretsiz ders ve Angry Birds, Frozen gibi temalarla
+                        eğlenceli kodlama etkinlikleri.
+                    </div>
+                    <div class="link-url">code.org</div>
+                    <a href="https://code.org" target="_blank">
+                        <button class="visit-btn">🌐 Siteyi Ziyaret Et</button>
+                    </a>
+                </div>
+
+                <div class="link-card">
+                    <div class="link-icon">🤖</div>
+                    <div class="link-title">Kodable</div>
+                    <div class="link-desc">
+                        Oyun tabanlı kodlama öğrenme platformu. Temel programlama kavramlarını eğlenceli
+                        bir şekilde öğretin.
+                    </div>
+                    <div class="link-url">kodable.com</div>
+                    <a href="https://www.kodable.com" target="_blank">
+                        <button class="visit-btn">🌐 Siteyi Ziyaret Et</button>
+                    </a>
+                </div>
+
+                <div class="link-card">
+                    <div class="link-icon">🎨</div>
+                    <div class="link-title">ScratchJr</div>
+                    <div class="link-desc">
+                        Scratch'in küçük çocuklar için versiyonu. Basitleştirilmiş arayüz ve bloklar.
+                    </div>
+                    <div class="link-url">scratchjr.org</div>
+                    <a href="https://www.scratchjr.org" target="_blank">
+                        <button class="visit-btn">🌐 Siteyi Ziyaret Et</button>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- TÜRK PLATFORMLARI -->
+        <div class="section">
+            <div class="section-title">🇹🇷 Türkçe Eğitim Platformları</div>
+
+            <div class="link-grid">
+                <div class="link-card">
+                    <div class="link-icon">📚</div>
+                    <div class="link-title">EBA - Eğitim Bilişim Ağı</div>
+                    <div class="link-desc">
+                        MEB'in resmi eğitim platformu. Tüm dersler için videolar, testler ve interaktif içerikler.
+                        BTY dersi için özel içerikler mevcut.
+                    </div>
+                    <div class="link-url">eba.gov.tr</div>
+                    <a href="https://www.eba.gov.tr" target="_blank">
+                        <button class="visit-btn">🌐 Siteyi Ziyaret Et</button>
+                    </a>
+                </div>
+
+                <div class="link-card">
+                    <div class="link-icon">💻</div>
+                    <div class="link-title">BTK Akademi</div>
+                    <div class="link-desc">
+                        Bilgi Teknolojileri ve İletişim Kurumu'nun eğitim platformu. Ücretsiz sertifikalı
+                        yazılım, kodlama ve teknoloji kursları.
+                    </div>
+                    <div class="link-url">btkakademi.gov.tr</div>
+                    <a href="https://www.btkakademi.gov.tr" target="_blank">
+                        <button class="visit-btn">🌐 Siteyi Ziyaret Et</button>
+                    </a>
+                </div>
+
+                <div class="link-card">
+                    <div class="link-icon">🎓</div>
+                    <div class="link-title">Açık Akademi</div>
+                    <div class="link-desc">
+                        Anadolu Üniversitesi'nin ücretsiz online eğitim platformu. Programlama, web tasarımı
+                        ve birçok teknoloji kursu.
+                    </div>
+                    <div class="link-url">acikakademi.anadolu.edu.tr</div>
+                    <a href="https://acikakademi.anadolu.edu.tr" target="_blank">
+                        <button class="visit-btn">🌐 Siteyi Ziyaret Et</button>
+                    </a>
+                </div>
+
+                <div class="link-card">
+                    <div class="link-icon">🤖</div>
+                    <div class="link-title">CodeMonkey Türkçe</div>
+                    <div class="link-desc">
+                        Oyun temelli kodlama platformu. Türkçe dil desteği ile çocuklar için kodlama eğitimi.
+                    </div>
+                    <div class="link-url">codemonkey.com/tr</div>
+                    <a href="https://www.codemonkey.com/tr" target="_blank">
+                        <button class="visit-btn">🌐 Siteyi Ziyaret Et</button>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- YAPAY ZEKA VE ROBOTİK -->
+        <div class="section">
+            <div class="section-title">🤖 Yapay Zeka ve Robotik</div>
+
+            <div class="link-grid">
+                <div class="link-card">
+                    <div class="link-icon">🧠</div>
+                    <div class="link-title">Machine Learning for Kids</div>
+                    <div class="link-desc">
+                        Çocuklar için yapay zeka öğrenme platformu. Makine öğrenmesi projelerini
+                        Scratch ile entegre ederek deneyimleyin.
+                    </div>
+                    <div class="link-url">machinelearningforkids.co.uk</div>
+                    <a href="https://machinelearningforkids.co.uk" target="_blank">
+                        <button class="visit-btn">🌐 Siteyi Ziyaret Et</button>
+                    </a>
+                </div>
+
+                <div class="link-card">
+                    <div class="link-icon">🎮</div>
+                    <div class="link-title">Teachable Machine</div>
+                    <div class="link-desc">
+                        Google'ın yapay zeka eğitim aracı. Kendi yapay zeka modelinizi oluşturun ve
+                        test edin. Görüntü, ses ve poz tanıma.
+                    </div>
+                    <div class="link-url">teachablemachine.withgoogle.com</div>
+                    <a href="https://teachablemachine.withgoogle.com" target="_blank">
+                        <button class="visit-btn">🌐 Siteyi Ziyaret Et</button>
+                    </a>
+                </div>
+
+                <div class="link-card">
+                    <div class="link-icon">🔬</div>
+                    <div class="link-title">Google CS First</div>
+                    <div class="link-desc">
+                        Google'ın bilgisayar bilimleri eğitim programı. Video dersler ve projelerle
+                        öğrenin. Öğretmenler için hazır müfredat.
+                    </div>
+                    <div class="link-url">csfirst.withgoogle.com</div>
+                    <a href="https://csfirst.withgoogle.com" target="_blank">
+                        <button class="visit-btn">🌐 Siteyi Ziyaret Et</button>
+                    </a>
+                </div>
+
+                <div class="link-card">
+                    <div class="link-icon">🚀</div>
+                    <div class="link-title">Tynker</div>
+                    <div class="link-desc">
+                        Kodlama ve STEM eğitimi platformu. Oyunlar, modlar ve uygulamalar oluşturun.
+                        Drone programlama modülleri mevcut.
+                    </div>
+                    <div class="link-url">tynker.com</div>
+                    <a href="https://www.tynker.com" target="_blank">
+                        <button class="visit-btn">🌐 Siteyi Ziyaret Et</button>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- DİJİTAL TASARIM VE YARATICILIK -->
+        <div class="section">
+            <div class="section-title">🎨 Dijital Tasarım ve Yaratıcılık</div>
+
+            <div class="link-grid">
+                <div class="link-card">
+                    <div class="link-icon">🖼️</div>
+                    <div class="link-title">Canva Eğitim</div>
+                    <div class="link-desc">
+                        Öğrenciler için ücretsiz grafik tasarım platformu. Poster, sunum, video ve daha
+                        fazlası oluşturun. Şablonlar ve kolay arayüz.
+                    </div>
+                    <div class="link-url">canva.com/education</div>
+                    <a href="https://www.canva.com/education/" target="_blank">
+                        <button class="visit-btn">🌐 Siteyi Ziyaret Et</button>
+                    </a>
+                </div>
+
+                <div class="link-card">
+                    <div class="link-icon">✏️</div>
+                    <div class="link-title">Pixlr</div>
+                    <div class="link-desc">
+                        Ücretsiz online fotoğraf düzenleme aracı. Photoshop benzeri özellikler,
+                        tarayıcı tabanlı çalışır.
+                    </div>
+                    <div class="link-url">pixlr.com</div>
+                    <a href="https://pixlr.com" target="_blank">
+                        <button class="visit-btn">🌐 Siteyi Ziyaret Et</button>
+                    </a>
+                </div>
+
+                <div class="link-card">
+                    <div class="link-icon">🎬</div>
+                    <div class="link-title">WeVideo</div>
+                    <div class="link-desc">
+                        Online video düzenleme platformu. Öğrenciler için özel sürüm. Kolay kullanımlı
+                        video editörü ve efektler.
+                    </div>
+                    <div class="link-url">wevideo.com</div>
+                    <a href="https://www.wevideo.com" target="_blank">
+                        <button class="visit-btn">🌐 Siteyi Ziyaret Et</button>
+                    </a>
+                </div>
+
+                <div class="link-card">
+                    <div class="link-icon">🎵</div>
+                    <div class="link-title">Soundtrap</div>
+                    <div class="link-desc">
+                        Online müzik ve podcast oluşturma platformu. Öğrenciler için ses düzenleme
+                        ve müzik üretimi araçları.
+                    </div>
+                    <div class="link-url">soundtrap.com/edu</div>
+                    <a href="https://www.soundtrap.com/edu" target="_blank">
+                        <button class="visit-btn">🌐 Siteyi Ziyaret Et</button>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- SİBER GÜVENLİK VE DİJİTAL VATANDAŞLIK -->
+        <div class="section">
+            <div class="section-title">🔒 Siber Güvenlik ve Dijital Vatandaşlık</div>
+
+            <div class="link-grid">
+                <div class="link-card">
+                    <div class="link-icon">🛡️</div>
+                    <div class="link-title">Güvenli İnternet</div>
+                    <div class="link-desc">
+                        TÜBİTAK'ın güvenli internet kullanımı platformu. Çocuklar, aileler ve eğitimciler
+                        için kaynaklar ve bilgiler.
+                    </div>
+                    <div class="link-url">guvenliweb.org.tr</div>
+                    <a href="https://www.guvenliweb.org.tr" target="_blank">
+                        <button class="visit-btn">🌐 Siteyi Ziyaret Et</button>
+                    </a>
+                </div>
+
+                <div class="link-card">
+                    <div class="link-icon">👨‍👩‍👧‍👦</div>
+                    <div class="link-title">Common Sense Media</div>
+                    <div class="link-desc">
+                        Dijital vatandaşlık müfredatı ve kaynakları. Öğrenciler için yaş gruplarına göre
+                        dersler ve aktiviteler.
+                    </div>
+                    <div class="link-url">commonsense.org/education</div>
+                    <a href="https://www.commonsense.org/education" target="_blank">
+                        <button class="visit-btn">🌐 Siteyi Ziyaret Et</button>
+                    </a>
+                </div>
+
+                <div class="link-card">
+                    <div class="link-icon">🔐</div>
+                    <div class="link-title">Kaspersky Kids</div>
+                    <div class="link-desc">
+                        Çocuklar için internet güvenliği oyunları ve eğitim materyalleri. Siber güvenlik
+                        bilinci geliştirme aktiviteleri.
+                    </div>
+                    <div class="link-url">kids.kaspersky.com</div>
+                    <a href="https://kids.kaspersky.com" target="_blank">
+                        <button class="visit-btn">🌐 Siteyi Ziyaret Et</button>
+                    </a>
+                </div>
+
+                <div class="link-card">
+                    <div class="link-icon">🌐</div>
+                    <div class="link-title">Be Internet Awesome</div>
+                    <div class="link-desc">
+                        Google'ın internet güvenliği programı. İnteraktif oyunlar ve aileler için
+                        kaynaklar. Güvenli internet kullanımı eğitimi.
+                    </div>
+                    <div class="link-url">beinternetawesome.withgoogle.com</div>
+                    <a href="https://beinternetawesome.withgoogle.com" target="_blank">
+                        <button class="visit-btn">🌐 Siteyi Ziyaret Et</button>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- OYUNLAŞTIRMA VE TEST -->
+        <div class="section">
+            <div class="section-title">🎯 Oyunlaştırma ve Test Platformları</div>
+
+            <div class="link-grid">
+                <div class="link-card">
+                    <div class="link-icon">🎮</div>
+                    <div class="link-title">Kahoot!</div>
+                    <div class="link-desc">
+                        Oyun tabanlı öğrenme platformu. Eğlenceli testler ve yarışmalar oluşturun.
+                        Sınıfta interaktif değerlendirme.
+                    </div>
+                    <div class="link-url">kahoot.com</div>
+                    <a href="https://kahoot.com" target="_blank">
+                        <button class="visit-btn">🌐 Siteyi Ziyaret Et</button>
+                    </a>
+                </div>
+
+                <div class="link-card">
+                    <div class="link-icon">📝</div>
+                    <div class="link-title">Quizizz</div>
+                    <div class="link-desc">
+                        Eğlenceli quiz platformu. Öğrenciler kendi hızlarında ilerler. Avatarlar ve
+                        meme'lerle eğlenceli öğrenme.
+                    </div>
+                    <div class="link-url">quizizz.com</div>
+                    <a href="https://quizizz.com" target="_blank">
+                        <button class="visit-btn">🌐 Siteyi Ziyaret Et</button>
+                    </a>
+                </div>
+
+                <div class="link-card">
+                    <div class="link-icon">🎲</div>
+                    <div class="link-title">Wordwall</div>
+                    <div class="link-desc">
+                        İnteraktif aktivite oluşturma aracı. Eşleştirme, kelime bulma, quiz gibi
+                        oyunlar yapın ve yazdırın.
+                    </div>
+                    <div class="link-url">wordwall.net</div>
+                    <a href="https://wordwall.net" target="_blank">
+                        <button class="visit-btn">🌐 Siteyi Ziyaret Et</button>
+                    </a>
+                </div>
+
+                <div class="link-card">
+                    <div class="link-icon">🏆</div>
+                    <div class="link-title">Blooket</div>
+                    <div class="link-desc">
+                        Oyun odaklı öğrenme platformu. Farklı oyun modları ile eğlenceli sınıf yarışmaları
+                        düzenleyin.
+                    </div>
+                    <div class="link-url">blooket.com</div>
+                    <a href="https://blooket.com" target="_blank">
+                        <button class="visit-btn">🌐 Siteyi Ziyaret Et</button>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="info-box" style="background: #fff3cd; border-left-color: #ffc107;">
+            <h3 style="color: #856404;">💡 Kullanım Önerileri</h3>
+            <p style="color: #856404; line-height: 1.8;">
+                • Bu platformları derste öğrendiklerinizi pekiştirmek için kullanın<br>
+                • Ebeveyn gözetiminde kullanılması önerilir<br>
+                • Her platformun hesap oluşturma gereksinimleri farklıdır<br>
+                • Okul e-postanızla giriş yapabileceğiniz platformlar öncelikli olmalı<br>
+                • Kişisel bilgilerinizi paylaşırken dikkatli olun
+            </p>
+        </div>
+    </div>
+</body>
+</html>

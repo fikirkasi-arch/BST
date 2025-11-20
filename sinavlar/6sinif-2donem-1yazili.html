@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sınav Soruları</title>
+    <style>
+        @media print { .no-print { display: none !important; } body { background: white; padding: 20px; } }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', sans-serif; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 20px; }
+        .container { max-width: 900px; margin: 0 auto; background: white; padding: 40px; border-radius: 15px; }
+        h1 { color: #667eea; text-align: center; margin-bottom: 30px; }
+        .info { background: #f5f7fa; padding: 20px; border-radius: 10px; margin: 20px 0; }
+        .btn { background: #667eea; color: white; border: none; padding: 12px 30px; border-radius: 25px; cursor: pointer; margin: 10px 5px; }
+        .btn:hover { background: #764ba2; }
+        .question { background: #f8f9fa; padding: 20px; margin: 20px 0; border-left: 4px solid #667eea; border-radius: 8px; }
+        .options { margin: 15px 0 0 25px; }
+        .option { padding: 8px; margin: 8px 0; background: white; border-radius: 5px; }
+        .section { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 15px; border-radius: 8px; margin: 30px 0 20px; }
+        .answer-key { background: #e7f3ff; padding: 30px; border-radius: 10px; margin-top: 30px; display: none; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📝 BİLİŞİM TEKNOLOJİLERİ VE YAZILIM DERSİ - YAZILI SINAVI</h1>
+        <div class="info">
+            <p><strong>Süre:</strong> 40 Dakika | <strong>Toplam Puan:</strong> 100</p>
+        </div>
+        <div class="no-print">
+            <button class="btn" onclick="window.print()">🖨️ Yazdır</button>
+            <button class="btn" onclick="document.querySelector('.answer-key').style.display='block'">📖 Cevapları Göster</button>
+        </div>
+        
+        <div class="section">BÖLÜM 1: ÇOKTAN SEÇMELİ SORULAR</div>
+        
+        <div class="question">
+            <strong>SORU 1:</strong> Bilgisayar sistemlerinin temel bileşenleri nelerdir?
+            <div class="options">
+                <div class="option">A) Sadece monitör</div>
+                <div class="option">B) Donanım ve yazılım</div>
+                <div class="option">C) Sadece klavye</div>
+                <div class="option">D) Sadece internet</div>
+            </div>
+        </div>
+
+        <div class="question">
+            <strong>SORU 2:</strong> İşletim sistemi ne işe yarar?
+            <div class="options">
+                <div class="option">A) Sadece oyun oynamak için</div>
+                <div class="option">B) Donanım ve yazılım arasında köprü oluşturmak</div>
+                <div class="option">C) Sadece internete girmek için</div>
+                <div class="option">D) Bilgisayarı yavaşlatmak için</div>
+            </div>
+        </div>
+
+        <div class="question">
+            <strong>SORU 3:</strong> Güçlü bir şifre nasıl olmalıdır?
+            <div class="options">
+                <div class="option">A) Sadece isim içermeli</div>
+                <div class="option">B) Büyük-küçük harf, rakam ve sembol içermeli</div>
+                <div class="option">C) Sadece 4 karakterli olmalı</div>
+                <div class="option">D) Doğum tarihi olmalı</div>
+            </div>
+        </div>
+
+        <div class="question">
+            <strong>SORU 4:</strong> Dijital vatandaşlık nedir?
+            <div class="options">
+                <div class="option">A) İnternette sorumsuz davranmak</div>
+                <div class="option">B) Dijital ortamda sorumlu ve etik davranmak</div>
+                <div class="option">C) Sadece sosyal medya kullanmak</div>
+                <div class="option">D) Hiçbir şey yapmamak</div>
+            </div>
+        </div>
+
+        <div class="question">
+            <strong>SORU 5:</strong> Algoritma nedir?
+            <div class="options">
+                <div class="option">A) Rastgele işlemler</div>
+                <div class="option">B) Problem çözme adımlarının sıralı yazılması</div>
+                <div class="option">C) Sadece matematik işlemi</div>
+                <div class="option">D) Bilgisayar oyunu</div>
+            </div>
+        </div>
+
+        <div class="section">BÖLÜM 2: DOĞRU-YANLIŞ SORULARI</div>
+
+        <div class="question"><strong>SORU 6:</strong> Scratch blok tabanlı bir programlama dilidir. ( )</div>
+        <div class="question"><strong>SORU 7:</strong> Dijital ayak izi kolayca silinebilir. ( )</div>
+        <div class="question"><strong>SORU 8:</strong> Döngüler kodların tekrarlanmasını sağlar. ( )</div>
+        <div class="question"><strong>SORU 9:</strong> Telif hakları sadece kitaplar için geçerlidir. ( )</div>
+        <div class="question"><strong>SORU 10:</strong> Antivirüs programları zararlı yazılımlardan korur. ( )</div>
+
+        <div class="answer-key">
+            <h3 style="color: #0066cc;">📖 CEVAP ANAHTARI</h3>
+            <div style="background: white; padding: 20px; margin: 15px 0; border-radius: 8px;">
+                <strong>Çoktan Seçmeli:</strong><br>
+                1-B, 2-B, 3-B, 4-B, 5-B
+            </div>
+            <div style="background: white; padding: 20px; margin: 15px 0; border-radius: 8px;">
+                <strong>Doğru-Yanlış:</strong><br>
+                6-DOĞRU, 7-YANLIŞ, 8-DOĞRU, 9-YANLIŞ, 10-DOĞRU
+            </div>
+        </div>
+
+        <div style="text-align: center; margin-top: 40px; padding: 20px; background: #f8f9fa; border-radius: 10px;">
+            <p style="color: #667eea; font-weight: bold; font-size: 1.2em;">BAŞARILAR DİLERİZ! 🎉</p>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>İçerik Yönetimi - Admin Paneli</title>
+    <link rel="stylesheet" href="css/admin.css">
+</head>
+<body>
+    <div class="admin-wrapper">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h2><span>🎓</span> <span>BST Admin</span></h2>
+                <small>Yönetim Paneli</small>
+            </div>
+            <nav class="sidebar-menu">
+                <a href="index.html" class="menu-item">
+                    <span>📊</span> <span>Dashboard</span>
+                </a>
+                <a href="kullanicilar.html" class="menu-item">
+                    <span>👥</span> <span>Kullanıcılar</span>
+                </a>
+                <a href="icerikler.html" class="menu-item active">
+                    <span>📚</span> <span>İçerikler</span>
+                </a>
+                <a href="istatistikler.html" class="menu-item">
+                    <span>📈</span> <span>İstatistikler</span>
+                </a>
+                <div class="menu-divider"></div>
+                <a href="ayarlar.html" class="menu-item">
+                    <span>⚙️</span> <span>Ayarlar</span>
+                </a>
+                <a href="#" class="menu-item" onclick="AdminAuth.logout(); return false;">
+                    <span>🚪</span> <span>Çıkış</span>
+                </a>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="admin-header">
+                <h1>📚 İçerik Yönetimi</h1>
+                <div class="header-actions">
+                    <button class="btn btn-primary" onclick="showAddContentModal()">
+                        ➕ Yeni İçerik Ekle
+                    </button>
+                </div>
+            </div>
+
+            <!-- Content Tabs -->
+            <div style="display: flex; gap: 10px; margin-bottom: 25px;">
+                <button class="btn btn-primary" id="tabLessons" onclick="showTab('lessons')">
+                    📖 Dersler
+                </button>
+                <button class="btn btn-secondary" id="tabQuizzes" onclick="showTab('quizzes')">
+                    📝 Quizler
+                </button>
+                <button class="btn btn-secondary" id="tabGames" onclick="showTab('games')">
+                    🎮 Oyunlar
+                </button>
+                <button class="btn btn-secondary" id="tabQuestions" onclick="showTab('questions')">
+                    ❓ Soru Bankası
+                </button>
+            </div>
+
+            <!-- Lessons Tab -->
+            <div id="lessonsTab" class="tab-content">
+                <div class="card">
+                    <div class="card-header">
+                        <h3><span>📖</span> Ders Listesi</h3>
+                        <span id="lessonCount" style="color: #666; font-size: 14px;">0 ders</span>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-container">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Başlık</th>
+                                        <th>Sınıf</th>
+                                        <th>Ünite</th>
+                                        <th>Durum</th>
+                                        <th>Görüntülenme</th>
+                                        <th>İşlemler</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="lessonsTableBody">
+                                    <!-- Dinamik olarak doldurulacak -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quizzes Tab -->
+            <div id="quizzesTab" class="tab-content" style="display: none;">
+                <div class="card">
+                    <div class="card-header">
+                        <h3><span>📝</span> Quiz Listesi</h3>
+                        <span id="quizCount" style="color: #666; font-size: 14px;">0 quiz</span>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-container">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Quiz Adı</th>
+                                        <th>Sınıf</th>
+                                        <th>Ünite</th>
+                                        <th>Soru Sayısı</th>
+                                        <th>Ortalama Puan</th>
+                                        <th>Çözülme</th>
+                                        <th>İşlemler</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="quizzesTableBody">
+                                    <!-- Dinamik olarak doldurulacak -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Games Tab -->
+            <div id="gamesTab" class="tab-content" style="display: none;">
+                <div class="card">
+                    <div class="card-header">
+                        <h3><span>🎮</span> Oyun Listesi</h3>
+                        <span id="gameCount" style="color: #666; font-size: 14px;">0 oyun</span>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-container">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Oyun Adı</th>
+                                        <th>Tür</th>
+                                        <th>Sınıf</th>
+                                        <th>Oynanma</th>
+                                        <th>Durum</th>
+                                        <th>İşlemler</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="gamesTableBody">
+                                    <!-- Dinamik olarak doldurulacak -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Questions Tab -->
+            <div id="questionsTab" class="tab-content" style="display: none;">
+                <div class="card">
+                    <div class="card-header">
+                        <h3><span>❓</span> Soru Bankası</h3>
+                        <button class="btn btn-primary" style="padding: 8px 15px; font-size: 13px;" onclick="showAddQuestionModal()">
+                            ➕ Yeni Soru Ekle
+                        </button>
+                    </div>
+                    <div class="card-body">
+                        <div class="search-bar" style="margin-bottom: 20px;">
+                            <input type="text" class="search-input" id="questionSearch" placeholder="Soru ara...">
+                            <select class="form-control" id="questionCategory" style="width: 150px;">
+                                <option value="">Tüm Kategoriler</option>
+                                <option value="unite1">Ünite 1</option>
+                                <option value="unite2">Ünite 2</option>
+                                <option value="unite3">Ünite 3</option>
+                            </select>
+                        </div>
+                        <div class="table-container">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Soru</th>
+                                        <th>Kategori</th>
+                                        <th>Zorluk</th>
+                                        <th>Kullanım</th>
+                                        <th>İşlemler</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="questionsTableBody">
+                                    <!-- Dinamik olarak doldurulacak -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Add Content Modal -->
+    <div class="modal-overlay" id="addContentModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3>➕ Yeni İçerik Ekle</h3>
+                <button class="modal-close" onclick="closeModal('addContentModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="addContentForm">
+                    <div class="form-group">
+                        <label>İçerik Türü</label>
+                        <select class="form-control" id="contentType" required>
+                            <option value="lesson">Ders</option>
+                            <option value="quiz">Quiz</option>
+                            <option value="game">Oyun</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Başlık</label>
+                        <input type="text" class="form-control" id="contentTitle" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Sınıf</label>
+                        <select class="form-control" id="contentGrade" required>
+                            <option value="5">5. Sınıf</option>
+                            <option value="6">6. Sınıf</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Ünite</label>
+                        <select class="form-control" id="contentUnit" required>
+                            <option value="1">Ünite 1</option>
+                            <option value="2">Ünite 2</option>
+                            <option value="3">Ünite 3</option>
+                            <option value="4">Ünite 4</option>
+                            <option value="5">Ünite 5</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Açıklama</label>
+                        <textarea class="form-control" id="contentDescription" rows="3"></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal('addContentModal')">İptal</button>
+                <button class="btn btn-primary" onclick="addContent()">Ekle</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Question Modal -->
+    <div class="modal-overlay" id="addQuestionModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3>❓ Yeni Soru Ekle</h3>
+                <button class="modal-close" onclick="closeModal('addQuestionModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="addQuestionForm">
+                    <div class="form-group">
+                        <label>Soru Metni</label>
+                        <textarea class="form-control" id="questionText" rows="3" required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>A Şıkkı</label>
+                        <input type="text" class="form-control" id="optionA" required>
+                    </div>
+                    <div class="form-group">
+                        <label>B Şıkkı</label>
+                        <input type="text" class="form-control" id="optionB" required>
+                    </div>
+                    <div class="form-group">
+                        <label>C Şıkkı</label>
+                        <input type="text" class="form-control" id="optionC" required>
+                    </div>
+                    <div class="form-group">
+                        <label>D Şıkkı</label>
+                        <input type="text" class="form-control" id="optionD" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Doğru Cevap</label>
+                        <select class="form-control" id="correctAnswer" required>
+                            <option value="A">A</option>
+                            <option value="B">B</option>
+                            <option value="C">C</option>
+                            <option value="D">D</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Kategori</label>
+                        <select class="form-control" id="questionCat" required>
+                            <option value="unite1">Ünite 1</option>
+                            <option value="unite2">Ünite 2</option>
+                            <option value="unite3">Ünite 3</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Zorluk</label>
+                        <select class="form-control" id="questionDifficulty" required>
+                            <option value="easy">Kolay</option>
+                            <option value="medium">Orta</option>
+                            <option value="hard">Zor</option>
+                        </select>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal('addQuestionModal')">İptal</button>
+                <button class="btn btn-primary" onclick="addQuestion()">Soru Ekle</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/admin-auth.js"></script>
+    <script>
+        // Örnek veriler
+        let lessons = JSON.parse(localStorage.getItem('bstLessons') || '[]');
+        let quizzes = JSON.parse(localStorage.getItem('bstQuizzes') || '[]');
+        let games = JSON.parse(localStorage.getItem('bstGames') || '[]');
+        let questions = JSON.parse(localStorage.getItem('bstQuestions') || '[]');
+
+        // Örnek veri oluştur
+        if (lessons.length === 0) {
+            lessons = [
+                { id: 1, title: 'Bilgisayarın Temel Bileşenleri', grade: 5, unit: 1, status: 'active', views: 245 },
+                { id: 2, title: 'Donanım ve Yazılım', grade: 5, unit: 1, status: 'active', views: 198 },
+                { id: 3, title: 'İşletim Sistemi Nedir?', grade: 5, unit: 2, status: 'active', views: 167 },
+                { id: 4, title: 'Dosya ve Klasör Yönetimi', grade: 5, unit: 2, status: 'active', views: 156 },
+                { id: 5, title: 'İnternet Güvenliği', grade: 5, unit: 3, status: 'active', views: 134 },
+                { id: 6, title: 'Dijital Vatandaşlık', grade: 5, unit: 3, status: 'draft', views: 45 },
+                { id: 7, title: 'Algoritma Temelleri', grade: 6, unit: 1, status: 'active', views: 289 },
+                { id: 8, title: 'Scratch ile Kodlama', grade: 6, unit: 2, status: 'active', views: 312 }
+            ];
+            localStorage.setItem('bstLessons', JSON.stringify(lessons));
+        }
+
+        if (quizzes.length === 0) {
+            quizzes = [
+                { id: 1, title: '5. Sınıf Ünite 1 Quiz', grade: 5, unit: 1, questions: 10, avgScore: 78, attempts: 45 },
+                { id: 2, title: '5. Sınıf Ünite 2 Quiz', grade: 5, unit: 2, questions: 10, avgScore: 82, attempts: 38 },
+                { id: 3, title: '5. Sınıf Ünite 3 Quiz', grade: 5, unit: 3, questions: 10, avgScore: 75, attempts: 32 },
+                { id: 4, title: '6. Sınıf Ünite 1 Quiz', grade: 6, unit: 1, questions: 15, avgScore: 71, attempts: 28 },
+                { id: 5, title: '6. Sınıf Ünite 2 Quiz', grade: 6, unit: 2, questions: 15, avgScore: 68, attempts: 25 }
+            ];
+            localStorage.setItem('bstQuizzes', JSON.stringify(quizzes));
+        }
+
+        if (games.length === 0) {
+            games = [
+                { id: 1, title: 'Hafıza Oyunu - Donanım', type: 'Hafıza', grade: 5, plays: 156, status: 'active' },
+                { id: 2, title: 'Eşleştirme - Yazılım Türleri', type: 'Eşleştirme', grade: 5, plays: 134, status: 'active' },
+                { id: 3, title: 'Kelime Avı - Bilişim', type: 'Kelime Avı', grade: 5, plays: 189, status: 'active' },
+                { id: 4, title: 'Sürükle Bırak - Algoritma', type: 'Sürükle Bırak', grade: 6, plays: 112, status: 'active' },
+                { id: 5, title: 'Bulmaca - Kodlama', type: 'Bulmaca', grade: 6, plays: 98, status: 'draft' }
+            ];
+            localStorage.setItem('bstGames', JSON.stringify(games));
+        }
+
+        if (questions.length === 0) {
+            questions = [
+                { id: 1, text: 'CPU ne işe yarar?', category: 'unite1', difficulty: 'easy', usage: 5 },
+                { id: 2, text: 'RAM nedir?', category: 'unite1', difficulty: 'easy', usage: 8 },
+                { id: 3, text: 'İşletim sistemi örnekleri nelerdir?', category: 'unite2', difficulty: 'medium', usage: 4 },
+                { id: 4, text: 'Güvenli şifre nasıl oluşturulur?', category: 'unite3', difficulty: 'medium', usage: 6 },
+                { id: 5, text: 'Algoritma nedir?', category: 'unite1', difficulty: 'easy', usage: 10 }
+            ];
+            localStorage.setItem('bstQuestions', JSON.stringify(questions));
+        }
+
+        // Tab değiştirme
+        function showTab(tab) {
+            // Tüm tab'ları gizle
+            document.querySelectorAll('.tab-content').forEach(t => t.style.display = 'none');
+
+            // Tüm butonları secondary yap
+            document.querySelectorAll('[id^="tab"]').forEach(b => {
+                b.className = 'btn btn-secondary';
+            });
+
+            // Seçili tab'ı göster
+            document.getElementById(tab + 'Tab').style.display = 'block';
+            document.getElementById('tab' + tab.charAt(0).toUpperCase() + tab.slice(1)).className = 'btn btn-primary';
+        }
+
+        // Dersler tablosu
+        function loadLessons() {
+            const tbody = document.getElementById('lessonsTableBody');
+            document.getElementById('lessonCount').textContent = lessons.length + ' ders';
+
+            tbody.innerHTML = lessons.map(lesson => `
+                <tr>
+                    <td><strong>${lesson.title}</strong></td>
+                    <td>${lesson.grade}. Sınıf</td>
+                    <td>Ünite ${lesson.unit}</td>
+                    <td>
+                        <span class="badge ${lesson.status === 'active' ? 'badge-success' : 'badge-warning'}">
+                            ${lesson.status === 'active' ? 'Yayında' : 'Taslak'}
+                        </span>
+                    </td>
+                    <td>${lesson.views} görüntülenme</td>
+                    <td>
+                        <button class="btn btn-secondary" style="padding: 5px 10px; font-size: 12px;">
+                            ✏️ Düzenle
+                        </button>
+                        <button class="btn btn-danger" style="padding: 5px 10px; font-size: 12px;" onclick="deleteItem('lessons', ${lesson.id})">
+                            🗑️
+                        </button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        // Quizler tablosu
+        function loadQuizzes() {
+            const tbody = document.getElementById('quizzesTableBody');
+            document.getElementById('quizCount').textContent = quizzes.length + ' quiz';
+
+            tbody.innerHTML = quizzes.map(quiz => `
+                <tr>
+                    <td><strong>${quiz.title}</strong></td>
+                    <td>${quiz.grade}. Sınıf</td>
+                    <td>Ünite ${quiz.unit}</td>
+                    <td>${quiz.questions} soru</td>
+                    <td>
+                        <div style="display: flex; align-items: center; gap: 8px;">
+                            <div class="progress" style="width: 60px;">
+                                <div class="progress-bar" style="width: ${quiz.avgScore}%"></div>
+                            </div>
+                            <span>${quiz.avgScore}%</span>
+                        </div>
+                    </td>
+                    <td>${quiz.attempts} kez</td>
+                    <td>
+                        <button class="btn btn-secondary" style="padding: 5px 10px; font-size: 12px;">
+                            ✏️ Düzenle
+                        </button>
+                        <button class="btn btn-danger" style="padding: 5px 10px; font-size: 12px;" onclick="deleteItem('quizzes', ${quiz.id})">
+                            🗑️
+                        </button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        // Oyunlar tablosu
+        function loadGames() {
+            const tbody = document.getElementById('gamesTableBody');
+            document.getElementById('gameCount').textContent = games.length + ' oyun';
+
+            tbody.innerHTML = games.map(game => `
+                <tr>
+                    <td><strong>${game.title}</strong></td>
+                    <td>${game.type}</td>
+                    <td>${game.grade}. Sınıf</td>
+                    <td>${game.plays} kez</td>
+                    <td>
+                        <span class="badge ${game.status === 'active' ? 'badge-success' : 'badge-warning'}">
+                            ${game.status === 'active' ? 'Aktif' : 'Taslak'}
+                        </span>
+                    </td>
+                    <td>
+                        <button class="btn btn-secondary" style="padding: 5px 10px; font-size: 12px;">
+                            ✏️ Düzenle
+                        </button>
+                        <button class="btn btn-danger" style="padding: 5px 10px; font-size: 12px;" onclick="deleteItem('games', ${game.id})">
+                            🗑️
+                        </button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        // Sorular tablosu
+        function loadQuestions() {
+            const tbody = document.getElementById('questionsTableBody');
+            const difficultyLabels = { easy: 'Kolay', medium: 'Orta', hard: 'Zor' };
+            const difficultyColors = { easy: 'badge-success', medium: 'badge-warning', hard: 'badge-danger' };
+
+            tbody.innerHTML = questions.map(q => `
+                <tr>
+                    <td style="max-width: 300px;">${q.text}</td>
+                    <td>${q.category}</td>
+                    <td>
+                        <span class="badge ${difficultyColors[q.difficulty]}">
+                            ${difficultyLabels[q.difficulty]}
+                        </span>
+                    </td>
+                    <td>${q.usage} kez</td>
+                    <td>
+                        <button class="btn btn-secondary" style="padding: 5px 10px; font-size: 12px;">
+                            ✏️
+                        </button>
+                        <button class="btn btn-danger" style="padding: 5px 10px; font-size: 12px;" onclick="deleteItem('questions', ${q.id})">
+                            🗑️
+                        </button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        // Modal işlemleri
+        function showAddContentModal() {
+            document.getElementById('addContentModal').classList.add('active');
+        }
+
+        function showAddQuestionModal() {
+            document.getElementById('addQuestionModal').classList.add('active');
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('active');
+        }
+
+        // Yeni içerik ekle
+        function addContent() {
+            const type = document.getElementById('contentType').value;
+            const title = document.getElementById('contentTitle').value;
+            const grade = document.getElementById('contentGrade').value;
+            const unit = document.getElementById('contentUnit').value;
+
+            if (!title) {
+                alert('Lütfen başlık girin!');
+                return;
+            }
+
+            const newItem = {
+                id: Date.now(),
+                title: title,
+                grade: parseInt(grade),
+                unit: parseInt(unit),
+                status: 'draft'
+            };
+
+            if (type === 'lesson') {
+                newItem.views = 0;
+                lessons.push(newItem);
+                localStorage.setItem('bstLessons', JSON.stringify(lessons));
+                loadLessons();
+            } else if (type === 'quiz') {
+                newItem.questions = 0;
+                newItem.avgScore = 0;
+                newItem.attempts = 0;
+                quizzes.push(newItem);
+                localStorage.setItem('bstQuizzes', JSON.stringify(quizzes));
+                loadQuizzes();
+            } else if (type === 'game') {
+                newItem.type = 'Genel';
+                newItem.plays = 0;
+                games.push(newItem);
+                localStorage.setItem('bstGames', JSON.stringify(games));
+                loadGames();
+            }
+
+            AdminAuth.logActivity(`Yeni ${type} eklendi: ${title}`);
+            closeModal('addContentModal');
+            document.getElementById('addContentForm').reset();
+        }
+
+        // Yeni soru ekle
+        function addQuestion() {
+            const text = document.getElementById('questionText').value;
+            const category = document.getElementById('questionCat').value;
+            const difficulty = document.getElementById('questionDifficulty').value;
+
+            if (!text) {
+                alert('Lütfen soru metnini girin!');
+                return;
+            }
+
+            const newQuestion = {
+                id: Date.now(),
+                text: text,
+                optionA: document.getElementById('optionA').value,
+                optionB: document.getElementById('optionB').value,
+                optionC: document.getElementById('optionC').value,
+                optionD: document.getElementById('optionD').value,
+                correct: document.getElementById('correctAnswer').value,
+                category: category,
+                difficulty: difficulty,
+                usage: 0
+            };
+
+            questions.push(newQuestion);
+            localStorage.setItem('bstQuestions', JSON.stringify(questions));
+
+            AdminAuth.logActivity(`Yeni soru eklendi: ${text.substring(0, 30)}...`);
+            closeModal('addQuestionModal');
+            document.getElementById('addQuestionForm').reset();
+            loadQuestions();
+        }
+
+        // Öğe sil
+        function deleteItem(type, id) {
+            if (!confirm('Bu öğeyi silmek istediğinize emin misiniz?')) return;
+
+            if (type === 'lessons') {
+                lessons = lessons.filter(l => l.id !== id);
+                localStorage.setItem('bstLessons', JSON.stringify(lessons));
+                loadLessons();
+            } else if (type === 'quizzes') {
+                quizzes = quizzes.filter(q => q.id !== id);
+                localStorage.setItem('bstQuizzes', JSON.stringify(quizzes));
+                loadQuizzes();
+            } else if (type === 'games') {
+                games = games.filter(g => g.id !== id);
+                localStorage.setItem('bstGames', JSON.stringify(games));
+                loadGames();
+            } else if (type === 'questions') {
+                questions = questions.filter(q => q.id !== id);
+                localStorage.setItem('bstQuestions', JSON.stringify(questions));
+                loadQuestions();
+            }
+
+            AdminAuth.logActivity(`${type} silindi (ID: ${id})`);
+        }
+
+        // Sayfa yüklendiğinde
+        document.addEventListener('DOMContentLoaded', () => {
+            loadLessons();
+            loadQuizzes();
+            loadGames();
+            loadQuestions();
+        });
+    </script>
+</body>
+</html>

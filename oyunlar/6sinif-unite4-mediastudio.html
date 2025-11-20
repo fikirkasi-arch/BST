@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Medya Üretim Stüdyosu - 6. Sınıf Ünite 4</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #ff9a56 0%, #ff6a88 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        h1 { text-align: center; color: #ff6a88; margin-bottom: 20px; }
+        .studio-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        .tab-btn {
+            flex: 1;
+            min-width: 150px;
+            padding: 15px 20px;
+            border: 2px solid #e0e0e0;
+            background: white;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+        }
+        .tab-btn:hover {
+            border-color: #ff6a88;
+            transform: translateY(-3px);
+        }
+        .tab-btn.active {
+            background: linear-gradient(135deg, #ff9a56 0%, #ff6a88 100%);
+            color: white;
+            border-color: #ff6a88;
+        }
+        .tab-icon {
+            font-size: 2em;
+        }
+        .studio-workspace {
+            background: #f5f5f5;
+            padding: 30px;
+            border-radius: 15px;
+            min-height: 400px;
+        }
+        .project-card {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+        }
+        .project-title {
+            font-size: 1.5em;
+            color: #333;
+            margin-bottom: 15px;
+            font-weight: bold;
+        }
+        .project-desc {
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+        .tool-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        .tool-card {
+            background: white;
+            border: 2px solid #e0e0e0;
+            padding: 20px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+        }
+        .tool-card:hover {
+            border-color: #ff6a88;
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(255, 106, 136, 0.3);
+        }
+        .tool-card.selected {
+            border-color: #28a745;
+            background: #d4edda;
+        }
+        .tool-card.wrong {
+            border-color: #dc3545;
+            background: #f8d7da;
+        }
+        .tool-icon {
+            font-size: 3em;
+            margin-bottom: 10px;
+        }
+        .tool-name {
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 5px;
+        }
+        .tool-type {
+            font-size: 0.85em;
+            color: #666;
+        }
+        .btn {
+            padding: 15px 30px;
+            font-size: 1.1em;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: bold;
+            background: linear-gradient(135deg, #ff9a56 0%, #ff6a88 100%);
+            color: white;
+            margin: 10px 5px;
+        }
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        .feedback {
+            background: #fff3cd;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            border-left: 5px solid #ffc107;
+            display: none;
+        }
+        .score-display {
+            text-align: center;
+            font-size: 1.5em;
+            color: #ff6a88;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎬 Medya Üretim Stüdyosu</h1>
+        <div class="score-display">Puan: <span id="score">0</span>/<span id="total">0</span></div>
+        
+        <div class="studio-tabs">
+            <button class="tab-btn active" onclick="switchTab('video')">
+                <div class="tab-icon">🎥</div>
+                <div>Video Üretimi</div>
+            </button>
+            <button class="tab-btn" onclick="switchTab('graphic')">
+                <div class="tab-icon">🎨</div>
+                <div>Grafik Tasarım</div>
+            </button>
+            <button class="tab-btn" onclick="switchTab('podcast')">
+                <div class="tab-icon">🎙️</div>
+                <div>Podcast</div>
+            </button>
+            <button class="tab-btn" onclick="switchTab('web')">
+                <div class="tab-icon">🌐</div>
+                <div>Web İçerik</div>
+            </button>
+        </div>
+
+        <div class="studio-workspace" id="workspace"></div>
+    </div>
+
+    <script>
+        const projects = {
+            video: [
+                {
+                    title: 'Ders Anlatım Videosu',
+                    desc: 'Matematik dersi için 5 dakikalık anlatım videosu hazırlayacaksınız.',
+                    icon: '📚',
+                    correctTools: ['OBS Studio', 'DaVinci Resolve'],
+                    tools: [
+                        { name: 'OBS Studio', icon: '🎥', type: 'Ekran kaydı', correct: true },
+                        { name: 'DaVinci Resolve', icon: '✂️', type: 'Video düzenleme', correct: true },
+                        { name: 'Photoshop', icon: '🖼️', type: 'Fotoğraf düzenleme', correct: false },
+                        { name: 'Audacity', icon: '🔊', type: 'Ses düzenleme', correct: false }
+                    ]
+                },
+                {
+                    title: 'Vlog Videosu',
+                    desc: 'Okul gezinizi anlatan vlog videosu çekip düzenleyeceksiniz.',
+                    icon: '📹',
+                    correctTools: ['Telefon Kamerası', 'CapCut'],
+                    tools: [
+                        { name: 'Telefon Kamerası', icon: '📱', type: 'Kayıt cihazı', correct: true },
+                        { name: 'CapCut', icon: '✂️', type: 'Mobil video düzenleme', correct: true },
+                        { name: 'Canva', icon: '🎨', type: 'Grafik tasarım', correct: false },
+                        { name: 'WordPress', icon: '🌐', type: 'Web sitesi', correct: false }
+                    ]
+                }
+            ],
+            graphic: [
+                {
+                    title: 'Okul Etkinlik Afişi',
+                    desc: 'Bilim fuarı için göz alıcı bir afiş tasarlayacaksınız.',
+                    icon: '📋',
+                    correctTools: ['Canva', 'Pixabay'],
+                    tools: [
+                        { name: 'Canva', icon: '🎨', type: 'Grafik tasarım', correct: true },
+                        { name: 'Pixabay', icon: '🖼️', type: 'Ücretsiz görseller', correct: true },
+                        { name: 'Audacity', icon: '🔊', type: 'Ses düzenleme', correct: false },
+                        { name: 'OBS Studio', icon: '🎥', type: 'Ekran kaydı', correct: false }
+                    ]
+                },
+                {
+                    title: 'Sosyal Medya Görseli',
+                    desc: 'Instagram için proje tanıtım görseli hazırlayacaksınız.',
+                    icon: '📱',
+                    correctTools: ['Figma', 'Unsplash'],
+                    tools: [
+                        { name: 'Figma', icon: '✏️', type: 'UI/UX tasarım', correct: true },
+                        { name: 'Unsplash', icon: '📸', type: 'Ücretsiz fotoğraflar', correct: true },
+                        { name: 'DaVinci Resolve', icon: '✂️', type: 'Video düzenleme', correct: false },
+                        { name: 'Anchor', icon: '🎙️', type: 'Podcast', correct: false }
+                    ]
+                }
+            ],
+            podcast: [
+                {
+                    title: 'Röportaj Podcast',
+                    desc: 'Okul müdürü ile röportaj podcast\' hazırlayacaksınız.',
+                    icon: '🎤',
+                    correctTools: ['Telefon Mikrofon', 'Audacity'],
+                    tools: [
+                        { name: 'Telefon Mikrofon', icon: '📱', type: 'Kayıt cihazı', correct: true },
+                        { name: 'Audacity', icon: '🔊', type: 'Ses düzenleme', correct: true },
+                        { name: 'Canva', icon: '🎨', type: 'Grafik tasarım', correct: false },
+                        { name: 'OBS Studio', icon: '🎥', type: 'Ekran kaydı', correct: false }
+                    ]
+                },
+                {
+                    title: 'Hikaye Anlatım Podcast',
+                    desc: 'Bir kitabı anlatan 10 dakikalık podcast yayınlayacaksınız.',
+                    icon: '📖',
+                    correctTools: ['Mikrofonlu Kulaklık', 'Anchor'],
+                    tools: [
+                        { name: 'Mikrofonlu Kulaklık', icon: '🎧', type: 'Kayıt ekipmanı', correct: true },
+                        { name: 'Anchor', icon: '🎙️', type: 'Podcast platformu', correct: true },
+                        { name: 'Photoshop', icon: '🖼️', type: 'Fotoğraf düzenleme', correct: false },
+                        { name: 'CapCut', icon: '✂️', type: 'Video düzenleme', correct: false }
+                    ]
+                }
+            ],
+            web: [
+                {
+                    title: 'Proje Web Sitesi',
+                    desc: 'Bilim projeniz için basit bir tanıtım web sitesi yapacaksınız.',
+                    icon: '💻',
+                    correctTools: ['Google Sites', 'Unsplash'],
+                    tools: [
+                        { name: 'Google Sites', icon: '🌐', type: 'Web sitesi oluşturucu', correct: true },
+                        { name: 'Unsplash', icon: '📸', type: 'Ücretsiz fotoğraflar', correct: true },
+                        { name: 'DaVinci Resolve', icon: '✂️', type: 'Video düzenleme', correct: false },
+                        { name: 'Audacity', icon: '🔊', type: 'Ses düzenleme', correct: false }
+                    ]
+                },
+                {
+                    title: 'Blog Yazısı',
+                    desc: 'Okul blogunda kodlama deneyiminizi paylaşacaksınız.',
+                    icon: '✍️',
+                    correctTools: ['WordPress', 'Canva'],
+                    tools: [
+                        { name: 'WordPress', icon: '📝', type: 'Blog platformu', correct: true },
+                        { name: 'Canva', icon: '🎨', type: 'Kapak görseli', correct: true },
+                        { name: 'OBS Studio', icon: '🎥', type: 'Ekran kaydı', correct: false },
+                        { name: 'Anchor', icon: '🎙️', type: 'Podcast', correct: false }
+                    ]
+                }
+            ]
+        };
+
+        let currentTab = 'video';
+        let currentProject = 0;
+        let selectedTools = [];
+        let totalScore = 0;
+        let maxScore = 0;
+
+        // Toplam puan hesapla
+        Object.values(projects).forEach(category => {
+            maxScore += category.length;
+        });
+        document.getElementById('total').textContent = maxScore;
+
+        function switchTab(tab) {
+            currentTab = tab;
+            currentProject = 0;
+            selectedTools = [];
+
+            // Tab butonlarını güncelle
+            document.querySelectorAll('.tab-btn').forEach((btn, i) => {
+                btn.classList.remove('active');
+            });
+            event.target.closest('.tab-btn').classList.add('active');
+
+            loadProject();
+        }
+
+        function loadProject() {
+            const categoryProjects = projects[currentTab];
+            if (currentProject >= categoryProjects.length) {
+                showCategoryComplete();
+                return;
+            }
+
+            const project = categoryProjects[currentProject];
+            selectedTools = [];
+
+            document.getElementById('workspace').innerHTML = `
+                <div class="project-card">
+                    <div style="font-size: 4em; text-align: center; margin-bottom: 15px;">${project.icon}</div>
+                    <div class="project-title">${project.title}</div>
+                    <div class="project-desc">${project.desc}</div>
+                    <div style="background: #e7f3ff; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
+                        <strong>🎯 Görev:</strong> Bu projeyi tamamlamak için gerekli <strong>${project.correctTools.length} aracı</strong> seçin.
+                    </div>
+
+                    <div class="tool-grid">
+                        ${project.tools.map((tool, i) => `
+                            <div class="tool-card" onclick="selectTool(${i})">
+                                <div class="tool-icon">${tool.icon}</div>
+                                <div class="tool-name">${tool.name}</div>
+                                <div class="tool-type">${tool.type}</div>
+                            </div>
+                        `).join('')}
+                    </div>
+
+                    <div class="feedback" id="feedback"></div>
+
+                    <div style="text-align: center; margin-top: 20px;">
+                        <button class="btn" id="checkBtn" onclick="checkSelection()" disabled>✅ Kontrol Et</button>
+                        <button class="btn" id="nextBtn" onclick="nextProject()" style="display: none;">➡️ Sonraki Proje</button>
+                    </div>
+                </div>
+            `;
+        }
+
+        function selectTool(index) {
+            if (document.getElementById('feedback').style.display === 'block') return;
+
+            const project = projects[currentTab][currentProject];
+            const toolCards = document.querySelectorAll('.tool-card');
+            const card = toolCards[index];
+
+            if (selectedTools.includes(index)) {
+                selectedTools = selectedTools.filter(i => i !== index);
+                card.style.border = '2px solid #e0e0e0';
+                card.style.background = 'white';
+            } else {
+                selectedTools.push(index);
+                card.style.border = '2px solid #ff6a88';
+                card.style.background = '#fff0f5';
+            }
+
+            document.getElementById('checkBtn').disabled = selectedTools.length !== project.correctTools.length;
+        }
+
+        function checkSelection() {
+            const project = projects[currentTab][currentProject];
+            const toolCards = document.querySelectorAll('.tool-card');
+            let allCorrect = true;
+
+            toolCards.forEach((card, i) => {
+                card.style.pointerEvents = 'none';
+                if (project.tools[i].correct) {
+                    card.classList.add('selected');
+                    if (!selectedTools.includes(i)) {
+                        allCorrect = false;
+                    }
+                } else if (selectedTools.includes(i)) {
+                    card.classList.add('wrong');
+                    allCorrect = false;
+                }
+            });
+
+            if (allCorrect) {
+                totalScore++;
+                document.getElementById('score').textContent = totalScore;
+            }
+
+            const feedbackDiv = document.getElementById('feedback');
+            feedbackDiv.innerHTML = `
+                <h3 style="color: ${allCorrect ? '#28a745' : '#dc3545'}; margin-bottom: 10px;">
+                    ${allCorrect ? '✅ Mükemmel! Doğru araçları seçtin!' : '❌ Bazı araçlar yanlış!'}
+                </h3>
+                <p><strong>💡 Doğru Araçlar:</strong></p>
+                <ul style="margin: 10px 0; line-height: 1.8;">
+                    ${project.correctTools.map(tool => `<li>${tool}</li>`).join('')}
+                </ul>
+                <p style="margin-top: 10px;"><strong>Açıklama:</strong> ${getExplanation(currentTab, project)}</p>
+            `;
+            feedbackDiv.style.display = 'block';
+
+            document.getElementById('checkBtn').style.display = 'none';
+            document.getElementById('nextBtn').style.display = 'inline-block';
+        }
+
+        function getExplanation(tab, project) {
+            const explanations = {
+                video: 'Video üretimi için kayıt cihazı + düzenleme programı gerekir.',
+                graphic: 'Grafik tasarım için tasarım aracı + görsel kaynağı kullanılır.',
+                podcast: 'Podcast için mikrofon + ses düzenleme/yayın platformu gerekir.',
+                web: 'Web içerik için site oluşturucu + görsel araçlar kullanılır.'
+            };
+            return explanations[tab];
+        }
+
+        function nextProject() {
+            currentProject++;
+            loadProject();
+        }
+
+        function showCategoryComplete() {
+            const tabNames = {
+                video: 'Video Üretimi',
+                graphic: 'Grafik Tasarım',
+                podcast: 'Podcast',
+                web: 'Web İçerik'
+            };
+
+            document.getElementById('workspace').innerHTML = `
+                <div style="text-align: center; padding: 40px;">
+                    <div style="font-size: 5em;">🎉</div>
+                    <h2 style="color: #ff6a88; margin: 20px 0;">${tabNames[currentTab]} Tamamlandı!</h2>
+                    <p style="font-size: 1.2em; color: #666;">Diğer kategorileri denemek için yukarıdaki sekmelere tıklayın.</p>
+                    ${totalScore === maxScore ? `
+                        <div style="background: linear-gradient(135deg, #ff9a56 0%, #ff6a88 100%); color: white; padding: 30px; border-radius: 15px; margin-top: 30px;">
+                            <h2>🏆 TÜM PROJELER TAMAMLANDI!</h2>
+                            <div style="font-size: 2em; margin: 20px 0;">${totalScore}/${maxScore} Puan</div>
+                            <div style="background: rgba(255,255,255,0.2); padding: 20px; border-radius: 10px; margin-top: 20px; text-align: left;">
+                                <h3 style="margin-bottom: 15px;">🎓 Öğrendikleriniz:</h3>
+                                <ul style="line-height: 2;">
+                                    <li>🎥 Video: OBS Studio, DaVinci Resolve, CapCut</li>
+                                    <li>🎨 Grafik: Canva, Figma, Photoshop</li>
+                                    <li>🎙️ Podcast: Audacity, Anchor</li>
+                                    <li>🌐 Web: Google Sites, WordPress</li>
+                                    <li>📸 Görseller: Pixabay, Unsplash, Pexels</li>
+                                </ul>
+                            </div>
+                            <button class="btn" onclick="location.reload()" style="background: white; color: #ff6a88; margin-top: 20px;">🔄 Tekrar Oyna</button>
+                        </div>
+                    ` : ''}
+                </div>
+            `;
+        }
+
+        // İlk projeyi yükle
+        loadProject();
+    </script>
+</body>
+</html>

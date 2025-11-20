@@ -1,0 +1,712 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Etkinlik Oluşturucu - BST</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        h1 {
+            text-align: center;
+            color: #f5576c;
+            margin-bottom: 10px;
+            font-size: 2.5em;
+        }
+        .subtitle { text-align: center; color: #666; margin-bottom: 30px; }
+
+        .activity-selector {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+
+        .activity-card {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+            border: 3px solid transparent;
+        }
+
+        .activity-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.3);
+            border-color: white;
+        }
+
+        .activity-icon {
+            font-size: 3em;
+            margin-bottom: 15px;
+        }
+
+        .activity-title {
+            font-size: 1.3em;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .activity-desc {
+            opacity: 0.9;
+            font-size: 0.95em;
+        }
+
+        .creator-panel {
+            display: none;
+            animation: fadeIn 0.3s;
+        }
+
+        .creator-panel.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .toolbar {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-bottom: 30px;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            font-size: 1em;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+
+        .btn-success {
+            background: #28a745;
+            color: white;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1em;
+            transition: all 0.3s;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: #f5576c;
+            box-shadow: 0 0 0 3px rgba(245, 87, 108, 0.1);
+        }
+
+        .preview-area {
+            background: #f8f9fa;
+            padding: 30px;
+            border-radius: 15px;
+            min-height: 400px;
+            margin: 20px 0;
+        }
+
+        .word-input {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .word-input input {
+            flex: 1;
+        }
+
+        .words-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin: 15px 0;
+        }
+
+        .word-tag {
+            background: #f093fb;
+            color: white;
+            padding: 8px 15px;
+            border-radius: 20px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .word-tag button {
+            background: rgba(255,255,255,0.3);
+            border: none;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+            color: white;
+            font-weight: bold;
+        }
+
+        .crossword-grid {
+            display: inline-grid;
+            gap: 2px;
+            background: #333;
+            padding: 2px;
+            border-radius: 5px;
+        }
+
+        .crossword-cell {
+            width: 40px;
+            height: 40px;
+            background: white;
+            border: 1px solid #ddd;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2em;
+            font-weight: bold;
+        }
+
+        .crossword-cell.black {
+            background: #333;
+        }
+
+        .matching-pair {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 15px;
+            padding: 15px;
+            background: white;
+            border-radius: 10px;
+        }
+
+        .matching-input {
+            padding: 10px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+        }
+
+        .fill-blank-sentence {
+            background: white;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 10px;
+            border-left: 4px solid #f5576c;
+        }
+
+        .blank-highlight {
+            background: #fff3cd;
+            padding: 2px 8px;
+            border-radius: 3px;
+            font-weight: bold;
+        }
+
+        .print-page {
+            background: white;
+            padding: 40px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .print-header {
+            text-align: center;
+            border-bottom: 3px solid #f5576c;
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+        }
+
+        .print-title {
+            font-size: 2em;
+            color: #f5576c;
+            margin-bottom: 10px;
+        }
+
+        .print-info {
+            display: flex;
+            justify-content: space-between;
+            color: #666;
+            font-size: 0.9em;
+            margin-top: 15px;
+        }
+
+        @media print {
+            body {
+                background: white;
+                padding: 0;
+            }
+            .container {
+                box-shadow: none;
+                padding: 20px;
+            }
+            .toolbar, .btn {
+                display: none !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎨 Etkinlik ve Çalışma Yaprağı Oluşturucu</h1>
+        <p class="subtitle">Öğrencileriniz için Eğlenceli Etkinlikler Oluşturun</p>
+
+        <div class="toolbar">
+            <button class="btn btn-secondary" onclick="showActivitySelector()">⬅️ Geri Dön</button>
+            <button class="btn btn-success" onclick="generatePDF()">🖨️ Yazdır / PDF</button>
+            <button class="btn btn-success" onclick="saveActivity()">💾 Kaydet</button>
+            <button class="btn btn-secondary" onclick="window.location.href='index.html'">🏠 Ana Sayfa</button>
+        </div>
+
+        <!-- Activity Selector -->
+        <div id="activitySelector" class="activity-selector">
+            <div class="activity-card" onclick="selectActivity('wordsearch')">
+                <div class="activity-icon">🔍</div>
+                <div class="activity-title">Kelime Avı</div>
+                <div class="activity-desc">Gizli kelimeleri bulma oyunu</div>
+            </div>
+
+            <div class="activity-card" onclick="selectActivity('crossword')">
+                <div class="activity-icon">🧩</div>
+                <div class="activity-title">Çapraz Bulmaca</div>
+                <div class="activity-desc">Tanımlardan kelime bulma</div>
+            </div>
+
+            <div class="activity-card" onclick="selectActivity('matching')">
+                <div class="activity-icon">🔗</div>
+                <div class="activity-title">Eşleştirme</div>
+                <div class="activity-desc">Terim-tanım veya resim eşleştir</div>
+            </div>
+
+            <div class="activity-card" onclick="selectActivity('fillblank')">
+                <div class="activity-icon">✏️</div>
+                <div class="activity-title">Boşluk Doldurma</div>
+                <div class="activity-desc">Cümlelerdeki boşlukları doldur</div>
+            </div>
+
+            <div class="activity-card" onclick="selectActivity('truefalse')">
+                <div class="activity-icon">✔️</div>
+                <div class="activity-title">Doğru/Yanlış</div>
+                <div class="activity-desc">İfadeleri değerlendir</div>
+            </div>
+
+            <div class="activity-card" onclick="selectActivity('maze')">
+                <div class="activity-icon">🌀</div>
+                <div class="activity-title">Labirent</div>
+                <div class="activity-desc">Doğru yolu bul</div>
+            </div>
+        </div>
+
+        <!-- Word Search Creator -->
+        <div id="wordsearchCreator" class="creator-panel">
+            <h2 style="color: #f5576c; margin-bottom: 20px;">🔍 Kelime Avı Oluştur</h2>
+
+            <div class="form-group">
+                <label class="form-label">Başlık</label>
+                <input type="text" class="form-control" id="wsTitle" placeholder="Örn: Bilişim Terimleri Kelime Avı">
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Kelimeler Ekle</label>
+                <div class="word-input">
+                    <input type="text" class="form-control" id="wsWord" placeholder="Kelime girin...">
+                    <button class="btn btn-primary" onclick="addWord()">➕ Ekle</button>
+                </div>
+                <div class="words-list" id="wordsList"></div>
+            </div>
+
+            <button class="btn btn-primary" onclick="generateWordSearch()">🎲 Kelime Avı Oluştur</button>
+
+            <div class="preview-area" id="wsPreview"></div>
+        </div>
+
+        <!-- Matching Creator -->
+        <div id="matchingCreator" class="creator-panel">
+            <h2 style="color: #f5576c; margin-bottom: 20px;">🔗 Eşleştirme Oluştur</h2>
+
+            <div class="form-group">
+                <label class="form-label">Başlık</label>
+                <input type="text" class="form-control" id="matchTitle" placeholder="Örn: Terim-Tanım Eşleştirme">
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Eşleştirme Çiftleri</label>
+                <div id="matchingPairs"></div>
+                <button class="btn btn-primary" onclick="addMatchingPair()">➕ Çift Ekle</button>
+            </div>
+
+            <button class="btn btn-primary" onclick="generateMatching()">📋 Eşleştirme Oluştur</button>
+
+            <div class="preview-area" id="matchPreview"></div>
+        </div>
+
+        <!-- Fill in the Blank Creator -->
+        <div id="fillblankCreator" class="creator-panel">
+            <h2 style="color: #f5576c; margin-bottom: 20px;">✏️ Boşluk Doldurma Oluştur</h2>
+
+            <div class="form-group">
+                <label class="form-label">Başlık</label>
+                <input type="text" class="form-control" id="fbTitle" placeholder="Örn: Bilişim Kavramları">
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Cümleler (Boşlukları [...] ile işaretleyin)</label>
+                <textarea class="form-control" id="fbSentences" rows="10" placeholder="Örnek:&#10;Bilgisayarın beyni [...] olarak adlandırılır.&#10;[...] veri saklamak için kullanılır."></textarea>
+            </div>
+
+            <button class="btn btn-primary" onclick="generateFillBlank()">📋 Çalışma Yaprağı Oluştur</button>
+
+            <div class="preview-area" id="fbPreview"></div>
+        </div>
+    </div>
+
+    <script>
+        let currentWords = [];
+        let currentActivity = '';
+
+        function showActivitySelector() {
+            document.querySelectorAll('.creator-panel').forEach(p => p.classList.remove('active'));
+            document.getElementById('activitySelector').style.display = 'grid';
+        }
+
+        function selectActivity(type) {
+            currentActivity = type;
+            document.getElementById('activitySelector').style.display = 'none';
+            document.querySelectorAll('.creator-panel').forEach(p => p.classList.remove('active'));
+
+            switch(type) {
+                case 'wordsearch':
+                    document.getElementById('wordsearchCreator').classList.add('active');
+                    break;
+                case 'matching':
+                    document.getElementById('matchingCreator').classList.add('active');
+                    addMatchingPair(); // Add first pair
+                    break;
+                case 'fillblank':
+                    document.getElementById('fillblankCreator').classList.add('active');
+                    break;
+                default:
+                    alert('Bu etkinlik henüz geliştirilme aşamasında!');
+                    showActivitySelector();
+            }
+        }
+
+        // Word Search Functions
+        function addWord() {
+            const input = document.getElementById('wsWord');
+            const word = input.value.trim().toUpperCase();
+
+            if (word && !currentWords.includes(word)) {
+                currentWords.push(word);
+                renderWordsList();
+                input.value = '';
+            }
+        }
+
+        function removeWord(word) {
+            currentWords = currentWords.filter(w => w !== word);
+            renderWordsList();
+        }
+
+        function renderWordsList() {
+            const container = document.getElementById('wordsList');
+            container.innerHTML = currentWords.map(word => `
+                <span class="word-tag">
+                    ${word}
+                    <button onclick="removeWord('${word}')">×</button>
+                </span>
+            `).join('');
+        }
+
+        function generateWordSearch() {
+            if (currentWords.length < 3) {
+                alert('En az 3 kelime eklemelisiniz!');
+                return;
+            }
+
+            const title = document.getElementById('wsTitle').value || 'Kelime Avı';
+            const gridSize = 15;
+            const grid = createEmptyGrid(gridSize);
+
+            // Place words
+            currentWords.forEach(word => {
+                placeWordInGrid(grid, word, gridSize);
+            });
+
+            // Fill empty cells
+            fillEmptyGridCells(grid, gridSize);
+
+            // Render
+            renderWordSearchGrid(grid, gridSize, title);
+        }
+
+        function createEmptyGrid(size) {
+            return Array(size).fill().map(() => Array(size).fill(''));
+        }
+
+        function placeWordInGrid(grid, word, size) {
+            const directions = [
+                [0, 1],  // horizontal
+                [1, 0],  // vertical
+                [1, 1]   // diagonal
+            ];
+
+            let placed = false;
+            let attempts = 0;
+
+            while (!placed && attempts < 100) {
+                const dir = directions[Math.floor(Math.random() * directions.length)];
+                const row = Math.floor(Math.random() * size);
+                const col = Math.floor(Math.random() * size);
+
+                if (canPlaceWord(grid, word, row, col, dir, size)) {
+                    for (let i = 0; i < word.length; i++) {
+                        grid[row + i * dir[0]][col + i * dir[1]] = word[i];
+                    }
+                    placed = true;
+                }
+                attempts++;
+            }
+        }
+
+        function canPlaceWord(grid, word, row, col, dir, size) {
+            for (let i = 0; i < word.length; i++) {
+                const newRow = row + i * dir[0];
+                const newCol = col + i * dir[1];
+
+                if (newRow >= size || newCol >= size || newRow < 0 || newCol < 0) {
+                    return false;
+                }
+
+                if (grid[newRow][newCol] !== '' && grid[newRow][newCol] !== word[i]) {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        function fillEmptyGridCells(grid, size) {
+            const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+            for (let i = 0; i < size; i++) {
+                for (let j = 0; j < size; j++) {
+                    if (grid[i][j] === '') {
+                        grid[i][j] = letters[Math.floor(Math.random() * letters.length)];
+                    }
+                }
+            }
+        }
+
+        function renderWordSearchGrid(grid, size, title) {
+            const preview = document.getElementById('wsPreview');
+            let html = `
+                <div class="print-page">
+                    <div class="print-header">
+                        <div class="print-title">${title}</div>
+                        <div class="print-info">
+                            <span>Ad Soyad: _________________</span>
+                            <span>Tarih: ${new Date().toLocaleDateString('tr-TR')}</span>
+                        </div>
+                    </div>
+                    <p style="margin-bottom: 20px;"><strong>📋 Talimat:</strong> Aşağıdaki kelimeleri bulmacada bulun ve işaretleyin.</p>
+                    <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 30px;">
+                        <div>
+                            <table style="border-collapse: collapse;">
+            `;
+
+            for (let i = 0; i < size; i++) {
+                html += '<tr>';
+                for (let j = 0; j < size; j++) {
+                    html += `<td style="width: 30px; height: 30px; border: 1px solid #ddd; text-align: center; font-weight: bold;">${grid[i][j]}</td>`;
+                }
+                html += '</tr>';
+            }
+
+            html += `
+                            </table>
+                        </div>
+                        <div>
+                            <h3 style="color: #f5576c; margin-bottom: 15px;">Bulunacak Kelimeler:</h3>
+                            <ul style="line-height: 2;">
+                                ${currentWords.map(w => `<li>☐ ${w}</li>`).join('')}
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            preview.innerHTML = html;
+        }
+
+        // Matching Functions
+        function addMatchingPair() {
+            const container = document.getElementById('matchingPairs');
+            const index = container.children.length;
+
+            const pairHtml = `
+                <div class="matching-pair">
+                    <input type="text" class="matching-input" placeholder="Sol taraf (Terim)" id="match_left_${index}">
+                    <input type="text" class="matching-input" placeholder="Sağ taraf (Tanım)" id="match_right_${index}">
+                </div>
+            `;
+
+            container.insertAdjacentHTML('beforeend', pairHtml);
+        }
+
+        function generateMatching() {
+            const title = document.getElementById('matchTitle').value || 'Eşleştirme Etkinliği';
+            const pairs = [];
+
+            document.querySelectorAll('.matching-pair').forEach((pair, i) => {
+                const left = document.getElementById(`match_left_${i}`).value;
+                const right = document.getElementById(`match_right_${i}`).value;
+                if (left && right) {
+                    pairs.push({ left, right });
+                }
+            });
+
+            if (pairs.length < 3) {
+                alert('En az 3 eşleştirme çifti eklemelisiniz!');
+                return;
+            }
+
+            // Shuffle right side
+            const rightShuffled = pairs.map(p => p.right).sort(() => Math.random() - 0.5);
+
+            const preview = document.getElementById('matchPreview');
+            let html = `
+                <div class="print-page">
+                    <div class="print-header">
+                        <div class="print-title">${title}</div>
+                        <div class="print-info">
+                            <span>Ad Soyad: _________________</span>
+                            <span>Tarih: ${new Date().toLocaleDateString('tr-TR')}</span>
+                        </div>
+                    </div>
+                    <p style="margin-bottom: 20px;"><strong>📋 Talimat:</strong> Sol ve sağ sütunları eşleştirin.</p>
+                    <table style="width: 100%; border-collapse: collapse;">
+                        <thead>
+                            <tr>
+                                <th style="background: #f5576c; color: white; padding: 15px; text-align: left; width: 40%;">A Sütunu</th>
+                                <th style="width: 10%; text-align: center;">Eşleştir</th>
+                                <th style="background: #4facfe; color: white; padding: 15px; text-align: left; width: 40%;">B Sütunu</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+            `;
+
+            pairs.forEach((pair, i) => {
+                html += `
+                    <tr>
+                        <td style="padding: 15px; border: 1px solid #ddd;">${i + 1}. ${pair.left}</td>
+                        <td style="text-align: center; border: 1px solid #ddd;">___</td>
+                        <td style="padding: 15px; border: 1px solid #ddd;">${String.fromCharCode(65 + i)}. ${rightShuffled[i]}</td>
+                    </tr>
+                `;
+            });
+
+            html += `
+                        </tbody>
+                    </table>
+                </div>
+            `;
+
+            preview.innerHTML = html;
+        }
+
+        // Fill in the Blank Functions
+        function generateFillBlank() {
+            const title = document.getElementById('fbTitle').value || 'Boşluk Doldurma';
+            const text = document.getElementById('fbSentences').value;
+
+            if (!text.trim()) {
+                alert('Lütfen cümleler girin!');
+                return;
+            }
+
+            const sentences = text.split('\n').filter(s => s.trim());
+            const preview = document.getElementById('fbPreview');
+
+            let html = `
+                <div class="print-page">
+                    <div class="print-header">
+                        <div class="print-title">${title}</div>
+                        <div class="print-info">
+                            <span>Ad Soyad: _________________</span>
+                            <span>Tarih: ${new Date().toLocaleDateString('tr-TR')}</span>
+                        </div>
+                    </div>
+                    <p style="margin-bottom: 20px;"><strong>📋 Talimat:</strong> Aşağıdaki cümlelerdeki boşlukları uygun kelimelerle doldurun.</p>
+            `;
+
+            sentences.forEach((sentence, i) => {
+                const processed = sentence.replace(/\[\.\.\.]/g, '<span style="display: inline-block; width: 150px; border-bottom: 2px solid #333; margin: 0 5px;"></span>');
+                html += `
+                    <div class="fill-blank-sentence">
+                        <strong>${i + 1}.</strong> ${processed}
+                    </div>
+                `;
+            });
+
+            html += '</div>';
+            preview.innerHTML = html;
+        }
+
+        function generatePDF() {
+            window.print();
+        }
+
+        function saveActivity() {
+            alert('Etkinlik kaydedildi!\n\nGerçek uygulamada localStorage veya sunucuya kaydedilir.');
+        }
+
+        // Initialize
+        showActivitySelector();
+    </script>
+</body>
+</html>

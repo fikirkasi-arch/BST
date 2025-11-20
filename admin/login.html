@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Girişi - BST Eğitim Portalı</title>
+    <link rel="stylesheet" href="css/admin.css">
+</head>
+<body>
+    <div class="login-container">
+        <div class="login-box">
+            <h1>🔐 Admin Paneli</h1>
+            <p>BST Eğitim Portalı Yönetici Girişi</p>
+
+            <div class="login-error" id="loginError">
+                Hatalı şifre! Lütfen tekrar deneyin.
+            </div>
+
+            <form id="loginForm">
+                <input
+                    type="password"
+                    id="password"
+                    placeholder="Yönetici Şifresi"
+                    autocomplete="current-password"
+                    required
+                >
+                <button type="submit">Giriş Yap</button>
+            </form>
+
+            <p style="margin-top: 20px; font-size: 12px; opacity: 0.7;">
+                <a href="../index.html" style="color: #667eea; text-decoration: none;">← Ana Sayfaya Dön</a>
+            </p>
+        </div>
+    </div>
+
+    <script src="js/admin-auth.js"></script>
+    <script>
+        // Zaten giriş yapılmışsa dashboard'a yönlendir
+        if (AdminAuth.isLoggedIn()) {
+            window.location.href = 'index.html';
+        }
+
+        // Giriş formu
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const password = document.getElementById('password').value;
+            const errorDiv = document.getElementById('loginError');
+
+            if (AdminAuth.login(password)) {
+                window.location.href = 'index.html';
+            } else {
+                errorDiv.style.display = 'block';
+                document.getElementById('password').value = '';
+                document.getElementById('password').focus();
+
+                // 3 saniye sonra hatayı gizle
+                setTimeout(() => {
+                    errorDiv.style.display = 'none';
+                }, 3000);
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Senaryoları - 5. Sınıf Ünite 5</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        h1 { text-align: center; color: #38f9d7; margin-bottom: 30px; }
+        .scenario {
+            background: #f5f5f5;
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+        }
+        .scenario-icon {
+            font-size: 5em;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .scenario-title {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+        .scenario-desc {
+            font-size: 1.1em;
+            line-height: 1.8;
+            color: #666;
+            margin-bottom: 20px;
+        }
+        .choice-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+        }
+        .choice {
+            padding: 20px;
+            background: white;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.3s;
+        }
+        .choice:hover {
+            border-color: #38f9d7;
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(56, 249, 215, 0.3);
+        }
+        .choice.correct {
+            border-color: #43e97b;
+            background: #e8f5e9;
+        }
+        .choice.wrong {
+            border-color: #f5576c;
+            background: #ffebee;
+        }
+        .btn {
+            padding: 15px 30px;
+            font-size: 1.1em;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: bold;
+            background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+            color: white;
+            width: 100%;
+            margin-top: 20px;
+        }
+        .score {
+            text-align: center;
+            font-size: 1.8em;
+            font-weight: bold;
+            color: #38f9d7;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🤖 Yapay Zeka Senaryoları</h1>
+        <div id="content"></div>
+        <div class="score" id="score">Puan: 0/5</div>
+    </div>
+    <script>
+        const scenarios = [
+            {icon: '🏥', title: 'Sağlıkta YZ', desc: 'Hastanede bir yapay zeka sistemi, binlerce hastalık belirtisini analiz ederek doktorlara teşhis konusunda yardımcı oluyor.', question: 'Bu YZ hangi alanda kullanılıyor?', choices: ['Hastalık Teşhisi', 'Oyun Oynama', 'Müzik Yapma', 'Yemek Pişirme'], correct: 0},
+            {icon: '🎮', title: 'Oyunlarda YZ', desc: 'Video oyununda düşman karakterler, oyuncunun hareketlerine göre stratejilerini değiştiriyor ve daha akıllıca davranıyor.', question: 'YZ ne yapıyor?', choices: ['Grafik çiziyor', 'Düşman AI oluşturuyor', 'Ses kaydediyor', 'İnternet sağlıyor'], correct: 1},
+            {icon: '🚗', title: 'Otonom Araçlar', desc: 'Sürücüsüz bir araba, yolda giderken trafik işaretlerini okuyup, yayaları fark ediyor ve güvenli bir şekilde sürüş yapıyor.', question: 'Bu örnek hangi YZ kullanımıdır?', choices: ['Görüntü İşleme', 'Sadece GPS', 'Manuel Kontrol', 'Radio'], correct: 0},
+            {icon: '📱', title: 'Sesli Asistanlar', desc: 'Telefonundaki asistan "Bugün hava nasıl?" diye sorduğunda seni anlayıp hava durumunu söylüyor.', question: 'Bu hangi YZ özelliğidir?', choices: ['Doğal Dil İşleme', 'Sadece Kayıt', 'Rastgele Cevap', 'İnternet Arama'], correct: 0},
+            {icon: '🎬', title: 'Netflix Önerileri', desc: 'Dizi izleme platformu, izlediğin dizilere bakarak sana benzer içerikler öneriyor.', question: 'YZ burada ne yapıyor?', choices: ['Rastgele seçiyor', 'Kişiselleştirilmiş öneri', 'En yeni dizileri gösteriyor', 'Hiçbir şey'], correct: 1}
+        ];
+        let current = 0, score = 0;
+        function load() {
+            const s = scenarios[current];
+            document.getElementById('content').innerHTML = `
+                <div class="scenario">
+                    <div class="scenario-icon">${s.icon}</div>
+                    <div class="scenario-title">${s.title}</div>
+                    <div class="scenario-desc">${s.desc}</div>
+                    <h3 style="color: #38f9d7; margin-bottom: 15px;">❓ ${s.question}</h3>
+                    <div class="choice-grid" id="choices"></div>
+                </div>
+                ${current < scenarios.length - 1 ? 
+                    '<button class="btn" id="next" style="display:none;" onclick="next()">➡️ Sonraki</button>' :
+                    '<button class="btn" id="next" style="display:none;" onclick="finish()">🏆 Bitir</button>'}
+            `;
+            const grid = document.getElementById('choices');
+            s.choices.forEach((c, i) => {
+                const el = document.createElement('div');
+                el.className = 'choice';
+                el.textContent = c;
+                el.onclick = () => select(i);
+                grid.appendChild(el);
+            });
+        }
+        function select(i) {
+            const s = scenarios[current];
+            const choices = document.querySelectorAll('.choice');
+            choices.forEach((c, idx) => {
+                c.style.pointerEvents = 'none';
+                if (idx === i) c.classList.add(i === s.correct ? 'correct' : 'wrong');
+            });
+            if (i === s.correct) {
+                score++;
+                document.getElementById('score').textContent = `Puan: ${score}/5`;
+            }
+            document.getElementById('next').style.display = 'block';
+        }
+        function next() { current++; load(); }
+        function finish() {
+            document.getElementById('content').innerHTML = `
+                <div style="text-align: center; padding: 40px;">
+                    <div style="font-size: 6em;">${score >= 4 ? '🏆' : score >= 3 ? '👍' : '📚'}</div>
+                    <h2 style="color: #38f9d7; margin: 20px 0;">${score >= 4 ? 'Harika!' : score >= 3 ? 'İyi!' : 'Tekrar Dene!'}</h2>
+                    <div style="font-size: 3em; font-weight: bold; color: #38f9d7;">${score}/5</div>
+                    <button class="btn" onclick="location.reload()">🔄 Tekrar</button>
+                </div>
+            `;
+        }
+        load();
+    </script>
+</body>
+</html>

@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Öğrenci Girişi - BST Eğitim Portalı</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+        }
+
+        .auth-container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            width: 100%;
+            max-width: 450px;
+            overflow: hidden;
+        }
+
+        .auth-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .auth-header h1 {
+            font-size: 28px;
+            margin-bottom: 8px;
+        }
+
+        .auth-header p {
+            opacity: 0.9;
+            font-size: 14px;
+        }
+
+        .auth-tabs {
+            display: flex;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        .auth-tab {
+            flex: 1;
+            padding: 15px;
+            text-align: center;
+            cursor: pointer;
+            font-weight: 600;
+            color: #666;
+            transition: all 0.3s;
+            border: none;
+            background: none;
+        }
+
+        .auth-tab.active {
+            color: #667eea;
+            border-bottom: 3px solid #667eea;
+            margin-bottom: -2px;
+        }
+
+        .auth-tab:hover {
+            background: #f8f9fa;
+        }
+
+        .auth-form {
+            padding: 30px;
+            display: none;
+        }
+
+        .auth-form.active {
+            display: block;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .message {
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            display: none;
+        }
+
+        .message.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .message.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .auth-footer {
+            padding: 20px 30px;
+            background: #f8f9fa;
+            text-align: center;
+            font-size: 13px;
+            color: #666;
+        }
+
+        .auth-footer a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .guest-link {
+            display: block;
+            margin-top: 15px;
+            text-align: center;
+        }
+
+        .guest-link a {
+            color: #667eea;
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        .guest-link a:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-width: 480px) {
+            .auth-container {
+                margin: 10px;
+            }
+
+            .auth-header {
+                padding: 20px;
+            }
+
+            .auth-form {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="auth-container">
+        <div class="auth-header">
+            <h1>🎓 BST Eğitim Portalı</h1>
+            <p>Bilişim Teknolojileri ve Yazılım</p>
+        </div>
+
+        <div class="auth-tabs">
+            <button class="auth-tab active" onclick="showTab('login')">Giriş Yap</button>
+            <button class="auth-tab" onclick="showTab('register')">Kayıt Ol</button>
+        </div>
+
+        <!-- Giriş Formu -->
+        <form class="auth-form active" id="loginForm">
+            <div class="message" id="loginMessage"></div>
+
+            <div class="form-group">
+                <label>Öğrenci Numarası</label>
+                <input type="text" id="loginNumber" placeholder="Örn: 2024001" required>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Giriş Yap</button>
+
+            <div class="guest-link">
+                <a href="index.html">Misafir olarak devam et →</a>
+            </div>
+        </form>
+
+        <!-- Kayıt Formu -->
+        <form class="auth-form" id="registerForm">
+            <div class="message" id="registerMessage"></div>
+
+            <div class="form-group">
+                <label>Ad Soyad *</label>
+                <input type="text" id="regName" placeholder="Adınız Soyadınız" required>
+            </div>
+
+            <div class="form-group">
+                <label>Öğrenci Numarası *</label>
+                <input type="text" id="regNumber" placeholder="Örn: 2024001" required>
+            </div>
+
+            <div class="form-group">
+                <label>Sınıf *</label>
+                <select id="regGrade" required>
+                    <option value="">Sınıfınızı seçin</option>
+                    <option value="5">5. Sınıf</option>
+                    <option value="6">6. Sınıf</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>E-posta (Opsiyonel)</label>
+                <input type="email" id="regEmail" placeholder="ornek@mail.com">
+            </div>
+
+            <button type="submit" class="btn btn-primary">Kayıt Ol</button>
+        </form>
+
+        <div class="auth-footer">
+            <a href="index.html">← Ana Sayfaya Dön</a>
+        </div>
+    </div>
+
+    <script src="scripts/student-auth.js"></script>
+    <script>
+        // Zaten giriş yapılmışsa ana sayfaya yönlendir
+        if (StudentAuth.isLoggedIn()) {
+            window.location.href = 'index.html';
+        }
+
+        // Tab değiştirme
+        function showTab(tab) {
+            document.querySelectorAll('.auth-tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.auth-form').forEach(f => f.classList.remove('active'));
+
+            if (tab === 'login') {
+                document.querySelector('.auth-tab:first-child').classList.add('active');
+                document.getElementById('loginForm').classList.add('active');
+            } else {
+                document.querySelector('.auth-tab:last-child').classList.add('active');
+                document.getElementById('registerForm').classList.add('active');
+            }
+
+            // Mesajları temizle
+            document.querySelectorAll('.message').forEach(m => m.style.display = 'none');
+        }
+
+        // Mesaj göster
+        function showMessage(elementId, message, type) {
+            const el = document.getElementById(elementId);
+            el.textContent = message;
+            el.className = 'message ' + type;
+            el.style.display = 'block';
+
+            if (type === 'success') {
+                setTimeout(() => {
+                    el.style.display = 'none';
+                }, 3000);
+            }
+        }
+
+        // Giriş formu
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const number = document.getElementById('loginNumber').value;
+            const result = StudentAuth.login(number);
+
+            if (result.success) {
+                showMessage('loginMessage', result.message, 'success');
+                setTimeout(() => {
+                    window.location.href = 'index.html';
+                }, 1000);
+            } else {
+                showMessage('loginMessage', result.message, 'error');
+            }
+        });
+
+        // Kayıt formu
+        document.getElementById('registerForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const name = document.getElementById('regName').value;
+            const number = document.getElementById('regNumber').value;
+            const grade = document.getElementById('regGrade').value;
+            const email = document.getElementById('regEmail').value;
+
+            const result = StudentAuth.register(name, number, grade, email);
+
+            if (result.success) {
+                showMessage('registerMessage', result.message, 'success');
+                setTimeout(() => {
+                    window.location.href = 'index.html';
+                }, 1000);
+            } else {
+                showMessage('registerMessage', result.message, 'error');
+            }
+        });
+    </script>
+</body>
+</html>

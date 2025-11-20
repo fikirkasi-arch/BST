@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>İstatistikler - Admin Paneli</title>
+    <link rel="stylesheet" href="css/admin.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="admin-wrapper">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h2><span>🎓</span> <span>BST Admin</span></h2>
+                <small>Yönetim Paneli</small>
+            </div>
+            <nav class="sidebar-menu">
+                <a href="index.html" class="menu-item">
+                    <span>📊</span> <span>Dashboard</span>
+                </a>
+                <a href="kullanicilar.html" class="menu-item">
+                    <span>👥</span> <span>Kullanıcılar</span>
+                </a>
+                <a href="icerikler.html" class="menu-item">
+                    <span>📚</span> <span>İçerikler</span>
+                </a>
+                <a href="istatistikler.html" class="menu-item active">
+                    <span>📈</span> <span>İstatistikler</span>
+                </a>
+                <div class="menu-divider"></div>
+                <a href="ayarlar.html" class="menu-item">
+                    <span>⚙️</span> <span>Ayarlar</span>
+                </a>
+                <a href="#" class="menu-item" onclick="AdminAuth.logout(); return false;">
+                    <span>🚪</span> <span>Çıkış</span>
+                </a>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="admin-header">
+                <h1>📈 İstatistikler & Analizler</h1>
+                <div class="header-actions">
+                    <select class="form-control" id="dateRange" style="width: 200px;">
+                        <option value="week">Son 7 Gün</option>
+                        <option value="month" selected>Son 30 Gün</option>
+                        <option value="year">Son 1 Yıl</option>
+                    </select>
+                    <button class="btn btn-primary" onclick="exportReport()">
+                        📥 Rapor İndir
+                    </button>
+                </div>
+            </div>
+
+            <!-- Overview Stats -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon blue">👥</div>
+                    <div class="stat-info">
+                        <h4 id="activeUsers">0</h4>
+                        <p>Aktif Kullanıcı</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon green">📝</div>
+                    <div class="stat-info">
+                        <h4 id="quizAttempts">0</h4>
+                        <p>Quiz Çözümü</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon orange">🎮</div>
+                    <div class="stat-info">
+                        <h4 id="gamePlays">0</h4>
+                        <p>Oyun Oynama</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon purple">⏱️</div>
+                    <div class="stat-info">
+                        <h4 id="avgTime">0 dk</h4>
+                        <p>Ort. Oturum Süresi</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Charts Row 1 -->
+            <div class="grid-2">
+                <!-- Weekly Activity -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3><span>📊</span> Haftalık Aktivite</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="chart-container">
+                            <canvas id="weeklyChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Performance by Grade -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3><span>🎯</span> Sınıf Bazlı Performans</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="chart-container">
+                            <canvas id="gradeChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Charts Row 2 -->
+            <div class="grid-2">
+                <!-- Content Popularity -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3><span>🔥</span> Popüler İçerikler</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="chart-container">
+                            <canvas id="popularChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quiz Score Distribution -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3><span>📈</span> Puan Dağılımı</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="chart-container">
+                            <canvas id="scoreChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Detailed Stats Tables -->
+            <div class="grid-2">
+                <!-- Top Performing Units -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3><span>🏆</span> En Başarılı Üniteler</h3>
+                    </div>
+                    <div class="card-body">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Ünite</th>
+                                    <th>Sınıf</th>
+                                    <th>Ort. Puan</th>
+                                    <th>Trend</th>
+                                </tr>
+                            </thead>
+                            <tbody id="topUnitsTable">
+                                <!-- Dinamik olarak doldurulacak -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Needs Improvement -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3><span>⚠️</span> Gelişim Gerektiren Alanlar</h3>
+                    </div>
+                    <div class="card-body">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Konu</th>
+                                    <th>Sorun</th>
+                                    <th>Öneri</th>
+                                </tr>
+                            </thead>
+                            <tbody id="improvementsTable">
+                                <!-- Dinamik olarak doldurulacak -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Activity Timeline -->
+            <div class="card">
+                <div class="card-header">
+                    <h3><span>⏱️</span> Son Aktiviteler</h3>
+                </div>
+                <div class="card-body">
+                    <ul class="activity-list" id="recentActivities">
+                        <!-- Dinamik olarak doldurulacak -->
+                    </ul>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="js/admin-auth.js"></script>
+    <script>
+        // Verileri yükle
+        function loadStatistics() {
+            const users = JSON.parse(localStorage.getItem('bstUsers') || '[]');
+            const quizzes = JSON.parse(localStorage.getItem('bstQuizzes') || '[]');
+            const games = JSON.parse(localStorage.getItem('bstGames') || '[]');
+
+            // İstatistik kartları
+            document.getElementById('activeUsers').textContent = users.filter(u => u.status === 'active').length;
+            document.getElementById('quizAttempts').textContent = quizzes.reduce((sum, q) => sum + q.attempts, 0);
+            document.getElementById('gamePlays').textContent = games.reduce((sum, g) => sum + g.plays, 0);
+            document.getElementById('avgTime').textContent = '12 dk';
+
+            // Tabloları doldur
+            loadTopUnits();
+            loadImprovements();
+            loadRecentActivities();
+        }
+
+        // Haftalık aktivite grafiği
+        function createWeeklyChart() {
+            const ctx = document.getElementById('weeklyChart').getContext('2d');
+
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: ['Pzt', 'Sal', 'Çar', 'Per', 'Cum', 'Cmt', 'Paz'],
+                    datasets: [{
+                        label: 'Quiz',
+                        data: [12, 19, 15, 25, 22, 8, 5],
+                        borderColor: 'rgb(102, 126, 234)',
+                        backgroundColor: 'rgba(102, 126, 234, 0.1)',
+                        tension: 0.4,
+                        fill: true
+                    }, {
+                        label: 'Oyun',
+                        data: [8, 15, 12, 18, 20, 15, 10],
+                        borderColor: 'rgb(40, 167, 69)',
+                        backgroundColor: 'rgba(40, 167, 69, 0.1)',
+                        tension: 0.4,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        }
+
+        // Sınıf bazlı performans
+        function createGradeChart() {
+            const ctx = document.getElementById('gradeChart').getContext('2d');
+
+            new Chart(ctx, {
+                type: 'radar',
+                data: {
+                    labels: ['Ünite 1', 'Ünite 2', 'Ünite 3', 'Ünite 4', 'Ünite 5'],
+                    datasets: [{
+                        label: '5. Sınıf',
+                        data: [78, 82, 75, 68, 72],
+                        borderColor: 'rgb(102, 126, 234)',
+                        backgroundColor: 'rgba(102, 126, 234, 0.2)',
+                        pointBackgroundColor: 'rgb(102, 126, 234)'
+                    }, {
+                        label: '6. Sınıf',
+                        data: [71, 68, 80, 75, 65],
+                        borderColor: 'rgb(118, 75, 162)',
+                        backgroundColor: 'rgba(118, 75, 162, 0.2)',
+                        pointBackgroundColor: 'rgb(118, 75, 162)'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
+                        }
+                    },
+                    scales: {
+                        r: {
+                            min: 0,
+                            max: 100
+                        }
+                    }
+                }
+            });
+        }
+
+        // Popüler içerikler
+        function createPopularChart() {
+            const ctx = document.getElementById('popularChart').getContext('2d');
+
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['Scratch', 'Algoritma', 'Donanım', 'Güvenlik', 'Dosya Yönetimi'],
+                    datasets: [{
+                        label: 'Görüntülenme',
+                        data: [312, 289, 245, 198, 167],
+                        backgroundColor: [
+                            'rgba(102, 126, 234, 0.8)',
+                            'rgba(118, 75, 162, 0.8)',
+                            'rgba(40, 167, 69, 0.8)',
+                            'rgba(255, 193, 7, 0.8)',
+                            'rgba(220, 53, 69, 0.8)'
+                        ],
+                        borderRadius: 8
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        }
+
+        // Puan dağılımı
+        function createScoreChart() {
+            const ctx = document.getElementById('scoreChart').getContext('2d');
+
+            new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['90-100', '80-89', '70-79', '60-69', '0-59'],
+                    datasets: [{
+                        data: [15, 25, 30, 20, 10],
+                        backgroundColor: [
+                            'rgba(40, 167, 69, 0.8)',
+                            'rgba(102, 126, 234, 0.8)',
+                            'rgba(255, 193, 7, 0.8)',
+                            'rgba(255, 152, 0, 0.8)',
+                            'rgba(220, 53, 69, 0.8)'
+                        ],
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'right'
+                        }
+                    }
+                }
+            });
+        }
+
+        // En başarılı üniteler
+        function loadTopUnits() {
+            const tbody = document.getElementById('topUnitsTable');
+            const units = [
+                { name: 'Ünite 2', grade: 5, score: 82, trend: 'up' },
+                { name: 'Ünite 3', grade: 6, score: 80, trend: 'up' },
+                { name: 'Ünite 1', grade: 5, score: 78, trend: 'stable' },
+                { name: 'Ünite 4', grade: 6, score: 75, trend: 'down' },
+                { name: 'Ünite 1', grade: 6, score: 71, trend: 'up' }
+            ];
+
+            tbody.innerHTML = units.map(unit => `
+                <tr>
+                    <td>${unit.name}</td>
+                    <td>${unit.grade}. Sınıf</td>
+                    <td>
+                        <div style="display: flex; align-items: center; gap: 8px;">
+                            <div class="progress" style="width: 50px;">
+                                <div class="progress-bar" style="width: ${unit.score}%"></div>
+                            </div>
+                            <span>${unit.score}%</span>
+                        </div>
+                    </td>
+                    <td>
+                        ${unit.trend === 'up' ? '📈' : unit.trend === 'down' ? '📉' : '➡️'}
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        // Gelişim gerektiren alanlar
+        function loadImprovements() {
+            const tbody = document.getElementById('improvementsTable');
+            const items = [
+                { topic: 'İnternet Güvenliği', issue: 'Düşük katılım', suggestion: 'Etkileşimli içerik ekle' },
+                { topic: 'Algoritma', issue: 'Düşük puan', suggestion: 'Görsel anlatım artır' },
+                { topic: 'Dosya Yönetimi', issue: 'Az görüntülenme', suggestion: 'Pratik uygulamalar ekle' }
+            ];
+
+            tbody.innerHTML = items.map(item => `
+                <tr>
+                    <td>${item.topic}</td>
+                    <td><span class="badge badge-warning">${item.issue}</span></td>
+                    <td style="font-size: 13px;">${item.suggestion}</td>
+                </tr>
+            `).join('');
+        }
+
+        // Son aktiviteler
+        function loadRecentActivities() {
+            const container = document.getElementById('recentActivities');
+            const logs = AdminAuth.getActivityLogs();
+
+            if (logs.length === 0) {
+                container.innerHTML = '<li style="text-align: center; color: #666;">Henüz aktivite yok</li>';
+                return;
+            }
+
+            container.innerHTML = logs.slice(0, 10).map(log => `
+                <li class="activity-item">
+                    <div class="activity-icon" style="background: rgba(102,126,234,0.15);">
+                        ${log.action.includes('Giriş') ? '🔑' : log.action.includes('eklendi') ? '➕' : log.action.includes('silindi') ? '🗑️' : '📝'}
+                    </div>
+                    <div class="activity-content">
+                        <strong>${log.action}</strong>
+                        <div class="activity-time">${log.date}</div>
+                    </div>
+                </li>
+            `).join('');
+        }
+
+        // Rapor indir
+        function exportReport() {
+            const users = JSON.parse(localStorage.getItem('bstUsers') || '[]');
+            const quizzes = JSON.parse(localStorage.getItem('bstQuizzes') || '[]');
+            const games = JSON.parse(localStorage.getItem('bstGames') || '[]');
+
+            let report = 'BST EĞİTİM PORTALI - İSTATİSTİK RAPORU\n';
+            report += '='.repeat(50) + '\n\n';
+            report += `Rapor Tarihi: ${new Date().toLocaleString('tr-TR')}\n\n`;
+
+            report += 'GENEL İSTATİSTİKLER\n';
+            report += '-'.repeat(30) + '\n';
+            report += `Toplam Öğrenci: ${users.length}\n`;
+            report += `Aktif Öğrenci: ${users.filter(u => u.status === 'active').length}\n`;
+            report += `Toplam Quiz: ${quizzes.length}\n`;
+            report += `Toplam Oyun: ${games.length}\n`;
+            report += `Quiz Çözümü: ${quizzes.reduce((sum, q) => sum + q.attempts, 0)}\n`;
+            report += `Oyun Oynama: ${games.reduce((sum, g) => sum + g.plays, 0)}\n\n`;
+
+            report += 'QUIZ PERFORMANSI\n';
+            report += '-'.repeat(30) + '\n';
+            quizzes.forEach(q => {
+                report += `${q.title}: %${q.avgScore} (${q.attempts} çözüm)\n`;
+            });
+
+            const blob = new Blob([report], { type: 'text/plain;charset=utf-8;' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = `bst_rapor_${new Date().toISOString().split('T')[0]}.txt`;
+            link.click();
+
+            AdminAuth.logActivity('İstatistik raporu indirildi');
+        }
+
+        // Sayfa yüklendiğinde
+        document.addEventListener('DOMContentLoaded', () => {
+            loadStatistics();
+            createWeeklyChart();
+            createGradeChart();
+            createPopularChart();
+            createScoreChart();
+        });
+    </script>
+</body>
+</html>

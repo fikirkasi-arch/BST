@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <title>Terim-Tanım Eşleştirme</title>
+    <style>
+        @media print { .no-print { display: none; } body { background: white; } }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', sans-serif; background: #f5f5f5; padding: 20px; }
+        .container { max-width: 900px; margin: 0 auto; background: white; padding: 40px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        h1 { text-align: center; color: #333; margin-bottom: 10px; border-bottom: 3px solid #00f2fe; padding-bottom: 10px; }
+        .subtitle { text-align: center; color: #666; margin-bottom: 30px; }
+        .matching-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; margin: 30px 0; }
+        .column h3 { color: #00f2fe; margin-bottom: 20px; }
+        .item { padding: 15px; margin-bottom: 10px; background: #f9f9f9; border-radius: 8px; border-left: 4px solid #00f2fe; }
+        .number { display: inline-block; width: 30px; height: 30px; background: #00f2fe; color: white; border-radius: 50%; text-align: center; line-height: 30px; margin-right: 10px; font-weight: bold; }
+        input[type="text"] { width: 30px; text-align: center; border: 2px solid #00f2fe; border-radius: 5px; padding: 5px; }
+        .btn { display: block; margin: 20px auto; padding: 15px 40px; background: #00f2fe; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 16px; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔗 Terim-Tanım Eşleştirme Çalışması</h1>
+        <p class="subtitle">Sol sütundaki terimleri sağ sütundaki tanımlarla eşleştirin.</p>
+        <div class="matching-grid">
+            <div class="column">
+                <h3>📌 TERİMLER</h3>
+                <div class="item"><span class="number">1</span> İşlemci (CPU)</div>
+                <div class="item"><span class="number">2</span> RAM</div>
+                <div class="item"><span class="number">3</span> Algoritma</div>
+                <div class="item"><span class="number">4</span> Yapay Zeka</div>
+                <div class="item"><span class="number">5</span> Phishing</div>
+                <div class="item"><span class="number">6</span> Bulut Bilişim</div>
+                <div class="item"><span class="number">7</span> Python</div>
+                <div class="item"><span class="number">8</span> Scratch</div>
+                <div class="item"><span class="number">9</span> İşletim Sistemi</div>
+                <div class="item"><span class="number">10</span> İnternet</div>
+            </div>
+            <div class="column">
+                <h3>📝 TANIMLAR</h3>
+                <div class="item"><input type="text"> Problemleri çözen adım adım yol</div>
+                <div class="item"><input type="text"> Blok tabanlı programlama dili</div>
+                <div class="item"><input type="text"> Bilgisayarın beyni</div>
+                <div class="item"><input type="text"> Milyonlarca bilgisayarın birbirine bağlanması</div>
+                <div class="item"><input type="text"> Verile inatteki sunucularda saklama</div>
+                <div class="item"><input type="text"> Bilgisayarı çalıştıran ana yazılım</div>
+                <div class="item"><input type="text"> Geçici hafıza</div>
+                <div class="item"><input type="text"> Kimlik avı dolandırıcılığı</div>
+                <div class="item"><input type="text"> Öğrenmesi kolay programlama dili</div>
+                <div class="item"><input type="text"> Makinelerin insan gibi düşünmesi</div>
+            </div>
+        </div>
+        <button class="btn no-print" onclick="window.print()">🖨️ Yazdır</button>
+        <button class="btn no-print" onclick="window.location.href='index.html'">🏠 Ana Sayfa</button>
+    </div>
+</body>
+</html>

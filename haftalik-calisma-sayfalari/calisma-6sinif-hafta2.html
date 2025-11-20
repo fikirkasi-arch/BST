@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>6. Sınıf - Hafta 2 - Boşluk Doldurma</title>
+    <style>
+        @media print {
+            body { margin: 0; padding: 20px; }
+            .no-print { display: none !important; }
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 30px;
+            background: white;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 3px solid #4facfe;
+        }
+        .header h1 { color: #4facfe; margin-bottom: 10px; }
+        .badges {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin: 15px 0;
+        }
+        .badge {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            font-weight: bold;
+        }
+        .instructions {
+            background: #f0f0f0;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            border-left: 4px solid #4facfe;
+        }
+        .student-info {
+            margin: 30px 0;
+            padding: 20px;
+            border: 2px dashed #4facfe;
+            border-radius: 10px;
+        }
+        .info-row {
+            margin: 10px 0;
+            display: flex;
+            align-items: center;
+        }
+        .info-label {
+            font-weight: bold;
+            margin-right: 10px;
+            min-width: 80px;
+        }
+        .info-line {
+            flex: 1;
+            border-bottom: 1px solid #333;
+            height: 1px;
+            margin-left: 10px;
+        }
+        .question {
+            margin: 20px 0;
+            padding: 15px;
+            background: #f9f9f9;
+            border-left: 4px solid #4facfe;
+            border-radius: 5px;
+        }
+        .question-number {
+            font-weight: bold;
+            color: #4facfe;
+            margin-right: 10px;
+        }
+        .blank {
+            display: inline-block;
+            min-width: 150px;
+            border-bottom: 2px solid #4facfe;
+            margin: 0 5px;
+            height: 20px;
+        }
+        .word-bank {
+            background: #e3f2fd;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+        .word-bank h3 {
+            color: #4facfe;
+            margin-bottom: 15px;
+        }
+        .words {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        .word {
+            padding: 8px 15px;
+            background: white;
+            border: 2px solid #4facfe;
+            border-radius: 20px;
+            font-weight: 600;
+        }
+        button {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            padding: 15px 40px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1em;
+            cursor: pointer;
+            margin: 0 10px;
+            font-weight: bold;
+        }
+        button:hover { transform: scale(1.05); }
+        .controls { text-align: center; margin: 30px 0; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>📝 Boşluk Doldurma Çalışması</h1>
+        <div class="badges">
+            <span class="badge">6. SINIF</span>
+            <span class="badge">HAFTA 2</span>
+            <span class="badge">BOŞLUK DOLDURMA</span>
+        </div>
+        <p style="margin-top: 10px; color: #666;">Veri Kavramları ve Yönetimi</p>
+    </div>
+
+    <div class="student-info">
+        <div class="info-row">
+            <span class="info-label">Adı Soyadı:</span>
+            <span class="info-line"></span>
+        </div>
+        <div class="info-row">
+            <span class="info-label">Sınıfı:</span>
+            <span class="info-line"></span>
+        </div>
+        <div class="info-row">
+            <span class="info-label">Numarası:</span>
+            <span class="info-line"></span>
+        </div>
+    </div>
+
+    <div class="instructions">
+        <strong>📌 Yönerge:</strong> Aşağıdaki cümlelerdeki boşlukları, kelime bankasından uygun kelimeleri seçerek doldurun.
+    </div>
+
+    <div class="word-bank">
+        <h3>🎯 Kelime Bankası</h3>
+        <div class="words">
+            <span class="word">Veritabanı</span>
+            <span class="word">Dosya</span>
+            <span class="word">Klasör</span>
+            <span class="word">Yedekleme</span>
+            <span class="word">Bulut</span>
+            <span class="word">Excel</span>
+            <span class="word">Sıralama</span>
+            <span class="word">Filtreleme</span>
+            <span class="word">Tablo</span>
+            <span class="word">Kayıt</span>
+        </div>
+    </div>
+
+    <div style="margin: 30px 0;">
+        <div class="question">
+            <span class="question-number">1.</span>
+            Verileri düzenli bir şekilde saklamak için <span class="blank"></span> kullanılır.
+        </div>
+
+        <div class="question">
+            <span class="question-number">2.</span>
+            Birden fazla dosyayı gruplamak için <span class="blank"></span> oluştururuz.
+        </div>
+
+        <div class="question">
+            <span class="question-number">3.</span>
+            Verilerimizi kaybetmemek için düzenli <span class="blank"></span> yapmalıyız.
+        </div>
+
+        <div class="question">
+            <span class="question-number">4.</span>
+            Google Drive ve OneDrive gibi servisler <span class="blank"></span> depolama hizmetidir.
+        </div>
+
+        <div class="question">
+            <span class="question-number">5.</span>
+            Sayısal verilerle hesaplama yapmak için <span class="blank"></span> programı kullanılır.
+        </div>
+
+        <div class="question">
+            <span class="question-number">6.</span>
+            Verileri küçükten büyüğe veya alfabetik düzenlemek için <span class="blank"></span> işlemi yapılır.
+        </div>
+
+        <div class="question">
+            <span class="question-number">7.</span>
+            Büyük veri setinden belirli kriterlere uygun verileri seçmek için <span class="blank"></span> kullanırız.
+        </div>
+
+        <div class="question">
+            <span class="question-number">8.</span>
+            Satır ve sütunlardan oluşan veri yapısına <span class="blank"></span> denir.
+        </div>
+
+        <div class="question">
+            <span class="question-number">9.</span>
+            Bir tablodaki her bir satıra <span class="blank"></span> adı verilir.
+        </div>
+
+        <div class="question">
+            <span class="question-number">10.</span>
+            Yapılandırılmış verilerin saklandığı sisteme <span class="blank"></span> denir.
+        </div>
+    </div>
+
+    <div class="controls no-print">
+        <button onclick="window.print()">🖨️ Yazdır / PDF Kaydet</button>
+        <button onclick="window.location.href='../index.html'">🏠 Ana Sayfa</button>
+    </div>
+
+    <div style="margin-top: 40px; padding: 15px; background: #f0f0f0; border-radius: 8px;">
+        <strong>💯 Notlandırma:</strong> Doğru sayısı: _____ / 10 &nbsp;&nbsp; Not: _____
+    </div>
+</body>
+</html>

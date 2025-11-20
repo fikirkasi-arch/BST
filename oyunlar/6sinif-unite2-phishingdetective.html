@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Phishing Dedektifi - 6. Sınıf Ünite 2</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        h1 { text-align: center; color: #f5576c; margin-bottom: 20px; }
+        .score-board {
+            display: flex;
+            justify-content: space-around;
+            background: #f5f5f5;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+        .score-item {
+            text-align: center;
+        }
+        .score-value {
+            font-size: 2em;
+            font-weight: bold;
+            color: #f5576c;
+        }
+        .email-window {
+            background: white;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            margin: 20px 0;
+            overflow: hidden;
+        }
+        .email-header {
+            background: #f5f5f5;
+            padding: 15px;
+            border-bottom: 2px solid #e0e0e0;
+        }
+        .email-field {
+            margin: 8px 0;
+            font-size: 0.95em;
+        }
+        .email-field strong {
+            color: #333;
+            display: inline-block;
+            width: 80px;
+        }
+        .email-body {
+            padding: 20px;
+            line-height: 1.8;
+            font-size: 1.05em;
+        }
+        .suspicious-indicator {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 10px;
+            margin: 15px 0;
+            border-radius: 5px;
+        }
+        .decision-buttons {
+            display: flex;
+            gap: 15px;
+            margin: 20px 0;
+        }
+        .btn {
+            flex: 1;
+            padding: 20px;
+            font-size: 1.2em;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+        .btn-safe {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+        }
+        .btn-phishing {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+        }
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+        .feedback {
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            display: none;
+        }
+        .feedback.correct {
+            background: #d4edda;
+            border: 2px solid #28a745;
+            color: #155724;
+        }
+        .feedback.wrong {
+            background: #f8d7da;
+            border: 2px solid #dc3545;
+            color: #721c24;
+        }
+        .clue-list {
+            background: #e7f3ff;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 10px;
+        }
+        .clue-list li {
+            margin: 5px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🕵️ Phishing Dedektifi</h1>
+        <div class="score-board">
+            <div class="score-item">
+                <div class="score-value" id="correct">0</div>
+                <div>✅ Doğru</div>
+            </div>
+            <div class="score-item">
+                <div class="score-value" id="wrong">0</div>
+                <div>❌ Yanlış</div>
+            </div>
+            <div class="score-item">
+                <div class="score-value" id="level">1</div>
+                <div>📧 Email</div>
+            </div>
+        </div>
+
+        <div id="emailContainer"></div>
+        <div id="feedbackContainer"></div>
+
+        <div class="decision-buttons" id="buttons">
+            <button class="btn btn-safe" onclick="makeDecision('safe')">✅ Güvenli Email</button>
+            <button class="btn btn-phishing" onclick="makeDecision('phishing')">⚠️ Phishing Saldırısı</button>
+        </div>
+
+        <div style="text-align: center; margin-top: 20px;">
+            <button class="btn" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;" onclick="location.reload()">🔄 Yeniden Başla</button>
+        </div>
+    </div>
+
+    <script>
+        const emails = [
+            {
+                from: 'destek@bankaniz.com',
+                subject: 'Hesap Güvenlik Uyarısı - ACİL İŞLEM GEREKLİ',
+                body: 'Sayın Müşterimiz,\n\nHesabınızda şüpheli aktivite tespit edildi. Hesabınızı korumak için HEMEN aşağıdaki linke tıklayarak şifrenizi yenileyin:\n\nhttp://bankaniz-guvenlik.tk/giris\n\n24 saat içinde işlem yapmazsanız hesabınız kapatılacaktır!\n\nBanka Güvenlik Ekibi',
+                isPhishing: true,
+                clues: [
+                    '❗ "ACİL", "HEMEN" gibi aciliyet belirten kelimeler kullanılmış',
+                    '❗ Şüpheli link (.tk uzantısı, resmi site değil)',
+                    '❗ Hesap kapatma tehdidi (korku yaratmaya çalışıyor)',
+                    '❗ Kişisel bilgi/şifre isteniyor',
+                    '❗ Gerçek bankalar böyle email göndermez'
+                ]
+            },
+            {
+                from: 'okulbilgilendirme@meb.gov.tr',
+                subject: 'Karne Bilgilendirmesi',
+                body: 'Sayın Velimiz,\n\nÖğrencinizin dönem sonu karne notları e-okul sistemine yüklenmiştir. Karne bilgilerine e-okul girişi yaparak ulaşabilirsiniz.\n\nİyi çalışmalar dileriz.\n\nOkul Müdürlüğü',
+                isPhishing: false,
+                clues: [
+                    '✅ Resmi kurum adresi (.gov.tr)',
+                    '✅ Link içermiyor, bilgilendirme amaçlı',
+                    '✅ Kişisel bilgi istemiyor',
+                    '✅ Aciliyet veya tehdit yok',
+                    '✅ Profesyonel dil kullanılmış'
+                ]
+            },
+            {
+                from: 'musteri-destek@apple-tr.org',
+                subject: '🎁 iPhone 14 Kazandınız! Hemen Tıklayın',
+                body: 'Tebrikler!\n\nApple Türkiye\'nin düzenlediği çekilişte iPhone 14 kazandınız! Hediyenizi almak için aşağıdaki linke tıklayıp kişisel bilgilerinizi doldurun:\n\nwww.apple-tr-hediye.com/kazanan\n\nSadece bugün geçerli! Kaçırmayın!\n\nApple Türkiye Ekibi',
+                isPhishing: true,
+                clues: [
+                    '❗ Sahte alan adı (.org, gerçek Apple .com kullanır)',
+                    '❗ "Hediye kazandınız" tuzağı (katılmadığınız çekiliş)',
+                    '❗ Kişisel bilgi doldurmaya yönlendirme',
+                    '❗ "Sadece bugün geçerli" baskısı',
+                    '❗ Emoji kullanımı (profesyonel değil)'
+                ]
+            },
+            {
+                from: 'bildirim@netflix.com',
+                subject: 'Netflix Abonelik Yenileme',
+                body: 'Merhaba,\n\nNetflix aboneliğiniz 15.03.2024 tarihinde yenilenecektir. Kayıtlı kredi kartınızdan otomatik olarak ödeme alınacaktır.\n\nAboneliğinizi iptal etmek veya plan değiştirmek için Netflix hesabınıza giriş yapabilirsiniz.\n\nİyi seyirler,\nNetflix Ekibi',
+                isPhishing: false,
+                clues: [
+                    '✅ Bilgilendirme amaçlı, link içermiyor',
+                    '✅ Kişisel bilgi istemiyor',
+                    '✅ Profesyonel ve sakin dil',
+                    '✅ İptal için resmi siteye yönlendirme',
+                    '✅ Aciliyet veya tehdit yok'
+                ]
+            },
+            {
+                from: 'guvenlik@gmail-hesap-dogrulama.net',
+                subject: 'Google Hesap Güvenlik Uyarısı',
+                body: 'Google Güvenlik Ekibi\n\nHesabınıza bilinmeyen bir cihazdan giriş yapıldı:\nKonum: Rusya, Moskova\nCihaz: Windows PC\n\nSiz değilseniz HEMEN aşağıdaki linke tıklayıp hesabınızı kurtarın:\nhttp://google-hesap-kurtar.net/dogrulama\n\nGoogle Güvenlik',
+                isPhishing: true,
+                clues: [
+                    '❗ Sahte alan adı (gerçek Google .com veya .google kullanır)',
+                    '❗ Korku yaratmaya çalışıyor (Rusya, bilinmeyen cihaz)',
+                    '❗ Acil işlem baskısı',
+                    '❗ Şüpheli link (.net uzantılı sahte site)',
+                    '❗ Google asla böyle link göndermez'
+                ]
+            },
+            {
+                from: 'no-reply@amazon.com.tr',
+                subject: 'Siparişiniz Kargoya Verildi',
+                body: 'Merhaba,\n\nSipariş No: #123-4567890\n\nSiparişiniz kargoya verilmiştir. Kargo takip numaranız: TR123456789\n\nTeslimat tahmini: 2-3 iş günü\n\nSipariş detaylarınızı Amazon hesabınızdan görüntüleyebilirsiniz.\n\nAmazon.com.tr',
+                isPhishing: false,
+                clues: [
+                    '✅ Resmi Amazon adresi (.com.tr)',
+                    '✅ Somut bilgiler (sipariş no, kargo no)',
+                    '✅ Link yerine hesaba yönlendirme',
+                    '✅ Kişisel bilgi istemiyor',
+                    '✅ Profesyonel format'
+                ]
+            }
+        ];
+
+        let currentEmail = 0;
+        let correctCount = 0;
+        let wrongCount = 0;
+
+        function loadEmail() {
+            if (currentEmail >= emails.length) {
+                showResults();
+                return;
+            }
+
+            const email = emails[currentEmail];
+            document.getElementById('level').textContent = (currentEmail + 1);
+            document.getElementById('feedbackContainer').innerHTML = '';
+
+            document.getElementById('emailContainer').innerHTML = `
+                <div class="email-window">
+                    <div class="email-header">
+                        <div class="email-field"><strong>Gönderen:</strong> ${email.from}</div>
+                        <div class="email-field"><strong>Konu:</strong> ${email.subject}</div>
+                    </div>
+                    <div class="email-body">
+                        ${email.body.replace(/\n/g, '<br>')}
+                    </div>
+                </div>
+                <div class="suspicious-indicator">
+                    🔍 <strong>Dikkat:</strong> Bu email'i dikkatlice inceleyin. Phishing olup olmadığını belirleyin.
+                </div>
+            `;
+        }
+
+        function makeDecision(decision) {
+            const email = emails[currentEmail];
+            const isCorrect = (decision === 'phishing' && email.isPhishing) || (decision === 'safe' && !email.isPhishing);
+
+            if (isCorrect) {
+                correctCount++;
+                document.getElementById('correct').textContent = correctCount;
+            } else {
+                wrongCount++;
+                document.getElementById('wrong').textContent = wrongCount;
+            }
+
+            showFeedback(isCorrect, email);
+        }
+
+        function showFeedback(isCorrect, email) {
+            const feedbackDiv = document.getElementById('feedbackContainer');
+            feedbackDiv.innerHTML = `
+                <div class="feedback ${isCorrect ? 'correct' : 'wrong'}">
+                    <h3>${isCorrect ? '✅ Doğru!' : '❌ Yanlış!'}</h3>
+                    <p><strong>Bu email ${email.isPhishing ? 'PHİSHİNG SALDIRISI' : 'GÜVENLİ'}</strong></p>
+                    <div class="clue-list">
+                        <strong>📝 İpuçları:</strong>
+                        <ul>
+                            ${email.clues.map(clue => `<li>${clue}</li>`).join('')}
+                        </ul>
+                    </div>
+                    <button class="btn" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); color: white; margin-top: 15px;" onclick="nextEmail()">
+                        ${currentEmail < emails.length - 1 ? '➡️ Sonraki Email' : '🏆 Sonuçları Gör'}
+                    </button>
+                </div>
+            `;
+
+            document.getElementById('buttons').style.display = 'none';
+        }
+
+        function nextEmail() {
+            currentEmail++;
+            document.getElementById('buttons').style.display = 'flex';
+            loadEmail();
+        }
+
+        function showResults() {
+            const percentage = Math.round((correctCount / emails.length) * 100);
+            let message, emoji;
+
+            if (percentage >= 80) {
+                message = 'Harikasın! Mükemmel bir Phishing Dedektifi oldun!';
+                emoji = '🏆';
+            } else if (percentage >= 60) {
+                message = 'İyi iş! Daha fazla pratik yaparak ustalaşabilirsin.';
+                emoji = '👍';
+            } else {
+                message = 'Daha fazla çalışmalısın. Phishing emaillerini tanımayı öğren.';
+                emoji = '📚';
+            }
+
+            document.getElementById('emailContainer').innerHTML = `
+                <div style="text-align: center; padding: 40px;">
+                    <div style="font-size: 6em;">${emoji}</div>
+                    <h2 style="color: #f5576c; margin: 20px 0;">${message}</h2>
+                    <div style="font-size: 3em; font-weight: bold; color: #f5576c; margin: 20px 0;">
+                        ${correctCount}/${emails.length} Doğru
+                    </div>
+                    <div style="font-size: 2em; font-weight: bold; color: #667eea;">
+                        %${percentage} Başarı
+                    </div>
+                    <div style="background: #e7f3ff; padding: 20px; border-radius: 10px; margin-top: 30px; text-align: left;">
+                        <h3 style="color: #333; margin-bottom: 15px;">🛡️ Phishing'den Korunma İpuçları:</h3>
+                        <ul style="line-height: 2;">
+                            <li>Şüpheli linklere tıklama</li>
+                            <li>Email adresini kontrol et (sahte adresler olabilir)</li>
+                            <li>Aciliyet belirten mesajlara dikkat</li>
+                            <li>Kişisel bilgi/şifre asla email ile istenmez</li>
+                            <li>Resmi sitelere direkt tarayıcıdan git</li>
+                            <li>Şüpheli durumlarda kurumla direkt iletişime geç</li>
+                        </ul>
+                    </div>
+                </div>
+            `;
+            document.getElementById('feedbackContainer').innerHTML = '';
+            document.getElementById('buttons').style.display = 'none';
+        }
+
+        // Oyunu başlat
+        loadEmail();
+    </script>
+</body>
+</html>

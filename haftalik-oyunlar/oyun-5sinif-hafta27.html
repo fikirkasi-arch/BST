@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>5. Sınıf - Hafta 27 - Eşleştirme Oyunu</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .header {
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            margin-bottom: 30px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            width: 100%;
+            max-width: 800px;
+        }
+
+        h1 {
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+
+        .topic {
+            color: #666;
+            font-size: 1.2em;
+        }
+
+        .game-container {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            max-width: 900px;
+            width: 100%;
+        }
+
+        .score-board {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 30px;
+            gap: 20px;
+        }
+
+        .score-item {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px 30px;
+            border-radius: 15px;
+            text-align: center;
+            flex: 1;
+        }
+
+        .score-number {
+            font-size: 2em;
+            font-weight: bold;
+        }
+
+        .game-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .column {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .match-item {
+            padding: 20px;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 1.1em;
+            text-align: center;
+            border: 3px solid transparent;
+        }
+
+        .left-item {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+        }
+
+        .right-item {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+        }
+
+        .match-item:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+
+        .match-item.selected {
+            border-color: #ffd700;
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.6);
+        }
+
+        .match-item.matched {
+            opacity: 0.5;
+            cursor: not-allowed;
+            background: #4CAF50 !important;
+        }
+
+        .match-item.wrong {
+            animation: shake 0.5s;
+            border-color: #f44336;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+        }
+
+        .message {
+            text-align: center;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            font-size: 1.2em;
+            font-weight: bold;
+            display: none;
+        }
+
+        .message.show {
+            display: block;
+        }
+
+        .message.success {
+            background: #4CAF50;
+            color: white;
+        }
+
+        .message.error {
+            background: #f44336;
+            color: white;
+        }
+
+        .controls {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+        }
+
+        button {
+            padding: 15px 40px;
+            font-size: 1.1em;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: bold;
+        }
+
+        .reset-btn {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+        }
+
+        .home-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+
+        @media (max-width: 768px) {
+            .game-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🎮 Eşleştirme Oyunu</h1>
+        <p class="topic">5. Sınıf - Hafta 27: </p>
+    </div>
+
+    <div class="game-container">
+        <div class="score-board">
+            <div class="score-item">
+                <div class="score-number" id="score">0</div>
+                <div>Puan</div>
+            </div>
+            <div class="score-item">
+                <div class="score-number" id="matched">0</div>
+                <div>Eşleşme</div>
+            </div>
+            <div class="score-item">
+                <div class="score-number" id="total">6</div>
+                <div>Toplam</div>
+            </div>
+        </div>
+
+        <div class="message" id="message"></div>
+
+        <div class="game-grid">
+            <div class="column" id="left-column"></div>
+            <div class="column" id="right-column"></div>
+        </div>
+
+        <div class="controls">
+            <button class="reset-btn" onclick="resetGame()">🔄 Yeniden Başla</button>
+            <button class="home-btn" onclick="goHome()">🏠 Ana Sayfa</button>
+        </div>
+    </div>
+
+    <script>
+        const pairs = [{"left": "Dosya", "right": "Veri depolama", "id": 0}, {"left": "Klasör", "right": "Dosya grubu", "id": 1}, {"left": "Kaydet", "right": "Sakla", "id": 2}, {"left": "Aç", "right": "Dosya yükle", "id": 3}, {"left": "Kopyala", "right": "Çoğalt", "id": 4}, {"left": "Sil", "right": "Kaldır", "id": 5}];
+
+        let selectedLeft = null;
+        let selectedRight = null;
+        let score = 0;
+        let matchedCount = 0;
+
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
+
+        function initGame() {
+            const leftColumn = document.getElementById('left-column');
+            const rightColumn = document.getElementById('right-column');
+
+            const leftItems = shuffleArray([...pairs]);
+            const rightItems = shuffleArray([...pairs]);
+
+            leftColumn.innerHTML = '';
+            rightColumn.innerHTML = '';
+
+            leftItems.forEach(pair => {
+                const div = document.createElement('div');
+                div.className = 'match-item left-item';
+                div.textContent = pair.left;
+                div.dataset.id = pair.id;
+                div.onclick = () => selectLeft(div);
+                leftColumn.appendChild(div);
+            });
+
+            rightItems.forEach(pair => {
+                const div = document.createElement('div');
+                div.className = 'match-item right-item';
+                div.textContent = pair.right;
+                div.dataset.id = pair.id;
+                div.onclick = () => selectRight(div);
+                rightColumn.appendChild(div);
+            });
+        }
+
+        function selectLeft(element) {
+            if (element.classList.contains('matched')) return;
+
+            document.querySelectorAll('.left-item').forEach(item => {
+                item.classList.remove('selected');
+            });
+
+            element.classList.add('selected');
+            selectedLeft = element;
+
+            checkMatch();
+        }
+
+        function selectRight(element) {
+            if (element.classList.contains('matched')) return;
+
+            document.querySelectorAll('.right-item').forEach(item => {
+                item.classList.remove('selected');
+            });
+
+            element.classList.add('selected');
+            selectedRight = element;
+
+            checkMatch();
+        }
+
+        function checkMatch() {
+            if (!selectedLeft || !selectedRight) return;
+
+            const leftId = selectedLeft.dataset.id;
+            const rightId = selectedRight.dataset.id;
+
+            if (leftId === rightId) {
+                // Doğru eşleşme
+                selectedLeft.classList.add('matched');
+                selectedRight.classList.add('matched');
+                selectedLeft.classList.remove('selected');
+                selectedRight.classList.remove('selected');
+
+                score += 10;
+                matchedCount++;
+
+                document.getElementById('score').textContent = score;
+                document.getElementById('matched').textContent = matchedCount;
+
+                showMessage('✅ Harika! Doğru eşleştirme!', 'success');
+
+                if (matchedCount === pairs.length) {
+                    setTimeout(() => {
+                        showMessage(`🎉 Tebrikler! Oyunu tamamladınız! Toplam Puan: ${score}`, 'success');
+                    }, 500);
+                }
+
+                selectedLeft = null;
+                selectedRight = null;
+            } else {
+                // Yanlış eşleşme
+                selectedLeft.classList.add('wrong');
+                selectedRight.classList.add('wrong');
+
+                showMessage('❌ Yanlış eşleşme! Tekrar dene.', 'error');
+
+                setTimeout(() => {
+                    selectedLeft.classList.remove('selected', 'wrong');
+                    selectedRight.classList.remove('selected', 'wrong');
+                    selectedLeft = null;
+                    selectedRight = null;
+                }, 1000);
+            }
+        }
+
+        function showMessage(text, type) {
+            const message = document.getElementById('message');
+            message.textContent = text;
+            message.className = 'message show ' + type;
+
+            setTimeout(() => {
+                message.classList.remove('show');
+            }, 2000);
+        }
+
+        function resetGame() {
+            score = 0;
+            matchedCount = 0;
+            selectedLeft = null;
+            selectedRight = null;
+
+            document.getElementById('score').textContent = score;
+            document.getElementById('matched').textContent = matchedCount;
+            document.getElementById('message').classList.remove('show');
+
+            initGame();
+        }
+
+        function goHome() {
+            window.location.href = '../index.html';
+        }
+
+        // Oyunu başlat
+        initGame();
+    </script>
+</body>
+</html>

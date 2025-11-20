@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Giriş Yap - BST Eğitim Portalı</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+        }
+
+        .auth-container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            width: 100%;
+            max-width: 480px;
+            overflow: hidden;
+        }
+
+        .auth-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .auth-header h1 {
+            font-size: 28px;
+            margin-bottom: 8px;
+        }
+
+        .auth-header p {
+            opacity: 0.9;
+            font-size: 14px;
+        }
+
+        /* Kullanıcı Türü Seçici */
+        .user-type-selector {
+            display: flex;
+            padding: 20px;
+            gap: 10px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        .user-type-btn {
+            flex: 1;
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            background: white;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.3s;
+        }
+
+        .user-type-btn:hover {
+            border-color: #667eea;
+        }
+
+        .user-type-btn.active {
+            border-color: #667eea;
+            background: rgba(102, 126, 234, 0.1);
+        }
+
+        .user-type-btn .icon {
+            font-size: 24px;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .user-type-btn .label {
+            font-weight: 600;
+            color: #333;
+        }
+
+        /* Tabs */
+        .auth-tabs {
+            display: flex;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        .auth-tab {
+            flex: 1;
+            padding: 15px;
+            text-align: center;
+            cursor: pointer;
+            font-weight: 600;
+            color: #666;
+            transition: all 0.3s;
+            border: none;
+            background: none;
+        }
+
+        .auth-tab.active {
+            color: #667eea;
+            border-bottom: 3px solid #667eea;
+            margin-bottom: -2px;
+        }
+
+        .auth-tab:hover {
+            background: #f8f9fa;
+        }
+
+        /* Forms */
+        .auth-form {
+            padding: 25px;
+            display: none;
+        }
+
+        .auth-form.active {
+            display: block;
+        }
+
+        .form-group {
+            margin-bottom: 18px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: 600;
+            color: #333;
+            font-size: 14px;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .message {
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            font-size: 14px;
+            display: none;
+        }
+
+        .message.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .message.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .auth-footer {
+            padding: 20px 25px;
+            background: #f8f9fa;
+            text-align: center;
+            font-size: 13px;
+            color: #666;
+        }
+
+        .auth-footer a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .guest-link {
+            display: block;
+            margin-top: 15px;
+            text-align: center;
+        }
+
+        .guest-link a {
+            color: #667eea;
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        .guest-link a:hover {
+            text-decoration: underline;
+        }
+
+        .form-note {
+            font-size: 12px;
+            color: #666;
+            margin-top: 5px;
+        }
+
+        @media (max-width: 480px) {
+            .auth-container {
+                margin: 10px;
+            }
+
+            .auth-header {
+                padding: 20px;
+            }
+
+            .auth-form {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="auth-container">
+        <div class="auth-header">
+            <h1>🎓 BST Eğitim Portalı</h1>
+            <p>Bilişim Teknolojileri ve Yazılım</p>
+        </div>
+
+        <!-- Kullanıcı Türü Seçici -->
+        <div class="user-type-selector">
+            <button class="user-type-btn active" onclick="selectUserType('student')" id="studentTypeBtn">
+                <span class="icon">👨‍🎓</span>
+                <span class="label">Öğrenci</span>
+            </button>
+            <button class="user-type-btn" onclick="selectUserType('teacher')" id="teacherTypeBtn">
+                <span class="icon">👨‍🏫</span>
+                <span class="label">Öğretmen</span>
+            </button>
+        </div>
+
+        <div class="auth-tabs">
+            <button class="auth-tab active" onclick="showTab('login')">Giriş Yap</button>
+            <button class="auth-tab" onclick="showTab('register')">Kayıt Ol</button>
+        </div>
+
+        <!-- ========== ÖĞRENCİ FORMLARI ========== -->
+
+        <!-- Öğrenci Giriş -->
+        <form class="auth-form active" id="studentLoginForm">
+            <div class="message" id="studentLoginMessage"></div>
+
+            <div class="form-group">
+                <label>Öğrenci Numarası</label>
+                <input type="text" id="studentLoginNumber" placeholder="Örn: 2024001" required>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Giriş Yap</button>
+
+            <div class="guest-link">
+                <a href="index.html">Misafir olarak devam et →</a>
+            </div>
+        </form>
+
+        <!-- Öğrenci Kayıt -->
+        <form class="auth-form" id="studentRegisterForm">
+            <div class="message" id="studentRegisterMessage"></div>
+
+            <div class="form-group">
+                <label>Ad Soyad *</label>
+                <input type="text" id="studentRegName" placeholder="Adınız Soyadınız" required>
+            </div>
+
+            <div class="form-group">
+                <label>Öğrenci Numarası *</label>
+                <input type="text" id="studentRegNumber" placeholder="Örn: 2024001" required>
+            </div>
+
+            <div class="form-group">
+                <label>Sınıf *</label>
+                <select id="studentRegGrade" required>
+                    <option value="">Sınıfınızı seçin</option>
+                    <option value="5">5. Sınıf</option>
+                    <option value="6">6. Sınıf</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>E-posta (Opsiyonel)</label>
+                <input type="email" id="studentRegEmail" placeholder="ornek@mail.com">
+            </div>
+
+            <button type="submit" class="btn btn-primary">Kayıt Ol</button>
+        </form>
+
+        <!-- ========== ÖĞRETMEN FORMLARI ========== -->
+
+        <!-- Öğretmen Giriş -->
+        <form class="auth-form" id="teacherLoginForm">
+            <div class="message" id="teacherLoginMessage"></div>
+
+            <div class="form-group">
+                <label>E-posta Adresi</label>
+                <input type="email" id="teacherLoginEmail" placeholder="ornek@okul.edu.tr" required>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Giriş Yap</button>
+
+            <div class="guest-link">
+                <a href="index.html">Misafir olarak devam et →</a>
+            </div>
+        </form>
+
+        <!-- Öğretmen Kayıt -->
+        <form class="auth-form" id="teacherRegisterForm">
+            <div class="message" id="teacherRegisterMessage"></div>
+
+            <div class="form-group">
+                <label>Ad Soyad *</label>
+                <input type="text" id="teacherRegName" placeholder="Adınız Soyadınız" required>
+            </div>
+
+            <div class="form-group">
+                <label>E-posta *</label>
+                <input type="email" id="teacherRegEmail" placeholder="ornek@okul.edu.tr" required>
+                <div class="form-note">Giriş için kullanılacak</div>
+            </div>
+
+            <div class="form-group">
+                <label>Okul (Opsiyonel)</label>
+                <input type="text" id="teacherRegSchool" placeholder="Okul adı">
+            </div>
+
+            <div class="form-group">
+                <label>Branş (Opsiyonel)</label>
+                <input type="text" id="teacherRegBranch" placeholder="Bilişim Teknolojileri">
+            </div>
+
+            <button type="submit" class="btn btn-primary">Kayıt Ol</button>
+        </form>
+
+        <div class="auth-footer">
+            <a href="index.html">← Ana Sayfaya Dön</a>
+        </div>
+    </div>
+
+    <script src="scripts/student-auth.js"></script>
+    <script>
+        let currentUserType = 'student';
+        let currentTab = 'login';
+
+        // Zaten giriş yapılmışsa ana sayfaya yönlendir
+        if (UserAuth.isLoggedIn()) {
+            window.location.href = 'index.html';
+        }
+
+        // Kullanıcı türü seç
+        function selectUserType(type) {
+            currentUserType = type;
+
+            // Butonları güncelle
+            document.getElementById('studentTypeBtn').classList.toggle('active', type === 'student');
+            document.getElementById('teacherTypeBtn').classList.toggle('active', type === 'teacher');
+
+            // Formları göster
+            updateForms();
+        }
+
+        // Tab değiştir
+        function showTab(tab) {
+            currentTab = tab;
+
+            document.querySelectorAll('.auth-tab').forEach((t, i) => {
+                t.classList.toggle('active', (tab === 'login' && i === 0) || (tab === 'register' && i === 1));
+            });
+
+            updateForms();
+
+            // Mesajları temizle
+            document.querySelectorAll('.message').forEach(m => m.style.display = 'none');
+        }
+
+        // Formları güncelle
+        function updateForms() {
+            // Tüm formları gizle
+            document.querySelectorAll('.auth-form').forEach(f => f.classList.remove('active'));
+
+            // Doğru formu göster
+            if (currentUserType === 'student') {
+                if (currentTab === 'login') {
+                    document.getElementById('studentLoginForm').classList.add('active');
+                } else {
+                    document.getElementById('studentRegisterForm').classList.add('active');
+                }
+            } else {
+                if (currentTab === 'login') {
+                    document.getElementById('teacherLoginForm').classList.add('active');
+                } else {
+                    document.getElementById('teacherRegisterForm').classList.add('active');
+                }
+            }
+        }
+
+        // Mesaj göster
+        function showMessage(elementId, message, type) {
+            const el = document.getElementById(elementId);
+            el.textContent = message;
+            el.className = 'message ' + type;
+            el.style.display = 'block';
+
+            if (type === 'success') {
+                setTimeout(() => {
+                    el.style.display = 'none';
+                }, 3000);
+            }
+        }
+
+        // Öğrenci Giriş
+        document.getElementById('studentLoginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const number = document.getElementById('studentLoginNumber').value;
+            const result = UserAuth.loginStudent(number);
+
+            if (result.success) {
+                showMessage('studentLoginMessage', result.message, 'success');
+                setTimeout(() => window.location.href = 'index.html', 1000);
+            } else {
+                showMessage('studentLoginMessage', result.message, 'error');
+            }
+        });
+
+        // Öğrenci Kayıt
+        document.getElementById('studentRegisterForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const name = document.getElementById('studentRegName').value;
+            const number = document.getElementById('studentRegNumber').value;
+            const grade = document.getElementById('studentRegGrade').value;
+            const email = document.getElementById('studentRegEmail').value;
+
+            const result = UserAuth.registerStudent(name, number, grade, email);
+
+            if (result.success) {
+                showMessage('studentRegisterMessage', result.message, 'success');
+                setTimeout(() => window.location.href = 'index.html', 1000);
+            } else {
+                showMessage('studentRegisterMessage', result.message, 'error');
+            }
+        });
+
+        // Öğretmen Giriş
+        document.getElementById('teacherLoginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const email = document.getElementById('teacherLoginEmail').value;
+            const result = UserAuth.loginTeacher(email);
+
+            if (result.success) {
+                showMessage('teacherLoginMessage', result.message, 'success');
+                setTimeout(() => window.location.href = 'index.html', 1000);
+            } else {
+                showMessage('teacherLoginMessage', result.message, 'error');
+            }
+        });
+
+        // Öğretmen Kayıt
+        document.getElementById('teacherRegisterForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const name = document.getElementById('teacherRegName').value;
+            const email = document.getElementById('teacherRegEmail').value;
+            const school = document.getElementById('teacherRegSchool').value;
+            const branch = document.getElementById('teacherRegBranch').value;
+
+            const result = UserAuth.registerTeacher(name, email, school, branch);
+
+            if (result.success) {
+                showMessage('teacherRegisterMessage', result.message, 'success');
+                setTimeout(() => window.location.href = 'index.html', 1000);
+            } else {
+                showMessage('teacherRegisterMessage', result.message, 'error');
+            }
+        });
+    </script>
+</body>
+</html>
