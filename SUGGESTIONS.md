@@ -55,3 +55,25 @@ Aşağıdaki fikirler, okul yönetimlerinin JinniBell Pro'yu daha hızlı ve hat
 - Tören modu aktifken ekranın üst kısmında kırmızı bir şerit veya simge gösterilirse öğretmenler otomatik zillerin durdurulduğunu kolayca anlar.
 
 Bu öneriler modüler olarak hayata geçirilebilir; öncelikle veri girişini kolaylaştıran kısayollar ve şablonlar kısa sürede uygulanabilirken, bulut senkronizasyonu gibi özellikler için ek servis planlaması yapılmalıdır.
+
+## 11. Modern ve Dokunmatik Uyumlu UI
+- Ana pencerede 14–16 px boşluklu kartlar ve yuvarlatılmış köşeler (8 px) kullanmak, kalabalık hisseyi azaltır; sütun araları 12–16 px tutulursa hem masaüstü hem dokunmatik tıklamalar rahatlar.
+- Tablo başlıkları ve satırlar için açık gri arka plan + ince ayırıcı çizgiler (`#e6e6e6`) kullanıp satır hover rengini hafif mavi yaparak seçili satırı öne çıkarabilirsiniz.
+- Büyük butonları 36–40 px yüksekliğe küçültüp ikon + kısa etiket (örn. `▶︎ Çal`, `⏸ Duraklat`) kombinasyonuna geçmek göz karmaşasını azaltır.
+- Zil saatlerini seçmek için spinbox yerine saat/dakika segmentli butonlar (örn. 05 dakikalık artış butonları) veya dokunmatik dostu saat seçici diyaloğu eklemek giriş hızını yükseltir.
+
+## 12. Karanlık Tema ve Kontrast Ayarı
+- Açık/karanlık tema anahtarını ayarlar menüsüne ekleyip Mica/Acrylic benzeri yarı saydam şeritler yerine sade düz renkler kullanmak göz yorgunluğunu azaltır.
+- WCAG uyumlu kontrastı tutturmak için metin/zemin renklerini `#1f1f1f` / `#f9f9f9` veya `#0f172a` / `#e2e8f0` gibi çiftlerle sınırlandırın; vurgu rengi tek bir palette (`#2563eb` veya `#22c55e`) kalmalı.
+
+## 13. Form Doğrulama ve Hata İpuçları
+- Zil saatleri, dosya yolları ve URL alanlarına anlık doğrulama ekleyerek hatalı girişte kırmızı kenarlık ve küçük ipucu balonu gösterin; kayıt butonunu bu alanlar düzeltilene kadar pasif tutun.
+- Ses dosyası seçicisine desteklenmeyen formatlarda uyarı ve "örnek dinle" butonu ekleyip ffplay/ffmpeg bulunamadığında tek tıklamalı yeniden indirme bağlantısı sunabilirsiniz.
+
+## 14. Özelleştirilebilir Kısayol Şeridi
+- Kontrol sekmesinin üstüne sık kullanılan eylemler ("Sonraki dersi çal", "Töreni başlat", "Tüm zilleri sustur") için küçük ikonlu bir kısayol şeridi eklemek, kullanıcıların karmaşık menülere girmeden işlem yapmasını sağlar.
+- Bu şerit, ayarlar sayfasında sürükle-bırak ile kişiselleştirilebilir olursa farklı okullar kendi akışlarına uyarlayabilir.
+
+## 15. Veri Yoğun Ekranlar İçin Filtreler
+- Ders programı tablosuna gün/sınıf filtresi ve metin arama çubuğu ekleyip tabloyu dinamik olarak daraltmak, özellikle çok dersli okullarda kaydırma ihtiyacını azaltır.
+- Playlist ve kütüphane listelerinde "sadece favoriler", "indirilmiş" gibi hazır filtre butonları sunarak aranan öğeye ulaşma süresini kısaltabilirsiniz.
