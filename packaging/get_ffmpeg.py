@@ -113,7 +113,8 @@ def download_archive(zip_path: Path) -> None:
 
 def ensure_binaries(target_dir: Path) -> None:
     target_dir.mkdir(parents=True, exist_ok=True)
-    required = ["ffmpeg.exe", "ffprobe.exe", "ffplay.exe", "SDL2.dll"]
+    required = ["ffmpeg.exe", "ffprobe.exe", "ffplay.exe"]
+    optional = ["SDL2.dll"]
     if all((target_dir / name).exists() for name in required):
         log("FFmpeg already cached, skipping download")
         return
@@ -150,6 +151,15 @@ def ensure_binaries(target_dir: Path) -> None:
         if missing:
             raise RuntimeError(
                 "FFmpeg arşivinde eksik dosyalar var: " + ", ".join(missing) + ". Lütfen tam paket indirin."
+            )
+
+        missing_optional = [name for name in optional if not (target_dir / name).exists()]
+        if missing_optional:
+            log(
+                "FFmpeg arşivinde isteğe bağlı dosyalar eksik: "
+                + ", ".join(missing_optional)
+                + ". ffplay ses çıkışı için SDL2.dll gerekli olabilir. İsterseniz tam paketi"
+                " manuel indirip 'ffmpeg-offline.zip' olarak packaging klasörüne koyabilirsiniz."
             )
         log(f"Binaries copied into {target_dir}")
 
