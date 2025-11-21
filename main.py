@@ -512,7 +512,12 @@ class BellApplication:
         style.configure("Muted.TLabel", background=surface, foreground=muted)
         style.configure("Accent.TLabel", background=surface, foreground=accent, font=(self.ui_font_family, 11, "bold"))
         style.configure("Bold.TLabel", font=(self.ui_font_family, 10, "bold"))
-        style.configure("TButton", padding=(10, 7))
+        style.configure("TButton", padding=(9, 6), font=(self.ui_font_family, 10))
+        style.map(
+            "TButton",
+            background=[("active", "#e5e7eb")],
+            relief=[("pressed", "sunken")],
+        )
         style.configure(
             "Primary.TButton",
             padding=(12, 8),
@@ -553,6 +558,14 @@ class BellApplication:
         )
         style.configure("TNotebook", background=canvas, tabmargins=(6, 4, 6, 0))
         style.configure("TNotebook.Tab", padding=(10, 6), font=(self.ui_font_family, 10, "bold"))
+        style.configure(
+            "Treeview",
+            background="white",
+            fieldbackground="white",
+            bordercolor="#e5e7eb",
+            relief="flat",
+        )
+        style.map("Treeview", background=[("selected", "#dbeafe")])
 
     def _init_default_font(self) -> str:
         preferred = "Segoe UI"
@@ -604,6 +617,7 @@ class BellApplication:
 
         notebook = ttk.Notebook(shell)
         notebook.pack(fill=tk.BOTH, expand=True)
+        self.notebook = notebook
 
         control_frame = ttk.Frame(notebook, style="App.TFrame", padding=6)
         schedule_frame = ttk.Frame(notebook, style="App.TFrame", padding=6)
@@ -615,11 +629,22 @@ class BellApplication:
         notebook.add(sound_frame, text="Ses Ayarları")
         notebook.add(ceremony_frame, text="Tören")
 
+        self._tabs = {
+            "control": control_frame,
+            "schedule": schedule_frame,
+            "sound": sound_frame,
+            "ceremony": ceremony_frame,
+        }
+
         self._build_control_tab(control_frame)
         self._build_schedule_tab(schedule_frame)
         self._build_sound_tab(sound_frame)
         self._build_ceremony_tab(ceremony_frame)
         self._refresh_holidays()
+
+    def _switch_tab(self, name: str) -> None:
+        if hasattr(self, "notebook") and hasattr(self, "_tabs") and name in self._tabs:
+            self.notebook.select(self._tabs[name])
 
     def _add_hint(self, widget: tk.Widget, text: str) -> None:
         self._tooltips.append(ToolTip(widget, text))
@@ -630,6 +655,26 @@ class BellApplication:
         ttk.Label(header, text="Kontrol Paneli", style="Accent.TLabel").pack(side=tk.LEFT)
         ttk.Label(header, text="Günlük işlemleri tek ekrandan yönetebilirsiniz.", style="Muted.TLabel").pack(
             side=tk.LEFT, padx=8
+        )
+
+        shortcut = ttk.LabelFrame(frame, text="Kısayol Şeridi", style="Card.TLabelframe")
+        shortcut.pack(fill=tk.X, padx=6, pady=6)
+        bar = ttk.Frame(shortcut, style="Card.TFrame")
+        bar.pack(fill=tk.X)
+        ttk.Button(bar, text="📅 Ders Programı", command=lambda: self._switch_tab("schedule"), width=18).pack(
+            side=tk.LEFT, padx=4, pady=4
+        )
+        ttk.Button(bar, text="🎵 Ses Ayarları", command=lambda: self._switch_tab("sound"), width=16).pack(
+            side=tk.LEFT, padx=4, pady=4
+        )
+        ttk.Button(bar, text="▶ Zil Simülasyonu", command=self._start_simulation, width=17).pack(
+            side=tk.LEFT, padx=4, pady=4
+        )
+        ttk.Button(bar, text="🔇 Sustur / Aç", command=self._flip_mute_from_shortcut, width=14).pack(
+            side=tk.RIGHT, padx=4, pady=4
+        )
+        ttk.Button(bar, text="⏸ Tören Modu", command=self._toggle_pause_from_button, width=14).pack(
+            side=tk.RIGHT, padx=4, pady=4
         )
 
         button_frame = ttk.LabelFrame(frame, text="Hızlı Tören Kısayolları", style="Card.TLabelframe")
@@ -862,6 +907,25 @@ class BellApplication:
         day_combo.bind("<<ComboboxSelected>>", self._on_day_change)
         ttk.Button(header, text="Diğer Günlere Uygula", command=self._open_copy_dialog).pack(side=tk.RIGHT, padx=5)
 
+        filter_row = ttk.Frame(right_panel)
+        filter_row.pack(fill=tk.X, pady=(2, 4))
+        ttk.Label(filter_row, text="Filtre", style="Bold.TLabel").pack(side=tk.LEFT, padx=(0, 4))
+        self.schedule_filter_var = tk.StringVar()
+        self.schedule_filter_var.trace_add("write", lambda *_: self._refresh_event_list())
+        search = ttk.Entry(filter_row, textvariable=self.schedule_filter_var, width=22)
+        search.pack(side=tk.LEFT, padx=2)
+        self.schedule_filter_sound_var = tk.StringVar(value="Tümü")
+        self.schedule_filter_sound_var.trace_add("write", lambda *_: self._refresh_event_list())
+        ttk.Combobox(
+            filter_row,
+            state="readonly",
+            width=20,
+            textvariable=self.schedule_filter_sound_var,
+            values=["Tümü"] + [choice[0] for choice in SCHEDULE_SOUND_CHOICES],
+        ).pack(side=tk.LEFT, padx=6)
+        self.schedule_count_var = tk.StringVar(value="")
+        ttk.Label(filter_row, textvariable=self.schedule_count_var, style="Muted.TLabel").pack(side=tk.RIGHT)
+
         table_frame = ttk.Frame(right_panel)
         table_frame.pack(fill=tk.BOTH, expand=True, pady=(4, 8))
         columns = ("clock", "label", "sound")
@@ -949,6 +1013,11 @@ class BellApplication:
         ttk.Label(form, text=":").grid(row=1, column=1)
         minute_spin = ttk.Spinbox(form, from_=0, to=59, textvariable=self.minute_var, width=5, wrap=True, format="%02.0f")
         minute_spin.grid(row=1, column=2, padx=4, pady=2)
+        adjust = ttk.Frame(form)
+        adjust.grid(row=2, column=0, columnspan=3, sticky=tk.W, padx=2, pady=(0, 4))
+        ttk.Button(adjust, text="+5 dk", width=7, command=lambda: self._nudge_time(5)).pack(side=tk.LEFT, padx=2)
+        ttk.Button(adjust, text="-5 dk", width=7, command=lambda: self._nudge_time(-5)).pack(side=tk.LEFT, padx=2)
+        ttk.Button(adjust, text="Şimdi", width=6, command=self._set_current_time).pack(side=tk.LEFT, padx=2)
 
         ttk.Label(form, text="Kategori").grid(row=0, column=3, padx=4, sticky=tk.W)
         self.sound_choice_var = tk.StringVar(value=SCHEDULE_SOUND_CHOICES[0][0])
@@ -1297,6 +1366,11 @@ class BellApplication:
         self.config.save()
         self.audio.set_muted(state)
 
+    def _flip_mute_from_shortcut(self) -> None:
+        if hasattr(self, "mute_var"):
+            self.mute_var.set(not self.mute_var.get())
+        self._toggle_mute()
+
     def _toggle_pause(self) -> None:
         self.bells_paused = self.pause_var.get()
         if self.bells_paused:
@@ -1304,6 +1378,11 @@ class BellApplication:
         else:
             self._update_status("Hazır")
         self._update_pause_badge()
+
+    def _toggle_pause_from_button(self) -> None:
+        if hasattr(self, "pause_var"):
+            self.pause_var.set(not self.pause_var.get())
+        self._toggle_pause()
 
     def _toggle_pause_from_tray(self) -> None:
         if hasattr(self, "pause_var"):
@@ -1410,6 +1489,12 @@ class BellApplication:
     def _build_sound_library_section(self, frame: ttk.Frame) -> None:
         library_frame = ttk.LabelFrame(frame, text="Ses Kütüphanesi ve Etiketler", style="Card.TLabelframe")
         library_frame.pack(fill=tk.BOTH, expand=True, padx=8, pady=6)
+        filter_bar = ttk.Frame(library_frame)
+        filter_bar.pack(fill=tk.X, padx=6, pady=(4, 2))
+        ttk.Label(filter_bar, text="Ara / Etiket", style="Bold.TLabel").pack(side=tk.LEFT, padx=(0, 4))
+        self.library_filter_var = tk.StringVar()
+        self.library_filter_var.trace_add("write", lambda *_: self._refresh_sound_library())
+        ttk.Entry(filter_bar, textvariable=self.library_filter_var, width=26).pack(side=tk.LEFT, padx=4)
         columns = ("name", "tags", "path")
         self.library_tree = ttk.Treeview(library_frame, columns=columns, show="headings", height=6)
         self.library_tree.heading("name", text="İsim")
@@ -1486,15 +1571,29 @@ class BellApplication:
         for item in self.library_tree.get_children():
             self.library_tree.delete(item)
         names: List[str] = []
+        filter_text = ""
+        if hasattr(self, "library_filter_var"):
+            filter_text = self.library_filter_var.get().strip().lower()
+        matched = 0
         for asset in self.config.sound_library:
-            names.append(asset.get("name", "Ses"))
-            tags = ", ".join(asset.get("tags", []))
+            name = asset.get("name", "Ses")
+            names.append(name)
+            tags_list = asset.get("tags", [])
+            tags = ", ".join(tags_list)
+            path_value = asset.get("path", "")
+            if filter_text:
+                combined = " ".join([name, tags, Path(path_value).stem]).lower()
+                if filter_text not in combined:
+                    continue
             self.library_tree.insert(
                 "",
                 tk.END,
                 iid=asset.get("asset_id"),
-                values=(asset.get("name", "Ses"), tags, asset.get("path", "")),
+                values=(name, tags, path_value),
             )
+            matched += 1
+        if matched == 0:
+            self.library_tree.insert("", tk.END, iid="__empty__", values=("Sonuç bulunamadı", "", ""))
         for combo in getattr(self, "_library_comboboxes", []):
             combo.configure(values=names)
 
@@ -1563,6 +1662,8 @@ class BellApplication:
             return None
         selection = self.library_tree.selection()
         if not selection:
+            return None
+        if selection[0] == "__empty__":
             return None
         return selection[0]
 
@@ -2052,6 +2153,21 @@ class BellApplication:
             raise ValueError("Saat 00-23, dakika 00-59 aralığında olmalı")
         return f"{hour:02d}:{minute:02d}"
 
+    def _nudge_time(self, minutes: int) -> None:
+        try:
+            hour = int(self.hour_var.get())
+            minute = int(self.minute_var.get())
+        except ValueError:
+            hour, minute = 8, 0
+        total = (hour * 60 + minute + minutes) % (24 * 60)
+        self.hour_var.set(f"{total // 60:02d}")
+        self.minute_var.set(f"{total % 60:02d}")
+
+    def _set_current_time(self) -> None:
+        now = datetime.now()
+        self.hour_var.set(f"{now.hour:02d}")
+        self.minute_var.set(f"{now.minute:02d}")
+
     def _refresh_holidays(self) -> None:
         if not hasattr(self, "holiday_list"):
             return
@@ -2090,8 +2206,24 @@ class BellApplication:
         for item in self.event_list.get_children():
             self.event_list.delete(item)
         events = self.config.daily_schedule.get(self.day_var.get(), [])
+        filter_text = ""
+        if hasattr(self, "schedule_filter_var"):
+            filter_text = self.schedule_filter_var.get().strip().lower()
+        selected_sound = "Tümü"
+        if hasattr(self, "schedule_filter_sound_var"):
+            selected_sound = self.schedule_filter_sound_var.get()
+
+        shown = 0
         for idx, event in enumerate(events):
             friendly = SOUND_DISPLAY.get(event.sound_type, event.sound_type)
+            if selected_sound and selected_sound != "Tümü" and friendly != selected_sound:
+                continue
+            if filter_text and (
+                filter_text not in event.label.lower()
+                and filter_text not in friendly.lower()
+                and filter_text not in event.clock.lower()
+            ):
+                continue
             self.event_list.insert(
                 "",
                 tk.END,
@@ -2099,6 +2231,10 @@ class BellApplication:
                 values=(event.clock, event.label, friendly),
                 tags=(event.sound_type,),
             )
+            shown += 1
+        if hasattr(self, "schedule_count_var"):
+            total = len(events)
+            self.schedule_count_var.set(f"{shown} / {total} zil listeleniyor")
         self._clear_schedule_form(preserve_time=True)
 
     def _refresh_today(self) -> None:
