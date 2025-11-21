@@ -102,17 +102,29 @@ class AudioController:
 
     def play_file(self, file_path: str, label: str = "") -> None:
         if not file_path:
+            self._notify_error("Çalınacak bir ses dosyası seçilmedi")
             return
         if self._muted:
             return
-        audio = self._cache.get(file_path)
-        if audio is None:
-            audio = AudioSegment.from_file(file_path)
-            self._cache[file_path] = audio
-        # apply volume
-        gain = 20 * (self._volume - 1)
-        segment = audio + gain if self._volume != 1.0 else audio
-        self._play_segment(segment, label or Path(file_path).stem)
+
+        path = Path(file_path)
+        if not path.exists():
+            self._notify_error(f"Ses dosyası bulunamadı: {file_path}")
+            return
+
+        try:
+            audio = self._cache.get(file_path)
+            if audio is None:
+                audio = AudioSegment.from_file(file_path)
+                self._cache[file_path] = audio
+            # apply volume
+            gain = 20 * (self._volume - 1)
+            segment = audio + gain if self._volume != 1.0 else audio
+        except Exception as exc:  # pragma: no cover - platform/codec bağımlı
+            self._notify_error(f"Ses dosyası yüklenemedi: {exc}")
+            return
+
+        self._play_segment(segment, label or path.stem)
 
     def play_sequence(
         self, segments: list[tuple[str, Optional[str]]], on_complete: Optional[Callable[[], None]] = None
