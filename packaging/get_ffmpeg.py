@@ -33,6 +33,7 @@ SDL2_URLS = (
         "https://github.com/libsdl-org/SDL/releases/download/release-2.30.5/SDL2-2.30.5-win32-x64.zip",
     ),
 )
+SDL2_LOCAL_NAMES = ("sdl2-offline.zip", "sdl2.zip")
 LOCAL_ARCHIVE_NAMES = ("ffmpeg-offline.zip", "ffmpeg.zip")
 DOWNLOAD_TIMEOUT = int(os.environ.get("FFMPEG_TIMEOUT", "45"))
 
@@ -122,20 +123,30 @@ def download_archive(zip_path: Path) -> None:
 
 
 def _download_sdl2(target_dir: Path) -> bool:
-    """İsteğe bağlı SDL2.dll eksikse indirmeyi dene."""
+    """SDL2.dll eksikse yerel arşiv veya internetten indirme ile tamamla."""
 
     with tempfile.TemporaryDirectory() as tmp_dir:
         zip_path = Path(tmp_dir) / "sdl2.zip"
-        for label, url in SDL2_URLS:
-            log(f"SDL2 paketi indirilmeye çalışılıyor: {label} ({url})")
-            try:
-                with urllib.request.urlopen(url, timeout=DOWNLOAD_TIMEOUT) as response, open(
-                    zip_path, "wb"
-                ) as dst:
-                    shutil.copyfileobj(response, dst)
-            except (URLError, TimeoutError, socket.timeout) as exc:
-                log(f"SDL2 indirilemedi ({label}): {exc}")
-                continue
+
+        local_archive = find_local_sdl_archive()
+        if local_archive:
+            log(f"Yerel SDL2 arşivi bulundu: {local_archive}")
+            shutil.copy2(local_archive, zip_path)
+            sources = [(zip_path.name, str(local_archive))]
+        else:
+            sources = SDL2_URLS
+
+        for label, url in sources:
+            if not local_archive:
+                log(f"SDL2 paketi indirilmeye çalışılıyor: {label} ({url})")
+                try:
+                    with urllib.request.urlopen(url, timeout=DOWNLOAD_TIMEOUT) as response, open(
+                        zip_path, "wb"
+                    ) as dst:
+                        shutil.copyfileobj(response, dst)
+                except (URLError, TimeoutError, socket.timeout) as exc:
+                    log(f"SDL2 indirilemedi ({label}): {exc}")
+                    continue
 
             try:
                 with zipfile.ZipFile(zip_path) as zf:
@@ -157,10 +168,30 @@ def _download_sdl2(target_dir: Path) -> bool:
     return False
 
 
+def find_local_sdl_archive() -> Path | None:
+    """Kullanıcı tarafından sağlanan SDL2 arşivini bul."""
+
+    candidates: list[Path] = []
+    env_path = os.environ.get("SDL2_ZIP_PATH")
+    if env_path:
+        candidates.append(Path(env_path))
+
+    script_dir = Path(__file__).parent
+    for name in SDL2_LOCAL_NAMES:
+        candidates.append(script_dir / name)
+        candidates.append(script_dir / "cache" / name)
+        candidates.append(script_dir / "assets" / name)
+
+    for candidate in candidates:
+        if candidate.is_file():
+            return candidate
+    return None
+
+
 def ensure_binaries(target_dir: Path) -> None:
     target_dir.mkdir(parents=True, exist_ok=True)
     required = ["ffmpeg.exe", "ffprobe.exe", "ffplay.exe"]
-    optional = ["SDL2.dll"]
+    optional = ["SDL2.dll"] if os.name == "nt" else []
     if all((target_dir / name).exists() for name in required):
         log("FFmpeg already cached, skipping download")
         return
@@ -206,10 +237,12 @@ def ensure_binaries(target_dir: Path) -> None:
                 missing_optional = [name for name in optional if not (target_dir / name).exists()]
 
         if missing_optional:
-            log(
-                "SDL2.dll bulunamadı. ffplay ses çıkışı için SDL2.dll gerekli olabilir. İsterseniz"
-                " tam paketi manuel indirip 'ffmpeg-offline.zip' olarak packaging klasörüne"
-                " koyabilir veya internet bağlantınız varsa derlemeyi yeniden deneyebilirsiniz."
+            raise RuntimeError(
+                "SDL2.dll bulunamadı. ffplay ses çıkışı için SDL2.dll zorunludur. İnternet"
+                " erişiminiz varsa indirme otomatik yapılır; yoksa https://github.com/libsdl-org/SDL"
+                " üzerindeki SDL2-*-win32-x64.zip arşivlerinden birini indirip"
+                " 'sdl2-offline.zip' adıyla packaging klasörüne veya SDL2_ZIP_PATH değişkeniyle"
+                " gösterdiğiniz konuma koyabilirsiniz."
             )
         log(f"Binaries copied into {target_dir}")
 
