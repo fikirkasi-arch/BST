@@ -452,6 +452,7 @@ class BellApplication:
             pass
         style.configure("Treeview", rowheight=26)
         style.configure("Treeview.Heading", font=(self.ui_font_family, 10, "bold"))
+        self._setup_styles()
 
         self.config = BellConfig.load()
         self.audio = AudioController()
@@ -491,6 +492,68 @@ class BellApplication:
         self.root.after(1200, self._auto_minimize_if_needed)
 
     # region UI
+    def _setup_styles(self) -> None:
+        primary = "#2563eb"
+        accent = "#111827"
+        surface = "#ffffff"
+        canvas = "#f5f7fb"
+        muted = "#6b7280"
+        try:
+            self.root.configure(background=canvas)
+        except tk.TclError:
+            pass
+
+        style = ttk.Style(self.root)
+        style.configure("TFrame", background=canvas)
+        style.configure("App.TFrame", background=canvas)
+        style.configure("Card.TFrame", background=surface, relief=tk.GROOVE, borderwidth=0)
+        style.configure("Card.TLabelframe", background=surface, borderwidth=0, padding=12)
+        style.configure("Card.TLabelframe.Label", background=surface, font=(self.ui_font_family, 10, "bold"))
+        style.configure("Muted.TLabel", background=surface, foreground=muted)
+        style.configure("Accent.TLabel", background=surface, foreground=accent, font=(self.ui_font_family, 11, "bold"))
+        style.configure("Bold.TLabel", font=(self.ui_font_family, 10, "bold"))
+        style.configure("TButton", padding=(10, 7))
+        style.configure(
+            "Primary.TButton",
+            padding=(12, 8),
+            background=primary,
+            foreground="white",
+            borderwidth=0,
+            focusthickness=3,
+            focustcolor=primary,
+        )
+        style.map(
+            "Primary.TButton",
+            background=[("active", "#1d4ed8"), ("pressed", "#1e40af")],
+            foreground=[("disabled", "#e5e7eb")],
+        )
+        style.configure(
+            "Success.TButton",
+            padding=(12, 8),
+            background="#16a34a",
+            foreground="white",
+            borderwidth=0,
+        )
+        style.map(
+            "Success.TButton",
+            background=[("active", "#15803d"), ("pressed", "#166534")],
+            foreground=[("disabled", "#e5e7eb")],
+        )
+        style.configure(
+            "Danger.TButton",
+            padding=(12, 8),
+            background="#dc2626",
+            foreground="white",
+            borderwidth=0,
+        )
+        style.map(
+            "Danger.TButton",
+            background=[("active", "#b91c1c"), ("pressed", "#991b1b")],
+            foreground=[("disabled", "#e5e7eb")],
+        )
+        style.configure("TNotebook", background=canvas, tabmargins=(6, 4, 6, 0))
+        style.configure("TNotebook.Tab", padding=(10, 6), font=(self.ui_font_family, 10, "bold"))
+
     def _init_default_font(self) -> str:
         preferred = "Segoe UI"
         fallback = "Arial"
@@ -536,13 +599,16 @@ class BellApplication:
         return " ".join(parts)
 
     def _build_ui(self) -> None:
-        notebook = ttk.Notebook(self.root)
+        shell = ttk.Frame(self.root, padding=12, style="App.TFrame")
+        shell.pack(fill=tk.BOTH, expand=True)
+
+        notebook = ttk.Notebook(shell)
         notebook.pack(fill=tk.BOTH, expand=True)
 
-        control_frame = ttk.Frame(notebook)
-        schedule_frame = ttk.Frame(notebook)
-        sound_frame = ttk.Frame(notebook)
-        ceremony_frame = ttk.Frame(notebook)
+        control_frame = ttk.Frame(notebook, style="App.TFrame", padding=6)
+        schedule_frame = ttk.Frame(notebook, style="App.TFrame", padding=6)
+        sound_frame = ttk.Frame(notebook, style="App.TFrame", padding=6)
+        ceremony_frame = ttk.Frame(notebook, style="App.TFrame", padding=6)
 
         notebook.add(control_frame, text="Kontrol")
         notebook.add(schedule_frame, text="Ders Programı")
@@ -559,25 +625,36 @@ class BellApplication:
         self._tooltips.append(ToolTip(widget, text))
 
     def _build_control_tab(self, frame: ttk.Frame) -> None:
-        button_frame = ttk.LabelFrame(frame, text="Manuel Butonlar")
-        button_frame.pack(fill=tk.X, padx=10, pady=5)
-        for label, key in MANUAL_BUTTONS.items():
-            btn = ttk.Button(button_frame, text=label, command=lambda k=key: self._trigger_manual(k))
-            btn.pack(fill=tk.X, padx=5, pady=2)
+        header = ttk.Frame(frame, style="App.TFrame")
+        header.pack(fill=tk.X, padx=6, pady=(2, 4))
+        ttk.Label(header, text="Kontrol Paneli", style="Accent.TLabel").pack(side=tk.LEFT)
+        ttk.Label(header, text="Günlük işlemleri tek ekrandan yönetebilirsiniz.", style="Muted.TLabel").pack(
+            side=tk.LEFT, padx=8
+        )
+
+        button_frame = ttk.LabelFrame(frame, text="Hızlı Tören Kısayolları", style="Card.TLabelframe")
+        button_frame.pack(fill=tk.X, padx=6, pady=4)
+        grid = ttk.Frame(button_frame, style="Card.TFrame")
+        grid.pack(fill=tk.X)
+        grid.columnconfigure(0, weight=1)
+        grid.columnconfigure(1, weight=1)
+        for idx, (label, key) in enumerate(MANUAL_BUTTONS.items()):
+            btn = ttk.Button(
+                grid,
+                text=label,
+                style="Primary.TButton" if idx == 0 else "TButton",
+                command=lambda k=key: self._trigger_manual(k),
+            )
+            row, col = divmod(idx, 2)
+            btn.grid(row=row, column=col, sticky="ew", padx=4, pady=4)
             hint = (
                 "Seçtiğiniz tören sesleri öncelikli çalar. 1 dk/2 dk butonları 'Saygı Duruşu' "
                 "dosyasını kullanır, boşsa sessiz bekler."
             )
             self._add_hint(btn, hint)
 
-        ttk.Label(
-            button_frame,
-            text="Not: Saygı duruşu dosyası seçiliyse butonlar bu kaydı çalar, aksi hâlde sessizlik uygulanır.",
-            wraplength=360,
-        ).pack(fill=tk.X, padx=6, pady=(2, 4))
-
-        delay_row = ttk.Frame(button_frame)
-        delay_row.pack(fill=tk.X, padx=5, pady=(4, 2))
+        delay_row = ttk.Frame(button_frame, style="Card.TFrame")
+        delay_row.pack(fill=tk.X, padx=4, pady=(6, 0))
         ttk.Label(delay_row, text="Başlatma süresi:").pack(side=tk.LEFT)
         self.manual_delay_var = tk.StringVar(value=MANUAL_DELAY_CHOICES[0][0])
         delay_combo = ttk.Combobox(
@@ -589,17 +666,17 @@ class BellApplication:
         )
         delay_combo.pack(side=tk.LEFT, padx=6)
         self._add_hint(delay_combo, "Tören butonunun kaç saniye sonra devreye gireceğini seçin.")
-        ttk.Label(delay_row, text="(Tören butonları için)").pack(side=tk.LEFT)
+        ttk.Label(delay_row, text="(Tören butonları için)", style="Muted.TLabel").pack(side=tk.LEFT)
 
-        status_frame = ttk.Frame(frame)
-        status_frame.pack(fill=tk.X, padx=10, pady=5)
-        ttk.Label(status_frame, text="Durum:").pack(side=tk.LEFT)
+        status_frame = ttk.Frame(frame, style="App.TFrame")
+        status_frame.pack(fill=tk.X, padx=6, pady=(6, 2))
+        ttk.Label(status_frame, text="Durum:", style="Bold.TLabel").pack(side=tk.LEFT)
         ttk.Label(status_frame, textvariable=self.status_var).pack(side=tk.LEFT, padx=5)
 
-        countdown_frame = tk.LabelFrame(frame, text="Geri Sayım ve Bildirim")
-        countdown_frame.pack(fill=tk.X, padx=10, pady=5)
+        countdown_frame = ttk.LabelFrame(frame, text="Geri Sayım ve Bildirim", style="Card.TLabelframe")
+        countdown_frame.pack(fill=tk.X, padx=6, pady=4)
         self.countdown_var = tk.StringVar(value="Sonraki zil hesaplanıyor...")
-        default_bg = self.root.cget("bg")
+        default_bg = countdown_frame.cget("background")
         tk.Label(
             countdown_frame,
             textvariable=self.countdown_var,
@@ -607,19 +684,16 @@ class BellApplication:
             fg="#0b5394",
             bg=default_bg,
         ).pack(fill=tk.X, padx=6, pady=4)
-        self.pause_badge = tk.Label(
+        self.pause_badge = ttk.Button(
             countdown_frame,
             text="Tören modu kapalı",
-            fg="#ffffff",
-            bg="#2e7d32",
-            font=(self.ui_font_family, 10, "bold"),
-            padx=6,
-            pady=2,
+            style="Success.TButton",
+            command=self._toggle_pause_from_button,
         )
         self.pause_badge.pack(fill=tk.X, padx=6, pady=(0, 6))
 
-        volume_frame = ttk.LabelFrame(frame, text="Ses")
-        volume_frame.pack(fill=tk.X, padx=10, pady=5)
+        volume_frame = ttk.LabelFrame(frame, text="Ses", style="Card.TLabelframe")
+        volume_frame.pack(fill=tk.X, padx=6, pady=4)
         self.volume_var = tk.DoubleVar(value=self.config.volume)
         self.volume_percent_var = tk.StringVar(value=self._format_volume_percent(self.config.volume))
         slider = ttk.Scale(
@@ -648,8 +722,8 @@ class BellApplication:
             command=self._toggle_pause,
         ).pack(side=tk.LEFT, padx=5)
 
-        startup_frame = ttk.LabelFrame(frame, text="Başlangıç / Arka Plan")
-        startup_frame.pack(fill=tk.X, padx=10, pady=5)
+        startup_frame = ttk.LabelFrame(frame, text="Başlangıç / Arka Plan", style="Card.TLabelframe")
+        startup_frame.pack(fill=tk.X, padx=6, pady=4)
         self.autostart_var = tk.BooleanVar(value=self.config.launch_on_boot)
         autostart_chk = ttk.Checkbutton(
             startup_frame,
@@ -680,8 +754,8 @@ class BellApplication:
         ttk.Button(frame, text="Arka Plana Al", command=self._minimize_to_tray).pack(pady=5)
         ttk.Button(frame, text="Programı Kapat", command=self._cleanup_and_exit).pack(pady=(0, 5))
 
-        shutdown_frame = ttk.LabelFrame(frame, text="Otomatik Kapatma")
-        shutdown_frame.pack(fill=tk.X, padx=10, pady=5)
+        shutdown_frame = ttk.LabelFrame(frame, text="Otomatik Kapatma", style="Card.TLabelframe")
+        shutdown_frame.pack(fill=tk.X, padx=6, pady=4)
         mode_label = self._get_shutdown_mode_label(
             self.config.auto_shutdown_mode or ("time" if self.config.auto_shutdown_enabled else "disabled")
         )
@@ -722,8 +796,8 @@ class BellApplication:
 
         self._update_shutdown_inputs()
 
-        today_frame = ttk.LabelFrame(frame, text="Bugünkü Ziller")
-        today_frame.pack(fill=tk.BOTH, expand=True, padx=10, pady=5)
+        today_frame = ttk.LabelFrame(frame, text="Bugünkü Ziller", style="Card.TLabelframe")
+        today_frame.pack(fill=tk.BOTH, expand=True, padx=6, pady=6)
         self.today_list = tk.Listbox(today_frame)
         self.today_list.pack(fill=tk.BOTH, expand=True, padx=5, pady=5)
         self._refresh_today()
@@ -739,7 +813,7 @@ class BellApplication:
         container = ttk.Frame(frame)
         container.pack(fill=tk.BOTH, expand=True)
 
-        calendar_panel = ttk.LabelFrame(container, text="Aylık Takvim")
+        calendar_panel = ttk.LabelFrame(container, text="Aylık Takvim", style="Card.TLabelframe")
         calendar_panel.pack(side=tk.LEFT, fill=tk.Y, padx=10, pady=8)
 
         now = datetime.now()
@@ -807,7 +881,7 @@ class BellApplication:
         self.event_list.tag_configure("lesson_exit", background="#fff7ed")
         self.event_list.bind("<<TreeviewSelect>>", self._on_schedule_select)
 
-        quick_frame = ttk.LabelFrame(right_panel, text="Tablo Halinde Zil Girişi")
+        quick_frame = ttk.LabelFrame(right_panel, text="Tablo Halinde Zil Girişi", style="Card.TLabelframe")
         quick_frame.pack(fill=tk.X, padx=12, pady=(4, 6))
         ttk.Label(
             quick_frame,
@@ -865,7 +939,7 @@ class BellApplication:
             side=tk.LEFT, padx=6
         )
 
-        form = ttk.LabelFrame(right_panel, text="Yeni/Seçili Zil")
+        form = ttk.LabelFrame(right_panel, text="Yeni/Seçili Zil", style="Card.TLabelframe")
         form.pack(fill=tk.X, padx=12, pady=8)
         self.hour_var = tk.StringVar(value="08")
         self.minute_var = tk.StringVar(value="00")
@@ -903,7 +977,7 @@ class BellApplication:
         ttk.Button(btn_frame, text="Güncelle", command=self._update_selected_event, width=10).pack(side=tk.LEFT, padx=2)
         ttk.Button(btn_frame, text="Sil", command=self._delete_event, width=8).pack(side=tk.LEFT, padx=2)
 
-        copy_frame = ttk.LabelFrame(right_panel, text="Program Kopyala")
+        copy_frame = ttk.LabelFrame(right_panel, text="Program Kopyala", style="Card.TLabelframe")
         copy_frame.pack(fill=tk.X, padx=12, pady=8)
         ttk.Label(copy_frame, text="Hedef Gün").pack(side=tk.LEFT, padx=4)
         self.copy_target_var = tk.StringVar(value=WEEKDAYS[1])
@@ -916,7 +990,7 @@ class BellApplication:
         ).pack(side=tk.LEFT, padx=4)
         ttk.Button(copy_frame, text="Aktar", command=self._copy_schedule_to_day).pack(side=tk.LEFT, padx=4)
 
-        holiday_frame = ttk.LabelFrame(right_panel, text="Tatil Günleri")
+        holiday_frame = ttk.LabelFrame(right_panel, text="Tatil Günleri", style="Card.TLabelframe")
         holiday_frame.pack(fill=tk.BOTH, expand=True, padx=12, pady=8)
         self.holiday_list = tk.Listbox(holiday_frame, height=5)
         self.holiday_list.pack(fill=tk.BOTH, expand=True, padx=6, pady=6)
@@ -925,7 +999,7 @@ class BellApplication:
         ttk.Button(holiday_btns, text="Ekle", command=self._add_holiday).pack(side=tk.LEFT, padx=5)
         ttk.Button(holiday_btns, text="Sil", command=self._remove_holiday).pack(side=tk.LEFT, padx=5)
 
-        simulation = ttk.LabelFrame(right_panel, text="Zil Testi Simülasyonu")
+        simulation = ttk.LabelFrame(right_panel, text="Zil Testi Simülasyonu", style="Card.TLabelframe")
         simulation.pack(fill=tk.X, padx=12, pady=(0, 10))
         self.sim_day_var = tk.StringVar(value=self.day_var.get())
         ttk.Label(simulation, text="Gün").grid(row=0, column=0, padx=4, pady=4, sticky=tk.W)
@@ -984,8 +1058,8 @@ class BellApplication:
         self._refresh_sound_library()
 
     def _build_sound_row(self, frame: ttk.Frame, key: str, label: str) -> None:
-        row = ttk.LabelFrame(frame, text=label)
-        row.pack(fill=tk.X, padx=10, pady=4)
+        row = ttk.LabelFrame(frame, text=label, style="Card.TLabelframe")
+        row.pack(fill=tk.X, padx=8, pady=3)
         row.columnconfigure(1, weight=1)
         path_var = tk.StringVar(value=self.config.sound_files.get(key, ""))
         self._sound_path_vars[key] = path_var
@@ -1155,7 +1229,7 @@ class BellApplication:
         next_btn.pack(side=tk.RIGHT, padx=2)
         self._add_hint(next_btn, "Sıradaki parçayı çalar ve durum sütununu günceller.")
 
-        form = ttk.LabelFrame(container, text="Parça Detayı")
+        form = ttk.LabelFrame(container, text="Parça Detayı", style="Card.TLabelframe")
         form.pack(side=tk.RIGHT, fill=tk.Y, padx=10, pady=4)
         self.ceremony_source_var = tk.StringVar(value="file")
         source_row = ttk.Frame(form)
@@ -1334,8 +1408,8 @@ class BellApplication:
         self.config.save()
 
     def _build_sound_library_section(self, frame: ttk.Frame) -> None:
-        library_frame = ttk.LabelFrame(frame, text="Ses Kütüphanesi ve Etiketler")
-        library_frame.pack(fill=tk.BOTH, expand=True, padx=10, pady=5)
+        library_frame = ttk.LabelFrame(frame, text="Ses Kütüphanesi ve Etiketler", style="Card.TLabelframe")
+        library_frame.pack(fill=tk.BOTH, expand=True, padx=8, pady=6)
         columns = ("name", "tags", "path")
         self.library_tree = ttk.Treeview(library_frame, columns=columns, show="headings", height=6)
         self.library_tree.heading("name", text="İsim")
@@ -2665,10 +2739,10 @@ class BellApplication:
         if getattr(self, "bells_paused", False):
             self.pause_badge.configure(
                 text="Tören modu aktif - otomatik ziller kapalı",
-                bg="#b71c1c",
+                style="Danger.TButton",
             )
         else:
-            self.pause_badge.configure(text="Tören modu kapalı", bg="#2e7d32")
+            self.pause_badge.configure(text="Tören modu kapalı", style="Success.TButton")
 
 
 def _parse_args() -> argparse.Namespace:
