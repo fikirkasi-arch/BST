@@ -101,3 +101,33 @@ Bu öneriler modüler olarak hayata geçirilebilir; öncelikle veri girişini ko
 ## 21. QR ve NFC ile Hızlı Komutlar
 - Görevliler için "Zili şimdi çal", "Törene geç", "Sustur" gibi komutlara özel QR kodları üretilip panolara asılabilir; mobil cihazla okutulduğunda web tabanlı kısa komut gönderilebilir.
 - NFC etiketlerine aynı komutlar yazılarak sahada internet erişimi sınırlı olduğunda bile tek dokunuşla tetikleme yapılabilir.
+
+## 22. YouTube ve Yerel Müzik İçin Sahne Modu
+- Tören çalma listesine "Sahne Modu" görünümü eklenip YouTube ve yerel parçalar tek ekranda büyük kapak görselleri ve durum rozetleriyle sunulabilir; dokunmatik sürükle-bırak ile sıralama yapılır.
+- YouTube bağlantıları için otomatik kalite/dil filtresi ve çevrimdışı önbellek durumu gösterilerek "hazır / indiriliyor / hata" gibi durumlar tek bakışta anlaşılır.
+- Playlist satırlarında çift zamanlama alanı (başlangıç ve vurgu anı) tutularak marş ve konuşmaların belirli kısımlarına hızlı atlama yapılabilir.
+
+## 23. Minimalist ve Satılabilir Arayüz Paketi
+- Tema sistemine "Minimal" preset'i eklenerek 12–16 px boşluk, ince ikonlar ve tek renk vurgu paleti (örn. `#2563eb`) ile sade bir görünüm sunulabilir; başlık çubuklarına cam efekti yerine düz şeritler tercih edilir.
+- Dokunmatik uyum için tablo satır yüksekliği 36–40 px, buton yükseklikleri 36 px olarak standardize edilir; kart gövdelerinde 8 px köşe yumuşatması kullanılır.
+- Kılavuzlu yerleşim (grid) ile ders ve tören kartları aynı genişlikte hizalanır; kritik aksiyonlar (Çal, Sustur, Tören) üstte ikonlu kısayol şeridiyle sabitlenir.
+
+## 24. Zil ve Müzik Kuyruğu Akışları
+- Kontrol sekmesine "Şimdi Çal / Sıradaki" kartı eklenerek hem ders zili hem tören müziği aynı zaman çizelgesinde gösterilebilir; sayaç bittiğinde bir sonraki maddeye otomatik geçiş animasyonu yapılır.
+- Kuyrukta yer alan her öğe için ses seviyesi, çıkış bölgesi ve çapraz solma süresi tek satırdan düzenlenir; kulaklık simgesi ile anlık ön dinleme yapılabilir.
+- Tüm kuyruğu dışa aktarma (JSON/CSV) ve içe alma butonları eklenerek sahne listelerinin paylaşımı kolaylaştırılır.
+
+## 25. Akıllı Form Doğrulama ve Yardım Balonları
+- Saat, URL ve dosya yolu alanlarında anlık doğrulama yapılıp hatalı alanlar kırmızı kenarlık ve mikro ipucu balonuyla belirtilir; form kaydı tüm alanlar geçerli olana kadar pasif tutulur.
+- YouTube bağlantıları çözümlenirken geçersiz veya yaş kısıtlamalı içerik tespit edilirse önceden uyarı verilir; alternatif indirme önerisi sunulur.
+- Kullanıcı ilk kez bir alanı doldururken kısa rehber balonları ("Ses dosyasını .mp3 olarak ekleyin", "Saat formatı 08:30") gösterilerek onboarding hızlandırılır.
+
+## 26. Zil Bölgesi ve Mekânsal Ses Sahneleyici
+- Uzamsal ses bölgeleri bir kat planı veya basit blok diyagramı üzerinde gösterilip sürükle-bırak ile hoparlör hattına bağlanabilir; kullanıcı hangi blokta hangi melodinin çaldığını canlı görür.
+- Bölge başına gecikme/sönümleme ayarı eklenerek törenlerde sahne-izleyici senaryoları için mekânsal denge sağlanır; test için "sağ/sol dolaşım" önizlemesi sunulur.
+- Bölge eşleşmeleri, ders tablosu ve tören listesiyle ilişkilendirilerek "Bu ders sadece Blok B'de çal" gibi kurallar tek tıklamayla uygulanır.
+
+## 27. Günlük Kullanım İçin Mikro İyileştirmeler
+- Çalma listesi ve ders tablolarında satır hover vurgusu ve yumuşak geçiş animasyonları eklenerek yoğun ekranlarda göz takibi kolaylaştırılır.
+- Geri sayım ve durum rozetlerinde hafif gradient veya cam efekti yerine düz renk mikro dokular kullanılabilir; böylece modern ama dikkat dağıtmayan bir görünüm elde edilir.
+- Sık kullanılan ayarlar (ses seviyesi, karanlık tema, dokunmatik modu) başlık çubuğunun sağında hızlı anahtarlar olarak sabitlenerek erişim süresi kısaltılır.
