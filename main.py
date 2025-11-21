@@ -445,6 +445,7 @@ class BellApplication:
     def __init__(self, root: tk.Tk) -> None:
         self.root = root
         self.root.title("JinniBell Pro")
+        self._init_window_size()
         self.ui_font_family = self._init_default_font()
         self.config = BellConfig.load()
         self.theme_var = tk.StringVar(value=self.config.theme_mode)
@@ -500,6 +501,18 @@ class BellApplication:
         self.root.after(1200, self._auto_minimize_if_needed)
 
     # region UI
+    def _init_window_size(self) -> None:
+        try:
+            self.root.update_idletasks()
+            screen_w = self.root.winfo_screenwidth() or 1366
+            screen_h = self.root.winfo_screenheight() or 768
+            target_w = max(960, min(1180, int(screen_w * 0.7)))
+            target_h = max(620, min(860, int(screen_h * 0.75)))
+            self.root.geometry(f"{target_w}x{target_h}")
+            self.root.minsize(900, 600)
+        except tk.TclError:
+            pass
+
     def _setup_styles(self) -> None:
         palette = self._get_palette(self.theme_var.get())
         self._palette = palette
@@ -516,7 +529,7 @@ class BellApplication:
             pass
 
         style = ttk.Style(self.root)
-        pad_base = 10 if self.touch_mode_var.get() else 8
+        pad_base = 10 if self.touch_mode_var.get() else 6
         font_size = 11 if self.touch_mode_var.get() else 10
 
         style.configure("TFrame", background=canvas)
@@ -731,20 +744,21 @@ class BellApplication:
         shortcut.pack(fill=tk.X, padx=6, pady=6)
         bar = ttk.Frame(shortcut, style="Card.TFrame")
         bar.pack(fill=tk.X)
-        ttk.Button(bar, text="📅 Ders Programı", command=lambda: self._switch_tab("schedule"), width=18).pack(
-            side=tk.LEFT, padx=4, pady=4
+        btn_width = 14
+        ttk.Button(bar, text="📅 Ders Programı", command=lambda: self._switch_tab("schedule"), width=btn_width).pack(
+            side=tk.LEFT, padx=3, pady=3
         )
-        ttk.Button(bar, text="🎵 Ses Ayarları", command=lambda: self._switch_tab("sound"), width=16).pack(
-            side=tk.LEFT, padx=4, pady=4
+        ttk.Button(bar, text="🎵 Ses Ayarları", command=lambda: self._switch_tab("sound"), width=btn_width).pack(
+            side=tk.LEFT, padx=3, pady=3
         )
-        ttk.Button(bar, text="▶ Zil Simülasyonu", command=self._start_simulation, width=17).pack(
-            side=tk.LEFT, padx=4, pady=4
+        ttk.Button(bar, text="▶ Zil Simülasyonu", command=self._start_simulation, width=btn_width).pack(
+            side=tk.LEFT, padx=3, pady=3
         )
-        ttk.Button(bar, text="🔇 Sustur / Aç", command=self._flip_mute_from_shortcut, width=14).pack(
-            side=tk.RIGHT, padx=4, pady=4
+        ttk.Button(bar, text="🔇 Sustur / Aç", command=self._flip_mute_from_shortcut, width=btn_width - 2).pack(
+            side=tk.RIGHT, padx=3, pady=3
         )
-        ttk.Button(bar, text="⏸ Tören Modu", command=self._toggle_pause_from_button, width=14).pack(
-            side=tk.RIGHT, padx=4, pady=4
+        ttk.Button(bar, text="⏸ Tören Modu", command=self._toggle_pause_from_button, width=btn_width - 2).pack(
+            side=tk.RIGHT, padx=3, pady=3
         )
 
         button_frame = ttk.LabelFrame(frame, text="Hızlı Tören Kısayolları", style="Card.TLabelframe")
@@ -797,9 +811,10 @@ class BellApplication:
         tk.Label(
             countdown_frame,
             textvariable=self.countdown_var,
-            font=(self.ui_font_family, 14, "bold"),
+            font=(self.ui_font_family, 12, "bold"),
             fg="#0b5394",
             bg=default_bg,
+            wraplength=540,
         ).pack(fill=tk.X, padx=6, pady=4)
         self.pause_badge = ttk.Button(
             countdown_frame,
@@ -881,8 +896,14 @@ class BellApplication:
             wraplength=360,
         ).pack(fill=tk.X, padx=6, pady=(0, 4))
 
-        ttk.Button(frame, text="Arka Plana Al", command=self._minimize_to_tray).pack(pady=5)
-        ttk.Button(frame, text="Programı Kapat", command=self._cleanup_and_exit).pack(pady=(0, 5))
+        bottom_actions = ttk.Frame(frame, style="App.TFrame")
+        bottom_actions.pack(fill=tk.X, padx=6, pady=4)
+        ttk.Button(bottom_actions, text="Arka Plana Al", command=self._minimize_to_tray, width=16).pack(
+            side=tk.LEFT, padx=3, pady=2
+        )
+        ttk.Button(bottom_actions, text="Programı Kapat", command=self._cleanup_and_exit, width=16).pack(
+            side=tk.RIGHT, padx=3, pady=2
+        )
 
         shutdown_frame = ttk.LabelFrame(frame, text="Otomatik Kapatma", style="Card.TLabelframe")
         shutdown_frame.pack(fill=tk.X, padx=6, pady=4)
@@ -896,7 +917,7 @@ class BellApplication:
             state="readonly",
             values=[label for label, _ in SHUTDOWN_MODES],
             textvariable=self.shutdown_mode_var,
-            width=28,
+            width=22,
         )
         mode_combo.grid(row=0, column=1, padx=4, pady=4, sticky=tk.W)
         mode_combo.bind("<<ComboboxSelected>>", lambda _e: self._apply_shutdown_settings())
@@ -998,14 +1019,14 @@ class BellApplication:
         ttk.Label(filter_row, text="Filtre", style="Bold.TLabel").pack(side=tk.LEFT, padx=(0, 4))
         self.schedule_filter_var = tk.StringVar()
         self.schedule_filter_var.trace_add("write", lambda *_: self._refresh_event_list())
-        search = ttk.Entry(filter_row, textvariable=self.schedule_filter_var, width=22)
+        search = ttk.Entry(filter_row, textvariable=self.schedule_filter_var, width=18)
         search.pack(side=tk.LEFT, padx=2)
         self.schedule_filter_sound_var = tk.StringVar(value="Tümü")
         self.schedule_filter_sound_var.trace_add("write", lambda *_: self._refresh_event_list())
         ttk.Combobox(
             filter_row,
             state="readonly",
-            width=20,
+            width=16,
             textvariable=self.schedule_filter_sound_var,
             values=["Tümü"] + [choice[0] for choice in SCHEDULE_SOUND_CHOICES],
         ).pack(side=tk.LEFT, padx=6)
@@ -1019,9 +1040,9 @@ class BellApplication:
         self.event_list.heading("clock", text="Saat")
         self.event_list.heading("label", text="Başlık")
         self.event_list.heading("sound", text="Kategori")
-        self.event_list.column("clock", width=80, anchor=tk.CENTER)
-        self.event_list.column("label", anchor=tk.W)
-        self.event_list.column("sound", width=140, anchor=tk.CENTER)
+        self.event_list.column("clock", width=72, anchor=tk.CENTER)
+        self.event_list.column("label", anchor=tk.W, stretch=True)
+        self.event_list.column("sound", width=120, anchor=tk.CENTER)
         self.event_list.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
         scrollbar = ttk.Scrollbar(table_frame, orient=tk.VERTICAL, command=self.event_list.yview)
         scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
@@ -1037,7 +1058,7 @@ class BellApplication:
             quick_frame,
             text="Aşağıdaki tablo 1. dersten 16. derse kadar tüm öğrenci/öğretmen giriş ve ders çıkışlarını"
             " aynı anda düzenlemenizi sağlar.",
-            wraplength=520,
+            wraplength=460,
         ).pack(anchor=tk.W, padx=6, pady=(4, 2))
         ttk.Label(
             quick_frame,
@@ -1051,7 +1072,7 @@ class BellApplication:
         for idx, (title, _key) in enumerate(
             [("Öğrenci Girişi", "student_entry"), ("Öğretmen Girişi", "teacher_entry"), ("Ders Çıkışı", "lesson_exit")]
         ):
-            ttk.Label(header_row, text=title, width=16).grid(row=0, column=idx + 1, padx=6)
+            ttk.Label(header_row, text=title, width=14).grid(row=0, column=idx + 1, padx=6)
 
         self._table_rows: List[Dict[str, object]] = []
         self.table_rows_frame = ttk.Frame(quick_frame)
@@ -1228,7 +1249,7 @@ class BellApplication:
         self.zone_tree.heading("name", text="Bölge")
         self.zone_tree.heading("status", text="Durum")
         self.zone_tree.heading("note", text="Not")
-        self.zone_tree.column("name", width=160, anchor=tk.W)
+        self.zone_tree.column("name", width=140, anchor=tk.W)
         self.zone_tree.column("status", width=80, anchor=tk.CENTER)
         self.zone_tree.column("note", anchor=tk.W)
         self.zone_tree.pack(fill=tk.X, padx=6, pady=(0, 2))
@@ -1526,13 +1547,13 @@ class BellApplication:
         self.ceremony_tree.heading("end", text="Bitiş")
         self.ceremony_tree.heading("duration", text="Toplam")
         self.ceremony_tree.heading("zones", text="Bölgeler")
-        self.ceremony_tree.column("title", width=200, anchor=tk.W)
-        self.ceremony_tree.column("source", width=90, anchor=tk.CENTER)
-        self.ceremony_tree.column("status", width=120, anchor=tk.W)
-        self.ceremony_tree.column("start", width=80, anchor=tk.CENTER)
-        self.ceremony_tree.column("end", width=80, anchor=tk.CENTER)
-        self.ceremony_tree.column("duration", width=90, anchor=tk.CENTER)
-        self.ceremony_tree.column("zones", width=140, anchor=tk.W)
+        self.ceremony_tree.column("title", width=180, anchor=tk.W)
+        self.ceremony_tree.column("source", width=80, anchor=tk.CENTER)
+        self.ceremony_tree.column("status", width=110, anchor=tk.W)
+        self.ceremony_tree.column("start", width=70, anchor=tk.CENTER)
+        self.ceremony_tree.column("end", width=70, anchor=tk.CENTER)
+        self.ceremony_tree.column("duration", width=80, anchor=tk.CENTER)
+        self.ceremony_tree.column("zones", width=120, anchor=tk.W)
         self.ceremony_tree.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
         tree_scroll = ttk.Scrollbar(tree_frame, orient=tk.VERTICAL, command=self.ceremony_tree.yview)
         tree_scroll.pack(side=tk.RIGHT, fill=tk.Y)
@@ -1809,14 +1830,14 @@ class BellApplication:
         ttk.Label(filter_bar, text="Ara / Etiket", style="Bold.TLabel").pack(side=tk.LEFT, padx=(0, 4))
         self.library_filter_var = tk.StringVar()
         self.library_filter_var.trace_add("write", lambda *_: self._refresh_sound_library())
-        ttk.Entry(filter_bar, textvariable=self.library_filter_var, width=26).pack(side=tk.LEFT, padx=4)
+        ttk.Entry(filter_bar, textvariable=self.library_filter_var, width=22).pack(side=tk.LEFT, padx=4)
         columns = ("name", "tags", "path")
         self.library_tree = ttk.Treeview(library_frame, columns=columns, show="headings", height=6)
         self.library_tree.heading("name", text="İsim")
         self.library_tree.heading("tags", text="Etiketler")
         self.library_tree.heading("path", text="Dosya")
-        self.library_tree.column("name", width=150, anchor=tk.W)
-        self.library_tree.column("tags", width=160, anchor=tk.W)
+        self.library_tree.column("name", width=140, anchor=tk.W)
+        self.library_tree.column("tags", width=140, anchor=tk.W)
         self.library_tree.column("path", anchor=tk.W)
         self.library_tree.pack(fill=tk.BOTH, expand=True, padx=6, pady=4)
         self.library_tree.bind("<Double-1>", lambda _e: self._play_selected_library_asset())
