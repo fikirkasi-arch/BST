@@ -479,6 +479,13 @@ class BellApplication:
         self._last_audio_error = ""
         self._last_audio_error_time = 0.0
         self._tray_hint_shown = False
+        self.queue_now_var = tk.StringVar(value="Hazır")
+        self.queue_next_var = tk.StringVar(value="Sonraki zil hesaplanıyor")
+        self.ceremony_now_var = tk.StringVar(value="Tören listesi beklemede")
+        self.ceremony_next_var = tk.StringVar(value="Sırada tören parçası yok")
+        self.stage_now_var = tk.StringVar(value="Sahne modu hazır")
+        self.stage_next_var = tk.StringVar(value="Sırada parça yok")
+        self._current_ceremony_zones: List[str] = []
 
         self.scheduler = ScheduleRunner(
             self.config,
@@ -592,6 +599,18 @@ class BellApplication:
                 "button_active": "#1f2937",
                 "table_sel": "#1e3a8a",
             }
+        if mode == "minimal":
+            return {
+                "primary": "#2563eb",
+                "accent": "#0f172a",
+                "surface": "#fbfbfc",
+                "canvas": "#f6f8fb",
+                "muted": "#6b7280",
+                "text": "#0f172a",
+                "divider": "#e5e7eb",
+                "button_active": "#e2e8f0",
+                "table_sel": "#e0e7ff",
+            }
         return {
             "primary": "#2563eb",
             "accent": "#111827",
@@ -693,14 +712,14 @@ class BellApplication:
         ttk.Label(header, text="Günlük işlemleri tek ekrandan yönetebilirsiniz.", style="Muted.TLabel").pack(
             side=tk.LEFT, padx=8
         )
-        ttk.Checkbutton(
+        ttk.Combobox(
             header,
-            text="🌙 Karanlık Tema",
-            variable=self.theme_var,
-            onvalue="dark",
-            offvalue="light",
-            command=self._toggle_theme,
+            state="readonly",
+            width=12,
+            textvariable=self.theme_var,
+            values=["light", "dark", "minimal"],
         ).pack(side=tk.RIGHT, padx=4)
+        self.theme_var.trace_add("write", lambda *_a: self._toggle_theme())
         ttk.Checkbutton(
             header,
             text="🤏 Dokunmatik Mod",
@@ -787,6 +806,19 @@ class BellApplication:
             command=self._toggle_pause_from_button,
         )
         self.pause_badge.pack(fill=tk.X, padx=6, pady=(0, 6))
+
+        queue_frame = ttk.LabelFrame(frame, text="Şimdi / Sıradaki Kuyruk", style="Card.TLabelframe")
+        queue_frame.pack(fill=tk.X, padx=6, pady=4)
+        row1 = ttk.Frame(queue_frame, style="Card.TFrame")
+        row1.pack(fill=tk.X, padx=4, pady=2)
+        ttk.Label(row1, text="Aktif Zil / Tören:", style="Bold.TLabel").pack(side=tk.LEFT)
+        ttk.Label(row1, textvariable=self.queue_now_var).pack(side=tk.LEFT, padx=6)
+        ttk.Label(row1, textvariable=self.ceremony_now_var, style="Muted.TLabel").pack(side=tk.RIGHT)
+        row2 = ttk.Frame(queue_frame, style="Card.TFrame")
+        row2.pack(fill=tk.X, padx=4, pady=2)
+        ttk.Label(row2, text="Sıradaki Zil:", style="Bold.TLabel").pack(side=tk.LEFT)
+        ttk.Label(row2, textvariable=self.queue_next_var).pack(side=tk.LEFT, padx=6)
+        ttk.Label(row2, textvariable=self.ceremony_next_var, style="Muted.TLabel").pack(side=tk.RIGHT)
 
         volume_frame = ttk.LabelFrame(frame, text="Ses", style="Card.TLabelframe")
         volume_frame.pack(fill=tk.X, padx=6, pady=4)
@@ -1276,6 +1308,32 @@ class BellApplication:
         self.config.save()
         self._refresh_zone_tree()
 
+    def _pick_ceremony_zones(self) -> None:
+        dialog = tk.Toplevel(self.root)
+        dialog.title("Bölge Seç")
+        dialog.transient(self.root)
+        dialog.grab_set()
+        ttk.Label(dialog, text="Parçanın çalacağı bölgeleri işaretleyin").pack(padx=12, pady=6)
+        vars: List[tuple[str, tk.BooleanVar]] = []
+        for zone in self.config.sound_zones:
+            var = tk.BooleanVar(value=zone.get("zone_id") in self._current_ceremony_zones)
+            ttk.Checkbutton(dialog, text=zone.get("name", "Bölge"), variable=var).pack(
+                anchor=tk.W, padx=14, pady=2
+            )
+            vars.append((zone.get("zone_id"), var))
+
+        def _apply() -> None:
+            self._current_ceremony_zones = [zone_id for zone_id, var in vars if var.get()]
+            self.ceremony_zone_label.set(
+                ", ".join(self._current_ceremony_zones) if self._current_ceremony_zones else "Genel"
+            )
+            dialog.destroy()
+
+        btn_row = ttk.Frame(dialog)
+        btn_row.pack(fill=tk.X, padx=12, pady=(6, 10))
+        ttk.Button(btn_row, text="Kaydet", command=_apply).pack(side=tk.RIGHT, padx=4)
+        ttk.Button(btn_row, text="Vazgeç", command=dialog.destroy).pack(side=tk.RIGHT, padx=4)
+
     def _format_zone_summary(self, sound_key: str) -> str:
         routes = self.config.sound_routes.get(sound_key) or ["main"]
         names = []
@@ -1457,7 +1515,7 @@ class BellApplication:
 
         tree_frame = ttk.Frame(container)
         tree_frame.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
-        columns = ("title", "source", "status", "start", "end", "duration")
+        columns = ("title", "source", "status", "start", "end", "duration", "zones")
         self.ceremony_tree = ttk.Treeview(tree_frame, columns=columns, show="headings", selectmode="browse", height=12)
         self.ceremony_tree.heading("title", text="Başlık")
         self.ceremony_tree.heading("source", text="Kaynak")
@@ -1465,12 +1523,14 @@ class BellApplication:
         self.ceremony_tree.heading("start", text="Başlangıç")
         self.ceremony_tree.heading("end", text="Bitiş")
         self.ceremony_tree.heading("duration", text="Toplam")
+        self.ceremony_tree.heading("zones", text="Bölgeler")
         self.ceremony_tree.column("title", width=200, anchor=tk.W)
         self.ceremony_tree.column("source", width=90, anchor=tk.CENTER)
         self.ceremony_tree.column("status", width=120, anchor=tk.W)
         self.ceremony_tree.column("start", width=80, anchor=tk.CENTER)
         self.ceremony_tree.column("end", width=80, anchor=tk.CENTER)
         self.ceremony_tree.column("duration", width=90, anchor=tk.CENTER)
+        self.ceremony_tree.column("zones", width=140, anchor=tk.W)
         self.ceremony_tree.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
         tree_scroll = ttk.Scrollbar(tree_frame, orient=tk.VERTICAL, command=self.ceremony_tree.yview)
         tree_scroll.pack(side=tk.RIGHT, fill=tk.Y)
@@ -1535,10 +1595,19 @@ class BellApplication:
         timing.pack(fill=tk.X, padx=8, pady=4)
         self.ceremony_start_var = tk.StringVar(value="00:00")
         self.ceremony_end_var = tk.StringVar(value="")
+        self.ceremony_highlight_var = tk.StringVar(value="")
         ttk.Label(timing, text="Başlangıç (MM:SS)").grid(row=0, column=0, sticky=tk.W)
-        ttk.Entry(timing, textvariable=self.ceremony_start_var, width=10).grid(row=1, column=0, padx=2, pady=2)
+        start_entry = ttk.Entry(timing, textvariable=self.ceremony_start_var, width=10)
+        start_entry.grid(row=1, column=0, padx=2, pady=2)
         ttk.Label(timing, text="Bitiş (opsiyonel)").grid(row=0, column=1, padx=6, sticky=tk.W)
-        ttk.Entry(timing, textvariable=self.ceremony_end_var, width=10).grid(row=1, column=1, padx=6, pady=2)
+        end_entry = ttk.Entry(timing, textvariable=self.ceremony_end_var, width=10)
+        end_entry.grid(row=1, column=1, padx=6, pady=2)
+        ttk.Label(timing, text="Vurgu (MM:SS)").grid(row=0, column=2, padx=6, sticky=tk.W)
+        highlight_entry = ttk.Entry(timing, textvariable=self.ceremony_highlight_var, width=10)
+        highlight_entry.grid(row=1, column=2, padx=6, pady=2)
+        self._attach_ms_validation(start_entry, self.ceremony_start_var)
+        self._attach_ms_validation(end_entry, self.ceremony_end_var)
+        self._attach_ms_validation(highlight_entry, self.ceremony_highlight_var)
         ttk.Label(form, text="Bitiş boşsa parça sonuna kadar çalar.").pack(anchor=tk.W, padx=8, pady=(0, 8))
 
         action_row = ttk.Frame(form)
@@ -1546,9 +1615,33 @@ class BellApplication:
         ttk.Button(action_row, text="Kaydet/Güncelle", command=self._save_ceremony_item).pack(side=tk.LEFT, padx=4)
         ttk.Button(action_row, text="Formu Temizle", command=self._clear_ceremony_form).pack(side=tk.RIGHT, padx=4)
 
+        zone_row = ttk.Frame(form)
+        zone_row.pack(fill=tk.X, padx=8, pady=(0, 6))
+        ttk.Label(zone_row, text="Çıkış Bölgesi / Mekânsal Alan").pack(side=tk.LEFT)
+        self.ceremony_zone_label = tk.StringVar(value="Genel")
+        ttk.Button(zone_row, textvariable=self.ceremony_zone_label, command=self._pick_ceremony_zones).pack(
+            side=tk.LEFT, padx=6
+        )
+
         self._ceremony_edit_index: Optional[int] = None
         self._refresh_ceremony_list()
         self._clear_ceremony_form()
+
+        stage_frame = ttk.LabelFrame(frame, text="Sahne Modu", style="Card.TLabelframe")
+        stage_frame.pack(fill=tk.X, padx=12, pady=6)
+        cards = ttk.Frame(stage_frame, style="Card.TFrame")
+        cards.pack(fill=tk.X, padx=6, pady=4)
+        now_card = ttk.Frame(cards, style="Card.TFrame")
+        now_card.pack(side=tk.LEFT, expand=True, fill=tk.X, padx=4)
+        ttk.Label(now_card, text="Şimdi Çalan", style="Bold.TLabel").pack(anchor=tk.W)
+        ttk.Label(now_card, textvariable=self.stage_now_var, wraplength=260).pack(anchor=tk.W, pady=2)
+        next_card = ttk.Frame(cards, style="Card.TFrame")
+        next_card.pack(side=tk.LEFT, expand=True, fill=tk.X, padx=4)
+        ttk.Label(next_card, text="Sıradaki", style="Bold.TLabel").pack(anchor=tk.W)
+        ttk.Label(next_card, textvariable=self.stage_next_var, wraplength=260).pack(anchor=tk.W, pady=2)
+        ttk.Button(stage_frame, text="Sahne Panelini Aç", command=self._open_stage_view).pack(
+            anchor=tk.E, padx=8, pady=(4, 6)
+        )
 
     # endregion
 
@@ -2394,6 +2487,19 @@ class BellApplication:
         entry.bind("<FocusOut>", lambda _e: self._validate_time_cell(var, entry))
         var.trace_add("write", lambda *_a: self._validate_time_cell(var, entry))
 
+    def _attach_ms_validation(self, entry: tk.Widget, var: tk.StringVar) -> None:
+        def _validate() -> None:
+            text = var.get().strip()
+            try:
+                if text:
+                    _parse_minute_second(text)
+                entry.configure(foreground=self._palette.get("text", "#111827"))
+            except Exception:
+                entry.configure(foreground="#dc2626")
+
+        entry.bind("<FocusOut>", lambda _e: _validate())
+        var.trace_add("write", lambda *_a: _validate())
+
     def _nudge_time(self, minutes: int) -> None:
         try:
             hour = int(self.hour_var.get())
@@ -2639,6 +2745,15 @@ class BellApplication:
             messagebox.showerror("Bitiş", "Bitiş süresi başlangıçtan büyük olmalı")
             return None
 
+        highlight_ms: Optional[int] = None
+        highlight_text = self.ceremony_highlight_var.get().strip()
+        if highlight_text:
+            try:
+                highlight_ms = _parse_minute_second(highlight_text)
+            except ValueError as exc:
+                messagebox.showerror("Vurgu", str(exc))
+                return None
+
         metadata = self._get_media_metadata(source, location, show_error=False)
         duration_sec: Optional[int] = None
         if metadata:
@@ -2657,11 +2772,19 @@ class BellApplication:
         }
         if end_ms is not None:
             item["end_ms"] = end_ms
+        if highlight_ms is not None:
+            item["highlight_ms"] = highlight_ms
+        item["zones"] = list(self._current_ceremony_zones)
         return item
 
     def _prepare_ceremony_item(
         self, item: Dict[str, object], existing: Optional[Dict[str, object]] = None
     ) -> Dict[str, object]:
+        if existing:
+            if "highlight_ms" not in item and existing.get("highlight_ms") is not None:
+                item["highlight_ms"] = existing.get("highlight_ms")
+            if not item.get("zones") and existing.get("zones"):
+                item["zones"] = existing.get("zones")
         source = item.get("source")
         location = str(item.get("location", ""))
         if source == "file":
@@ -2722,6 +2845,7 @@ class BellApplication:
             duration_text = _format_mmss(duration_sec * 1000 if duration_sec else None)
             source_text = "YouTube" if item.get("source") == "youtube" else "Dosya"
             status_text = self._describe_ceremony_status(item)
+            zone_text = ", ".join(item.get("zones", [])) if item.get("zones") else "Genel"
             self.ceremony_tree.insert(
                 "",
                 tk.END,
@@ -2733,10 +2857,12 @@ class BellApplication:
                     start_text,
                     end_text,
                     duration_text,
+                    zone_text,
                 ),
             )
         self._ceremony_edit_index = None
         self.ceremony_tree.selection_remove(self.ceremony_tree.selection())
+        self._refresh_queue_snapshot()
 
     def _describe_ceremony_status(self, item: Dict[str, object]) -> str:
         status = item.get("status") or ("Hazır" if item.get("source") == "file" else "Bekliyor")
@@ -2744,6 +2870,18 @@ class BellApplication:
         if detail:
             return f"{status} - {detail}"
         return str(status)
+
+    def _format_ceremony_badge(self, item: Optional[Dict[str, object]]) -> str:
+        if not item:
+            return "-"
+        title = item.get("label") or "Tören Parçası"
+        source = item.get("source") or "file"
+        start_text = _format_mmss(int(item.get("start_ms", 0)))
+        highlight = item.get("highlight_ms")
+        marker = f" · vurgu { _format_mmss(int(highlight))}" if highlight is not None else ""
+        zones = item.get("zones") or []
+        zone_tag = f" · {', '.join(zones)}" if zones else ""
+        return f"{title} ({'YouTube' if source == 'youtube' else 'Dosya'}) · {start_text}{marker}{zone_tag}"
 
     def _set_ceremony_status(
         self, index: int, status: str, detail: Optional[str] = None, cache_path: Optional[str] = None
@@ -2775,6 +2913,10 @@ class BellApplication:
         self.ceremony_start_var.set(_format_mmss(int(item.get("start_ms", 0))))
         end_ms = item.get("end_ms")
         self.ceremony_end_var.set(_format_mmss(end_ms) if end_ms is not None else "")
+        highlight_ms = item.get("highlight_ms")
+        self.ceremony_highlight_var.set(_format_mmss(int(highlight_ms)) if highlight_ms is not None else "")
+        self._current_ceremony_zones = list(item.get("zones", []))
+        self.ceremony_zone_label.set(", ".join(self._current_ceremony_zones) if self._current_ceremony_zones else "Genel")
 
     def _clear_ceremony_form(self) -> None:
         self._ceremony_edit_index = None
@@ -2783,6 +2925,9 @@ class BellApplication:
         self.ceremony_title_var.set("")
         self.ceremony_start_var.set("00:00")
         self.ceremony_end_var.set("")
+        self.ceremony_highlight_var.set("")
+        self._current_ceremony_zones = []
+        self.ceremony_zone_label.set("Genel")
         self.ceremony_tree.selection_remove(self.ceremony_tree.selection())
 
     def _move_ceremony_item(self, offset: int) -> None:
@@ -2921,6 +3066,25 @@ class BellApplication:
         temp_file = Path(tempfile.gettempdir()) / f"slice_{int(time.time())}.wav"
         segment.export(temp_file, format="wav")
         return str(temp_file)
+
+    def _open_stage_view(self) -> None:
+        if getattr(self, "_stage_win", None) and self._stage_win.winfo_exists():
+            self._stage_win.lift()
+            return
+        win = tk.Toplevel(self.root)
+        self._stage_win = win
+        win.title("Sahne Modu")
+        win.geometry("640x380")
+        ttk.Label(win, text="Sahne Modu", style="Accent.TLabel").pack(anchor=tk.W, padx=12, pady=6)
+        ttk.Label(win, text="YouTube + yerel müzikleri dokunmatik uyumlu listeden yönetin.").pack(
+            anchor=tk.W, padx=12
+        )
+        listbox = tk.Listbox(win, height=14)
+        listbox.pack(fill=tk.BOTH, expand=True, padx=12, pady=6)
+        for idx, item in enumerate(self.config.ceremony_playlist):
+            badge = self._format_ceremony_badge(item)
+            listbox.insert(tk.END, f"{idx + 1}. {badge}")
+        ttk.Button(win, text="Kapat", command=win.destroy).pack(anchor=tk.E, padx=12, pady=(0, 8))
 
     def _download_youtube_audio(self, url: str, playlist_index: Optional[int] = None) -> Optional[str]:
         if playlist_index is not None and 0 <= playlist_index < len(self.config.ceremony_playlist):
@@ -3070,6 +3234,7 @@ class BellApplication:
         self.status_var.set(message)
         self._update_pause_badge()
         self._update_countdown_label()
+        self._refresh_queue_snapshot()
 
     def _schedule_countdown_refresh(self) -> None:
         if not hasattr(self, "root"):
@@ -3084,17 +3249,20 @@ class BellApplication:
         holiday = self.config.holiday_for(date.today())
         if holiday:
             self.countdown_var.set(f"Bugün tatil: {holiday}")
+            self._refresh_queue_snapshot()
             return
         today_name = WEEKDAYS[now.weekday()]
         next_event = self.config.next_event_for_day(today_name, now.time())
         if not next_event:
             self.countdown_var.set("Bugün kalan zil yok")
+            self._refresh_queue_snapshot()
             return
         try:
             target_time = datetime.strptime(next_event.clock, "%H:%M")
             target_dt = datetime.combine(date.today(), target_time.time())
         except ValueError:
             self.countdown_var.set("Sıradaki zil hesaplanamadı")
+            self._refresh_queue_snapshot()
             return
         remaining = int((target_dt - now).total_seconds())
         if remaining < 0:
@@ -3109,6 +3277,36 @@ class BellApplication:
         self.countdown_var.set(
             f"{prefix}Sonraki zil {next_event.label} için {formatted} sonra ({next_event.clock})"
         )
+        self._refresh_queue_snapshot()
+
+    def _refresh_queue_snapshot(self) -> None:
+        today = date.today()
+        now = datetime.now()
+        today_name = WEEKDAYS[today.weekday()]
+        next_event = self.config.next_event_for_day(today_name, now.time())
+        if next_event:
+            self.queue_next_var.set(f"{next_event.clock} · {next_event.label}")
+        else:
+            self.queue_next_var.set("Planlı zil yok")
+        self.queue_now_var.set(self.status_var.get())
+
+        if self.config.ceremony_playlist:
+            idx = min(self._ceremony_index, len(self.config.ceremony_playlist) - 1)
+            current = self.config.ceremony_playlist[idx]
+            nxt = (
+                self.config.ceremony_playlist[(idx + 1) % len(self.config.ceremony_playlist)]
+                if len(self.config.ceremony_playlist) > 1
+                else None
+            )
+            self.ceremony_now_var.set(self._format_ceremony_badge(current))
+            self.ceremony_next_var.set(self._format_ceremony_badge(nxt) if nxt else "Sırada yok")
+            self.stage_now_var.set(self.ceremony_now_var.get())
+            self.stage_next_var.set(self.ceremony_next_var.get())
+        else:
+            self.ceremony_now_var.set("Tören listesi boş")
+            self.ceremony_next_var.set("Sıradaki parça yok")
+            self.stage_now_var.set("Sahne modu hazır")
+            self.stage_next_var.set("Sırada parça yok")
 
     def _update_pause_badge(self) -> None:
         if not hasattr(self, "pause_badge"):

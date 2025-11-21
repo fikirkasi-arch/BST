@@ -78,10 +78,12 @@ class CeremonyItem(TypedDict, total=False):
     location: str
     start_ms: int
     end_ms: Optional[int]
+    highlight_ms: Optional[int]
     duration_sec: Optional[int]
     status: str
     status_detail: Optional[str]
     cache_path: Optional[str]
+    zones: List[str]
 
 
 class SoundAsset(TypedDict, total=False):
@@ -191,6 +193,13 @@ class BellConfig:
                     end_ms = int(raw["end_minute"]) * 60 * 1000
                 if end_ms is not None:
                     item["end_ms"] = int(end_ms)
+                highlight_ms = raw.get("highlight_ms")
+                if highlight_ms is not None:
+                    item["highlight_ms"] = int(highlight_ms)
+                zones = raw.get("zones") or []
+                if isinstance(zones, str):
+                    zones = [zones]
+                item["zones"] = list(zones)
                 playlist.append(item)
 
             library: List[SoundAsset] = []
