@@ -17,6 +17,7 @@ from datetime import datetime, date
 from pathlib import Path
 from tkinter import filedialog, messagebox, simpledialog, ttk
 from typing import Callable, Dict, List, Optional, Tuple
+from uuid import uuid4
 
 from mutagen import File as MutagenFile
 from pydub import AudioSegment
@@ -445,16 +446,16 @@ class BellApplication:
         self.root = root
         self.root.title("JinniBell Pro")
         self.ui_font_family = self._init_default_font()
+        self.config = BellConfig.load()
+        self.theme_var = tk.StringVar(value=self.config.theme_mode)
+        self.touch_mode_var = tk.BooleanVar(value=self.config.touch_mode)
         style = ttk.Style(self.root)
         try:
             style.theme_use("clam")
         except tk.TclError:
             pass
-        style.configure("Treeview", rowheight=26)
-        style.configure("Treeview.Heading", font=(self.ui_font_family, 10, "bold"))
+        self._palette: Dict[str, str] = {}
         self._setup_styles()
-
-        self.config = BellConfig.load()
         self.audio = AudioController()
         self.audio.set_state_callback(self._update_status)
         self.audio.set_error_callback(self._on_audio_error)
@@ -493,34 +494,42 @@ class BellApplication:
 
     # region UI
     def _setup_styles(self) -> None:
-        primary = "#2563eb"
-        accent = "#111827"
-        surface = "#ffffff"
-        canvas = "#f5f7fb"
-        muted = "#6b7280"
+        palette = self._get_palette(self.theme_var.get())
+        self._palette = palette
+        primary = palette["primary"]
+        accent = palette["accent"]
+        surface = palette["surface"]
+        canvas = palette["canvas"]
+        muted = palette["muted"]
+        text = palette["text"]
+        table_sel = palette["table_sel"]
         try:
             self.root.configure(background=canvas)
         except tk.TclError:
             pass
 
         style = ttk.Style(self.root)
+        pad_base = 10 if self.touch_mode_var.get() else 8
+        font_size = 11 if self.touch_mode_var.get() else 10
+
         style.configure("TFrame", background=canvas)
         style.configure("App.TFrame", background=canvas)
         style.configure("Card.TFrame", background=surface, relief=tk.GROOVE, borderwidth=0)
         style.configure("Card.TLabelframe", background=surface, borderwidth=0, padding=12)
-        style.configure("Card.TLabelframe.Label", background=surface, font=(self.ui_font_family, 10, "bold"))
+        style.configure("Card.TLabelframe.Label", background=surface, font=(self.ui_font_family, font_size, "bold"))
         style.configure("Muted.TLabel", background=surface, foreground=muted)
-        style.configure("Accent.TLabel", background=surface, foreground=accent, font=(self.ui_font_family, 11, "bold"))
-        style.configure("Bold.TLabel", font=(self.ui_font_family, 10, "bold"))
-        style.configure("TButton", padding=(9, 6), font=(self.ui_font_family, 10))
+        style.configure("Accent.TLabel", background=surface, foreground=accent, font=(self.ui_font_family, font_size + 1, "bold"))
+        style.configure("Bold.TLabel", font=(self.ui_font_family, font_size, "bold"))
+        style.configure("TLabel", foreground=text)
+        style.configure("TButton", padding=(pad_base + 1, pad_base - 2), font=(self.ui_font_family, font_size))
         style.map(
             "TButton",
-            background=[("active", "#e5e7eb")],
+            background=[("active", palette["button_active"])],
             relief=[("pressed", "sunken")],
         )
         style.configure(
             "Primary.TButton",
-            padding=(12, 8),
+            padding=(pad_base + 4, pad_base - 1),
             background=primary,
             foreground="white",
             borderwidth=0,
@@ -557,15 +566,43 @@ class BellApplication:
             foreground=[("disabled", "#e5e7eb")],
         )
         style.configure("TNotebook", background=canvas, tabmargins=(6, 4, 6, 0))
-        style.configure("TNotebook.Tab", padding=(10, 6), font=(self.ui_font_family, 10, "bold"))
+        style.configure("TNotebook.Tab", padding=(10, 6), font=(self.ui_font_family, font_size, "bold"))
         style.configure(
             "Treeview",
-            background="white",
-            fieldbackground="white",
-            bordercolor="#e5e7eb",
+            background=surface,
+            fieldbackground=surface,
+            bordercolor=palette["divider"],
             relief="flat",
         )
-        style.map("Treeview", background=[("selected", "#dbeafe")])
+        style.map("Treeview", background=[("selected", table_sel)])
+        row_height = 30 if self.touch_mode_var.get() else 26
+        style.configure("Treeview", rowheight=row_height)
+        style.configure("Treeview.Heading", font=(self.ui_font_family, font_size, "bold"))
+
+    def _get_palette(self, mode: str) -> Dict[str, str]:
+        if mode == "dark":
+            return {
+                "primary": "#60a5fa",
+                "accent": "#e5e7eb",
+                "surface": "#111827",
+                "canvas": "#0b1220",
+                "muted": "#9ca3af",
+                "text": "#e5e7eb",
+                "divider": "#1f2937",
+                "button_active": "#1f2937",
+                "table_sel": "#1e3a8a",
+            }
+        return {
+            "primary": "#2563eb",
+            "accent": "#111827",
+            "surface": "#ffffff",
+            "canvas": "#f5f7fb",
+            "muted": "#6b7280",
+            "text": "#111827",
+            "divider": "#e5e7eb",
+            "button_active": "#e5e7eb",
+            "table_sel": "#dbeafe",
+        }
 
     def _init_default_font(self) -> str:
         preferred = "Segoe UI"
@@ -656,6 +693,20 @@ class BellApplication:
         ttk.Label(header, text="Günlük işlemleri tek ekrandan yönetebilirsiniz.", style="Muted.TLabel").pack(
             side=tk.LEFT, padx=8
         )
+        ttk.Checkbutton(
+            header,
+            text="🌙 Karanlık Tema",
+            variable=self.theme_var,
+            onvalue="dark",
+            offvalue="light",
+            command=self._toggle_theme,
+        ).pack(side=tk.RIGHT, padx=4)
+        ttk.Checkbutton(
+            header,
+            text="🤏 Dokunmatik Mod",
+            variable=self.touch_mode_var,
+            command=self._toggle_touch_mode,
+        ).pack(side=tk.RIGHT, padx=4)
 
         shortcut = ttk.LabelFrame(frame, text="Kısayol Şeridi", style="Card.TLabelframe")
         shortcut.pack(fill=tk.X, padx=6, pady=6)
@@ -822,6 +873,7 @@ class BellApplication:
         self.shutdown_entry = ttk.Entry(shutdown_frame, textvariable=self.shutdown_time_var, width=10)
         self.shutdown_entry.grid(row=1, column=1, padx=4, pady=2, sticky=tk.W)
         self.shutdown_entry.bind("<FocusOut>", lambda _e: self._apply_shutdown_settings())
+        self._attach_time_validation(self.shutdown_entry, self.shutdown_time_var)
 
         ttk.Label(shutdown_frame, text="Son zil sonrası (dk):").grid(row=2, column=0, padx=4, pady=2, sticky=tk.W)
         self.shutdown_delay_var = tk.IntVar(value=int(self.config.auto_shutdown_delay_minutes or 10))
@@ -1100,6 +1152,8 @@ class BellApplication:
             text="Kitaplıktaki isimleri görmek için aşağıdaki Ses Kütüphanesi bölümünden dosya ekleyin.",
             foreground="#777",
         ).pack(anchor=tk.W, padx=10, pady=(0, 6))
+        self._route_labels: Dict[str, tk.StringVar] = {}
+        self._build_zone_manager(frame)
         self.recess_var = tk.BooleanVar(value=self.config.recess_music_enabled)
         self._sound_path_vars: Dict[str, tk.StringVar] = {}
         self._library_comboboxes: List[ttk.Combobox] = []
@@ -1125,6 +1179,146 @@ class BellApplication:
         self._build_sound_library_section(frame)
         self._seed_library_from_config()
         self._refresh_sound_library()
+
+    def _build_zone_manager(self, frame: ttk.Frame) -> None:
+        zone_frame = ttk.LabelFrame(frame, text="Uzamsal Ses Bölgeleri", style="Card.TLabelframe")
+        zone_frame.pack(fill=tk.X, padx=8, pady=(0, 6))
+        ttk.Label(
+            zone_frame,
+            text="Ses çıkışlarını kat, bina veya alanlara göre gruplayıp her zili ilgili bölgelere yönlendirebilirsiniz.",
+            foreground="#555",
+            wraplength=560,
+        ).pack(anchor=tk.W, padx=6, pady=(4, 2))
+        columns = ("name", "status", "note")
+        self.zone_tree = ttk.Treeview(zone_frame, columns=columns, show="headings", height=4)
+        self.zone_tree.heading("name", text="Bölge")
+        self.zone_tree.heading("status", text="Durum")
+        self.zone_tree.heading("note", text="Not")
+        self.zone_tree.column("name", width=160, anchor=tk.W)
+        self.zone_tree.column("status", width=80, anchor=tk.CENTER)
+        self.zone_tree.column("note", anchor=tk.W)
+        self.zone_tree.pack(fill=tk.X, padx=6, pady=(0, 2))
+        btns = ttk.Frame(zone_frame)
+        btns.pack(fill=tk.X, padx=6, pady=(0, 4))
+        ttk.Button(btns, text="Bölge Ekle", command=self._add_zone_dialog).pack(side=tk.LEFT, padx=2)
+        ttk.Button(btns, text="Düzenle", command=self._edit_zone_dialog).pack(side=tk.LEFT, padx=2)
+        ttk.Button(btns, text="Aç/Kapat", command=self._toggle_zone_enable).pack(side=tk.LEFT, padx=2)
+        self._refresh_zone_tree()
+
+    def _refresh_zone_tree(self) -> None:
+        if not hasattr(self, "zone_tree"):
+            return
+        for item in self.zone_tree.get_children():
+            self.zone_tree.delete(item)
+        for zone in self.config.sound_zones:
+            status = "Açık" if zone.get("enabled", True) else "Kapalı"
+            self.zone_tree.insert(
+                "",
+                tk.END,
+                iid=zone.get("zone_id"),
+                values=(zone.get("name", "Bölge"), status, zone.get("note", "")),
+            )
+        for key, label_var in self._route_labels.items():
+            label_var.set(self._format_zone_summary(key))
+
+    def _add_zone_dialog(self) -> None:
+        name = simpledialog.askstring("Yeni Bölge", "Bölge adı", parent=self.root)
+        if not name:
+            return
+        note = simpledialog.askstring("Not", "Kısa açıklama (opsiyonel)", parent=self.root) or ""
+        new_zone = {
+            "zone_id": uuid4().hex,
+            "name": name,
+            "color": "#2563eb",
+            "enabled": True,
+            "note": note,
+        }
+        self.config.sound_zones.append(new_zone)
+        self.config.save()
+        self._refresh_zone_tree()
+
+    def _get_selected_zone_id(self) -> Optional[str]:
+        selection = getattr(self, "zone_tree", None)
+        if not selection:
+            return None
+        picked = selection.selection()
+        if not picked:
+            return None
+        return picked[0]
+
+    def _edit_zone_dialog(self) -> None:
+        zone_id = self._get_selected_zone_id()
+        if not zone_id:
+            messagebox.showinfo("Bölge", "Önce düzenlemek için bir satır seçin")
+            return
+        for zone in self.config.sound_zones:
+            if zone.get("zone_id") == zone_id:
+                current_name = zone.get("name", "Bölge")
+                new_name = simpledialog.askstring("Bölge Adı", "Yeni ad", initialvalue=current_name, parent=self.root)
+                if new_name:
+                    zone["name"] = new_name
+                new_note = simpledialog.askstring("Not", "Açıklama", initialvalue=zone.get("note", ""), parent=self.root)
+                if new_note is not None:
+                    zone["note"] = new_note
+                break
+        self.config.save()
+        self._refresh_zone_tree()
+
+    def _toggle_zone_enable(self) -> None:
+        zone_id = self._get_selected_zone_id()
+        if not zone_id:
+            messagebox.showinfo("Bölge", "Lütfen aç/kapat için bir satır seçin")
+            return
+        for zone in self.config.sound_zones:
+            if zone.get("zone_id") == zone_id:
+                zone["enabled"] = not zone.get("enabled", True)
+                break
+        self.config.save()
+        self._refresh_zone_tree()
+
+    def _format_zone_summary(self, sound_key: str) -> str:
+        routes = self.config.sound_routes.get(sound_key) or ["main"]
+        names = []
+        for zone_id in routes:
+            zone = next((z for z in self.config.sound_zones if z.get("zone_id") == zone_id), None)
+            names.append(zone.get("name") if zone else zone_id)
+        if not names:
+            return "Bölge atanmadı"
+        return f"Bölgeler: {', '.join(names)}"
+
+    def _open_route_dialog(self, sound_key: str, title: str) -> None:
+        dialog = tk.Toplevel(self.root)
+        dialog.title(f"{title} için bölgeler")
+        dialog.transient(self.root)
+        dialog.grab_set()
+        ttk.Label(dialog, text="Bu zil hangi bölgelere gitsin?", style="Bold.TLabel").pack(padx=12, pady=8)
+        vars: List[tuple[str, tk.BooleanVar]] = []
+        current = set(self.config.sound_routes.get(sound_key) or [])
+        for zone in self.config.sound_zones:
+            var = tk.BooleanVar(value=zone.get("zone_id") in current)
+            ttk.Checkbutton(dialog, text=zone.get("name", "Bölge"), variable=var).pack(anchor=tk.W, padx=14)
+            vars.append((zone.get("zone_id"), var))
+        ttk.Label(
+            dialog,
+            text="Bölge listesi boşsa önce ses ayarları ekranındaki bölge yöneticisinden yeni bölge ekleyin.",
+            wraplength=360,
+            foreground="#6b7280",
+        ).pack(padx=12, pady=(6, 2))
+
+        def apply() -> None:
+            picked = [zone_id for zone_id, var in vars if var.get()]
+            if not picked:
+                messagebox.showwarning("Bölge", "En az bir bölge seçin")
+                return
+            self.config.sound_routes[sound_key] = picked
+            self.config.save()
+            self._route_labels[sound_key].set(self._format_zone_summary(sound_key))
+            dialog.destroy()
+
+        btns = ttk.Frame(dialog)
+        btns.pack(fill=tk.X, padx=12, pady=10)
+        ttk.Button(btns, text="Kaydet", command=apply).pack(side=tk.LEFT, padx=4)
+        ttk.Button(btns, text="İptal", command=dialog.destroy).pack(side=tk.RIGHT, padx=4)
 
     def _build_sound_row(self, frame: ttk.Frame, key: str, label: str) -> None:
         row = ttk.LabelFrame(frame, text=label, style="Card.TLabelframe")
@@ -1182,8 +1376,19 @@ class BellApplication:
                 row=1, column=3, columnspan=2, padx=4, pady=2, sticky=tk.W
             )
 
+        route_var = tk.StringVar(value=self._format_zone_summary(key))
+        self._route_labels[key] = route_var
+        route_row = ttk.Frame(row)
+        route_row.grid(row=2, column=0, columnspan=6, sticky=tk.EW, padx=4, pady=(4, 0))
+        ttk.Label(route_row, textvariable=route_var, foreground="#0f172a").pack(side=tk.LEFT)
+        ttk.Button(
+            route_row,
+            text="Bölge Ata",
+            command=lambda k=key, title=label: self._open_route_dialog(k, title),
+        ).pack(side=tk.RIGHT, padx=2)
+
         announce_frame = ttk.Frame(row)
-        announce_frame.grid(row=2, column=0, columnspan=6, sticky=tk.EW, padx=4, pady=(4, 2))
+        announce_frame.grid(row=3, column=0, columnspan=6, sticky=tk.EW, padx=4, pady=(4, 2))
         announce_frame.columnconfigure(2, weight=1)
         config_ann = self.config.announcement_settings.get(key, {"enabled": False, "path": ""})
         enabled_var = tk.BooleanVar(value=bool(config_ann.get("enabled")))
@@ -1485,6 +1690,21 @@ class BellApplication:
     def _toggle_recess_music(self) -> None:
         self.config.recess_music_enabled = self.recess_var.get()
         self.config.save()
+
+    def _toggle_theme(self) -> None:
+        mode = self.theme_var.get() or "light"
+        self.config.theme_mode = mode
+        self.config.save()
+        self._setup_styles()
+        self.root.update_idletasks()
+
+    def _toggle_touch_mode(self) -> None:
+        enabled = bool(self.touch_mode_var.get())
+        self.config.touch_mode = enabled
+        self.config.save()
+        self._setup_styles()
+        if enabled:
+            self._update_status("Dokunmatik mod: büyük butonlar ve satırlar aktif")
 
     def _build_sound_library_section(self, frame: ttk.Frame) -> None:
         library_frame = ttk.LabelFrame(frame, text="Ses Kütüphanesi ve Etiketler", style="Card.TLabelframe")
@@ -2038,6 +2258,8 @@ class BellApplication:
             entry = ttk.Entry(row_frame, textvariable=var, width=8, justify=tk.CENTER)
             entry.grid(row=0, column=col, padx=4)
             self._add_hint(entry, f"{SOUND_DISPLAY.get(sound_key)} saatini HH:MM olarak girin")
+            entry.bind("<FocusOut>", lambda _e, v=var, w=entry: self._validate_time_cell(v, w))
+            var.trace_add("write", lambda *_a, v=var, w=entry: self._validate_time_cell(v, w))
             row_data[sound_key] = var
         self._table_rows.append(row_data)
 
@@ -2152,6 +2374,25 @@ class BellApplication:
         if hour < 0 or hour > 23 or minute < 0 or minute > 59:
             raise ValueError("Saat 00-23, dakika 00-59 aralığında olmalı")
         return f"{hour:02d}:{minute:02d}"
+
+    def _validate_time_cell(self, var: tk.StringVar, widget: tk.Widget) -> None:
+        value = var.get().strip()
+        try:
+            self._normalize_clock(value)
+        except Exception:
+            try:
+                widget.configure(foreground="#dc2626")
+            except tk.TclError:
+                pass
+        else:
+            try:
+                widget.configure(foreground=self._palette.get("text", "#111827"))
+            except tk.TclError:
+                pass
+
+    def _attach_time_validation(self, entry: tk.Widget, var: tk.StringVar) -> None:
+        entry.bind("<FocusOut>", lambda _e: self._validate_time_cell(var, entry))
+        var.trace_add("write", lambda *_a: self._validate_time_cell(var, entry))
 
     def _nudge_time(self, minutes: int) -> None:
         try:

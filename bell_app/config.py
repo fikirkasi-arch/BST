@@ -31,6 +31,15 @@ def _resolve_data_dir() -> Path:
 DATA_DIR = _resolve_data_dir()
 CONFIG_PATH = DATA_DIR / "config.json"
 MEDIA_DIR = DATA_DIR / "JinniBellSesler"
+SOUND_ROUTE_KEYS = [
+    "student_entry",
+    "teacher_entry",
+    "lesson_exit",
+    "recess_music",
+    "istiklal",
+    "siren",
+    "moment_of_silence",
+]
 
 WEEKDAYS = [
     "Pazartesi",
@@ -82,6 +91,14 @@ class SoundAsset(TypedDict, total=False):
     tags: List[str]
 
 
+class SoundZone(TypedDict, total=False):
+    zone_id: str
+    name: str
+    color: str
+    enabled: bool
+    note: str
+
+
 def _default_announcement_settings() -> Dict[str, Dict[str, object]]:
     keys = ["student_entry", "teacher_entry", "lesson_exit", "recess_music"]
     return {key: {"enabled": False, "path": ""} for key in keys}
@@ -124,6 +141,22 @@ class BellConfig:
     launch_on_boot_service: bool = False
     announcement_settings: Dict[str, Dict[str, object]] = field(
         default_factory=_default_announcement_settings
+    )
+    theme_mode: str = "light"
+    touch_mode: bool = False
+    sound_zones: List[SoundZone] = field(
+        default_factory=lambda: [
+            {
+                "zone_id": "main",
+                "name": "Genel Salon",
+                "color": "#2563eb",
+                "enabled": True,
+                "note": "Varsayılan çıkış",
+            }
+        ]
+    )
+    sound_routes: Dict[str, List[str]] = field(
+        default_factory=lambda: {key: ["main"] for key in SOUND_ROUTE_KEYS}
     )
 
     @classmethod
@@ -181,6 +214,38 @@ class BellConfig:
                 announcement_settings[key]["enabled"] = bool(value.get("enabled", False))
                 announcement_settings[key]["path"] = value.get("path", "")
 
+            zones: List[SoundZone] = []
+            for raw in data.get("sound_zones", []):
+                if not raw:
+                    continue
+                zones.append(
+                    {
+                        "zone_id": raw.get("zone_id") or uuid4().hex,
+                        "name": raw.get("name", "Bölge"),
+                        "color": raw.get("color", "#2563eb"),
+                        "enabled": bool(raw.get("enabled", True)),
+                        "note": raw.get("note", ""),
+                    }
+                )
+            if not zones:
+                zones = [
+                    {
+                        "zone_id": "main",
+                        "name": "Genel Salon",
+                        "color": "#2563eb",
+                        "enabled": True,
+                        "note": "Varsayılan çıkış",
+                    }
+                ]
+
+            routes: Dict[str, List[str]] = {key: ["main"] for key in SOUND_ROUTE_KEYS}
+            raw_routes = data.get("sound_routes") or {}
+            for key, value in raw_routes.items():
+                if isinstance(value, list):
+                    routes[key] = [str(v) for v in value if v]
+                elif isinstance(value, str):
+                    routes[key] = [v.strip() for v in value.split(",") if v.strip()]
+
             instance = cls(
                 daily_schedule={**{day: [] for day in WEEKDAYS}, **schedule},
                 sound_files=data.get("sound_files", {}),
@@ -198,6 +263,10 @@ class BellConfig:
                 launch_on_boot=data.get("launch_on_boot", False),
                 launch_on_boot_service=data.get("launch_on_boot_service", False),
                 announcement_settings=announcement_settings,
+                theme_mode=data.get("theme_mode", "light"),
+                touch_mode=bool(data.get("touch_mode", False)),
+                sound_zones=zones,
+                sound_routes=routes,
             )
             return instance
         return cls()
