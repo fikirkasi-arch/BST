@@ -80,6 +80,8 @@ def _dependency_hint(exc: Exception) -> str:
 
     if isinstance(exc, FileNotFoundError) or "WinError 2" in str(exc):
         hints: list[str] = []
+        runtime_root = Path(sys.executable).parent if getattr(sys, "frozen", False) else Path(__file__).resolve().parents[1]
+        ffmpeg_dir = runtime_root / "ffmpeg"
         if FFMPEG_PATH is None or not Path(FFMPEG_PATH).exists():
             hints.append("ffmpeg.exe bulunamadı; ffmpeg klasörünün eksiksiz kopyalandığından emin olun")
         if FFPROBE_PATH is None or not Path(FFPROBE_PATH).exists():
@@ -87,6 +89,12 @@ def _dependency_hint(exc: Exception) -> str:
         dep_err = _ffplay_dependency_error()
         if dep_err:
             hints.append(dep_err)
+        hints.append(
+            "Manuel çözüm: packaging/ffmpeg-bin içeriğini derlenen exe'nin yanındaki 'ffmpeg'"
+            f" klasörüne kopyalayın (örn: {ffmpeg_dir}).\n"
+            "Çevrimdışı arşiv kullanacaksanız 'ffmpeg-offline.zip' ve 'sdl2-offline.zip'"
+            " dosyalarını packaging klasörüne koyup build_exe'yi yeniden çalıştırın."
+        )
         if not hints:
             hints.append(
                 "FFmpeg klasöründeki ffplay.exe / SDL2.dll dosyalarını ve ffmpeg.exe, ffprobe.exe yollarını doğrulayın"

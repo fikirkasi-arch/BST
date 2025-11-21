@@ -37,6 +37,21 @@ SDL2_LOCAL_NAMES = ("sdl2-offline.zip", "sdl2.zip")
 LOCAL_ARCHIVE_NAMES = ("ffmpeg-offline.zip", "ffmpeg.zip")
 DOWNLOAD_TIMEOUT = int(os.environ.get("FFMPEG_TIMEOUT", "45"))
 
+MANUAL_INSTRUCTIONS = (
+    "1) İnternet erişiminiz kısıtlıysa https://www.gyan.dev/ffmpeg/builds/ adresindeki",
+    "   *latest release* sayfasından `ffmpeg-release-essentials.zip` veya",
+    "   https://github.com/BtbN/FFmpeg-Builds/releases adresinden `ffmpeg-master-latest-win64-gpl.zip`",
+    "   paketlerinden birini indirin.",
+    "2) Arşivi açmadan, zip dosyasını `packaging/ffmpeg-offline.zip` adıyla kopyalayın",
+    "   ya da doğrudan dışarıda tuttuğunuz yol için `FFMPEG_ZIP_PATH` ortam değişkenini set edin.",
+    "3) SDL2 için https://github.com/libsdl-org/SDL/releases sayfasından",
+    "   `SDL2-*-win32-x64.zip` dosyasını indirip `packaging/sdl2-offline.zip` adıyla kopyalayın",
+    "   ya da `SDL2_ZIP_PATH` ile yol gösterin.",
+    "4) Alternatif olarak, bir kez indirip hazırladığınız `packaging/ffmpeg-bin` klasörünü",
+    "   olduğu gibi PyInstaller komutunda `--add-data` ile ekleyebilir veya oluşan `dist/ffmpeg`",
+    "   klasörünü son kullanıcı dizinine manuel kopyalayabilirsiniz.",
+)
+
 
 def _write_console(line: str) -> None:
     """Best-effort mirror of log lines to the visible console on Windows."""
@@ -112,13 +127,12 @@ def download_archive(zip_path: Path) -> None:
         return
 
     error_lines = " ; ".join(errors) if errors else "Bilinmeyen hata"
+    guide = "\n".join(MANUAL_INSTRUCTIONS)
     raise RuntimeError(
         "FFmpeg indirilemedi. Bilgisayarınız internete çıkamıyorsa veya SSL doğrulaması"
-        " engelleniyorsa, https://www.gyan.dev/ffmpeg/builds/ ya da"
-        " https://github.com/BtbN/FFmpeg-Builds/releases adreslerinden"
-        " listelenen paketlerden birini indirip 'ffmpeg-offline.zip' adıyla"
-        " packaging klasörüne kopyalayın veya FFMPEG_ZIP_PATH değişkeniyle yol gösterin."
-        f" Denenen URL'ler: {error_lines}"
+        " engelleniyorsa aşağıdaki adımları izleyin:\n\n"
+        f"{guide}\n\n"
+        f"Denenen URL'ler: {error_lines}"
     )
 
 
@@ -237,12 +251,10 @@ def ensure_binaries(target_dir: Path) -> None:
                 missing_optional = [name for name in optional if not (target_dir / name).exists()]
 
         if missing_optional:
+            guide = "\n".join(MANUAL_INSTRUCTIONS)
             raise RuntimeError(
-                "SDL2.dll bulunamadı. ffplay ses çıkışı için SDL2.dll zorunludur. İnternet"
-                " erişiminiz varsa indirme otomatik yapılır; yoksa https://github.com/libsdl-org/SDL"
-                " üzerindeki SDL2-*-win32-x64.zip arşivlerinden birini indirip"
-                " 'sdl2-offline.zip' adıyla packaging klasörüne veya SDL2_ZIP_PATH değişkeniyle"
-                " gösterdiğiniz konuma koyabilirsiniz."
+                "SDL2.dll bulunamadı. ffplay ses çıkışı için SDL2.dll zorunludur. Aşağıdaki"
+                " çevrimdışı kopyalama adımlarını izleyin:\n\n" + guide
             )
         log(f"Binaries copied into {target_dir}")
 

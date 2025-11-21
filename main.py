@@ -1196,17 +1196,27 @@ class BellApplication:
         self._load_day_into_table()
 
     def _build_sound_tab(self, frame: ttk.Frame) -> None:
-        ttk.Label(frame, text="Her ses için dosya seçin").pack(anchor=tk.W, padx=10, pady=(5, 0))
+        intro = ttk.LabelFrame(frame, text="Ses Motoru Hazırlığı", style="Card.TLabelframe")
+        intro.pack(fill=tk.X, padx=8, pady=(6, 6))
         ttk.Label(
-            frame,
-            text="Seçtiğiniz her dosya JinniBell ses klasörüne kopyalanır ve Kitaplık menüsüne eklenir.",
-            foreground="#555",
-        ).pack(anchor=tk.W, padx=10, pady=(0, 5))
-        ttk.Label(
-            frame,
-            text="Kitaplıktaki isimleri görmek için aşağıdaki Ses Kütüphanesi bölümünden dosya ekleyin.",
-            foreground="#777",
-        ).pack(anchor=tk.W, padx=10, pady=(0, 6))
+            intro,
+            text=(
+                "FFmpeg/ffplay ve SDL2.dll eksiksiz bulunduğunda testler sorunsuz çalışır."
+                " Aşağıdaki göstergeden durumu takip edip talimatlarla manuel kopya yapabilirsiniz."
+            ),
+            foreground="#4b5563",
+            wraplength=620,
+        ).pack(anchor=tk.W, padx=8, pady=(6, 4))
+        self.audio_status_var = tk.StringVar(value=self._describe_audio_dependencies())
+        ttk.Label(intro, textvariable=self.audio_status_var, foreground="#0f172a", wraplength=640).pack(
+            anchor=tk.W, padx=8, pady=(0, 6)
+        )
+        status_row = ttk.Frame(intro)
+        status_row.pack(fill=tk.X, padx=8, pady=(0, 6))
+        ttk.Button(status_row, text="Durumu Yenile", command=self._refresh_audio_status, width=16).pack(
+            side=tk.LEFT, padx=(0, 6)
+        )
+        ttk.Button(status_row, text="Adım Adım Talimat", command=self._show_ffmpeg_help, width=18).pack(side=tk.LEFT)
         self._route_labels: Dict[str, tk.StringVar] = {}
         self._build_zone_manager(frame)
         self.recess_var = tk.BooleanVar(value=self.config.recess_music_enabled)
@@ -1234,6 +1244,45 @@ class BellApplication:
         self._build_sound_library_section(frame)
         self._seed_library_from_config()
         self._refresh_sound_library()
+
+    def _describe_audio_dependencies(self) -> str:
+        parts = []
+        if audio.FFMPEG_PATH and Path(audio.FFMPEG_PATH).exists():
+            parts.append(f"ffmpeg: {audio.FFMPEG_PATH}")
+        else:
+            parts.append("ffmpeg: bulunamadı")
+        if audio.FFPROBE_PATH and Path(audio.FFPROBE_PATH).exists():
+            parts.append(f"ffprobe: {audio.FFPROBE_PATH}")
+        else:
+            parts.append("ffprobe: bulunamadı")
+        dep_err = audio._ffplay_dependency_error()
+        if dep_err:
+            parts.append(dep_err)
+        elif audio.FFPLAY_PATH:
+            parts.append(f"ffplay: {audio.FFPLAY_PATH}")
+        runtime_root = Path(sys.executable).parent if getattr(sys, "frozen", False) else Path(__file__).resolve().parent
+        ffmpeg_dir = runtime_root / "ffmpeg"
+        parts.append(f"Klasör: {ffmpeg_dir}")
+        return " \u2022 ".join(parts)
+
+    def _refresh_audio_status(self) -> None:
+        audio._configure_external_binaries()
+        self.audio_status_var.set(self._describe_audio_dependencies())
+
+    def _show_ffmpeg_help(self) -> None:
+        guide = audio._dependency_hint(FileNotFoundError())
+        messagebox.showinfo(
+            "FFmpeg / ffplay",
+            (
+                "Ses oynatımı için gereken bileşenler eksikse aşağıdaki adımları izleyin:\n\n"
+                "- ffmpeg klasöründe ffmpeg.exe, ffprobe.exe, ffplay.exe ve SDL2.dll bulunduğundan emin olun.\n"
+                "- packaging/ffmpeg-bin içeriğini derlenen exe'nin yanına 'ffmpeg' klasörü olarak kopyalayın.\n"
+                "- Çevrimdışı arşivler için 'ffmpeg-offline.zip' ve 'sdl2-offline.zip' dosyalarını packaging klasörüne koyup"
+                " build_exe'yi yeniden çalıştırabilirsiniz.\n\n"
+                f"Durum: {self._describe_audio_dependencies()}\n\n"
+                f"İpucu:\n{guide}"
+            ),
+        )
 
     def _build_zone_manager(self, frame: ttk.Frame) -> None:
         zone_frame = ttk.LabelFrame(frame, text="Uzamsal Ses Bölgeleri", style="Card.TLabelframe")
