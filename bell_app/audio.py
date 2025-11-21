@@ -59,6 +59,16 @@ def _configure_external_binaries() -> None:
         AudioSegment.ffprobe = str(ffprobe_path)
 
 
+def _ffplay_dependency_error() -> Optional[str]:
+    if FFPLAY_PATH is None:
+        return "ffplay bulunamadı; ffmpeg klasörüne ffplay.exe ekleyin"
+    if os.name == "nt":
+        sdl_path = Path(FFPLAY_PATH).with_name("SDL2.dll")
+        if not sdl_path.exists():
+            return "SDL2.dll eksik; ffplay ses çıkışı için SDL2.dll'i ffmpeg klasörüne ekleyin"
+    return None
+
+
 _configure_external_binaries()
 
 
@@ -150,6 +160,9 @@ class AudioController:
         def worker() -> None:
             handle = None
             try:
+                dep_error = _ffplay_dependency_error()
+                if dep_error:
+                    raise RuntimeError(dep_error)
                 handle = _play_with_ffplay(segment)
             except Exception as exc:
                 try:

@@ -23,6 +23,16 @@ FFMPEG_URLS = (
     ("ffmpeg-release-essentials.zip", "https://www.gyan.dev/ffmpeg/builds/ffmpeg-release-essentials.zip"),
     ("ffmpeg-master-latest-win64-gpl.zip", "https://github.com/BtbN/FFmpeg-Builds/releases/download/latest/ffmpeg-master-latest-win64-gpl.zip"),
 )
+SDL2_URLS = (
+    (
+        "SDL2-2.30.7-win32-x64.zip",
+        "https://github.com/libsdl-org/SDL/releases/download/release-2.30.7/SDL2-2.30.7-win32-x64.zip",
+    ),
+    (
+        "SDL2-2.30.5-win32-x64.zip",
+        "https://github.com/libsdl-org/SDL/releases/download/release-2.30.5/SDL2-2.30.5-win32-x64.zip",
+    ),
+)
 LOCAL_ARCHIVE_NAMES = ("ffmpeg-offline.zip", "ffmpeg.zip")
 DOWNLOAD_TIMEOUT = int(os.environ.get("FFMPEG_TIMEOUT", "45"))
 
@@ -111,6 +121,42 @@ def download_archive(zip_path: Path) -> None:
     )
 
 
+def _download_sdl2(target_dir: Path) -> bool:
+    """İsteğe bağlı SDL2.dll eksikse indirmeyi dene."""
+
+    with tempfile.TemporaryDirectory() as tmp_dir:
+        zip_path = Path(tmp_dir) / "sdl2.zip"
+        for label, url in SDL2_URLS:
+            log(f"SDL2 paketi indirilmeye çalışılıyor: {label} ({url})")
+            try:
+                with urllib.request.urlopen(url, timeout=DOWNLOAD_TIMEOUT) as response, open(
+                    zip_path, "wb"
+                ) as dst:
+                    shutil.copyfileobj(response, dst)
+            except (URLError, TimeoutError, socket.timeout) as exc:
+                log(f"SDL2 indirilemedi ({label}): {exc}")
+                continue
+
+            try:
+                with zipfile.ZipFile(zip_path) as zf:
+                    candidates = [name for name in zf.namelist() if name.lower().endswith("sdl2.dll")]
+                    if not candidates:
+                        log(f"SDL2 arşivinde DLL bulunamadı: {label}")
+                        continue
+                    dll_name = candidates[0]
+                    extract_dir = Path(tmp_dir) / "sdl_extract"
+                    zf.extract(dll_name, extract_dir)
+                    src_path = extract_dir / dll_name
+                    shutil.copy2(src_path, target_dir / "SDL2.dll")
+                    log("SDL2.dll indirildi ve ffmpeg klasörüne kopyalandı")
+                    return True
+            except zipfile.BadZipFile as exc:  # pragma: no cover - bozuk arşiv durumunda
+                log(f"SDL2 arşivi açılamadı: {exc}")
+                continue
+
+    return False
+
+
 def ensure_binaries(target_dir: Path) -> None:
     target_dir.mkdir(parents=True, exist_ok=True)
     required = ["ffmpeg.exe", "ffprobe.exe", "ffplay.exe"]
@@ -155,11 +201,15 @@ def ensure_binaries(target_dir: Path) -> None:
 
         missing_optional = [name for name in optional if not (target_dir / name).exists()]
         if missing_optional:
+            log("FFmpeg arşivinde isteğe bağlı dosyalar eksik: " + ", ".join(missing_optional))
+            if _download_sdl2(target_dir):
+                missing_optional = [name for name in optional if not (target_dir / name).exists()]
+
+        if missing_optional:
             log(
-                "FFmpeg arşivinde isteğe bağlı dosyalar eksik: "
-                + ", ".join(missing_optional)
-                + ". ffplay ses çıkışı için SDL2.dll gerekli olabilir. İsterseniz tam paketi"
-                " manuel indirip 'ffmpeg-offline.zip' olarak packaging klasörüne koyabilirsiniz."
+                "SDL2.dll bulunamadı. ffplay ses çıkışı için SDL2.dll gerekli olabilir. İsterseniz"
+                " tam paketi manuel indirip 'ffmpeg-offline.zip' olarak packaging klasörüne"
+                " koyabilir veya internet bağlantınız varsa derlemeyi yeniden deneyebilirsiniz."
             )
         log(f"Binaries copied into {target_dir}")
 
