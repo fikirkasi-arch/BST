@@ -19,6 +19,8 @@ except Exception:  # pragma: no cover - diğer platformlar
 from pydub import AudioSegment
 
 
+FFMPEG_PATH: Optional[Path] = None
+FFPROBE_PATH: Optional[Path] = None
 FFPLAY_PATH: Optional[Path] = None
 
 
@@ -50,9 +52,13 @@ def _configure_external_binaries() -> None:
 
     global FFPLAY_PATH
 
+    global FFMPEG_PATH, FFPROBE_PATH
+
     ffmpeg_path = _resolve_binary("ffmpeg")
     ffprobe_path = _resolve_binary("ffprobe")
     FFPLAY_PATH = _resolve_binary("ffplay")
+    FFMPEG_PATH = ffmpeg_path
+    FFPROBE_PATH = ffprobe_path
     if ffmpeg_path:
         AudioSegment.converter = str(ffmpeg_path)
     if ffprobe_path:
@@ -60,13 +66,33 @@ def _configure_external_binaries() -> None:
 
 
 def _ffplay_dependency_error() -> Optional[str]:
-    if FFPLAY_PATH is None:
+    if FFPLAY_PATH is None or not Path(FFPLAY_PATH).exists():
         return "ffplay bulunamadı; ffmpeg klasörüne ffplay.exe ekleyin"
     if os.name == "nt":
         sdl_path = Path(FFPLAY_PATH).with_name("SDL2.dll")
         if not sdl_path.exists():
             return "SDL2.dll eksik; ffplay ses çıkışı için SDL2.dll'i ffmpeg klasörüne ekleyin"
     return None
+
+
+def _dependency_hint(exc: Exception) -> str:
+    """Derinlemesine hata ipucu üret."""
+
+    if isinstance(exc, FileNotFoundError) or "WinError 2" in str(exc):
+        hints: list[str] = []
+        if FFMPEG_PATH is None or not Path(FFMPEG_PATH).exists():
+            hints.append("ffmpeg.exe bulunamadı; ffmpeg klasörünün eksiksiz kopyalandığından emin olun")
+        if FFPROBE_PATH is None or not Path(FFPROBE_PATH).exists():
+            hints.append("ffprobe.exe bulunamadı; paket içindeki ffmpeg klasörünü kontrol edin")
+        dep_err = _ffplay_dependency_error()
+        if dep_err:
+            hints.append(dep_err)
+        if not hints:
+            hints.append(
+                "FFmpeg klasöründeki ffplay.exe / SDL2.dll dosyalarını ve ffmpeg.exe, ffprobe.exe yollarını doğrulayın"
+            )
+        return "\n".join(hints)
+    return ""
 
 
 _configure_external_binaries()
@@ -131,7 +157,11 @@ class AudioController:
             gain = 20 * (self._volume - 1)
             segment = audio + gain if self._volume != 1.0 else audio
         except Exception as exc:  # pragma: no cover - platform/codec bağımlı
-            self._notify_error(f"Ses dosyası yüklenemedi: {exc}")
+            hint = _dependency_hint(exc)
+            message = f"Ses dosyası yüklenemedi: {exc}"
+            if hint:
+                message += "\n\n" + hint
+            self._notify_error(message)
             return
 
         self._play_segment(segment, label or path.stem)
