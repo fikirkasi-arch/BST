@@ -22,6 +22,7 @@ from uuid import uuid4
 from mutagen import File as MutagenFile
 from pydub import AudioSegment
 
+import bell_app.audio as audio
 from bell_app.audio import AudioController
 from bell_app.config import BellConfig, BellEvent, WEEKDAYS, ensure_media_dir
 from bell_app.scheduler import ScheduleRunner
