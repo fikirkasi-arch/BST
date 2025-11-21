@@ -2,14 +2,35 @@
 from __future__ import annotations
 
 import json
+import os
 from dataclasses import dataclass, field, asdict
 from datetime import date, time
 from pathlib import Path
 from typing import Dict, List, Optional, TypedDict
 from uuid import uuid4
 
-CONFIG_PATH = Path("config.json")
-MEDIA_DIR = CONFIG_PATH.parent / "JinniBellSesler"
+def _resolve_data_dir() -> Path:
+    """Kullanılabilir en iyi veri dizinini belirle."""
+
+    override = os.environ.get("JINNIBELL_DATA_DIR")
+    if override:
+        return Path(override)
+
+    if os.name == "nt":
+        appdata = os.environ.get("APPDATA") or os.environ.get("LOCALAPPDATA")
+        if appdata:
+            return Path(appdata) / "JinniBellPro"
+
+    try:
+        return Path.home() / ".jinnibellpro"
+    except Exception:
+        # Bazı ortamlarda kullanıcı dizini çözümlenemez; çalışma dizinine düş.
+        return Path.cwd() / "jinnibellpro_data"
+
+
+DATA_DIR = _resolve_data_dir()
+CONFIG_PATH = DATA_DIR / "config.json"
+MEDIA_DIR = DATA_DIR / "JinniBellSesler"
 
 WEEKDAYS = [
     "Pazartesi",
@@ -31,7 +52,13 @@ def time_to_str(value: time) -> str:
     return value.strftime("%H:%M")
 
 
+def ensure_data_dir() -> Path:
+    DATA_DIR.mkdir(parents=True, exist_ok=True)
+    return DATA_DIR
+
+
 def ensure_media_dir() -> Path:
+    ensure_data_dir()
     MEDIA_DIR.mkdir(parents=True, exist_ok=True)
     return MEDIA_DIR
 
@@ -101,6 +128,7 @@ class BellConfig:
 
     @classmethod
     def load(cls) -> "BellConfig":
+        ensure_data_dir()
         if CONFIG_PATH.exists():
             data = json.loads(CONFIG_PATH.read_text(encoding="utf-8"))
             # Convert dicts to dataclasses
@@ -175,6 +203,7 @@ class BellConfig:
         return cls()
 
     def save(self) -> None:
+        ensure_data_dir()
         serializable = asdict(self)
         serializable["daily_schedule"] = {
             day: [asdict(event) for event in events]
