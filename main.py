@@ -791,7 +791,9 @@ class BellApplication:
         countdown_frame = ttk.LabelFrame(frame, text="Geri Sayım ve Bildirim", style="Card.TLabelframe")
         countdown_frame.pack(fill=tk.X, padx=6, pady=4)
         self.countdown_var = tk.StringVar(value="Sonraki zil hesaplanıyor...")
-        default_bg = countdown_frame.cget("background")
+        default_bg = self._palette.get(
+            "surface", ttk.Style(self.root).lookup("Card.TLabelframe", "background")
+        )
         tk.Label(
             countdown_frame,
             textvariable=self.countdown_var,
