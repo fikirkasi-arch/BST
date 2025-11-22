@@ -554,15 +554,7 @@
                 <button id="darkModeToggle" class="header-nav-btn">
                     🌙 Dark Mode
                 </button>
-                <div id="userArea" style="display: flex; align-items: center; gap: 10px;">
-                    <span id="userGreeting" style="font-size: 0.9em;"></span>
-                    <button id="loginBtn" class="header-nav-btn" onclick="window.location.href='giris.html'" style="background: rgba(255,255,255,0.2);">
-                        🔑 Giriş Yap
-                    </button>
-                    <button id="logoutBtn" class="header-nav-btn" onclick="UserAuth.logout()" style="background: rgba(255,255,255,0.2); display: none;">
-                        🚪 Çıkış
-                    </button>
-                </div>
+                <div id="userInfo"></div>
             </div>
         </header>
 
@@ -2368,10 +2360,7 @@
     <script>
         // Giriş durumunu kontrol et ve UI güncelle
         function checkLoginStatus() {
-            const session = StudentAuth.getSession();
-            const loginBtn = document.getElementById('loginBtn');
-            const logoutBtn = document.getElementById('logoutBtn');
-            const userGreeting = document.getElementById('userGreeting');
+            const session = Auth.getSession();
 
             // Profil bölümü elementleri
             const profileName = document.getElementById('profileName');
@@ -2382,25 +2371,25 @@
 
             if (session) {
                 // Giriş yapılmış
-                loginBtn.style.display = 'none';
-                logoutBtn.style.display = 'block';
-                userGreeting.textContent = `Merhaba, ${session.name}!`;
-                userGreeting.style.fontWeight = '600';
-
                 // Profil bölümünü güncelle
                 if (profileName) {
                     profileName.textContent = session.name;
-                    profileInfo.textContent = `${session.number} • ${session.grade}. Sınıf`;
+
+                    // Rol bazlı profil bilgisi
+                    if (session.role === 'student') {
+                        profileInfo.textContent = `${session.number || 'Öğrenci'}`;
+                    } else if (session.role === 'teacher') {
+                        profileInfo.textContent = `👨‍🏫 Öğretmen`;
+                    } else if (session.role === 'admin') {
+                        profileInfo.textContent = `👑 Admin`;
+                    }
+
                     profileAvatar.textContent = session.name.charAt(0).toUpperCase();
                     editProfileBtn.style.display = 'block';
                     profileLoginBtn.style.display = 'none';
                 }
             } else {
                 // Giriş yapılmamış
-                loginBtn.style.display = 'block';
-                logoutBtn.style.display = 'none';
-                userGreeting.textContent = '';
-
                 // Profil bölümü varsayılan
                 if (profileName) {
                     profileName.textContent = 'Misafir Kullanıcı';
@@ -2414,38 +2403,61 @@
 
         // Profil düzenleme modalı göster
         function showEditProfileModal() {
-            const session = StudentAuth.getSession();
+            const session = Auth.getSession();
             if (!session) return;
 
-            const student = StudentAuth.getCurrentStudent();
-            if (!student) return;
+            const user = Auth.getCurrentUser();
+            if (!user) return;
 
             const modal = document.createElement('div');
             modal.id = 'editProfileModal';
             modal.style.cssText = 'position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 10000;';
 
-            modal.innerHTML = `
-                <div style="background: white; border-radius: 20px; padding: 30px; width: 90%; max-width: 400px; box-shadow: 0 20px 60px rgba(0,0,0,0.3);">
-                    <h3 style="margin: 0 0 20px 0; color: #333;">✏️ Profili Düzenle</h3>
+            // Rol bazlı form alanları
+            let formFields = `
+                <div style="margin-bottom: 15px;">
+                    <label style="display: block; margin-bottom: 5px; font-weight: 600; color: #333;">Ad Soyad</label>
+                    <input type="text" id="editName" value="${user.name}" style="width: 100%; padding: 12px; border: 2px solid #e0e0e0; border-radius: 10px; font-size: 14px;">
+                </div>
 
-                    <div style="margin-bottom: 15px;">
-                        <label style="display: block; margin-bottom: 5px; font-weight: 600; color: #333;">Ad Soyad</label>
-                        <input type="text" id="editName" value="${student.name}" style="width: 100%; padding: 12px; border: 2px solid #e0e0e0; border-radius: 10px; font-size: 14px;">
-                    </div>
+                <div style="margin-bottom: 15px;">
+                    <label style="display: block; margin-bottom: 5px; font-weight: 600; color: #333;">E-posta</label>
+                    <input type="email" id="editEmail" value="${user.email || ''}" placeholder="ornek@mail.com" style="width: 100%; padding: 12px; border: 2px solid #e0e0e0; border-radius: 10px; font-size: 14px;">
+                </div>
+            `;
 
-                    <div style="margin-bottom: 15px;">
-                        <label style="display: block; margin-bottom: 5px; font-weight: 600; color: #333;">E-posta</label>
-                        <input type="email" id="editEmail" value="${student.email || ''}" placeholder="ornek@mail.com" style="width: 100%; padding: 12px; border: 2px solid #e0e0e0; border-radius: 10px; font-size: 14px;">
-                    </div>
-
+            // Öğrenci ise sınıf seçimi ekle
+            if (user.role === 'student') {
+                formFields += `
                     <div style="margin-bottom: 20px;">
                         <label style="display: block; margin-bottom: 5px; font-weight: 600; color: #333;">Sınıf</label>
                         <select id="editGrade" style="width: 100%; padding: 12px; border: 2px solid #e0e0e0; border-radius: 10px; font-size: 14px;">
-                            <option value="5" ${student.grade == 5 ? 'selected' : ''}>5. Sınıf</option>
-                            <option value="6" ${student.grade == 6 ? 'selected' : ''}>6. Sınıf</option>
+                            <option value="5" ${user.grade == 5 ? 'selected' : ''}>5. Sınıf</option>
+                            <option value="6" ${user.grade == 6 ? 'selected' : ''}>6. Sınıf</option>
                         </select>
                     </div>
+                `;
+            }
 
+            // Öğretmen ise okul ve branş ekle
+            if (user.role === 'teacher') {
+                formFields += `
+                    <div style="margin-bottom: 15px;">
+                        <label style="display: block; margin-bottom: 5px; font-weight: 600; color: #333;">Okul</label>
+                        <input type="text" id="editSchool" value="${user.school || ''}" placeholder="Okul adı" style="width: 100%; padding: 12px; border: 2px solid #e0e0e0; border-radius: 10px; font-size: 14px;">
+                    </div>
+
+                    <div style="margin-bottom: 20px;">
+                        <label style="display: block; margin-bottom: 5px; font-weight: 600; color: #333;">Branş</label>
+                        <input type="text" id="editBranch" value="${user.branch || ''}" placeholder="Branş" style="width: 100%; padding: 12px; border: 2px solid #e0e0e0; border-radius: 10px; font-size: 14px;">
+                    </div>
+                `;
+            }
+
+            modal.innerHTML = `
+                <div style="background: white; border-radius: 20px; padding: 30px; width: 90%; max-width: 400px; box-shadow: 0 20px 60px rgba(0,0,0,0.3);">
+                    <h3 style="margin: 0 0 20px 0; color: #333;">✏️ Profili Düzenle</h3>
+                    ${formFields}
                     <div style="display: flex; gap: 10px;">
                         <button onclick="closeEditProfileModal()" style="flex: 1; padding: 12px; border: 2px solid #e0e0e0; border-radius: 10px; background: white; cursor: pointer; font-weight: 600;">İptal</button>
                         <button onclick="saveProfile()" style="flex: 1; padding: 12px; border: none; border-radius: 10px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; cursor: pointer; font-weight: 600;">Kaydet</button>
@@ -2466,18 +2478,32 @@
         function saveProfile() {
             const name = document.getElementById('editName').value;
             const email = document.getElementById('editEmail').value;
-            const grade = document.getElementById('editGrade').value;
 
             if (!name.trim()) {
                 alert('Lütfen adınızı girin!');
                 return;
             }
 
-            const result = StudentAuth.updateProfile({ name, email, grade });
+            const updates = { name, email };
+
+            // Öğrenci ise sınıf bilgisini ekle
+            const gradeEl = document.getElementById('editGrade');
+            if (gradeEl) {
+                updates.grade = gradeEl.value;
+            }
+
+            // Öğretmen ise okul ve branş bilgilerini ekle
+            const schoolEl = document.getElementById('editSchool');
+            const branchEl = document.getElementById('editBranch');
+            if (schoolEl) updates.school = schoolEl.value;
+            if (branchEl) updates.branch = branchEl.value;
+
+            const result = Auth.updateProfile(updates);
 
             if (result.success) {
                 closeEditProfileModal();
                 checkLoginStatus();
+                Roles.updateUserInfo(); // Header'daki kullanıcı bilgilerini güncelle
                 alert('Profil güncellendi!');
             } else {
                 alert(result.message);

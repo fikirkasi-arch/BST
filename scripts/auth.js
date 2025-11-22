@@ -329,6 +329,58 @@ const Auth = {
     },
 
     /**
+     * Profil bilgilerini güncelle
+     */
+    updateProfile(updates) {
+        try {
+            const session = this.getSession();
+            if (!session) {
+                return {
+                    success: false,
+                    message: 'Oturum bulunamadı!'
+                };
+            }
+
+            const users = this.getAllUsers();
+            const userIndex = users.findIndex(u => u.id === session.userId);
+
+            if (userIndex === -1) {
+                return {
+                    success: false,
+                    message: 'Kullanıcı bulunamadı!'
+                };
+            }
+
+            // Güncellenebilir alanlar
+            if (updates.name) users[userIndex].name = updates.name;
+            if (updates.email !== undefined) users[userIndex].email = updates.email;
+            if (updates.grade) users[userIndex].grade = updates.grade;
+            if (updates.school) users[userIndex].school = updates.school;
+            if (updates.branch) users[userIndex].branch = updates.branch;
+
+            // Kaydet
+            localStorage.setItem('bst_users', JSON.stringify(users));
+
+            // Session'ı güncelle
+            session.name = users[userIndex].name;
+            session.email = users[userIndex].email;
+            localStorage.setItem('bst_session', JSON.stringify(session));
+
+            return {
+                success: true,
+                message: 'Profil güncellendi!'
+            };
+
+        } catch (error) {
+            console.error('Update profile error:', error);
+            return {
+                success: false,
+                message: 'Profil güncellenirken hata oluştu!'
+            };
+        }
+    },
+
+    /**
      * Kullanıcı var mı kontrolü
      */
     userExists(identifier) {
