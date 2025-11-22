@@ -369,6 +369,10 @@
                 padding: 0;
                 margin: 0;
             }
+            .container h1,
+            .container .subtitle {
+                display: none;
+            }
             .workflow {
                 display: block;
             }
@@ -383,37 +387,59 @@
                 background: white;
             }
             .test-paper {
-                padding: 15px;
+                padding: 10px;
                 box-shadow: none;
                 border-radius: 0;
             }
             .test-header {
-                padding-bottom: 8px;
-                margin-bottom: 15px;
+                padding-bottom: 5px;
+                margin-bottom: 10px;
                 border-bottom: 2px solid #000;
             }
             .test-title {
-                font-size: 1.3em;
-                margin-bottom: 5px;
+                font-size: 1.2em;
+                margin-bottom: 3px;
             }
             .test-info {
-                font-size: 0.85em;
-                margin-top: 8px;
+                font-size: 0.8em;
+                margin-top: 5px;
             }
             .question-item {
-                margin-bottom: 20px;
-                padding: 12px;
+                margin-bottom: 10px;
+                padding: 8px;
                 background: white;
                 border: 1px solid #ddd;
                 border-left: 3px solid #000;
                 border-radius: 0;
                 page-break-inside: avoid;
             }
+            .question-number {
+                font-size: 0.95em;
+                margin-bottom: 5px;
+            }
+            .question-text {
+                font-size: 0.95em;
+                margin-bottom: 8px;
+                line-height: 1.4;
+            }
+            .options {
+                margin-left: 15px;
+            }
+            .option {
+                padding: 4px 0;
+                font-size: 0.9em;
+            }
             .answer-box {
-                min-height: 120px;
+                min-height: 60px;
+                margin-top: 8px;
+                padding: 8px;
                 border: 2px solid #000;
                 border-radius: 0;
                 background: white;
+            }
+            .answer-box-label {
+                font-size: 0.85em;
+                margin-bottom: 5px;
             }
             .answer-key {
                 page-break-before: always;
@@ -857,7 +883,20 @@
                 alert('⚠️ Önce bir test oluşturun!');
                 return;
             }
-            window.print();
+            // Yazdırırken cevap anahtarını göster
+            const previousShowAnswers = showAnswers;
+            showAnswers = true;
+            renderTest();
+
+            // Yazdırma işlemi
+            setTimeout(() => {
+                window.print();
+                // Yazdırdıktan sonra eski duruma dön
+                setTimeout(() => {
+                    showAnswers = previousShowAnswers;
+                    renderTest();
+                }, 100);
+            }, 100);
         }
 
         // Sayfa yüklendiğinde
