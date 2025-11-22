@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🔤 Harf Avı - Bilişim Terimleri Oyunu</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .container {
+            max-width: 900px;
+            width: 100%;
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        h1 {
+            text-align: center;
+            color: #f5576c;
+            margin-bottom: 10px;
+            font-size: 2.5em;
+        }
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 1.1em;
+        }
+        .stats {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: #f5f5f5;
+            border-radius: 15px;
+        }
+        .stat {
+            text-align: center;
+        }
+        .stat-value {
+            font-size: 2.5em;
+            font-weight: bold;
+            color: #f5576c;
+        }
+        .stat-label {
+            font-size: 1em;
+            color: #666;
+            margin-top: 5px;
+        }
+        .word-grid {
+            display: grid;
+            grid-template-columns: repeat(15, 1fr);
+            gap: 3px;
+            margin: 30px 0;
+            background: #333;
+            padding: 3px;
+            border-radius: 10px;
+        }
+        .letter {
+            aspect-ratio: 1;
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.2em;
+            cursor: pointer;
+            transition: all 0.3s;
+            user-select: none;
+        }
+        .letter:hover {
+            background: #f093fb;
+            color: white;
+            transform: scale(1.1);
+        }
+        .letter.selected {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+        }
+        .letter.found {
+            background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+            color: white;
+            animation: pulse 0.5s;
+        }
+        .word-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 30px 0;
+        }
+        .word-item {
+            padding: 15px;
+            background: #f5f5f5;
+            border-radius: 10px;
+            border: 2px solid #e0e0e0;
+            text-align: center;
+            font-weight: bold;
+            color: #666;
+            transition: all 0.3s;
+        }
+        .word-item.found {
+            background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+            color: white;
+            border-color: #43e97b;
+        }
+        .buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 30px;
+        }
+        .btn {
+            padding: 15px 30px;
+            font-size: 1.1em;
+            font-weight: bold;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+        }
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        .modal.active {
+            display: flex;
+        }
+        .modal-content {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            text-align: center;
+            max-width: 500px;
+        }
+        .modal-content h2 {
+            color: #43e97b;
+            font-size: 2.5em;
+            margin-bottom: 20px;
+        }
+        .modal-content p {
+            font-size: 1.3em;
+            color: #666;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔤 Harf Avı</h1>
+        <p class="subtitle">Bilişim terimlerini harfler arasında bulun!</p>
+
+        <div class="stats">
+            <div class="stat">
+                <div class="stat-value" id="foundWords">0</div>
+                <div class="stat-label">Bulunan Kelime</div>
+            </div>
+            <div class="stat">
+                <div class="stat-value" id="totalWords">10</div>
+                <div class="stat-label">Toplam Kelime</div>
+            </div>
+            <div class="stat">
+                <div class="stat-value" id="score">0</div>
+                <div class="stat-label">Puan</div>
+            </div>
+        </div>
+
+        <div class="word-list" id="wordList"></div>
+
+        <div class="word-grid" id="wordGrid"></div>
+
+        <div class="buttons">
+            <button class="btn btn-primary" onclick="resetSelection()">🔄 Seçimi Temizle</button>
+            <button class="btn btn-primary" onclick="startNewGame()">🎮 Yeni Oyun</button>
+            <button class="btn btn-secondary" onclick="window.location.href='../index.html'">🏠 Ana Sayfa</button>
+        </div>
+    </div>
+
+    <div class="modal" id="winModal">
+        <div class="modal-content">
+            <h2>🎉 Tebrikler!</h2>
+            <p>Tüm kelimeleri buldunuz!</p>
+            <p>Toplam Puan: <strong id="finalScore">0</strong></p>
+            <button class="btn btn-primary" onclick="startNewGame(); closeModal();" style="margin-top: 20px;">🔄 Yeni Oyun</button>
+        </div>
+    </div>
+
+    <script>
+        const words = [
+            'RAM', 'CPU', 'DISK', 'MONITOR', 'KLAVYE',
+            'FARE', 'YAZICI', 'TARAYICI', 'USB', 'INTERNET'
+        ];
+
+        let grid = [];
+        let selected = [];
+        let foundWords = new Set();
+        let score = 0;
+        const gridSize = 15;
+
+        function initGame() {
+            foundWords.clear();
+            selected = [];
+            score = 0;
+            updateStats();
+            generateGrid();
+            renderWordList();
+            renderGrid();
+        }
+
+        function generateGrid() {
+            grid = Array(gridSize).fill(null).map(() =>
+                Array(gridSize).fill(null).map(() =>
+                    String.fromCharCode(65 + Math.floor(Math.random() * 26))
+                )
+            );
+
+            // Her kelimeyi rastgele yerleştir
+            words.forEach(word => {
+                let placed = false;
+                let attempts = 0;
+
+                while (!placed && attempts < 100) {
+                    const direction = Math.floor(Math.random() * 3); // 0: yatay, 1: dikey, 2: çapraz
+                    const row = Math.floor(Math.random() * gridSize);
+                    const col = Math.floor(Math.random() * gridSize);
+
+                    if (canPlaceWord(word, row, col, direction)) {
+                        placeWord(word, row, col, direction);
+                        placed = true;
+                    }
+                    attempts++;
+                }
+            });
+        }
+
+        function canPlaceWord(word, row, col, direction) {
+            if (direction === 0) { // Yatay
+                if (col + word.length > gridSize) return false;
+            } else if (direction === 1) { // Dikey
+                if (row + word.length > gridSize) return false;
+            } else { // Çapraz
+                if (row + word.length > gridSize || col + word.length > gridSize) return false;
+            }
+            return true;
+        }
+
+        function placeWord(word, row, col, direction) {
+            for (let i = 0; i < word.length; i++) {
+                if (direction === 0) { // Yatay
+                    grid[row][col + i] = word[i];
+                } else if (direction === 1) { // Dikey
+                    grid[row + i][col] = word[i];
+                } else { // Çapraz
+                    grid[row + i][col + i] = word[i];
+                }
+            }
+        }
+
+        function renderGrid() {
+            const gridEl = document.getElementById('wordGrid');
+            gridEl.innerHTML = '';
+
+            grid.forEach((row, r) => {
+                row.forEach((letter, c) => {
+                    const cell = document.createElement('div');
+                    cell.className = 'letter';
+                    cell.textContent = letter;
+                    cell.dataset.row = r;
+                    cell.dataset.col = c;
+                    cell.onclick = () => selectLetter(r, c);
+                    gridEl.appendChild(cell);
+                });
+            });
+        }
+
+        function renderWordList() {
+            const listEl = document.getElementById('wordList');
+            listEl.innerHTML = '';
+
+            words.forEach(word => {
+                const item = document.createElement('div');
+                item.className = 'word-item';
+                if (foundWords.has(word)) {
+                    item.classList.add('found');
+                    item.innerHTML = `✓ ${word}`;
+                } else {
+                    item.textContent = word;
+                }
+                listEl.appendChild(item);
+            });
+        }
+
+        function selectLetter(row, col) {
+            const key = `${row},${col}`;
+            const index = selected.findIndex(s => s.key === key);
+
+            if (index > -1) {
+                selected.splice(index, 1);
+            } else {
+                selected.push({ row, col, key, letter: grid[row][col] });
+            }
+
+            updateSelection();
+            checkWord();
+        }
+
+        function updateSelection() {
+            document.querySelectorAll('.letter').forEach(el => {
+                const key = `${el.dataset.row},${el.dataset.col}`;
+                if (selected.some(s => s.key === key)) {
+                    el.classList.add('selected');
+                } else {
+                    el.classList.remove('selected');
+                }
+            });
+        }
+
+        function checkWord() {
+            if (selected.length < 2) return;
+
+            const word = selected.map(s => s.letter).join('');
+
+            if (words.includes(word) && !foundWords.has(word)) {
+                foundWords.add(word);
+                score += word.length * 10;
+
+                selected.forEach(s => {
+                    const cell = document.querySelector(`.letter[data-row="${s.row}"][data-col="${s.col}"]`);
+                    cell.classList.add('found');
+                    cell.classList.remove('selected');
+                });
+
+                selected = [];
+                updateStats();
+                renderWordList();
+
+                if (foundWords.size === words.length) {
+                    setTimeout(showWinModal, 500);
+                }
+            }
+        }
+
+        function resetSelection() {
+            selected = [];
+            updateSelection();
+        }
+
+        function updateStats() {
+            document.getElementById('foundWords').textContent = foundWords.size;
+            document.getElementById('totalWords').textContent = words.length;
+            document.getElementById('score').textContent = score;
+        }
+
+        function showWinModal() {
+            document.getElementById('finalScore').textContent = score;
+            document.getElementById('winModal').classList.add('active');
+        }
+
+        function closeModal() {
+            document.getElementById('winModal').classList.remove('active');
+        }
+
+        function startNewGame() {
+            initGame();
+        }
+
+        // Oyunu başlat
+        initGame();
+    </script>
+</body>
+</html>

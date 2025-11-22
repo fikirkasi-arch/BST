@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎮 Scratch Projesi - Blok Kodlama</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #38f9d7 0%, #43e97b 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        h1 {
+            text-align: center;
+            color: #43e97b;
+            margin-bottom: 10px;
+        }
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+        }
+        .workspace {
+            display: grid;
+            grid-template-columns: 250px 1fr 300px;
+            gap: 20px;
+            margin: 20px 0;
+        }
+        .blocks-panel {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 15px;
+            max-height: 600px;
+            overflow-y: auto;
+        }
+        .blocks-panel h3 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 1.1em;
+        }
+        .block {
+            padding: 12px 15px;
+            margin: 10px 0;
+            border-radius: 8px;
+            cursor: move;
+            color: white;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+        .block:hover {
+            transform: translateX(5px);
+            box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+        }
+        .block-motion { background: #4C97FF; }
+        .block-looks { background: #9966FF; }
+        .block-sound { background: #CF63CF; }
+        .block-events { background: #FFD500; color: #333; }
+        .block-control { background: #FFAB19; }
+        .code-area {
+            background: #f8f9fa;
+            border: 3px dashed #ddd;
+            border-radius: 15px;
+            min-height: 600px;
+            padding: 20px;
+        }
+        .code-area h3 {
+            color: #333;
+            margin-bottom: 15px;
+        }
+        .dropped-block {
+            margin: 10px 0;
+            padding: 12px 15px;
+            border-radius: 8px;
+            color: white;
+            font-weight: bold;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .remove-btn {
+            background: rgba(255,255,255,0.3);
+            border: none;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        .preview-panel {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 15px;
+        }
+        .preview-panel h3 {
+            color: #333;
+            margin-bottom: 15px;
+        }
+        .stage {
+            background: white;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            height: 300px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+        .sprite {
+            font-size: 4em;
+            position: absolute;
+            transition: all 0.5s;
+        }
+        .buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 30px;
+            justify-content: center;
+        }
+        .btn {
+            padding: 15px 30px;
+            font-size: 1.1em;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+        .btn-success {
+            background: linear-gradient(135deg, #38f9d7 0%, #43e97b 100%);
+            color: white;
+        }
+        .btn-danger {
+            background: #dc3545;
+            color: white;
+        }
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎮 Scratch Blok Kodlama</h1>
+        <p class="subtitle">Blokları sürükleyerek kendi programını oluştur!</p>
+
+        <div class="workspace">
+            <!-- Bloklar Paneli -->
+            <div class="blocks-panel">
+                <h3>📦 Kod Blokları</h3>
+
+                <div class="block block-events" draggable="true" data-code="start">
+                    🚀 Başla
+                </div>
+
+                <div class="block block-motion" draggable="true" data-code="move-10">
+                    ➡️ 10 adım ilerle
+                </div>
+
+                <div class="block block-motion" draggable="true" data-code="turn-90">
+                    🔄 90 derece dön
+                </div>
+
+                <div class="block block-looks" draggable="true" data-code="say-hello">
+                    💬 "Merhaba!" de
+                </div>
+
+                <div class="block block-looks" draggable="true" data-code="show">
+                    👁️ Göster
+                </div>
+
+                <div class="block block-looks" draggable="true" data-code="hide">
+                    🚫 Gizle
+                </div>
+
+                <div class="block block-control" draggable="true" data-code="wait-1">
+                    ⏱️ 1 saniye bekle
+                </div>
+
+                <div class="block block-control" draggable="true" data-code="repeat-3">
+                    🔁 3 kez tekrarla
+                </div>
+            </div>
+
+            <!-- Kod Alanı -->
+            <div class="code-area" id="codeArea">
+                <h3>💻 Senin Kodun</h3>
+                <div id="droppedBlocks"></div>
+            </div>
+
+            <!-- Önizleme Paneli -->
+            <div class="preview-panel">
+                <h3>🎬 Sahne</h3>
+                <div class="stage" id="stage">
+                    <div class="sprite" id="sprite">🐱</div>
+                </div>
+                <div style="margin-top: 15px;">
+                    <p><strong>Durumu:</strong> <span id="status">Bekliyor...</span></p>
+                </div>
+            </div>
+        </div>
+
+        <div class="buttons">
+            <button class="btn btn-success" onclick="runCode()">▶️ Çalıştır</button>
+            <button class="btn btn-danger" onclick="clearCode()">🗑️ Temizle</button>
+            <button class="btn btn-secondary" onclick="window.location.href='../index.html'">🏠 Ana Sayfa</button>
+        </div>
+    </div>
+
+    <script>
+        let codeBlocks = [];
+        let draggedBlock = null;
+
+        // Drag & Drop setup
+        document.querySelectorAll('.block').forEach(block => {
+            block.addEventListener('dragstart', (e) => {
+                draggedBlock = e.target.cloneNode(true);
+                draggedBlock.dataset.code = e.target.dataset.code;
+                draggedBlock.className = e.target.className;
+            });
+        });
+
+        const codeArea = document.getElementById('codeArea');
+        codeArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+        });
+
+        codeArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            if (draggedBlock) {
+                addBlock(draggedBlock.dataset.code, draggedBlock.className, draggedBlock.textContent.trim());
+            }
+        });
+
+        function addBlock(code, className, text) {
+            codeBlocks.push({ code, className, text });
+            renderBlocks();
+        }
+
+        function renderBlocks() {
+            const container = document.getElementById('droppedBlocks');
+            container.innerHTML = '';
+
+            codeBlocks.forEach((block, index) => {
+                const div = document.createElement('div');
+                div.className = 'dropped-block ' + block.className.split(' ').slice(1).join(' ');
+                div.innerHTML = `
+                    ${block.text}
+                    <button class="remove-btn" onclick="removeBlock(${index})">×</button>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        function removeBlock(index) {
+            codeBlocks.splice(index, 1);
+            renderBlocks();
+        }
+
+        function clearCode() {
+            codeBlocks = [];
+            renderBlocks();
+            resetSprite();
+            document.getElementById('status').textContent = 'Bekliyor...';
+        }
+
+        function resetSprite() {
+            const sprite = document.getElementById('sprite');
+            sprite.style.left = '50%';
+            sprite.style.top = '50%';
+            sprite.style.transform = 'translate(-50%, -50%) rotate(0deg)';
+            sprite.style.display = 'block';
+        }
+
+        async function runCode() {
+            if (codeBlocks.length === 0) {
+                alert('❌ Önce kod blokları ekleyin!');
+                return;
+            }
+
+            resetSprite();
+            document.getElementById('status').textContent = 'Çalışıyor...';
+
+            for (let block of codeBlocks) {
+                await executeBlock(block.code);
+            }
+
+            document.getElementById('status').textContent = '✓ Tamamlandı!';
+        }
+
+        async function executeBlock(code) {
+            const sprite = document.getElementById('sprite');
+            const status = document.getElementById('status');
+
+            switch (code) {
+                case 'start':
+                    status.textContent = '🚀 Başlatıldı!';
+                    break;
+                case 'move-10':
+                    const currentLeft = parseFloat(sprite.style.left || '50%');
+                    sprite.style.left = (currentLeft + 10) + '%';
+                    break;
+                case 'turn-90':
+                    const currentRotation = parseInt(sprite.style.transform.match(/rotate\((\d+)deg\)/)?.[1] || '0');
+                    sprite.style.transform = sprite.style.transform.replace(/rotate\(\d+deg\)/, '') + ` rotate(${currentRotation + 90}deg)`;
+                    break;
+                case 'say-hello':
+                    status.textContent = '💬 "Merhaba!"';
+                    break;
+                case 'show':
+                    sprite.style.display = 'block';
+                    break;
+                case 'hide':
+                    sprite.style.display = 'none';
+                    break;
+                case 'wait-1':
+                    await new Promise(resolve => setTimeout(resolve, 1000));
+                    break;
+                case 'repeat-3':
+                    // Basit tekrar - sonraki bloğu 3 kez çalıştır
+                    break;
+            }
+
+            await new Promise(resolve => setTimeout(resolve, 300));
+        }
+
+        resetSprite();
+    </script>
+</body>
+</html>

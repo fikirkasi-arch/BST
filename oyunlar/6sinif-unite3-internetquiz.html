@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🌐 İnternet Güvenliği Quiz</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #ff9800 0%, #ff5722 100%);
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .container {
+            max-width: 800px;
+            width: 100%;
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        h1 {
+            text-align: center;
+            color: #ff5722;
+            margin-bottom: 10px;
+            font-size: 2.5em;
+        }
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 1.2em;
+        }
+        .stats {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: #f5f5f5;
+            border-radius: 15px;
+        }
+        .stat {
+            text-align: center;
+        }
+        .stat-value {
+            font-size: 2em;
+            font-weight: bold;
+            color: #ff5722;
+        }
+        .stat-label {
+            font-size: 0.9em;
+            color: #666;
+            margin-top: 5px;
+        }
+        .question-card {
+            background: #f8f9fa;
+            padding: 30px;
+            border-radius: 15px;
+            margin: 20px 0;
+            border: 3px solid #ff9800;
+        }
+        .question-number {
+            color: #ff5722;
+            font-weight: bold;
+            font-size: 1.1em;
+            margin-bottom: 15px;
+        }
+        .question-text {
+            font-size: 1.3em;
+            color: #333;
+            margin-bottom: 25px;
+            line-height: 1.6;
+        }
+        .options {
+            display: grid;
+            gap: 15px;
+        }
+        .option {
+            padding: 15px 20px;
+            background: white;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 1.1em;
+        }
+        .option:hover {
+            border-color: #ff9800;
+            background: #fff3e0;
+            transform: translateX(5px);
+        }
+        .option.selected {
+            background: linear-gradient(135deg, #ff9800 0%, #ff5722 100%);
+            color: white;
+            border-color: #ff5722;
+        }
+        .option.correct {
+            background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+            color: white;
+            border-color: #43e97b;
+        }
+        .option.wrong {
+            background: linear-gradient(135deg, #f5576c 0%, #d32f2f 100%);
+            color: white;
+            border-color: #d32f2f;
+        }
+        .option.disabled {
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+        .buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 30px;
+        }
+        .btn {
+            padding: 15px 35px;
+            font-size: 1.2em;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #ff9800 0%, #ff5722 100%);
+            color: white;
+        }
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        .feedback {
+            margin-top: 20px;
+            padding: 20px;
+            border-radius: 10px;
+            display: none;
+            font-size: 1.1em;
+        }
+        .feedback.show {
+            display: block;
+        }
+        .feedback.correct {
+            background: #d4edda;
+            color: #155724;
+            border: 2px solid #c3e6cb;
+        }
+        .feedback.wrong {
+            background: #f8d7da;
+            color: #721c24;
+            border: 2px solid #f5c6cb;
+        }
+        .result-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        .result-modal.active {
+            display: flex;
+        }
+        .result-content {
+            background: white;
+            padding: 50px;
+            border-radius: 20px;
+            text-align: center;
+            max-width: 500px;
+        }
+        .result-content h2 {
+            font-size: 2.5em;
+            margin-bottom: 20px;
+        }
+        .result-content p {
+            font-size: 1.3em;
+            color: #666;
+            margin: 15px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🌐 İnternet Güvenliği Quiz</h1>
+        <p class="subtitle">Güvenli internet kullanımını öğren!</p>
+
+        <div class="stats">
+            <div class="stat">
+                <div class="stat-value" id="currentQ">1</div>
+                <div class="stat-label">Soru</div>
+            </div>
+            <div class="stat">
+                <div class="stat-value" id="totalQ">10</div>
+                <div class="stat-label">Toplam</div>
+            </div>
+            <div class="stat">
+                <div class="stat-value" id="score">0</div>
+                <div class="stat-label">Doğru</div>
+            </div>
+        </div>
+
+        <div class="question-card" id="questionCard"></div>
+        <div class="feedback" id="feedback"></div>
+
+        <div class="buttons">
+            <button class="btn btn-primary" id="nextBtn" onclick="nextQuestion()" disabled>Sonraki Soru ➡️</button>
+            <button class="btn btn-secondary" onclick="window.location.href='../index.html'">🏠 Ana Sayfa</button>
+        </div>
+    </div>
+
+    <div class="result-modal" id="resultModal">
+        <div class="result-content">
+            <h2>🎉 Quiz Tamamlandı!</h2>
+            <p>Toplam Skor: <strong id="finalScore">0</strong> / <strong id="finalTotal">10</strong></p>
+            <p id="resultMessage"></p>
+            <button class="btn btn-primary" onclick="restartQuiz()" style="margin-top: 20px;">🔄 Yeniden Başla</button>
+        </div>
+    </div>
+
+    <script>
+        const questions = [
+            {
+                question: 'Bilinmeyen bir kişiden gelen şüpheli e-postadaki linke ne yapmalısın?',
+                options: [
+                    'Hemen tıklarım, merak ederim',
+                    'Linke tıklamam, e-postayı silerim',
+                    'Arkadaşlarımla paylaşırım',
+                    'Tüm dosyaları indiririm'
+                ],
+                correct: 1,
+                explanation: 'Bilinmeyen e-postalardaki linklere asla tıklamamalısın. Bu phishing (oltalama) girişimi olabilir.'
+            },
+            {
+                question: 'Güçlü bir şifre nasıl olmalıdır?',
+                options: [
+                    'Sadece ismim',
+                    'Doğum tarihim',
+                    'Harf, rakam ve sembol karışımı',
+                    '123456'
+                ],
+                correct: 2,
+                explanation: 'Güçlü şifre en az 8 karakter, büyük-küçük harf, rakam ve özel karakterler içermelidir.'
+            },
+            {
+                question: 'Sosyal medyada hangi bilgileri paylaşmamalısın?',
+                options: [
+                    'Favori rengim',
+                    'Ev adresim ve telefon numaram',
+                    'Sevdiğim müzikler',
+                    'Okuduğum kitaplar'
+                ],
+                correct: 1,
+                explanation: 'Kişisel bilgiler (adres, telefon, okul) sosyal medyada paylaşılmamalı.'
+            },
+            {
+                question: 'Ortak bilgisayarda işini bitirdikten sonra ne yapmalısın?',
+                options: [
+                    'Bilgisayarı kapatırım',
+                    'Oturumu kapatırım',
+                    'Hiçbir şey yapmam',
+                    'Ekranı kilitlemem yeterli'
+                ],
+                correct: 1,
+                explanation: 'Ortak bilgisayarlarda mutlaka oturumu kapatmalısın. Böylece başkaları bilgilerine erişemez.'
+            },
+            {
+                question: 'Arkadaşından gelen ama şüpheli görünen bir mesaja ne yapmalısın?',
+                options: [
+                    'Hemen tıklarım',
+                    'Arkadaşımı ararım ve sorarım',
+                    'Tüm arkadaşlarıma gönderirim',
+                    'Linkteki dosyayı indiririm'
+                ],
+                correct: 1,
+                explanation: 'Arkadaşının hesabı ele geçirilmiş olabilir. Önce başka yoldan doğrulama yapmalısın.'
+            },
+            {
+                question: 'Ücretsiz WiFi ağlarında hangi işlemi yapmamalısın?',
+                options: [
+                    'Haber okumak',
+                    'Banka işlemleri yapmak',
+                    'Müzik dinlemek',
+                    'Oyun oynamak'
+                ],
+                correct: 1,
+                explanation: 'Açık WiFi ağlarında banka işlemleri ve şifre girişi yapmak tehlikelidir.'
+            },
+            {
+                question: 'Bir web sitesinin güvenli olduğunu nasıl anlarsın?',
+                options: [
+                    'Renkli olması',
+                    'Adres çubuğunda "https://" olması',
+                    'Çok resim olması',
+                    'Hızlı açılması'
+                ],
+                correct: 1,
+                explanation: 'HTTPS protokolü ve kilit işareti, sitenin güvenli bağlantı kullandığını gösterir.'
+            },
+            {
+                question: 'Bilgisayarında virüs olduğunu düşünüyorsun. Ne yapmalısın?',
+                options: [
+                    'Hiçbir şey yapmam',
+                    'Antivirüs programı çalıştırırım',
+                    'Bilgisayarı atarım',
+                    'Tüm dosyaları silerim'
+                ],
+                correct: 1,
+                explanation: 'Antivirüs programı virüsleri tespit edip temizleyebilir. Güncel tutulmalıdır.'
+            },
+            {
+                question: 'İnternette bir şey satın alırken nelere dikkat etmelisin?',
+                options: [
+                    'En ucuz olanı alırım',
+                    'İlk gördüğümü alırım',
+                    'Site güvenilir mi, yorumlar var mı kontrol ederim',
+                    'Rastgele sitelere kart bilgimi veririm'
+                ],
+                correct: 2,
+                explanation: 'Online alışverişte sitenin güvenilirliğini, kullanıcı yorumlarını kontrol etmelisin.'
+            },
+            {
+                question: 'Siber zorbalığa (cyberbullying) maruz kalırsan ne yapmalısın?',
+                options: [
+                    'Sessiz kalırım',
+                    'Aynı şekilde karşılık veririm',
+                    'Büyüklerime/öğretmenime söylerim',
+                    'Hesabımı kapatırım'
+                ],
+                correct: 2,
+                explanation: 'Siber zorbalıkta mutlaka bir yetişkinden yardım istemelisin. Sen suçlu değilsin!'
+            }
+        ];
+
+        let currentQuestion = 0;
+        let score = 0;
+        let selectedAnswer = null;
+
+        function loadQuestion() {
+            const q = questions[currentQuestion];
+            const card = document.getElementById('questionCard');
+
+            card.innerHTML = `
+                <div class="question-number">Soru ${currentQuestion + 1} / ${questions.length}</div>
+                <div class="question-text">${q.question}</div>
+                <div class="options">
+                    ${q.options.map((opt, idx) => `
+                        <div class="option" onclick="selectAnswer(${idx})" data-index="${idx}">
+                            ${String.fromCharCode(65 + idx)}) ${opt}
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+
+            document.getElementById('currentQ').textContent = currentQuestion + 1;
+            document.getElementById('totalQ').textContent = questions.length;
+            document.getElementById('feedback').classList.remove('show');
+            document.getElementById('nextBtn').disabled = true;
+            selectedAnswer = null;
+        }
+
+        function selectAnswer(index) {
+            if (selectedAnswer !== null) return;
+
+            selectedAnswer = index;
+            const q = questions[currentQuestion];
+            const options = document.querySelectorAll('.option');
+            const feedback = document.getElementById('feedback');
+
+            options.forEach(opt => opt.classList.add('disabled'));
+
+            if (index === q.correct) {
+                options[index].classList.add('correct');
+                feedback.className = 'feedback correct show';
+                feedback.innerHTML = `✓ Doğru! ${q.explanation}`;
+                score++;
+                document.getElementById('score').textContent = score;
+            } else {
+                options[index].classList.add('wrong');
+                options[q.correct].classList.add('correct');
+                feedback.className = 'feedback wrong show';
+                feedback.innerHTML = `✗ Yanlış. ${q.explanation}`;
+            }
+
+            document.getElementById('nextBtn').disabled = false;
+        }
+
+        function nextQuestion() {
+            currentQuestion++;
+
+            if (currentQuestion < questions.length) {
+                loadQuestion();
+            } else {
+                showResults();
+            }
+        }
+
+        function showResults() {
+            const percentage = (score / questions.length) * 100;
+            let message = '';
+
+            if (percentage >= 80) {
+                message = '🌟 Harika! İnternet güvenliği konusunda çok başarılısın!';
+            } else if (percentage >= 60) {
+                message = '👍 İyi! Bazı konuları tekrar etmen faydalı olabilir.';
+            } else {
+                message = '📚 Daha fazla çalışmalısın. İnternet güvenliği çok önemli!';
+            }
+
+            document.getElementById('finalScore').textContent = score;
+            document.getElementById('finalTotal').textContent = questions.length;
+            document.getElementById('resultMessage').textContent = message;
+            document.getElementById('resultModal').classList.add('active');
+        }
+
+        function restartQuiz() {
+            currentQuestion = 0;
+            score = 0;
+            selectedAnswer = null;
+            document.getElementById('score').textContent = score;
+            document.getElementById('resultModal').classList.remove('active');
+            loadQuestion();
+        }
+
+        loadQuestion();
+    </script>
+</body>
+</html>
