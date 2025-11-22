@@ -47,7 +47,6 @@
             font-size: 14px;
         }
 
-        /* Kullanıcı Türü Seçici */
         .user-type-selector {
             display: flex;
             padding: 20px;
@@ -86,7 +85,6 @@
             color: #333;
         }
 
-        /* Tabs */
         .auth-tabs {
             display: flex;
             border-bottom: 2px solid #f0f0f0;
@@ -114,7 +112,6 @@
             background: #f8f9fa;
         }
 
-        /* Forms */
         .auth-form {
             padding: 25px;
             display: none;
@@ -150,6 +147,18 @@
         .form-group select:focus {
             outline: none;
             border-color: #667eea;
+        }
+
+        .password-wrapper {
+            position: relative;
+        }
+
+        .password-toggle {
+            position: absolute;
+            right: 15px;
+            top: 12px;
+            cursor: pointer;
+            user-select: none;
         }
 
         .btn {
@@ -193,6 +202,12 @@
             border: 1px solid #f5c6cb;
         }
 
+        .message.info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+
         .auth-footer {
             padding: 20px 25px;
             background: #f8f9fa;
@@ -223,10 +238,40 @@
             text-decoration: underline;
         }
 
+        .forgot-password {
+            display: block;
+            margin-top: 10px;
+            text-align: center;
+            font-size: 13px;
+        }
+
+        .forgot-password a {
+            color: #667eea;
+            text-decoration: none;
+        }
+
+        .forgot-password a:hover {
+            text-decoration: underline;
+        }
+
         .form-note {
             font-size: 12px;
             color: #666;
             margin-top: 5px;
+        }
+
+        .security-questions {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 15px 0;
+        }
+
+        .security-questions-title {
+            font-weight: 600;
+            color: #667eea;
+            margin-bottom: 10px;
+            font-size: 13px;
         }
 
         @media (max-width: 480px) {
@@ -251,7 +296,6 @@
             <p>Bilişim Teknolojileri ve Yazılım</p>
         </div>
 
-        <!-- Kullanıcı Türü Seçici -->
         <div class="user-type-selector">
             <button class="user-type-btn active" onclick="selectUserType('student')" id="studentTypeBtn">
                 <span class="icon">👨‍🎓</span>
@@ -268,8 +312,6 @@
             <button class="auth-tab" onclick="showTab('register')">Kayıt Ol</button>
         </div>
 
-        <!-- ========== ÖĞRENCİ FORMLARI ========== -->
-
         <!-- Öğrenci Giriş -->
         <form class="auth-form active" id="studentLoginForm">
             <div class="message" id="studentLoginMessage"></div>
@@ -279,7 +321,19 @@
                 <input type="text" id="studentLoginNumber" placeholder="Örn: 2024001" required>
             </div>
 
+            <div class="form-group">
+                <label>Şifre</label>
+                <div class="password-wrapper">
+                    <input type="password" id="studentLoginPassword" placeholder="Şifreniz" required>
+                    <span class="password-toggle" onclick="togglePassword('studentLoginPassword')">👁️</span>
+                </div>
+            </div>
+
             <button type="submit" class="btn btn-primary">Giriş Yap</button>
+
+            <div class="forgot-password">
+                <a href="sifremi-unuttum.html">Şifremi Unuttum</a>
+            </div>
 
             <div class="guest-link">
                 <a href="index.html">Misafir olarak devam et →</a>
@@ -314,10 +368,49 @@
                 <input type="email" id="studentRegEmail" placeholder="ornek@mail.com">
             </div>
 
+            <div class="form-group">
+                <label>Şifre *</label>
+                <div class="password-wrapper">
+                    <input type="password" id="studentRegPassword" placeholder="En az 6 karakter" required>
+                    <span class="password-toggle" onclick="togglePassword('studentRegPassword')">👁️</span>
+                </div>
+                <div class="form-note">En az 6 karakter olmalıdır</div>
+            </div>
+
+            <div class="security-questions">
+                <div class="security-questions-title">🔒 Güvenlik Soruları (Şifre sıfırlama için)</div>
+
+                <div class="form-group">
+                    <select id="studentSecQ1" required>
+                        <option value="">1. Soru seçin</option>
+                        <option value="İlk okulunuzun adı?">İlk okulunuzun adı?</option>
+                        <option value="En sevdiğiniz renk?">En sevdiğiniz renk?</option>
+                        <option value="Doğduğunuz şehir?">Doğduğunuz şehir?</option>
+                        <option value="İlk evcil hayvanınızın adı?">İlk evcil hayvanınızın adı?</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <input type="text" id="studentSecA1" placeholder="1. Sorunun cevabı" required>
+                </div>
+
+                <div class="form-group">
+                    <select id="studentSecQ2" required>
+                        <option value="">2. Soru seçin</option>
+                        <option value="Annenizin kızlık soyadı?">Annenizin kızlık soyadı?</option>
+                        <option value="En sevdiğiniz yemek?">En sevdiğiniz yemek?</option>
+                        <option value="İlk işiniz?">İlk işiniz?</option>
+                        <option value="Favori film türünüz?">Favori film türünüz?</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <input type="text" id="studentSecA2" placeholder="2. Sorunun cevabı" required>
+                </div>
+            </div>
+
             <button type="submit" class="btn btn-primary">Kayıt Ol</button>
         </form>
-
-        <!-- ========== ÖĞRETMEN FORMLARI ========== -->
 
         <!-- Öğretmen Giriş -->
         <form class="auth-form" id="teacherLoginForm">
@@ -328,7 +421,19 @@
                 <input type="email" id="teacherLoginEmail" placeholder="ornek@okul.edu.tr" required>
             </div>
 
+            <div class="form-group">
+                <label>Şifre</label>
+                <div class="password-wrapper">
+                    <input type="password" id="teacherLoginPassword" placeholder="Şifreniz" required>
+                    <span class="password-toggle" onclick="togglePassword('teacherLoginPassword')">👁️</span>
+                </div>
+            </div>
+
             <button type="submit" class="btn btn-primary">Giriş Yap</button>
+
+            <div class="forgot-password">
+                <a href="sifremi-unuttum.html">Şifremi Unuttum</a>
+            </div>
 
             <div class="guest-link">
                 <a href="index.html">Misafir olarak devam et →</a>
@@ -351,6 +456,15 @@
             </div>
 
             <div class="form-group">
+                <label>Şifre *</label>
+                <div class="password-wrapper">
+                    <input type="password" id="teacherRegPassword" placeholder="En az 6 karakter" required>
+                    <span class="password-toggle" onclick="togglePassword('teacherRegPassword')">👁️</span>
+                </div>
+                <div class="form-note">En az 6 karakter olmalıdır</div>
+            </div>
+
+            <div class="form-group">
                 <label>Okul (Opsiyonel)</label>
                 <input type="text" id="teacherRegSchool" placeholder="Okul adı">
             </div>
@@ -358,6 +472,42 @@
             <div class="form-group">
                 <label>Branş (Opsiyonel)</label>
                 <input type="text" id="teacherRegBranch" placeholder="Bilişim Teknolojileri">
+            </div>
+
+            <div class="security-questions">
+                <div class="security-questions-title">🔒 Güvenlik Soruları (Şifre sıfırlama için)</div>
+
+                <div class="form-group">
+                    <select id="teacherSecQ1" required>
+                        <option value="">1. Soru seçin</option>
+                        <option value="İlk okulunuzun adı?">İlk okulunuzun adı?</option>
+                        <option value="En sevdiğiniz renk?">En sevdiğiniz renk?</option>
+                        <option value="Doğduğunuz şehir?">Doğduğunuz şehir?</option>
+                        <option value="İlk evcil hayvanınızın adı?">İlk evcil hayvanınızın adı?</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <input type="text" id="teacherSecA1" placeholder="1. Sorunun cevabı" required>
+                </div>
+
+                <div class="form-group">
+                    <select id="teacherSecQ2" required>
+                        <option value="">2. Soru seçin</option>
+                        <option value="Annenizin kızlık soyadı?">Annenizin kızlık soyadı?</option>
+                        <option value="En sevdiğiniz yemek?">En sevdiğiniz yemek?</option>
+                        <option value="İlk işiniz?">İlk işiniz?</option>
+                        <option value="Favori film türünüz?">Favori film türünüz?</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <input type="text" id="teacherSecA2" placeholder="2. Sorunun cevabı" required>
+                </div>
+            </div>
+
+            <div class="message info" style="display: block;">
+                ℹ️ Öğretmen hesabınız admin onayından sonra aktif olacaktır.
             </div>
 
             <button type="submit" class="btn btn-primary">Kayıt Ol</button>
@@ -368,48 +518,35 @@
         </div>
     </div>
 
-    <script src="scripts/student-auth.js"></script>
+    <script src="scripts/auth.js"></script>
     <script>
         let currentUserType = 'student';
         let currentTab = 'login';
 
         // Zaten giriş yapılmışsa ana sayfaya yönlendir
-        if (UserAuth.isLoggedIn()) {
+        if (Auth.isLoggedIn()) {
             window.location.href = 'index.html';
         }
 
-        // Kullanıcı türü seç
         function selectUserType(type) {
             currentUserType = type;
-
-            // Butonları güncelle
             document.getElementById('studentTypeBtn').classList.toggle('active', type === 'student');
             document.getElementById('teacherTypeBtn').classList.toggle('active', type === 'teacher');
-
-            // Formları göster
             updateForms();
         }
 
-        // Tab değiştir
         function showTab(tab) {
             currentTab = tab;
-
             document.querySelectorAll('.auth-tab').forEach((t, i) => {
                 t.classList.toggle('active', (tab === 'login' && i === 0) || (tab === 'register' && i === 1));
             });
-
             updateForms();
-
-            // Mesajları temizle
             document.querySelectorAll('.message').forEach(m => m.style.display = 'none');
         }
 
-        // Formları güncelle
         function updateForms() {
-            // Tüm formları gizle
             document.querySelectorAll('.auth-form').forEach(f => f.classList.remove('active'));
 
-            // Doğru formu göster
             if (currentUserType === 'student') {
                 if (currentTab === 'login') {
                     document.getElementById('studentLoginForm').classList.add('active');
@@ -425,7 +562,6 @@
             }
         }
 
-        // Mesaj göster
         function showMessage(elementId, message, type) {
             const el = document.getElementById(elementId);
             el.textContent = message;
@@ -439,11 +575,18 @@
             }
         }
 
+        function togglePassword(inputId) {
+            const input = document.getElementById(inputId);
+            input.type = input.type === 'password' ? 'text' : 'password';
+        }
+
         // Öğrenci Giriş
         document.getElementById('studentLoginForm').addEventListener('submit', function(e) {
             e.preventDefault();
             const number = document.getElementById('studentLoginNumber').value;
-            const result = UserAuth.loginStudent(number);
+            const password = document.getElementById('studentLoginPassword').value;
+
+            const result = Auth.login(number, password, 'student');
 
             if (result.success) {
                 showMessage('studentLoginMessage', result.message, 'success');
@@ -456,12 +599,29 @@
         // Öğrenci Kayıt
         document.getElementById('studentRegisterForm').addEventListener('submit', function(e) {
             e.preventDefault();
-            const name = document.getElementById('studentRegName').value;
-            const number = document.getElementById('studentRegNumber').value;
-            const grade = document.getElementById('studentRegGrade').value;
-            const email = document.getElementById('studentRegEmail').value;
 
-            const result = UserAuth.registerStudent(name, number, grade, email);
+            const q1 = document.getElementById('studentSecQ1').value;
+            const a1 = document.getElementById('studentSecA1').value;
+            const q2 = document.getElementById('studentSecQ2').value;
+            const a2 = document.getElementById('studentSecA2').value;
+
+            if (q1 === q2) {
+                showMessage('studentRegisterMessage', 'Güvenlik soruları farklı olmalıdır!', 'error');
+                return;
+            }
+
+            const result = Auth.register({
+                name: document.getElementById('studentRegName').value,
+                number: document.getElementById('studentRegNumber').value,
+                grade: document.getElementById('studentRegGrade').value,
+                email: document.getElementById('studentRegEmail').value,
+                password: document.getElementById('studentRegPassword').value,
+                role: 'student',
+                securityQuestions: [
+                    { question: q1, answer: a1 },
+                    { question: q2, answer: a2 }
+                ]
+            });
 
             if (result.success) {
                 showMessage('studentRegisterMessage', result.message, 'success');
@@ -475,7 +635,9 @@
         document.getElementById('teacherLoginForm').addEventListener('submit', function(e) {
             e.preventDefault();
             const email = document.getElementById('teacherLoginEmail').value;
-            const result = UserAuth.loginTeacher(email);
+            const password = document.getElementById('teacherLoginPassword').value;
+
+            const result = Auth.login(email, password, 'teacher');
 
             if (result.success) {
                 showMessage('teacherLoginMessage', result.message, 'success');
@@ -488,16 +650,35 @@
         // Öğretmen Kayıt
         document.getElementById('teacherRegisterForm').addEventListener('submit', function(e) {
             e.preventDefault();
-            const name = document.getElementById('teacherRegName').value;
-            const email = document.getElementById('teacherRegEmail').value;
-            const school = document.getElementById('teacherRegSchool').value;
-            const branch = document.getElementById('teacherRegBranch').value;
 
-            const result = UserAuth.registerTeacher(name, email, school, branch);
+            const q1 = document.getElementById('teacherSecQ1').value;
+            const a1 = document.getElementById('teacherSecA1').value;
+            const q2 = document.getElementById('teacherSecQ2').value;
+            const a2 = document.getElementById('teacherSecA2').value;
+
+            if (q1 === q2) {
+                showMessage('teacherRegisterMessage', 'Güvenlik soruları farklı olmalıdır!', 'error');
+                return;
+            }
+
+            const result = Auth.register({
+                name: document.getElementById('teacherRegName').value,
+                email: document.getElementById('teacherRegEmail').value,
+                password: document.getElementById('teacherRegPassword').value,
+                school: document.getElementById('teacherRegSchool').value,
+                branch: document.getElementById('teacherRegBranch').value,
+                role: 'teacher',
+                securityQuestions: [
+                    { question: q1, answer: a1 },
+                    { question: q2, answer: a2 }
+                ]
+            });
 
             if (result.success) {
-                showMessage('teacherRegisterMessage', result.message, 'success');
-                setTimeout(() => window.location.href = 'index.html', 1000);
+                showMessage('teacherRegisterMessage', result.message, result.requiresApproval ? 'info' : 'success');
+                if (!result.requiresApproval) {
+                    setTimeout(() => window.location.href = 'index.html', 1000);
+                }
             } else {
                 showMessage('teacherRegisterMessage', result.message, 'error');
             }
