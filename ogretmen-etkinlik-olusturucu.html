@@ -404,6 +404,79 @@
 
             <div class="preview-area" id="fbPreview"></div>
         </div>
+
+        <!-- Crossword Creator -->
+        <div id="crosswordCreator" class="creator-panel">
+            <h2 style="color: #f5576c; margin-bottom: 20px;">🧩 Çapraz Bulmaca Oluştur</h2>
+
+            <div class="form-group">
+                <label class="form-label">Başlık</label>
+                <input type="text" class="form-control" id="cwTitle" placeholder="Örn: Bilişim Terimleri Bulmacası">
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Kelime ve İpuçları</label>
+                <div id="crosswordClues"></div>
+                <button class="btn btn-primary" onclick="addCrosswordClue()">➕ İpucu Ekle</button>
+            </div>
+
+            <button class="btn btn-primary" onclick="generateCrossword()">🎲 Bulmaca Oluştur</button>
+
+            <div class="preview-area" id="cwPreview"></div>
+        </div>
+
+        <!-- True/False Creator -->
+        <div id="truefalseCreator" class="creator-panel">
+            <h2 style="color: #f5576c; margin-bottom: 20px;">✔️ Doğru/Yanlış Oluştur</h2>
+
+            <div class="form-group">
+                <label class="form-label">Başlık</label>
+                <input type="text" class="form-control" id="tfTitle" placeholder="Örn: Bilişim Kavramları Test">
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">İfadeler</label>
+                <div id="tfStatements"></div>
+                <button class="btn btn-primary" onclick="addTFStatement()">➕ İfade Ekle</button>
+            </div>
+
+            <button class="btn btn-primary" onclick="generateTrueFalse()">📋 Test Oluştur</button>
+
+            <div class="preview-area" id="tfPreview"></div>
+        </div>
+
+        <!-- Maze Creator -->
+        <div id="mazeCreator" class="creator-panel">
+            <h2 style="color: #f5576c; margin-bottom: 20px;">🌀 Labirent Oluştur</h2>
+
+            <div class="form-group">
+                <label class="form-label">Başlık</label>
+                <input type="text" class="form-control" id="mazeTitle" placeholder="Örn: Bilişim Yolu Labirenti">
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Labirent Boyutu</label>
+                <select class="form-control" id="mazeSize">
+                    <option value="10">Küçük (10x10)</option>
+                    <option value="15" selected>Orta (15x15)</option>
+                    <option value="20">Büyük (20x20)</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Başlangıç Metni</label>
+                <input type="text" class="form-control" id="mazeStart" placeholder="Örn: BAŞLA">
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Bitiş Metni</label>
+                <input type="text" class="form-control" id="mazeEnd" placeholder="Örn: BİTİŞ">
+            </div>
+
+            <button class="btn btn-primary" onclick="generateMaze()">🎲 Labirent Oluştur</button>
+
+            <div class="preview-area" id="mazePreview"></div>
+        </div>
     </div>
 
     <script>
@@ -424,12 +497,23 @@
                 case 'wordsearch':
                     document.getElementById('wordsearchCreator').classList.add('active');
                     break;
+                case 'crossword':
+                    document.getElementById('crosswordCreator').classList.add('active');
+                    addCrosswordClue(); // Add first clue
+                    break;
                 case 'matching':
                     document.getElementById('matchingCreator').classList.add('active');
                     addMatchingPair(); // Add first pair
                     break;
                 case 'fillblank':
                     document.getElementById('fillblankCreator').classList.add('active');
+                    break;
+                case 'truefalse':
+                    document.getElementById('truefalseCreator').classList.add('active');
+                    addTFStatement(); // Add first statement
+                    break;
+                case 'maze':
+                    document.getElementById('mazeCreator').classList.add('active');
                     break;
                 default:
                     alert('Bu etkinlik henüz geliştirilme aşamasında!');
@@ -695,6 +779,234 @@
 
             html += '</div>';
             preview.innerHTML = html;
+        }
+
+        // Crossword Functions
+        function addCrosswordClue() {
+            const container = document.getElementById('crosswordClues');
+            const index = container.children.length;
+
+            const clueHtml = `
+                <div class="matching-pair">
+                    <input type="text" class="matching-input" placeholder="Kelime" id="cw_word_${index}">
+                    <input type="text" class="matching-input" placeholder="İpucu" id="cw_clue_${index}">
+                </div>
+            `;
+
+            container.insertAdjacentHTML('beforeend', clueHtml);
+        }
+
+        function generateCrossword() {
+            const title = document.getElementById('cwTitle').value || 'Çapraz Bulmaca';
+            const clues = [];
+
+            document.querySelectorAll('#crosswordClues .matching-pair').forEach((pair, i) => {
+                const word = document.getElementById(`cw_word_${i}`).value.toUpperCase();
+                const clue = document.getElementById(`cw_clue_${i}`).value;
+                if (word && clue) {
+                    clues.push({ word, clue });
+                }
+            });
+
+            if (clues.length < 3) {
+                alert('En az 3 kelime ve ipucu eklemelisiniz!');
+                return;
+            }
+
+            const preview = document.getElementById('cwPreview');
+            let html = `
+                <div class="print-page">
+                    <div class="print-header">
+                        <div class="print-title">${title}</div>
+                        <div class="print-info">
+                            <span>Ad Soyad: _________________</span>
+                            <span>Tarih: ${new Date().toLocaleDateString('tr-TR')}</span>
+                        </div>
+                    </div>
+                    <p style="margin-bottom: 20px;"><strong>📋 Talimat:</strong> İpuçlarını kullanarak bulmacayı doldurun.</p>
+
+                    <div style="margin: 30px 0;">
+                        <h3 style="color: #f5576c; margin-bottom: 15px;">İpuçları:</h3>
+            `;
+
+            clues.forEach((item, i) => {
+                html += `
+                    <div style="margin-bottom: 15px; padding: 10px; background: white; border-radius: 8px; border-left: 4px solid #f5576c;">
+                        <strong>${i + 1}.</strong> ${item.clue} <span style="color: #999;">(${item.word.length} harf)</span>
+                        <div style="margin-top: 8px; display: flex; gap: 5px;">
+                            ${Array(item.word.length).fill(0).map(() =>
+                                '<div style="width: 30px; height: 30px; border: 2px solid #ddd; display: inline-block;"></div>'
+                            ).join('')}
+                        </div>
+                    </div>
+                `;
+            });
+
+            html += `
+                    </div>
+                </div>
+            `;
+
+            preview.innerHTML = html;
+        }
+
+        // True/False Functions
+        function addTFStatement() {
+            const container = document.getElementById('tfStatements');
+            const index = container.children.length;
+
+            const statementHtml = `
+                <div class="matching-pair">
+                    <input type="text" class="matching-input" placeholder="İfade" id="tf_statement_${index}" style="grid-column: 1 / 3;">
+                    <select class="matching-input" id="tf_answer_${index}">
+                        <option value="true">Doğru</option>
+                        <option value="false">Yanlış</option>
+                    </select>
+                </div>
+            `;
+
+            container.insertAdjacentHTML('beforeend', statementHtml);
+        }
+
+        function generateTrueFalse() {
+            const title = document.getElementById('tfTitle').value || 'Doğru/Yanlış Testi';
+            const statements = [];
+
+            document.querySelectorAll('#tfStatements .matching-pair').forEach((pair, i) => {
+                const statement = document.getElementById(`tf_statement_${i}`).value;
+                const answer = document.getElementById(`tf_answer_${i}`).value;
+                if (statement) {
+                    statements.push({ statement, answer });
+                }
+            });
+
+            if (statements.length < 3) {
+                alert('En az 3 ifade eklemelisiniz!');
+                return;
+            }
+
+            const preview = document.getElementById('tfPreview');
+            let html = `
+                <div class="print-page">
+                    <div class="print-header">
+                        <div class="print-title">${title}</div>
+                        <div class="print-info">
+                            <span>Ad Soyad: _________________</span>
+                            <span>Tarih: ${new Date().toLocaleDateString('tr-TR')}</span>
+                        </div>
+                    </div>
+                    <p style="margin-bottom: 20px;"><strong>📋 Talimat:</strong> Aşağıdaki ifadelerin doğru (D) veya yanlış (Y) olduğunu işaretleyin.</p>
+            `;
+
+            statements.forEach((item, i) => {
+                html += `
+                    <div style="background: white; padding: 15px; margin: 10px 0; border-radius: 10px; border-left: 4px solid #f5576c; display: flex; align-items: center; gap: 15px;">
+                        <strong>${i + 1}.</strong>
+                        <div style="flex: 1;">${item.statement}</div>
+                        <div style="display: flex; gap: 20px;">
+                            <label style="cursor: pointer;">
+                                <input type="checkbox" style="margin-right: 5px;"> D
+                            </label>
+                            <label style="cursor: pointer;">
+                                <input type="checkbox" style="margin-right: 5px;"> Y
+                            </label>
+                        </div>
+                    </div>
+                `;
+            });
+
+            html += '</div>';
+            preview.innerHTML = html;
+        }
+
+        // Maze Functions
+        function generateMaze() {
+            const title = document.getElementById('mazeTitle').value || 'Labirent';
+            const size = parseInt(document.getElementById('mazeSize').value);
+            const startText = document.getElementById('mazeStart').value || 'BAŞLA';
+            const endText = document.getElementById('mazeEnd').value || 'BİTİŞ';
+
+            // Simple maze generation using recursive backtracking
+            const maze = createMazeGrid(size);
+
+            const preview = document.getElementById('mazePreview');
+            let html = `
+                <div class="print-page">
+                    <div class="print-header">
+                        <div class="print-title">${title}</div>
+                        <div class="print-info">
+                            <span>Ad Soyad: _________________</span>
+                            <span>Tarih: ${new Date().toLocaleDateString('tr-TR')}</span>
+                        </div>
+                    </div>
+                    <p style="margin-bottom: 20px;"><strong>📋 Talimat:</strong> Başlangıçtan bitişe kadar doğru yolu bulun.</p>
+
+                    <div style="text-align: center;">
+                        <table style="border-collapse: collapse; margin: 20px auto;">
+            `;
+
+            for (let i = 0; i < size; i++) {
+                html += '<tr>';
+                for (let j = 0; j < size; j++) {
+                    const isStart = (i === 0 && j === 0);
+                    const isEnd = (i === size - 1 && j === size - 1);
+                    const isWall = maze[i][j] === 1;
+
+                    let cellStyle = 'width: 25px; height: 25px; border: 1px solid #999;';
+                    let cellContent = '';
+
+                    if (isStart) {
+                        cellStyle += ' background: #4CAF50; color: white; font-size: 8px; font-weight: bold;';
+                        cellContent = '🏁';
+                    } else if (isEnd) {
+                        cellStyle += ' background: #f5576c; color: white; font-size: 8px; font-weight: bold;';
+                        cellContent = '🎯';
+                    } else if (isWall) {
+                        cellStyle += ' background: #333;';
+                    } else {
+                        cellStyle += ' background: white;';
+                    }
+
+                    html += `<td style="${cellStyle}">${cellContent}</td>`;
+                }
+                html += '</tr>';
+            }
+
+            html += `
+                        </table>
+                    </div>
+                </div>
+            `;
+
+            preview.innerHTML = html;
+        }
+
+        function createMazeGrid(size) {
+            // Create a simple maze with walls and paths
+            const maze = Array(size).fill().map(() => Array(size).fill(0));
+
+            // Add random walls (30% chance)
+            for (let i = 0; i < size; i++) {
+                for (let j = 0; j < size; j++) {
+                    if (Math.random() < 0.3) {
+                        maze[i][j] = 1; // Wall
+                    }
+                }
+            }
+
+            // Ensure start and end are open
+            maze[0][0] = 0;
+            maze[size-1][size-1] = 0;
+
+            // Create a guaranteed path (simple diagonal-ish path)
+            for (let i = 0; i < size; i++) {
+                maze[i][Math.min(i, size-1)] = 0;
+                if (i < size - 1) {
+                    maze[i][Math.min(i+1, size-1)] = 0;
+                }
+            }
+
+            return maze;
         }
 
         function generatePDF() {

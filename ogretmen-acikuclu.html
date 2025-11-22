@@ -329,90 +329,123 @@
         }
 
         @media print {
+            @page {
+                margin: 15mm;
+            }
+
             body {
                 background: white;
                 padding: 0;
+                margin: 0;
             }
+
             .container {
                 max-width: 100%;
                 box-shadow: none;
                 padding: 0;
+                margin: 0;
             }
+
             .workflow {
                 display: block;
             }
+
             .settings-panel, .action-bar, .no-print {
                 display: none !important;
             }
+
             .preview-panel {
                 box-shadow: none;
             }
+
             .exam-paper {
-                padding: 15px;
+                padding: 0;
+                margin: 0;
             }
 
-            /* Sınav başlık kısmını küçült */
-            .exam-paper h2 {
-                font-size: 1.3em;
-                margin: 8px 0;
+            /* Sınav başlığını minimal yap */
+            .exam-header {
+                margin-bottom: 8px;
+            }
+
+            .exam-header > div {
+                margin: 2px 0 !important;
+                padding: 0 !important;
+                font-size: 0.9em !important;
             }
 
             .exam-info {
-                padding: 10px;
-                margin: 10px 0;
-                gap: 8px;
+                padding: 5px;
+                margin: 5px 0;
+                gap: 3px;
+                font-size: 0.85em;
+            }
+
+            .exam-info .info-label {
+                font-size: 0.85em;
+            }
+
+            /* Açıklama kutusunu küçült */
+            .exam-paper > div[style*="background: #fff9e6"] {
+                padding: 5px 10px !important;
+                margin-bottom: 10px !important;
+                font-size: 0.85em !important;
             }
 
             /* Soruları optimize et - 5 soru/sayfa */
             .question-item {
-                margin-bottom: 12px;
-                padding: 10px;
+                margin-bottom: 6px;
+                padding: 5px;
                 page-break-inside: avoid;
+                border-radius: 5px;
             }
 
             .question-item:nth-of-type(5n) {
                 page-break-after: always;
+                margin-bottom: 0;
             }
 
             .question-number {
-                font-size: 1em;
-                margin-bottom: 6px;
+                font-size: 0.9em;
+                margin-bottom: 3px;
             }
 
             .question-text {
-                font-size: 0.95em;
-                line-height: 1.4;
-                margin-bottom: 8px;
+                font-size: 0.85em;
+                line-height: 1.3;
+                margin-bottom: 3px;
             }
 
             .answer-space {
-                min-height: 50px;
-                padding: 8px;
-                margin-top: 6px;
+                min-height: 35px;
+                padding: 3px;
+                margin-top: 3px;
+                border-width: 1px;
             }
 
             .answer-lines {
-                gap: 10px;
+                gap: 5px;
             }
 
             .answer-line {
-                height: 20px;
+                height: 15px;
             }
 
             .answer-content {
                 page-break-inside: avoid;
-                padding: 10px;
-                margin-top: 6px;
+                padding: 5px;
+                margin-top: 3px;
+                font-size: 0.8em;
             }
 
             .answer-label {
-                margin-bottom: 5px;
-                font-size: 0.9em;
+                margin-bottom: 2px;
+                font-size: 0.85em;
             }
 
             .answer-text {
-                line-height: 1.4;
-                font-size: 0.9em;
+                line-height: 1.3;
+                font-size: 0.8em;
             }
 
             /* Cevapları gizle */
@@ -420,17 +453,18 @@
                 display: none !important;
             }
 
-            /* Filigran */
-            body::before {
+            /* Filigran - her sayfada */
+            .exam-paper::before {
                 content: '📚 Bilişim Teknolojileri Eğitim Portalı';
                 position: fixed;
                 top: 50%;
                 left: 50%;
                 transform: translate(-50%, -50%) rotate(-45deg);
-                font-size: 3em;
-                color: rgba(0, 0, 0, 0.05);
-                z-index: -1;
+                font-size: 2.5em;
+                color: rgba(0, 0, 0, 0.04);
+                z-index: 9999;
                 white-space: nowrap;
+                pointer-events: none;
             }
         }
 
@@ -447,7 +481,6 @@
 <body>
     <div class="container">
         <h1>📝 Açık Uçlu Sınav Oluşturucu</h1>
-        <p class="subtitle">Kazanım bazlı açık uçlu sorularla sınav hazırlayın</p>
 
         <div class="workflow">
             <!-- Ayarlar Paneli -->
