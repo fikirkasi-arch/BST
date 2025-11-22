@@ -520,7 +520,7 @@
                     <div class="stats-label">Toplam Soru</div>
                 </div>
 
-                <button class="btn btn-primary" onclick="generateExam()">
+                <button type="button" class="btn btn-primary" onclick="generateExam()">
                     🎯 Sınavı Oluştur
                 </button>
             </div>
@@ -535,13 +535,13 @@
                     </div>
                 </div>
                 <div class="action-bar no-print" id="actionBar" style="display: none;">
-                    <button class="btn btn-success" onclick="printExam(false)">
+                    <button type="button" class="btn btn-success" onclick="printExam(false)">
                         🖨️ Sınav Kağıdı (Cevapsız)
                     </button>
-                    <button class="btn btn-warning" onclick="printExam(true)">
+                    <button type="button" class="btn btn-warning" onclick="printExam(true)">
                         📋 Cevap Anahtarlı
                     </button>
-                    <button class="btn" style="background: #6c757d; color: white;" onclick="toggleAnswers()">
+                    <button type="button" class="btn" style="background: #6c757d; color: white;" onclick="toggleAnswers()">
                         👁️ Cevapları Göster/Gizle
                     </button>
                 </div>
@@ -706,7 +706,8 @@
             document.getElementById('statsBox').style.display = checkedOutcomes.length > 0 ? 'block' : 'none';
         }
 
-        function generateExam() {
+        // Orijinal generateExam fonksiyonu - window nesnesine açıkça ekle
+        window.generateExamOriginal = function() {
             const grade = document.getElementById('gradeSelect').value;
             const schoolName = document.getElementById('schoolName').value || 'Okul Adı';
             const examInfo = document.getElementById('examInfo').value || '';
@@ -715,12 +716,12 @@
 
             if (!grade) {
                 alert('❌ Lütfen sınıf seviyesi seçin!');
-                return;
+                return false;
             }
 
             if (checkedOutcomes.length === 0) {
                 alert('❌ Lütfen en az bir kazanım seçin!');
-                return;
+                return false;
             }
 
             // Sınavı oluştur
@@ -746,7 +747,11 @@
             // Önizleme oluştur
             renderExam(schoolName, examInfo, grade);
             document.getElementById('actionBar').style.display = 'flex';
-        }
+            return true;
+        };
+
+        // Başlangıçta generateExam orijinal fonksiyona eşit
+        window.generateExam = window.generateExamOriginal;
 
         function renderExam(schoolName, examInfo, grade) {
             const preview = document.getElementById('examPreview');
@@ -873,10 +878,7 @@
     <script src="scripts/roles.js"></script>
     <script src="scripts/usage-limits.js"></script>
     <script>
-        // Orijinal generateExam fonksiyonunu sakla
-        let originalGenerateExam = null;
-
-        // Öğretmen erişim kontrolü
+        // Öğretmen erişim kontrolü ve limit kontrolü
         document.addEventListener('DOMContentLoaded', function() {
             const session = Auth.getSession();
 
@@ -899,38 +901,39 @@
                 dashboardContainer.insertBefore(usageDashboard.firstChild, dashboardContainer.firstChild);
             }
 
-            // generateExam fonksiyonunu sakla ve override et
-            if (typeof window.generateExam === 'function') {
-                originalGenerateExam = window.generateExam;
+            // generateExam fonksiyonunu limit kontrolü ile wrap et
+            window.generateExam = function() {
+                const session = Auth.getSession();
+                if (!session) {
+                    alert('Oturum süreniz dolmuş. Lütfen tekrar giriş yapın.');
+                    return;
+                }
 
-                window.generateExam = function() {
-                    const session = Auth.getSession();
-                    if (!session) return;
+                // Limit kontrolü (Premium ve Admin için sınırsız)
+                const check = UsageLimits.checkLimit(session.userId, 'exam');
 
-                    // Limit kontrolü
-                    const check = UsageLimits.checkLimit(session.userId, 'exam');
+                if (!check.allowed) {
+                    // Limit dolmuş, uyarı göster
+                    const warningDiv = document.createElement('div');
+                    warningDiv.innerHTML = UsageLimits.getLimitWarningHTML('exam');
+                    const container = document.querySelector('.container');
 
-                    if (!check.allowed) {
-                        // Limit dolmuş, uyarı göster
-                        const warningDiv = document.createElement('div');
-                        warningDiv.innerHTML = UsageLimits.getLimitWarningHTML('exam');
-                        const container = document.querySelector('.container');
+                    // Önceki uyarıları temizle
+                    const oldWarnings = container.querySelectorAll('.limit-warning');
+                    oldWarnings.forEach(w => w.remove());
 
-                        // Önceki uyarıları temizle
-                        const oldWarnings = container.querySelectorAll('.limit-warning');
-                        oldWarnings.forEach(w => w.remove());
+                    container.insertBefore(warningDiv.firstChild, container.firstChild);
 
-                        container.insertBefore(warningDiv.firstChild, container.firstChild);
+                    // Scroll to top
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                    return;
+                }
 
-                        // Scroll to top
-                        window.scrollTo({ top: 0, behavior: 'smooth' });
-                        return;
-                    }
+                // Limit kontrolü geçti, orijinal fonksiyonu çağır
+                const success = window.generateExamOriginal();
 
-                    // Limit kontrolü geçti, orijinal fonksiyonu çağır
-                    originalGenerateExam();
-
-                    // Kullanımı artır
+                // Başarılı olduysa kullanımı artır
+                if (success !== false) {
                     UsageLimits.incrementUsage(session.userId, 'exam');
 
                     // Dashboard'u güncelle
@@ -942,8 +945,8 @@
                         usageDashboard.innerHTML = UsageLimits.getUsageDashboardHTML(session.userId);
                         container.insertBefore(usageDashboard.firstChild, container.firstChild);
                     }, 100);
-                };
-            }
+                }
+            };
         });
     </script>
 </body>
