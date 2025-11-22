@@ -46,13 +46,18 @@ const UsageLimits = {
     checkLimit(userId, featureType) {
         const session = Auth.getSession();
 
-        if (!session || session.role !== 'teacher') {
-            return { allowed: false, reason: 'Sadece öğretmenler için' };
+        if (!session) {
+            return { allowed: false, reason: 'Giriş yapılmamış' };
         }
 
-        // Premium veya admin ise sınırsız
-        if (session.subscription === 'premium' || session.role === 'admin') {
+        // Admin veya premium ise sınırsız
+        if (session.role === 'admin' || session.subscription === 'premium') {
             return { allowed: true, remaining: -1 };
+        }
+
+        // Öğretmen değilse izin yok
+        if (session.role !== 'teacher') {
+            return { allowed: false, reason: 'Sadece öğretmenler için' };
         }
 
         // Free kullanıcı için limit kontrolü

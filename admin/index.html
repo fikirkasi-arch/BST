@@ -28,6 +28,10 @@
                 <a href="istatistikler.html" class="menu-item">
                     <span>📈</span> <span>İstatistikler</span>
                 </a>
+                <a href="mesajlar.html" class="menu-item" id="messagesMenuItem">
+                    <span>💬</span> <span>Mesajlar</span>
+                    <span class="badge" id="unreadBadge" style="display: none; background: #dc3545; color: white; padding: 2px 8px; border-radius: 10px; font-size: 12px; margin-left: 5px;">0</span>
+                </a>
                 <div class="menu-divider"></div>
                 <a href="ayarlar.html" class="menu-item">
                     <span>⚙️</span> <span>Ayarlar</span>
@@ -688,10 +692,30 @@
             createQuizChart();
             createActivityChart();
             loadPendingTeachers();
+            updateUnreadMessageCount();
         });
+
+        // Okunmamış mesaj sayısını güncelle
+        function updateUnreadMessageCount() {
+            if (typeof Messaging !== 'undefined') {
+                const unreadCount = Messaging.getUnreadCount();
+                const badge = document.getElementById('unreadBadge');
+
+                if (unreadCount > 0) {
+                    badge.textContent = unreadCount;
+                    badge.style.display = 'inline';
+                } else {
+                    badge.style.display = 'none';
+                }
+            }
+        }
+
+        // Her 30 saniyede bir okunmamış mesaj sayısını güncelle
+        setInterval(updateUnreadMessageCount, 30000);
     </script>
 
     <!-- Auth Sistemi -->
     <script src="../scripts/auth.js"></script>
+    <script src="../scripts/messaging.js"></script>
 </body>
 </html>

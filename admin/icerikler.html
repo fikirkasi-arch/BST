@@ -27,6 +27,10 @@
                 <a href="istatistikler.html" class="menu-item">
                     <span>📈</span> <span>İstatistikler</span>
                 </a>
+                <a href="mesajlar.html" class="menu-item" id="messagesMenuItem">
+                    <span>💬</span> <span>Mesajlar</span>
+                    <span class="badge" id="unreadBadge" style="display: none; background: #dc3545; color: white; padding: 2px 8px; border-radius: 10px; font-size: 12px; margin-left: 5px;">0</span>
+                </a>
                 <div class="menu-divider"></div>
                 <a href="ayarlar.html" class="menu-item">
                     <span>⚙️</span> <span>Ayarlar</span>
@@ -308,6 +312,7 @@
     </div>
 
     <script src="js/admin-auth.js"></script>
+    <script src="../scripts/messaging.js"></script>
     <script>
         // Örnek veriler
         let lessons = JSON.parse(localStorage.getItem('bstLessons') || '[]');
@@ -616,6 +621,9 @@
             loadQuizzes();
             loadGames();
             loadQuestions();
+            if (typeof updateUnreadMessageCount === 'function') {
+                updateUnreadMessageCount();
+            }
         });
     </script>
 </body>
