@@ -82,6 +82,19 @@
                 </div>
             </div>
 
+            <!-- Pending Teacher Approvals -->
+            <div class="card" id="pendingTeachersCard" style="display: none; margin-bottom: 30px;">
+                <div class="card-header" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white;">
+                    <h3><span>👨‍🏫</span> Bekleyen Öğretmen Onayları</h3>
+                    <span id="pendingCount" style="background: rgba(255,255,255,0.3); padding: 4px 12px; border-radius: 12px; font-size: 14px;">0</span>
+                </div>
+                <div class="card-body">
+                    <div id="pendingTeachersList" style="display: flex; flex-direction: column; gap: 15px;">
+                        <!-- Dinamik olarak doldurulacak -->
+                    </div>
+                </div>
+            </div>
+
             <!-- Grid 2 Column -->
             <div class="grid-2">
                 <!-- Quiz Performance Chart -->
@@ -371,12 +384,90 @@
             });
         }
 
+        // Öğretmen onay fonksiyonları
+        function loadPendingTeachers() {
+            const users = JSON.parse(localStorage.getItem('bst_users') || '[]');
+            const pendingTeachers = users.filter(u => u.role === 'teacher' && u.status === 'pending');
+
+            const card = document.getElementById('pendingTeachersCard');
+            const list = document.getElementById('pendingTeachersList');
+            const countSpan = document.getElementById('pendingCount');
+
+            if (pendingTeachers.length === 0) {
+                card.style.display = 'none';
+                return;
+            }
+
+            card.style.display = 'block';
+            countSpan.textContent = pendingTeachers.length;
+
+            list.innerHTML = pendingTeachers.map(teacher => `
+                <div style="background: #f8f9fa; padding: 20px; border-radius: 12px; border-left: 4px solid #f5576c;">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <div>
+                            <strong style="font-size: 1.1em;">👨‍🏫 ${teacher.name}</strong>
+                            <div style="color: #666; font-size: 0.9em; margin-top: 5px;">
+                                📧 ${teacher.email}
+                                ${teacher.school ? `| 🏫 ${teacher.school}` : ''}
+                                ${teacher.branch ? `| 📚 ${teacher.branch}` : ''}
+                            </div>
+                            <div style="color: #999; font-size: 0.85em; margin-top: 3px;">
+                                Kayıt tarihi: ${new Date(teacher.createdAt).toLocaleDateString('tr-TR')}
+                            </div>
+                        </div>
+                        <div style="display: flex; gap: 10px;">
+                            <button onclick="approveTeacher('${teacher.id}')"
+                                    style="padding: 10px 20px; background: #28a745; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 600;">
+                                ✅ Onayla
+                            </button>
+                            <button onclick="rejectTeacher('${teacher.id}')"
+                                    style="padding: 10px 20px; background: #dc3545; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 600;">
+                                ❌ Reddet
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function approveTeacher(teacherId) {
+            if (!confirm('Bu öğretmeni onaylamak istediğinizden emin misiniz?')) {
+                return;
+            }
+
+            const users = JSON.parse(localStorage.getItem('bst_users') || '[]');
+            const teacherIndex = users.findIndex(u => u.id === teacherId);
+
+            if (teacherIndex !== -1) {
+                users[teacherIndex].status = 'active';
+                localStorage.setItem('bst_users', JSON.stringify(users));
+                alert('✅ Öğretmen başarıyla onaylandı!');
+                loadPendingTeachers();
+            }
+        }
+
+        function rejectTeacher(teacherId) {
+            if (!confirm('Bu öğretmeni reddetmek istediğinizden emin misiniz? Kullanıcı tamamen silinecektir.')) {
+                return;
+            }
+
+            const users = JSON.parse(localStorage.getItem('bst_users') || '[]');
+            const filteredUsers = users.filter(u => u.id !== teacherId);
+            localStorage.setItem('bst_users', JSON.stringify(filteredUsers));
+            alert('❌ Öğretmen reddedildi ve silindi.');
+            loadPendingTeachers();
+        }
+
         // Sayfa yüklendiğinde
         document.addEventListener('DOMContentLoaded', () => {
             loadDashboardData();
             createQuizChart();
             createActivityChart();
+            loadPendingTeachers();
         });
     </script>
+
+    <!-- Auth Sistemi -->
+    <script src="../scripts/auth.js"></script>
 </body>
 </html>
