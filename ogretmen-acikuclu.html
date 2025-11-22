@@ -867,5 +867,25 @@
             }, 100);
         }
     </script>
+
+    <!-- Auth & Roles Sistemi -->
+    <script src="scripts/auth.js"></script>
+    <script src="scripts/roles.js"></script>
+    <script>
+        // Öğretmen erişim kontrolü
+        document.addEventListener('DOMContentLoaded', function() {
+            const session = Auth.getSession();
+
+            // Giriş yapılmamışsa veya öğretmen/admin değilse
+            if (!session || (session.role !== 'teacher' && session.role !== 'admin')) {
+                // Uyarı göster
+                if (confirm('Bu sayfa sadece öğretmenler içindir. Giriş sayfasına yönlendiriliyorsunuz.')) {
+                    window.location.href = 'giris.html';
+                } else {
+                    window.location.href = 'index.html';
+                }
+            }
+        });
+    </script>
 </body>
 </html>

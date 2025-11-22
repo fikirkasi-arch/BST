@@ -514,6 +514,130 @@
         body.role-teacher .tab-content.teacher-only.active {
             display: block;
         }
+
+        /* Premium Özellikleri Stilleri */
+        .premium-lock {
+            position: relative;
+        }
+
+        .premium-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.95) 0%, rgba(255, 165, 0, 0.95) 100%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            border-radius: 15px;
+            padding: 30px;
+            text-align: center;
+            z-index: 10;
+        }
+
+        .premium-overlay h4 {
+            color: #fff;
+            font-size: 1.8em;
+            margin-bottom: 15px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .premium-overlay p {
+            color: #fff;
+            font-size: 1.1em;
+            margin-bottom: 20px;
+        }
+
+        .premium-overlay button {
+            padding: 15px 30px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1em;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            transition: transform 0.3s;
+        }
+
+        .premium-overlay button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.4);
+        }
+
+        /* Rol bazlı görünürlük - Premium için */
+        .teacher-free-only {
+            display: none;
+        }
+
+        .teacher-premium-only {
+            display: none;
+        }
+
+        body.role-teacher-free .teacher-free-only {
+            display: block;
+        }
+
+        body.role-teacher-premium .teacher-premium-only {
+            display: block;
+        }
+
+        /* Premium badge */
+        .premium-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, #ffd700 0%, #ffa500 100%);
+            color: #000;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: 600;
+            margin-left: 10px;
+            box-shadow: 0 2px 8px rgba(255, 215, 0, 0.4);
+        }
+
+        /* Limit warning */
+        .limit-warning {
+            background: linear-gradient(135deg, #fff3cd 0%, #ffe69c 100%);
+            border: 2px solid #ffc107;
+            padding: 15px 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .limit-warning .icon {
+            font-size: 2em;
+        }
+
+        .limit-warning .content {
+            flex: 1;
+        }
+
+        .limit-warning .content h4 {
+            color: #856404;
+            margin-bottom: 5px;
+        }
+
+        .limit-warning .content p {
+            color: #856404;
+            margin: 0;
+        }
+
+        .limit-warning button {
+            padding: 10px 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            white-space: nowrap;
+        }
     </style>
 </head>
 <body>
@@ -1262,6 +1386,35 @@
                 <p style="font-size: 1.2em; opacity: 0.95;">Oyunlar, quizler ve interaktif aktiviteler</p>
             </div>
 
+            <!-- Misafirler için uyarı -->
+            <div class="guest-only" style="background: linear-gradient(135deg, #fff3cd 0%, #ffe69c 100%); padding: 40px; border-radius: 15px; margin-bottom: 40px; text-align: center; border: 3px solid #ffc107;">
+                <div style="font-size: 4em; margin-bottom: 20px;">🔒</div>
+                <h2 style="color: #856404; margin-bottom: 15px;">Bu İçerik Üyelerimize Özeldir</h2>
+                <p style="color: #856404; font-size: 1.1em; margin-bottom: 25px;">
+                    Aktivitelere, oyunlara ve quizlere erişmek için üye girişi yapmanız gerekmektedir.
+                </p>
+                <div style="display: flex; gap: 15px; justify-content: center; flex-wrap: wrap;">
+                    <a href="giris.html" style="padding: 15px 30px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; text-decoration: none; border-radius: 10px; font-weight: 600; font-size: 1.1em; box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);">
+                        🔐 Giriş Yap
+                    </a>
+                    <a href="giris.html" style="padding: 15px 30px; background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white; text-decoration: none; border-radius: 10px; font-weight: 600; font-size: 1.1em; box-shadow: 0 4px 15px rgba(245, 87, 108, 0.4);">
+                        ✨ Ücretsiz Kayıt Ol
+                    </a>
+                </div>
+                <div style="margin-top: 25px; padding: 20px; background: rgba(255, 255, 255, 0.7); border-radius: 10px;">
+                    <p style="color: #856404; font-weight: 600; margin-bottom: 10px;">✅ Üyelik Avantajları:</p>
+                    <ul style="list-style: none; padding: 0; color: #856404;">
+                        <li>🎮 Tüm eğitici oyunlara sınırsız erişim</li>
+                        <li>📝 İnteraktif testler ve quizler</li>
+                        <li>📊 İlerleme takibi ve raporlama</li>
+                        <li>🏆 Başarı rozetleri ve sertifikalar</li>
+                        <li>💯 %100 Ücretsiz öğrenci üyeliği!</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Üyeler için tam içerik -->
+            <div class="auth-only">
             <!-- Hızlı Erişim -->
             <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-bottom: 40px;">
                 <div style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white; padding: 30px; border-radius: 15px; text-align: center; cursor: pointer;" onclick="window.open('games-hub.html', '_blank')">
@@ -1350,6 +1503,7 @@
                     </div>
                 </a>
             </div>
+            </div><!-- auth-only sonu -->
         </div>
 
         <!-- YARDIMCILAR (Sözlük + Konu Haritası) -->
