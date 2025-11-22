@@ -2508,6 +2508,7 @@
     <!-- Auth & Roles Sistemi (Yeni Üyelik Sistemi) -->
     <script src="scripts/auth.js"></script>
     <script src="scripts/roles.js"></script>
+    <script src="scripts/usage-limits.js"></script>
 
     <!-- Öğrenci Giriş Sistemi (Eski sistem - geriye uyumluluk) -->
     <script src="scripts/student-auth.js"></script>
@@ -2661,6 +2662,150 @@
                 alert('Profil güncellendi!');
             } else {
                 alert(result.message);
+            }
+        }
+
+        // Premium Modal Göster
+        function showPremiumModal() {
+            const session = Auth.getSession();
+
+            if (!session) {
+                alert('Premium üyelik için önce giriş yapmalısınız!');
+                window.location.href = 'giris.html';
+                return;
+            }
+
+            if (session.role !== 'teacher') {
+                alert('Premium üyelik sadece öğretmenler içindir!');
+                return;
+            }
+
+            const modal = document.createElement('div');
+            modal.id = 'premiumModal';
+            modal.style.cssText = 'position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); display: flex; align-items: center; justify-content: center; z-index: 10000; padding: 20px; overflow-y: auto;';
+
+            const subscriptionInfo = Auth.getSubscriptionInfo(session.userId);
+            const currentPlan = subscriptionInfo ? subscriptionInfo.plan : 'free';
+
+            modal.innerHTML = `
+                <div style="background: white; border-radius: 20px; padding: 40px; width: 100%; max-width: 800px; box-shadow: 0 20px 60px rgba(0,0,0,0.5); max-height: 90vh; overflow-y: auto;">
+                    <div style="text-align: center; margin-bottom: 30px;">
+                        <div style="font-size: 4em; margin-bottom: 10px;">⭐</div>
+                        <h2 style="color: #667eea; margin-bottom: 10px;">Premium Üyeliğe Geçin!</h2>
+                        <p style="color: #666; font-size: 1.1em;">Sınırsız özellikler ve gelişmiş araçlarla eğitimi kolaylaştırın</p>
+                    </div>
+
+                    ${currentPlan === 'premium' ? `
+                        <div style="background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%); padding: 20px; border-radius: 15px; margin-bottom: 20px; text-align: center; color: white;">
+                            <h3 style="margin-bottom: 10px; color: white;">✅ Premium Üyesiniz!</h3>
+                            <p style="margin: 0; color: white;">Kalan süre: ${subscriptionInfo.daysRemaining} gün</p>
+                        </div>
+                    ` : ''}
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 30px;">
+                        <!-- Free Plan -->
+                        <div style="border: 2px solid #e0e0e0; border-radius: 15px; padding: 25px; ${currentPlan === 'free' ? 'background: #f8f9fa;' : ''}">
+                            <h3 style="text-align: center; margin-bottom: 15px; color: #666;">Ücretsiz</h3>
+                            <div style="text-align: center; margin-bottom: 20px;">
+                                <div style="font-size: 2.5em; font-weight: 600; color: #28a745;">₺0</div>
+                                <div style="color: #666;">/ ay</div>
+                            </div>
+                            <ul style="list-style: none; padding: 0; color: #666;">
+                                <li style="padding: 10px 0; border-bottom: 1px solid #e0e0e0;">✓ Ayda 10 sınav</li>
+                                <li style="padding: 10px 0; border-bottom: 1px solid #e0e0e0;">✓ Ayda 5 etkinlik</li>
+                                <li style="padding: 10px 0; border-bottom: 1px solid #e0e0e0;">✓ Temel raporlar</li>
+                                <li style="padding: 10px 0; border-bottom: 1px solid #e0e0e0;">✗ Öğrenci takibi</li>
+                                <li style="padding: 10px 0; border-bottom: 1px solid #e0e0e0;">✗ Toplu işlemler</li>
+                                <li style="padding: 10px 0;">✗ PDF arşivleme</li>
+                            </ul>
+                            ${currentPlan === 'free' ? `<div style="margin-top: 15px; padding: 10px; background: #28a745; color: white; text-align: center; border-radius: 8px; font-weight: 600;">Aktif Plan</div>` : ''}
+                        </div>
+
+                        <!-- Premium Plan -->
+                        <div style="border: 3px solid #ffd700; border-radius: 15px; padding: 25px; background: linear-gradient(135deg, #fff9e6 0%, #fffef8 100%); position: relative;">
+                            <div style="position: absolute; top: -15px; right: 20px; background: linear-gradient(135deg, #ffd700 0%, #ffa500 100%); color: #000; padding: 5px 15px; border-radius: 20px; font-size: 0.85em; font-weight: 600;">🔥 Popüler</div>
+                            <h3 style="text-align: center; margin-bottom: 15px; color: #667eea;">⭐ Premium</h3>
+                            <div style="text-align: center; margin-bottom: 20px;">
+                                <div style="font-size: 2.5em; font-weight: 600; color: #667eea;">₺99</div>
+                                <div style="color: #666;">/ ay</div>
+                                <div style="font-size: 0.85em; color: #28a745; margin-top: 5px;">✓ 14 gün ücretsiz deneme</div>
+                            </div>
+                            <ul style="list-style: none; padding: 0; color: #333;">
+                                <li style="padding: 10px 0; border-bottom: 1px solid #e0e0e0; font-weight: 600; color: #667eea;">✓ Sınırsız sınav</li>
+                                <li style="padding: 10px 0; border-bottom: 1px solid #e0e0e0; font-weight: 600; color: #667eea;">✓ Sınırsız etkinlik</li>
+                                <li style="padding: 10px 0; border-bottom: 1px solid #e0e0e0; font-weight: 600; color: #667eea;">✓ Gelişmiş raporlar</li>
+                                <li style="padding: 10px 0; border-bottom: 1px solid #e0e0e0; font-weight: 600; color: #667eea;">✓ Öğrenci takip sistemi</li>
+                                <li style="padding: 10px 0; border-bottom: 1px solid #e0e0e0; font-weight: 600; color: #667eea;">✓ Toplu işlemler</li>
+                                <li style="padding: 10px 0; font-weight: 600; color: #667eea;">✓ PDF arşivleme</li>
+                            </ul>
+                            ${currentPlan === 'premium' ? `
+                                <div style="margin-top: 15px; padding: 10px; background: #667eea; color: white; text-align: center; border-radius: 8px; font-weight: 600;">Aktif Plan</div>
+                            ` : `
+                                <button onclick="activatePremium(1)" style="margin-top: 15px; width: 100%; padding: 15px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; border-radius: 10px; cursor: pointer; font-weight: 600; font-size: 1.1em;">
+                                    Premium'a Geç
+                                </button>
+                            `}
+                        </div>
+                    </div>
+
+                    <div style="background: #f8f9fa; padding: 20px; border-radius: 10px; margin-bottom: 20px;">
+                        <h4 style="margin-bottom: 15px; color: #333;">💡 Premium Avantajları</h4>
+                        <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px;">
+                            <div style="padding: 10px;">
+                                <div style="font-size: 1.5em; margin-bottom: 5px;">🎯</div>
+                                <strong>Sınırsız Kullanım</strong>
+                                <p style="margin: 5px 0 0 0; font-size: 0.9em; color: #666;">Dilediğiniz kadar sınav ve etkinlik oluşturun</p>
+                            </div>
+                            <div style="padding: 10px;">
+                                <div style="font-size: 1.5em; margin-bottom: 5px;">📊</div>
+                                <strong>Gelişmiş Raporlar</strong>
+                                <p style="margin: 5px 0 0 0; font-size: 0.9em; color: #666;">Detaylı öğrenci performans analizi</p>
+                            </div>
+                            <div style="padding: 10px;">
+                                <div style="font-size: 1.5em; margin-bottom: 5px;">👥</div>
+                                <strong>Öğrenci Takibi</strong>
+                                <p style="margin: 5px 0 0 0; font-size: 0.9em; color: #666;">Sınıf yönetimi ve ilerleme takibi</p>
+                            </div>
+                            <div style="padding: 10px;">
+                                <div style="font-size: 1.5em; margin-bottom: 5px;">💾</div>
+                                <strong>PDF Arşivleme</strong>
+                                <p style="margin: 5px 0 0 0; font-size: 0.9em; color: #666;">Tüm sınavlarınızı saklayın</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div style="text-align: center;">
+                        <button onclick="closePremiumModal()" style="padding: 12px 30px; background: #e0e0e0; border: none; border-radius: 8px; cursor: pointer; font-weight: 600;">
+                            Kapat
+                        </button>
+                    </div>
+                </div>
+            `;
+
+            document.body.appendChild(modal);
+        }
+
+        function closePremiumModal() {
+            const modal = document.getElementById('premiumModal');
+            if (modal) modal.remove();
+        }
+
+        function activatePremium(months) {
+            const session = Auth.getSession();
+            if (!session) return;
+
+            // Demo amaçlı direkt aktifleştir (gerçek uygulamada ödeme işlemi olur)
+            if (confirm(`${months} ay Premium üyeliği aktifleştirmek istediğinize emin misiniz?\n\nNot: Bu demo sürümünde ödeme alınmaz, direkt aktifleşir.`)) {
+                const result = Auth.upgradeToPremium(session.userId, months);
+
+                if (result.success) {
+                    alert('🎉 ' + result.message);
+                    closePremiumModal();
+                    // Sayfayı yenile
+                    window.location.reload();
+                } else {
+                    alert('❌ ' + result.message);
+                }
             }
         }
 

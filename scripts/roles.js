@@ -40,6 +40,17 @@ const Roles = {
     },
 
     /**
+     * Kullanıcının subscription durumunu al
+     */
+    getSubscriptionStatus() {
+        const session = Auth.getSession();
+        if (!session || session.role !== 'teacher') {
+            return null;
+        }
+        return session.subscription || 'free';
+    },
+
+    /**
      * Belirli role sahip mi?
      */
     hasRole(role) {
@@ -80,6 +91,7 @@ const Roles = {
      */
     applyRoleBasedVisibility() {
         const role = this.getUserRole();
+        const subscription = this.getSubscriptionStatus();
 
         // Teacher-only elementler
         document.querySelectorAll('.teacher-only').forEach(el => {
@@ -137,6 +149,32 @@ const Roles = {
         // Guest-only (sadece misafirler)
         document.querySelectorAll('.guest-only').forEach(el => {
             if (!this.isAuthenticated()) {
+                el.style.display = el.dataset.originalDisplay || '';
+            } else {
+                if (!el.dataset.originalDisplay) {
+                    const computed = window.getComputedStyle(el).display;
+                    el.dataset.originalDisplay = computed !== 'none' ? computed : 'block';
+                }
+                el.style.display = 'none';
+            }
+        });
+
+        // Teacher-free-only (sadece ücretsiz öğretmenler)
+        document.querySelectorAll('.teacher-free-only').forEach(el => {
+            if (role === this.TEACHER && subscription === 'free') {
+                el.style.display = el.dataset.originalDisplay || '';
+            } else {
+                if (!el.dataset.originalDisplay) {
+                    const computed = window.getComputedStyle(el).display;
+                    el.dataset.originalDisplay = computed !== 'none' ? computed : 'block';
+                }
+                el.style.display = 'none';
+            }
+        });
+
+        // Teacher-premium-only (sadece premium öğretmenler)
+        document.querySelectorAll('.teacher-premium-only').forEach(el => {
+            if ((role === this.TEACHER && subscription === 'premium') || role === this.ADMIN) {
                 el.style.display = el.dataset.originalDisplay || '';
             } else {
                 if (!el.dataset.originalDisplay) {

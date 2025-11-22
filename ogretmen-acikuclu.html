@@ -871,6 +871,7 @@
     <!-- Auth & Roles Sistemi -->
     <script src="scripts/auth.js"></script>
     <script src="scripts/roles.js"></script>
+    <script src="scripts/usage-limits.js"></script>
     <script>
         // Öğretmen erişim kontrolü
         document.addEventListener('DOMContentLoaded', function() {
@@ -884,8 +885,55 @@
                 } else {
                     window.location.href = 'index.html';
                 }
+                return;
+            }
+
+            // Kullanım dashboard'unu göster
+            const dashboardContainer = document.querySelector('.container');
+            if (dashboardContainer && session) {
+                const usageDashboard = document.createElement('div');
+                usageDashboard.innerHTML = UsageLimits.getUsageDashboardHTML(session.userId);
+                dashboardContainer.insertBefore(usageDashboard.firstChild, dashboardContainer.firstChild);
             }
         });
+
+        // Sınav oluşturma fonksiyonunu limit kontrolü ile değiştir
+        const originalGenerateExam = generateExam;
+        function generateExam() {
+            const session = Auth.getSession();
+            if (!session) return;
+
+            // Limit kontrolü
+            const check = UsageLimits.checkLimit(session.userId, 'exam');
+
+            if (!check.allowed) {
+                // Limit dolmuş, uyarı göster
+                const warningDiv = document.createElement('div');
+                warningDiv.innerHTML = UsageLimits.getLimitWarningHTML('exam');
+                document.querySelector('.container').insertBefore(warningDiv.firstChild, document.querySelector('.container').firstChild);
+
+                // Scroll to top
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+                return;
+            }
+
+            // Limit kontrolü geçti, sınavı oluştur
+            originalGenerateExam();
+
+            // Kullanımı artır
+            UsageLimits.incrementUsage(session.userId, 'exam');
+
+            // Dashboard'u güncelle
+            setTimeout(() => {
+                const dashboards = document.querySelectorAll('[style*="Kullanım İstatistikleri"]');
+                dashboards.forEach(d => d.remove());
+
+                const dashboardContainer = document.querySelector('.container');
+                const usageDashboard = document.createElement('div');
+                usageDashboard.innerHTML = UsageLimits.getUsageDashboardHTML(session.userId);
+                dashboardContainer.insertBefore(usageDashboard.firstChild, dashboardContainer.firstChild);
+            }, 100);
+        }
     </script>
 </body>
 </html>

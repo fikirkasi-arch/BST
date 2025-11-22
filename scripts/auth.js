@@ -87,6 +87,13 @@ const Auth = {
                     answer: this.hashSecurityAnswer(sq.answer)
                 })),
                 status: userData.role === 'teacher' ? 'pending' : 'active',
+                // Subscription sistemi - Öğretmenler için free, öğrenciler için null
+                subscription: userData.role === 'teacher' ? {
+                    plan: 'free',
+                    startDate: new Date().toISOString(),
+                    endDate: null, // Free sınırsız
+                    status: 'active'
+                } : null,
                 createdAt: new Date().toISOString(),
                 lastLogin: null
             };
@@ -275,6 +282,7 @@ const Auth = {
             name: user.name,
             email: user.email,
             number: user.number,
+            subscription: user.subscription ? user.subscription.plan : null,
             createdAt: Date.now(),
             expiresAt: Date.now() + this.SESSION_DURATION
         };
@@ -540,6 +548,7 @@ const Auth = {
                 }
             ],
             status: 'active',
+            subscription: null, // Admin için subscription gerekmez
             createdAt: new Date().toISOString(),
             lastLogin: null
         };
@@ -547,6 +556,142 @@ const Auth = {
         users.push(admin);
         localStorage.setItem('bst_users', JSON.stringify(users));
         console.log('Default admin created: admin@bst.edu.tr / Admin123!');
+    },
+
+    /**
+     * Subscription Yönetimi
+     */
+
+    // Kullanıcının subscription durumunu al
+    getSubscriptionStatus(userId) {
+        const users = this.getAllUsers();
+        const user = users.find(u => u.id === userId);
+
+        if (!user || user.role !== 'teacher') {
+            return null;
+        }
+
+        // Subscription yoksa veya free ise
+        if (!user.subscription || user.subscription.plan === 'free') {
+            return 'free';
+        }
+
+        // Premium ise süresini kontrol et
+        if (user.subscription.plan === 'premium') {
+            const endDate = user.subscription.endDate ? new Date(user.subscription.endDate) : null;
+            const now = new Date();
+
+            // Süre dolmuşsa free'ye düşür
+            if (endDate && now > endDate) {
+                this.downgradeToFree(userId);
+                return 'free';
+            }
+
+            return 'premium';
+        }
+
+        return 'free';
+    },
+
+    // Premium'a yükselt
+    upgradeToPremium(userId, durationMonths = 1) {
+        try {
+            const users = this.getAllUsers();
+            const userIndex = users.findIndex(u => u.id === userId);
+
+            if (userIndex === -1) {
+                return {
+                    success: false,
+                    message: 'Kullanıcı bulunamadı!'
+                };
+            }
+
+            const user = users[userIndex];
+
+            if (user.role !== 'teacher') {
+                return {
+                    success: false,
+                    message: 'Premium üyelik sadece öğretmenler içindir!'
+                };
+            }
+
+            const endDate = new Date();
+            endDate.setMonth(endDate.getMonth() + durationMonths);
+
+            user.subscription = {
+                plan: 'premium',
+                startDate: new Date().toISOString(),
+                endDate: endDate.toISOString(),
+                status: 'active',
+                durationMonths: durationMonths
+            };
+
+            localStorage.setItem('bst_users', JSON.stringify(users));
+
+            // Session'ı güncelle
+            const session = this.getSession();
+            if (session && session.userId === userId) {
+                session.subscription = 'premium';
+                localStorage.setItem('bst_session', JSON.stringify(session));
+            }
+
+            return {
+                success: true,
+                message: `Premium üyeliğiniz ${durationMonths} ay süreyle aktifleştirildi!`,
+                endDate: endDate.toISOString()
+            };
+
+        } catch (error) {
+            console.error('Upgrade error:', error);
+            return {
+                success: false,
+                message: 'Premium yükseltme sırasında hata oluştu!'
+            };
+        }
+    },
+
+    // Free'ye düşür
+    downgradeToFree(userId) {
+        const users = this.getAllUsers();
+        const userIndex = users.findIndex(u => u.id === userId);
+
+        if (userIndex === -1) return;
+
+        users[userIndex].subscription = {
+            plan: 'free',
+            startDate: new Date().toISOString(),
+            endDate: null,
+            status: 'active'
+        };
+
+        localStorage.setItem('bst_users', JSON.stringify(users));
+
+        // Session'ı güncelle
+        const session = this.getSession();
+        if (session && session.userId === userId) {
+            session.subscription = 'free';
+            localStorage.setItem('bst_session', JSON.stringify(session));
+        }
+    },
+
+    // Subscription bilgilerini al
+    getSubscriptionInfo(userId) {
+        const users = this.getAllUsers();
+        const user = users.find(u => u.id === userId);
+
+        if (!user || !user.subscription) {
+            return null;
+        }
+
+        return {
+            plan: user.subscription.plan,
+            status: user.subscription.status,
+            startDate: user.subscription.startDate,
+            endDate: user.subscription.endDate,
+            daysRemaining: user.subscription.endDate ?
+                Math.ceil((new Date(user.subscription.endDate) - new Date()) / (1000 * 60 * 60 * 24)) :
+                null
+        };
     }
 };
 
