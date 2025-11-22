@@ -982,27 +982,67 @@
         }
 
         function createMazeGrid(size) {
-            // Create a simple maze with walls and paths
-            const maze = Array(size).fill().map(() => Array(size).fill(0));
+            // Create a maze filled with walls
+            const maze = Array(size).fill().map(() => Array(size).fill(1));
 
-            // Add random walls (30% chance)
-            for (let i = 0; i < size; i++) {
-                for (let j = 0; j < size; j++) {
-                    if (Math.random() < 0.3) {
-                        maze[i][j] = 1; // Wall
+            // Recursive backtracking maze generation
+            function carvePath(row, col) {
+                maze[row][col] = 0; // Mark as path
+
+                // Directions: up, right, down, left
+                const directions = [
+                    [-2, 0], [0, 2], [2, 0], [0, -2]
+                ];
+
+                // Shuffle directions for randomness
+                for (let i = directions.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [directions[i], directions[j]] = [directions[j], directions[i]];
+                }
+
+                // Try each direction
+                for (const [dr, dc] of directions) {
+                    const newRow = row + dr;
+                    const newCol = col + dc;
+
+                    // Check if the new position is valid and unvisited
+                    if (newRow > 0 && newRow < size - 1 &&
+                        newCol > 0 && newCol < size - 1 &&
+                        maze[newRow][newCol] === 1) {
+
+                        // Carve path between current and new cell
+                        maze[row + dr/2][col + dc/2] = 0;
+                        carvePath(newRow, newCol);
                     }
                 }
             }
 
+            // Start from (1,1) to ensure borders remain walls
+            carvePath(1, 1);
+
             // Ensure start and end are open
             maze[0][0] = 0;
+            maze[0][1] = 0;
+            maze[1][0] = 0;
             maze[size-1][size-1] = 0;
+            maze[size-1][size-2] = 0;
+            maze[size-2][size-1] = 0;
 
-            // Create a guaranteed path (simple diagonal-ish path)
-            for (let i = 0; i < size; i++) {
-                maze[i][Math.min(i, size-1)] = 0;
-                if (i < size - 1) {
-                    maze[i][Math.min(i+1, size-1)] = 0;
+            // Add some random complexity (optional extra paths - makes it harder)
+            const extraPaths = Math.floor(size * 0.3);
+            for (let i = 0; i < extraPaths; i++) {
+                const row = Math.floor(Math.random() * (size - 2)) + 1;
+                const col = Math.floor(Math.random() * (size - 2)) + 1;
+
+                // Only create path if surrounded by at least 2 walls
+                let wallCount = 0;
+                if (row > 0 && maze[row-1][col] === 1) wallCount++;
+                if (row < size-1 && maze[row+1][col] === 1) wallCount++;
+                if (col > 0 && maze[row][col-1] === 1) wallCount++;
+                if (col < size-1 && maze[row][col+1] === 1) wallCount++;
+
+                if (wallCount >= 2) {
+                    maze[row][col] = 0;
                 }
             }
 
