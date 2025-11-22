@@ -357,6 +357,105 @@
             font-size: 1.5em;
             color: #43e97b;
         }
+
+        /* Print Styles for PDF */
+        @media print {
+            body {
+                background: white;
+                padding: 0;
+                margin: 0;
+                position: relative;
+            }
+
+            body::before {
+                content: '📚 Bilişim Teknolojileri Eğitim Portalı';
+                position: fixed;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%) rotate(-45deg);
+                font-size: 3em;
+                color: rgba(0, 0, 0, 0.05);
+                white-space: nowrap;
+                z-index: -1;
+                pointer-events: none;
+            }
+
+            .container {
+                max-width: 100%;
+                box-shadow: none;
+                padding: 10px;
+                border-radius: 0;
+            }
+
+            h1, .subtitle, .stats-bar, .toolbar, .filters, .search-bar, .btn, .question-actions, .modal {
+                display: none !important;
+            }
+
+            .questions-grid {
+                display: block;
+            }
+
+            .question-card {
+                margin-bottom: 12px;
+                padding: 10px;
+                background: white;
+                border: 1px solid #000;
+                border-left: 3px solid #000;
+                border-radius: 0;
+                box-shadow: none;
+                page-break-inside: avoid;
+            }
+
+            .question-card:hover {
+                transform: none;
+                box-shadow: none;
+            }
+
+            .question-header {
+                margin-bottom: 8px;
+            }
+
+            .question-tags {
+                gap: 5px;
+            }
+
+            .tag {
+                padding: 3px 8px;
+                font-size: 0.75em;
+                border: 1px solid #000;
+                color: #000 !important;
+                background: white !important;
+            }
+
+            .question-text {
+                font-size: 0.95em;
+                margin-bottom: 10px;
+                line-height: 1.4;
+            }
+
+            .question-options {
+                gap: 6px;
+                margin-top: 10px;
+            }
+
+            .option {
+                padding: 6px;
+                font-size: 0.9em;
+                border: 1px solid #000;
+                border-radius: 0;
+                background: white;
+            }
+
+            .option.correct {
+                border: 2px solid #000;
+                background: #f0f0f0;
+            }
+
+            /* Every 5 questions, add page break */
+            .question-card:nth-child(5n) {
+                page-break-after: always;
+            }
+        }
     </style>
 </head>
 <body>
@@ -736,7 +835,42 @@
         }
 
         function exportToPDF() {
-            alert('PDF export özelliği aktif!\n\nGerçek uygulamada jsPDF kütüphanesi ile PDF oluşturulur.\n\nŞimdilik JSON olarak dışa aktarıp yazdırabilirsiniz.');
+            if (questions.length === 0) {
+                alert('❌ Soru bankası boş! Önce soru ekleyin.');
+                return;
+            }
+
+            // Tüm soruları göster (filtreyi kaldır)
+            const searchInput = document.getElementById('searchInput');
+            const filterGrade = document.getElementById('filterGrade');
+            const filterSubject = document.getElementById('filterSubject');
+            const filterDifficulty = document.getElementById('filterDifficulty');
+
+            const originalSearch = searchInput.value;
+            const originalGrade = filterGrade.value;
+            const originalSubject = filterSubject.value;
+            const originalDifficulty = filterDifficulty.value;
+
+            // Filtreleri temizle
+            searchInput.value = '';
+            filterGrade.value = '';
+            filterSubject.value = '';
+            filterDifficulty.value = '';
+            filterQuestions();
+
+            // Yazdırma
+            setTimeout(() => {
+                window.print();
+
+                // Filtreleri geri yükle
+                setTimeout(() => {
+                    searchInput.value = originalSearch;
+                    filterGrade.value = originalGrade;
+                    filterSubject.value = originalSubject;
+                    filterDifficulty.value = originalDifficulty;
+                    filterQuestions();
+                }, 100);
+            }, 100);
         }
 
         // Initial render

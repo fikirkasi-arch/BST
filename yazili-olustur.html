@@ -130,6 +130,21 @@
             body {
                 background: white;
                 padding: 0;
+                margin: 0;
+                position: relative;
+            }
+
+            body::before {
+                content: '📚 Bilişim Teknolojileri Eğitim Portalı';
+                position: fixed;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%) rotate(-45deg);
+                font-size: 3em;
+                color: rgba(0, 0, 0, 0.05);
+                white-space: nowrap;
+                z-index: -1;
+                pointer-events: none;
             }
 
             .container {
@@ -139,21 +154,66 @@
                 border-radius: 0;
             }
 
+            .container h1 {
+                display: none;
+            }
+
             .back-btn, .editor-section, .btn-group, .no-print {
                 display: none !important;
             }
 
             .print-area {
                 display: block !important;
+                padding: 10px;
             }
 
             @page {
                 size: A4;
-                margin: 2cm;
+                margin: 1.5cm;
             }
 
             .page-break {
                 page-break-after: always;
+            }
+
+            .exam-header {
+                padding-bottom: 8px;
+                margin-bottom: 15px;
+                border-bottom: 2px solid #000;
+            }
+
+            .exam-header h2 {
+                font-size: 1.2em;
+                margin-bottom: 5px;
+            }
+
+            .exam-header h3 {
+                font-size: 1.1em;
+            }
+
+            .exam-info {
+                margin-bottom: 15px;
+                font-size: 0.85em;
+            }
+
+            .exam-info-item {
+                padding: 4px 0;
+            }
+
+            .exam-question {
+                margin-bottom: 15px;
+                page-break-inside: avoid;
+            }
+
+            .exam-question-number {
+                font-size: 1em;
+                margin-bottom: 5px;
+            }
+
+            .exam-question-text {
+                font-size: 0.95em;
+                line-height: 1.5;
+                margin-bottom: 10px;
             }
         }
 
@@ -206,13 +266,6 @@
         .exam-question-text {
             line-height: 1.8;
             margin-bottom: 20px;
-        }
-
-        .answer-space {
-            border: 1px solid #ddd;
-            min-height: 60px;
-            border-radius: 5px;
-            padding: 10px;
         }
     </style>
 </head>
@@ -426,14 +479,11 @@
                         <div class="exam-question-text">
                             ${q.text || '<em style="color: #999;">Soru metni girilmemiş</em>'}
                         </div>
-                        <div class="answer-space">
-                            <em style="color: #999;">Cevap:</em>
-                        </div>
                     </div>
                 `;
 
-                // Her 4 soruda bir sayfa sonu
-                if ((index + 1) % 4 === 0 && index < questions.length - 1) {
+                // Her 5 soruda bir sayfa sonu
+                if ((index + 1) % 5 === 0 && index < questions.length - 1) {
                     html += '<div class="page-break"></div>';
                 }
             });
