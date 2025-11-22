@@ -690,6 +690,7 @@
             <button class="tab" onclick="openTab('yardimcilar')">📖 Yardımcılar</button>
             <button class="tab" onclick="openTab('profilim')">👤 Profilim</button>
             <button class="tab teacher-only" onclick="openTab('kaynaklar')">💾 Kaynaklar</button>
+            <button class="tab auth-only" onclick="showContactAdminModal()" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">💬 İletişim</button>
         </div>
 
         <!-- Breadcrumb Navigasyon -->
@@ -2509,6 +2510,7 @@
     <script src="scripts/auth.js"></script>
     <script src="scripts/roles.js"></script>
     <script src="scripts/usage-limits.js"></script>
+    <script src="scripts/messaging.js"></script>
 
     <!-- Öğrenci Giriş Sistemi (Eski sistem - geriye uyumluluk) -->
     <script src="scripts/student-auth.js"></script>
@@ -2806,6 +2808,107 @@
                 } else {
                     alert('❌ ' + result.message);
                 }
+            }
+        }
+
+        // Admin'e Mesaj Gönder
+        function showContactAdminModal() {
+            const session = Auth.getSession();
+
+            if (!session) {
+                alert('Mesaj göndermek için önce giriş yapmalısınız!');
+                window.location.href = 'giris.html';
+                return;
+            }
+
+            const modal = document.createElement('div');
+            modal.id = 'contactAdminModal';
+            modal.style.cssText = 'position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); display: flex; align-items: center; justify-content: center; z-index: 10000; padding: 20px;';
+
+            modal.innerHTML = `
+                <div style="background: white; border-radius: 20px; padding: 30px; width: 100%; max-width: 600px; max-height: 90vh; overflow-y: auto;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                        <h2 style="margin: 0; color: #667eea;">💬 Admin'e Mesaj Gönder</h2>
+                        <button onclick="closeContactAdminModal()" style="background: none; border: none; font-size: 2em; cursor: pointer; color: #999;">&times;</button>
+                    </div>
+
+                    <p style="color: #666; margin-bottom: 20px;">
+                        Sorularınız, önerileriniz veya sorunlarınız için bize mesaj gönderin. En kısa sürede size dönüş yapılacaktır.
+                    </p>
+
+                    <form id="contactAdminForm" onsubmit="sendMessageToAdmin(event)">
+                        <div style="margin-bottom: 15px;">
+                            <label style="display: block; font-weight: 600; margin-bottom: 5px; color: #333;">Konu *</label>
+                            <input
+                                type="text"
+                                id="messageSubject"
+                                maxlength="${Messaging.MAX_SUBJECT_LENGTH}"
+                                required
+                                style="width: 100%; padding: 12px; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 14px;"
+                                placeholder="Mesaj konusu (max ${Messaging.MAX_SUBJECT_LENGTH} karakter)"
+                            >
+                        </div>
+
+                        <div style="margin-bottom: 15px;">
+                            <label style="display: block; font-weight: 600; margin-bottom: 5px; color: #333;">Mesajınız *</label>
+                            <textarea
+                                id="messageContent"
+                                rows="6"
+                                maxlength="${Messaging.MAX_MESSAGE_LENGTH}"
+                                required
+                                style="width: 100%; padding: 12px; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 14px; font-family: inherit; resize: vertical;"
+                                placeholder="Mesajınızı buraya yazın (min ${Messaging.MIN_MESSAGE_LENGTH}, max ${Messaging.MAX_MESSAGE_LENGTH} karakter)"
+                            ></textarea>
+                            <small id="charCount" style="color: #999; font-size: 0.85em;">0 / ${Messaging.MAX_MESSAGE_LENGTH} karakter</small>
+                        </div>
+
+                        <div style="background: #fff3cd; border: 1px solid #ffc107; border-radius: 8px; padding: 12px; margin-bottom: 15px;">
+                            <strong style="color: #856404;">⚠️ Lütfen Dikkat:</strong>
+                            <ul style="margin: 5px 0 0 20px; color: #856404; font-size: 0.9em;">
+                                <li>Küfür ve hakaret içeren mesajlar gönderilmez</li>
+                                <li>Her mesaj arasında en az ${Messaging.COOLDOWN_MINUTES} dakika beklemelisiniz</li>
+                                <li>Spam mesajlar engellenecektir</li>
+                            </ul>
+                        </div>
+
+                        <div style="display: flex; gap: 10px;">
+                            <button type="button" onclick="closeContactAdminModal()" style="flex: 1; padding: 12px; border: 2px solid #e0e0e0; border-radius: 8px; background: white; cursor: pointer; font-weight: 600;">
+                                İptal
+                            </button>
+                            <button type="submit" style="flex: 1; padding: 12px; border: none; border-radius: 8px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; cursor: pointer; font-weight: 600;">
+                                📤 Gönder
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            `;
+
+            document.body.appendChild(modal);
+
+            // Karakter sayacı
+            document.getElementById('messageContent').addEventListener('input', function() {
+                document.getElementById('charCount').textContent = this.value.length + ' / ' + Messaging.MAX_MESSAGE_LENGTH + ' karakter';
+            });
+        }
+
+        function closeContactAdminModal() {
+            const modal = document.getElementById('contactAdminModal');
+            if (modal) modal.remove();
+        }
+
+        function sendMessageToAdmin(event) {
+            event.preventDefault();
+
+            const subject = document.getElementById('messageSubject').value;
+            const content = document.getElementById('messageContent').value;
+
+            const result = Messaging.sendMessage({ subject, content });
+
+            if (result.success) {
+                alert('✅ ' + result.message);
+                closeContactAdminModal();
+            } else {
+                alert('❌ ' + result.message);
             }
         }
 
