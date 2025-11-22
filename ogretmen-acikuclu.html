@@ -87,7 +87,7 @@
 
         .checkbox-label {
             display: flex;
-            align-items: flex-start;
+            align-items: center;
             gap: 10px;
             padding: 12px;
             background: white;
@@ -348,13 +348,71 @@
                 box-shadow: none;
             }
             .exam-paper {
-                padding: 20px;
+                padding: 15px;
             }
+
+            /* Sınav başlık kısmını küçült */
+            .exam-paper h2 {
+                font-size: 1.3em;
+                margin: 8px 0;
+            }
+
+            .exam-info {
+                padding: 10px;
+                margin: 10px 0;
+                gap: 8px;
+            }
+
+            /* Soruları optimize et - 5 soru/sayfa */
+            .question-item {
+                margin-bottom: 12px;
+                padding: 10px;
+                page-break-inside: avoid;
+            }
+
+            .question-item:nth-of-type(5n) {
+                page-break-after: always;
+            }
+
+            .question-number {
+                font-size: 1em;
+                margin-bottom: 6px;
+            }
+
+            .question-text {
+                font-size: 0.95em;
+                line-height: 1.4;
+                margin-bottom: 8px;
+            }
+
+            .answer-space {
+                min-height: 50px;
+                padding: 8px;
+                margin-top: 6px;
+            }
+
+            .answer-lines {
+                gap: 10px;
+            }
+
+            .answer-line {
+                height: 20px;
+            }
+
             .answer-content {
                 page-break-inside: avoid;
+                padding: 10px;
+                margin-top: 6px;
             }
-            .question-item {
-                page-break-inside: avoid;
+
+            .answer-label {
+                margin-bottom: 5px;
+                font-size: 0.9em;
+            }
+
+            .answer-text {
+                line-height: 1.4;
+                font-size: 0.9em;
             }
 
             /* Cevapları gizle */
@@ -411,8 +469,8 @@
                 </div>
 
                 <div class="form-group">
-                    <label class="form-label">Sınav Başlığı</label>
-                    <input type="text" id="examTitle" class="form-control" placeholder="Örn: 1. Dönem Yazılı Sınavı">
+                    <label class="form-label">Dönem/Yazılı Bilgisi</label>
+                    <input type="text" id="examInfo" class="form-control" placeholder="Örn: 1. dönem 1. yazılı">
                 </div>
 
                 <div class="form-group">
@@ -467,38 +525,50 @@
                     { q: "İşletim sistemi nedir ve bir bilgisayarda neden gereklidir? Windows, Linux ve macOS işletim sistemlerini karşılaştırınız.", a: "İşletim sistemi, bilgisayarın donanımını yöneten ve uygulamaları çalıştıran temel yazılımdır. Windows: En yaygın, oyunlar için uygun. Linux: Açık kaynak, ücretsiz, güvenli. macOS: Apple ürünleri için, kullanıcı dostu." },
                     { q: "Dosya ve klasör yönetiminde düzenli bir yapı oluşturmanın önemi nedir? Bilgisayarınızda derslere göre klasör yapısı nasıl oluşturulur? Örnek bir yapı çizerek açıklayınız.", a: "Düzenli klasör yapısı, dosyaları hızlı bulmayı ve organize çalışmayı sağlar. Örnek yapı: Ana klasör 'Derslerim' > Alt klasörler: 'Matematik', 'Türkçe', 'Bilişim' > Her ders klasöründe 'Ödevler', 'Projeler', 'Notlar' alt klasörleri. Bu yapı sayesinde her ders için ayrı alan olur ve karışıklık önlenir. Dosya isimleri açıklayıcı olmalı (Örn: Matematik_Odev1_Tarih.docx)." },
                     { q: "Depolama aygıtlarını (HDD, SSD, USB bellek, CD/DVD, Bulut depolama) sınıflandırınız ve her birinin özelliklerini karşılaştırınız. Hangisi hangi durumlarda tercih edilir?", a: "HDD (Hard Disk): Mekanik, ucuz, yüksek kapasite ama yavaş. Büyük dosyalar için uygun. SSD (Katı Hal Diski): Elektronik, hızlı, dayanıklı ama pahalı. İşletim sistemi için ideal. USB Bellek: Taşınabilir, pratik, orta kapasite. Dosya aktarımı için. CD/DVD: Optik disk, 700MB-4.7GB, arşivleme için. Bulut Depolama: İnternet üzerinden, sınırsız erişim, Google Drive, OneDrive. Her yerden ulaşım için en iyi. Hız: SSD > HDD > USB > CD/DVD. Taşınabilirlik: Bulut > USB > CD/DVD > SSD/HDD." },
-                    { q: "Bilişim teknolojilerinin insan sağlığı üzerindeki olumlu ve olumsuz etkilerini tartışınız. Bilgisayar başında çalışırken ergonomik kurallara neden uyulmalıdır? Sağlıklı teknoloji kullanımı için önerilerinizi yazınız.", a: "Olumlu etkiler: Teletıp ile uzaktan tedavi, sağlık kayıtlarına hızlı erişim, hastalık teşhisinde yapay zeka desteği, egzersiz uygulamaları. Olumsuz etkiler: 1. Göz yorgunluğu ve görme bozuklukları (20-20-20 kuralı: Her 20 dakikada 20 saniye 20 adım uzağa bak). 2. Boyun, sırt, bilek ağrıları (kötü oturuş pozisyonu). 3. Hareketsizlik ve obezite. 4. Teknoloji bağımlılığı ve uyku bozuklukları. Ergonomik kurallar: Monitör göz hizasında, koltuk bel destekli, ayaklar yerde, klavye dirsek hizasında, ekran mesafesi 50-70 cm. Her saat 10 dakika mola, bol su içme, göz egzersizleri. Dengeli kullanım sağlığı korur." }
+                    { q: "Bilişim teknolojilerinin insan sağlığı üzerindeki olumlu ve olumsuz etkilerini tartışınız. Bilgisayar başında çalışırken ergonomik kurallara neden uyulmalıdır? Sağlıklı teknoloji kullanımı için önerilerinizi yazınız.", a: "Olumlu etkiler: Teletıp ile uzaktan tedavi, sağlık kayıtlarına hızlı erişim, hastalık teşhisinde yapay zeka desteği, egzersiz uygulamaları. Olumsuz etkiler: 1. Göz yorgunluğu ve görme bozuklukları (20-20-20 kuralı: Her 20 dakikada 20 saniye 20 adım uzağa bak). 2. Boyun, sırt, bilek ağrıları (kötü oturuş pozisyonu). 3. Hareketsizlik ve obezite. 4. Teknoloji bağımlılığı ve uyku bozuklukları. Ergonomik kurallar: Monitör göz hizasında, koltuk bel destekli, ayaklar yerde, klavye dirsek hizasında, ekran mesafesi 50-70 cm. Her saat 10 dakika mola, bol su içme, göz egzersizleri. Dengeli kullanım sağlığı korur." },
+                    { q: "Yazılım türlerini (sistem yazılımı, uygulama yazılımı) açıklayınız ve her birinden örnekler veriniz. Yazılımların bilgisayar sistemindeki rolleri nelerdir?", a: "Sistem Yazılımı: Donanımı yöneten ve bilgisayarın çalışmasını sağlayan temel yazılımlardır. Örnekler: Windows, Linux, macOS (işletim sistemleri), sürücüler (driver), BIOS. Görevleri: Donanımı kontrol etme, dosya yönetimi, bellek yönetimi, güvenlik. Uygulama Yazılımı: Kullanıcının belirli işlerini yapmasını sağlar. Örnekler: Word (yazı yazma), Chrome (internet), Photoshop (resim düzenleme), Scratch (programlama), Zoom (toplantı). Görevleri: Kullanıcının ihtiyaçlarını karşılama. Sistem yazılımı olmadan uygulama yazılımı çalışmaz. İşletim sistemi ikisi arasında köprüdür." },
+                    { q: "Bilgisayar donanımının bakımı ve korunması için neler yapılmalıdır? Fiziksel bakım, yazılımsal bakım ve güvenlik önlemlerini açıklayınız.", a: "Fiziksel Bakım: 1. Bilgisayarı tozdan temizleme (basınçlı hava ile). 2. Ekranı mikrofiber bezle silme. 3. Klavye ve fareyi düzenli temizleme. 4. Havalandırma deliklerini açık tutma (aşırı ısınmayı önleme). 5. Sıvılardan uzak tutma. Yazılımsal Bakım: 1. İşletim sistemini güncel tutma. 2. Gereksiz programları kaldırma. 3. Disk temizliği yapma. 4. Düzenli yedekleme. 5. Virüs taraması. Güvenlik Önlemleri: 1. Antivirüs kullanma. 2. Güvenlik duvarı aktif etme. 3. Güçlü şifreler. 4. Elektrik kesintilerine karşı UPS kullanma. 5. Fiziksel güvenlik (kilitli oda). Düzenli bakım bilgisayarın ömrünü uzatır ve performansını korur." }
                 ],
                 "Ünite 2 - Dijital Ürün Tasarımı": [
                     { q: "Dijital ürün tasarım sürecinin adımlarını (planlama, tasarım, uygulama, test, değerlendirme) sırasıyla açıklayınız.", a: "1. Planlama: Projenin amacı ve hedefi belirlenir. 2. Tasarım: Ürünün nasıl görüneceği çizilir. 3. Uygulama: Ürün kodlanır veya oluşturulur. 4. Test: Hatalar kontrol edilir. 5. Değerlendirme: Ürün kullanıcılarla test edilir ve geri bildirim alınır." },
                     { q: "Microsoft Word'de bir belge hazırlarken kullanabileceğiniz biçimlendirme araçlarını (font, hizalama, madde işaretleri, resim ekleme) açıklayınız.", a: "Font: Yazı tipi, boyutu ve rengi değiştirilir. Hizalama: Metin sola, sağa, ortaya veya iki yana yaslanır. Madde İşaretleri: Liste oluşturulur. Resim Ekleme: Belgeye görsel eklenir. Kalın, İtalik, Altı Çizili gibi vurgu araçları kullanılır." },
                     { q: "PowerPoint sunumu hazırlarken dikkat edilmesi gereken tasarım prensiplerini yazınız. Etkili bir sunum nasıl olmalıdır?", a: "Etkili sunum özellikleri: 1. Az metin, çok görsel kullanılmalı. 2. Okunabilir font boyutu (en az 24 punto). 3. Uyumlu renkler seçilmeli. 4. Her slayt tek bir ana fikir içermeli. 5. Animasyonlar abartısız kullanılmalı. 6. Slaytlar sıralı ve mantıklı olmalı." },
-                    { q: "Microsoft Excel hesap tablosu programının temel özelliklerini açıklayınız. Hücre, satır, sütun kavramlarını ve basit bir formül örneği (toplama, ortalama) veriniz.", a: "Excel, verileri tablo halinde düzenler ve hesaplamalar yapar. Hücre: Tek bir kutucuk (Örn: A1). Satır: Yatay sıra (1, 2, 3...). Sütun: Dikey sıra (A, B, C...). Formül örnekleri: =TOPLA(A1:A5) → A1'den A5'e kadar toplar. =ORTALAMA(B1:B10) → B1'den B10'a kadar ortalama alır. Excel matematik, bütçe, liste gibi işlemler için kullanılır." }
+                    { q: "Microsoft Excel hesap tablosu programının temel özelliklerini açıklayınız. Hücre, satır, sütun kavramlarını ve basit bir formül örneği (toplama, ortalama) veriniz.", a: "Excel, verileri tablo halinde düzenler ve hesaplamalar yapar. Hücre: Tek bir kutucuk (Örn: A1). Satır: Yatay sıra (1, 2, 3...). Sütun: Dikey sıra (A, B, C...). Formül örnekleri: =TOPLA(A1:A5) → A1'den A5'e kadar toplar. =ORTALAMA(B1:B10) → B1'den B10'a kadar ortalama alır. Excel matematik, bütçe, liste gibi işlemler için kullanılır." },
+                    { q: "Dijital bir proje hazırlarken telif hakkı ve özgün eser üretme kavramlarını açıklayınız. Başkalarının çalışmalarını kullanırken nelere dikkat edilmelidir?", a: "Telif hakkı, yaratıcının eserini koruma hakkıdır. Özgün eser, kendi emeğinizle ürettiğiniz orijinal çalışmadır. Dijital projede dikkat edilecekler: 1. Başkasının resmini, müziğini, videosunu izinsiz kullanmayın. 2. Kullandıysanız kaynak belirtin. 3. Creative Commons lisanslı içerikler kullanabilirsiniz. 4. Kendi fotoğraflarınızı çekin, kendi metninizi yazın. 5. Özgün fikirlerinizi geliştirin, kopyala-yapıştır yapmayın. 6. Ekip çalışmasında herkesin katkısını belirtin. Etik çalışma önemlidir." },
+                    { q: "Multimedya öğeleri (metin, resim, ses, video, animasyon) nedir? Bir dijital sunum hazırlarken bu öğeleri nasıl etkili kullanırsınız?", a: "Multimedya: Farklı içerik türlerinin bir arada kullanılmasıdır. Öğeler: 1. Metin: Bilgi aktarır, kısa ve öz olmalı. 2. Resim: Görsel destek, yüksek çözünürlüklü olmalı. 3. Ses: Müzik, anlatım, 128 kbps veya üzeri kalitede. 4. Video: Hareketli görüntü, MP4 formatı uygun. 5. Animasyon: Dikkat çeker, abartısız kullanılmalı. Etkili kullanım: Dengeli dağıtım (çok fazla metin değil), tutarlı renk ve font, erişilebilirlik (alt yazı, kontrast), dosya boyutuna dikkat (büyük dosyalar yavaşlatır). Multimedya öğrenmeyi kolaylaştırır ve ilgi çekicidir." }
                 ],
                 "Ünite 3 - Ağlar ve İletişim": [
                     { q: "LAN ve WAN ağlarını tanımlayınız. Aralarındaki farkları ve kullanım alanlarını açıklayınız.", a: "LAN (Yerel Alan Ağı): Ev, okul, ofis gibi sınırlı alanlardaki bilgisayarları birbirine bağlar. Hızlı ve güvenlidir. WAN (Geniş Alan Ağı): Şehirler, ülkeler arası bağlantıdır. İnternet en büyük WAN örneğidir. LAN daha hızlı, WAN daha geniş kapsamlıdır." },
                     { q: "Router (yönlendirici) ve Switch'in (anahtar) görevlerini açıklayınız. Bir ağda neden her ikisine de ihtiyaç duyulur?", a: "Router: Farklı ağları birbirine bağlar ve internete erişim sağlar. Veri paketlerini doğru yere yönlendirir. Switch: Aynı ağdaki bilgisayarları birbirine bağlar. Router internete çıkış için, Switch aynı ağ içi iletişim için gereklidir." },
                     { q: "E-posta kullanırken dikkat edilmesi gereken güvenlik kurallarını yazınız. Phishing saldırısından nasıl korunulur?", a: "E-posta güvenliği: 1. Tanımadığınız kişilerden gelen ekleri açmayın. 2. Şüpheli linklere tıklamayın. 3. Kişisel bilgilerinizi e-posta ile paylaşmayın. 4. Güçlü şifre kullanın. Phishing'den korunma: Resmi kuruluşların e-posta adreslerini kontrol edin, acil işlem isteyen mesajlara şüpheyle yaklaşın." },
-                    { q: "Arama motorlarını (Google, Bing, Yandex) etkili kullanmanın yollarını açıklayınız. Arama yaparken hangi operatörler ve teknikleri kullanılır? Örneklerle gösteriniz.", a: "Etkili arama teknikleri: 1. Tırnak işareti: \"Tam ifade\" arar. Örn: \"yapay zeka\" 2. Eksi işareti: İstenmeyen kelimeyi hariç tutar. Örn: jaguar -araba (hayvanı arar). 3. Site: Belirli sitede arar. Örn: site:edu.tr bilişim. 4. OR: Alternatif arar. Örn: futbol OR basketbol. 5. Anahtar kelimeler kullanın, cümle değil. 6. Filtrelerden (tarih, dil) yararlanın. Doğru arama zamanı ve doğru bilgiyi bulmanızı sağlar." }
+                    { q: "Arama motorlarını (Google, Bing, Yandex) etkili kullanmanın yollarını açıklayınız. Arama yaparken hangi operatörler ve teknikleri kullanılır? Örneklerle gösteriniz.", a: "Etkili arama teknikleri: 1. Tırnak işareti: \"Tam ifade\" arar. Örn: \"yapay zeka\" 2. Eksi işareti: İstenmeyen kelimeyi hariç tutar. Örn: jaguar -araba (hayvanı arar). 3. Site: Belirli sitede arar. Örn: site:edu.tr bilişim. 4. OR: Alternatif arar. Örn: futbol OR basketbol. 5. Anahtar kelimeler kullanın, cümle değil. 6. Filtrelerden (tarih, dil) yararlanın. Doğru arama zamanı ve doğru bilgiyi bulmanızı sağlar." },
+                    { q: "İnternet bağlantı türlerini (ADSL, Fiber, Mobil internet, Uydu) karşılaştırınız. Her birinin avantaj ve dezavantajları nelerdir?", a: "ADSL: Telefon hattından internet. Avantaj: Yaygın, uygun fiyat. Dezavantaj: Yavaş (24 Mbps'e kadar). Fiber: Işık kablosu. Avantaj: Çok hızlı (1000 Mbps'e kadar), stabil. Dezavantaj: Her yerde yok, pahalı. Mobil İnternet (3G/4G/5G): Cep telefonu üzerinden. Avantaj: Taşınabilir, kabloya gerek yok. Dezavantaj: Kota sınırı, sinyal sorunları. Uydu: Uydulardan internet. Avantaj: Uzak bölgelerde kullanılabilir. Dezavantaj: Pahalı, gecikmeli. Kullanım amacına göre seçim yapılmalıdır." },
+                    { q: "İnternet tarayıcılarının (Chrome, Firefox, Edge, Safari) özelliklerini açıklayınız. Gizli mod (incognito mode) nedir ve ne işe yarar?", a: "Tarayıcılar: Chrome: Google'ın hızlı tarayıcısı, çok eklenti. Firefox: Gizlilik odaklı, açık kaynak. Edge: Microsoft'un tarayıcısı, Windows'a entegre. Safari: Apple ürünleri için optimize. Gizli Mod: Gezinme geçmişi, çerezler ve form verileri kaydedilmez. Ne zaman kullanılır: Ortak bilgisayarda giriş yapma, hediye araştırması (reklam takibini önleme), test amaçlı. ÖNEMLİ: Gizli mod sizi anonim yapmaz, sadece yerel kayıt tutmaz. İnternet sağlayıcısı ve web siteleri görebilir. Tam gizlilik için VPN gerekir." }
                 ],
                 "Ünite 4 - Etik ve Güvenlik": [
                     { q: "Güçlü bir şifre nasıl olmalıdır? Şifre güvenliği için uygulamanız gereken en az 5 kuralı yazınız.", a: "Güçlü şifre kuralları: 1. En az 8 karakter olmalı. 2. Büyük ve küçük harf içermeli. 3. Sayı içermeli. 4. Özel karakter (@, #, !, vb.) içermeli. 5. Kişisel bilgiler (doğum tarihi, isim) kullanılmamalı. 6. Her hesap için farklı şifre kullanılmalı. 7. Düzenli olarak değiştirilmeli." },
                     { q: "Dijital vatandaşlık nedir? İnternette sorumlu bir birey olmanın gerekliliklerini açıklayınız.", a: "Dijital vatandaşlık, dijital ortamlarda etik, güvenli ve sorumlu davranmaktır. Gereklilikleri: 1. Başkalarına saygılı olmak. 2. Siber zorbalık yapmamak. 3. Kişisel bilgileri korumak. 4. Telif haklarına saygı göstermek. 5. Güvenilir kaynaklardan bilgi almak. 6. Dijital ayak izine dikkat etmek." },
                     { q: "Siber zorbalık nedir? Karşılaştığınızda ne yapmanız gerektiğini adım adım yazınız.", a: "Siber zorbalık, internet üzerinden yapılan taciz, aşağılama ve tehdittir. Karşılaşınca yapılacaklar: 1. Sakin kalın ve karşılık vermeyin. 2. Kanıt olarak ekran görüntüsü alın. 3. Zorbanı engelleyin. 4. Ebeveyn veya öğretmeninize bildirin. 5. Gerekirse okul yönetimine veya kolluk kuvvetlerine başvurun. 6. Sosyal medya platformuna şikayet edin." },
-                    { q: "Telif hakkı ve fikri mülkiyet nedir? İnternetten indirdiğiniz müzik, resim veya videoları kullanırken nelere dikkat etmelisiniz? Yasal kullanım yollarını açıklayınız.", a: "Telif hakkı, yaratıcının eserini koruma hakkıdır. Fikri mülkiyet, düşünce ürünlerinin sahipliğidir. Dikkat edilecekler: 1. İzinsiz kopyalama ve dağıtma yasaktır. 2. Creative Commons lisanslı içerikler kullanılabilir. 3. Kaynak belirtilmeli. 4. Ticari kullanım için izin alınmalı. 5. Özgün eser üretmek en iyisidir. 6. Ücretsiz müzik siteleri: YouTube Audio Library, Free Music Archive. Başkasının emeğine saygı göstermek etik davranıştır." }
+                    { q: "Telif hakkı ve fikri mülkiyet nedir? İnternetten indirdiğiniz müzik, resim veya videoları kullanırken nelere dikkat etmelisiniz? Yasal kullanım yollarını açıklayınız.", a: "Telif hakkı, yaratıcının eserini koruma hakkıdır. Fikri mülkiyet, düşünce ürünlerinin sahipliğidir. Dikkat edilecekler: 1. İzinsiz kopyalama ve dağıtma yasaktır. 2. Creative Commons lisanslı içerikler kullanılabilir. 3. Kaynak belirtilmeli. 4. Ticari kullanım için izin alınmalı. 5. Özgün eser üretmek en iyisidir. 6. Ücretsiz müzik siteleri: YouTube Audio Library, Free Music Archive. Başkasının emeğine saygı göstermek etik davranıştır." },
+                    { q: "Kişisel bilgileri (adres, telefon, doğum tarihi, okul bilgisi) internette paylaşmanın riskleri nelerdir? Kendinizi nasıl korursunuz?", a: "Kişisel bilgi paylaşımının riskleri: 1. Kimlik hırsızlığı: Birisi sizin adınıza işlem yapabilir. 2. Dolandırıcılık: Bilgileriniz kötü amaçla kullanılabilir. 3. Fiziksel tehlike: Adresinizi öğrenenler sizi bulabilir. 4. Siber zorbalık: Okul bilginizle size ulaşabilirler. 5. Veri toplama: Şirketler bilgilerinizi satabilir. Korunma yolları: 1. Profilleri gizli yapın. 2. Sadece tanıdıklarınızla paylaşın. 3. Konum paylaşmayın. 4. Gerçek doğum tarihinizi kullanmayın. 5. Ebeveyn izniyle hareket edin. 6. Güvenilir sitelerde gezinin. DİKKAT: İnternette paylaştığınız her şey kalıcıdır ve silinmesi zordur." },
+                    { q: "Zararlı yazılım türlerini (virüs, trojan, worm, spyware, adware) açıklayınız. Bilgisayarınıza zararlı yazılım bulaşmasını nasıl önlersiniz?", a: "Zararlı yazılım türleri: 1. Virüs: Dosyalara yapışır, kendini kopyalar, hasara yol açar. 2. Trojan (Truva Atı): Yararlı programa benzer, gizlice zarar verir. 3. Worm (Solucan): Ağ üzerinden hızla yayılır, sistem kaynaklarını tüketir. 4. Spyware (Casus yazılım): Bilgilerinizi gizlice toplar (şifreler, kredi kartı). 5. Adware: İstenmeyen reklamlar gösterir, bilgisayarı yavaşlatır. Önleme yolları: 1. Güncel antivirüs programı kullanın (Windows Defender, Avast). 2. İşletim sistemini ve programları güncel tutun. 3. Bilinmeyen kaynaklardan dosya indirmeyin. 4. E-posta eklerini dikkatsizce açmayın. 5. Güvenilir sitelerden yazılım indirin. 6. Düzenli sistem taraması yapın. 7. Güvenlik duvarını aktif tutun. Önlem almak tedavi etmekten kolaydır." }
                 ],
                 "Ünite 5 - Yapay Zeka": [
                     { q: "Yapay zeka nedir? Günlük hayattan en az 5 yapay zeka kullanım örneği veriniz ve açıklayınız.", a: "Yapay zeka, makinelerin insan gibi düşünme ve öğrenme yeteneğidir. Örnekler: 1. Siri/Alexa: Sesli asistanlar. 2. Netflix/YouTube: Film önerileri. 3. Yüz tanıma: Telefon kilidi. 4. Google Translate: Dil çevirisi. 5. Spam filtresi: İstenmeyen e-postaları ayırma. 6. Otonom araçlar: Sürücüsüz otomobiller." },
                     { q: "Makine öğrenmesi nedir? Geleneksel programlamadan farkını bir örnekle açıklayınız.", a: "Makine öğrenmesi, bilgisayarın verilerden öğrenerek kararlar almasıdır. Geleneksel programlamada: Tüm kurallar programcı tarafından yazılır. Makine öğrenmesinde: Bilgisayar verilerden öğrenir ve kendi kurallarını oluşturur. Örnek: Spam filtresi, binlerce e-postadan öğrenerek spam'i otomatik ayırt eder." },
                     { q: "Yapay zekanın toplum üzerindeki olumlu ve olumsuz etkilerini tartışınız. Her birinden en az 3 örnek veriniz.", a: "Olumlu etkiler: 1. Hastalık teşhisinde yardımcı olur. 2. İş süreçlerini hızlandırır. 3. Eğitimde kişiselleştirilmiş öğrenme sağlar. Olumsuz etkiler: 1. İşsizliğe neden olabilir. 2. Gizlilik endişeleri yaratır. 3. Yanlı kararlar alabilir. 4. İnsanlar teknolojiye bağımlı hale gelebilir." },
-                    { q: "Yapay zeka etik kurallarını açıklayınız. Yapay zekanın geliştirilmesi ve kullanılmasında hangi ahlaki ilkelere dikkat edilmelidir? Örneklerle açıklayınız.", a: "YZ etik kuralları: 1. Şeffaflık: Algoritmanın nasıl çalıştığı açık olmalı. 2. Adalet: Ayrımcılık yapmamalı (ırk, cinsiyet, vb.). 3. Gizlilik: Kişisel verileri korumalı. 4. Sorumluluk: Hatalı kararların sorumlusu belli olmalı. 5. Güvenlik: Kötü amaçla kullanılmamalı. 6. İnsan kontrolü: Son karar insanda olmalı. Örnek: İşe alım yapan YZ tüm adaylara eşit şans vermeli. Sağlık YZ'si hasta bilgilerini gizli tutmalı. YZ silah sistemleri etik dışıdır." }
+                    { q: "Yapay zeka etik kurallarını açıklayınız. Yapay zekanın geliştirilmesi ve kullanılmasında hangi ahlaki ilkelere dikkat edilmelidir? Örneklerle açıklayınız.", a: "YZ etik kuralları: 1. Şeffaflık: Algoritmanın nasıl çalıştığı açık olmalı. 2. Adalet: Ayrımcılık yapmamalı (ırk, cinsiyet, vb.). 3. Gizlilik: Kişisel verileri korumalı. 4. Sorumluluk: Hatalı kararların sorumlusu belli olmalı. 5. Güvenlik: Kötü amaçla kullanılmamalı. 6. İnsan kontrolü: Son karar insanda olmalı. Örnek: İşe alım yapan YZ tüm adaylara eşit şans vermeli. Sağlık YZ'si hasta bilgilerini gizli tutmalı. YZ silah sistemleri etik dışıdır." },
+                    { q: "Derin öğrenme (deep learning) ve yapay sinir ağları nedir? Hangi alanlarda kullanılır? Günlük hayattan örneklerle açıklayınız.", a: "Derin öğrenme, insan beynindeki nöronları taklit eden yapay sinir ağlarıyla çalışır. Çok katmanlı ağlar sayesinde karmaşık örüntüleri öğrenir. Yapay Sinir Ağı: Birbirine bağlı düğümler (nöronlar) veriyi işler ve öğrenir. Kullanım alanları: 1. Görüntü tanıma: Fotoğraflarda yüz tanıma, nesne algılama. 2. Ses tanıma: Siri, Alexa gibi asistanlar. 3. Dil çevirisi: Google Translate. 4. Tıp: Röntgen, MR görüntülerinden hastalık teşhisi. 5. Otonom araçlar: Trafik işaretlerini ve yayaları tanıma. 6. Öneriler: Netflix'in film önerileri. Derin öğrenme, büyük veri ile daha iyi sonuç verir." },
+                    { q: "Chatbot nedir ve nasıl çalışır? Günlük hayatta chatbot kullanım örnekleri verin iz. Chatbot'ların avantaj ve dezavantajları nelerdir?", a: "Chatbot: Metin veya sesle konuşabilen yapay zeka destekli programdır. Nasıl çalışır: Doğal dil işleme (NLP) ile kullanıcının sorusunu anlar, veritabanından cevap bulur veya yapay zeka ile yanıt üretir. Örnekler: 1. Müşteri hizmetleri: Web sitelerinde 7/24 destek. 2. Sağlık: Randevu alma, semptom kontrolü. 3. E-ticaret: Ürün önerisi, sipariş takibi. 4. Eğitim: Soru cevaplama, ödev yardımı. 5. ChatGPT: Genel konularda yardımcı. Avantajlar: Hızlı yanıt, 24 saat açık, sabırlı, çok kişiye aynı anda hizmet. Dezavantajlar: Her soruyu anlamayabilir, empati kuramaz, karmaşık problemlerde yetersiz kalabilir. İnsan desteği tamamen değiştirmez." }
                 ],
                 "Ünite 6 - Programlama (Scratch)": [
                     { q: "Algoritma nedir? Sabah okula hazırlanma sürecinizi adım adım algoritma olarak yazınız.", a: "Algoritma, bir işi yapmak için sıralı adımlar dizisidir. Okula hazırlanma algoritması: 1. Uyan. 2. Yataktan kalk. 3. Yüzünü yıka. 4. Kahvaltı yap. 5. Giyin. 6. Çantanı hazırla. 7. Ayakkabılarını giy. 8. Okula git." },
                     { q: "Scratch'te döngü ve koşul yapılarını açıklayınız. Her birinin kullanım amacını bir örnekle gösteriniz.", a: "Döngü: Bir işi tekrar tekrar yapmak için kullanılır. Örnek: 'Forever' bloğu ile sprite'ı sürekli hareket ettirmek. Koşul: Belirli bir durumda işlem yapmak için kullanılır. Örnek: 'If...then' bloğu ile sprite duvara çarparsa yön değiştirmesini sağlamak. Döngü tekrar, koşul seçim içindir." },
                     { q: "Scratch'te değişken nedir ve ne için kullanılır? Bir oyunda skor tutmak için değişken nasıl kullanılır?", a: "Değişken, değişebilen bilgileri saklar. Skor, yaş, isim gibi değerler değişkende tutulur. Skor tutma: 1. 'skor' adında değişken oluştur. 2. Başlangıçta skor = 0 yap. 3. Her puan kazanıldığında 'skor'u 1 artır. 4. Skoru ekranda göster. Değişken sayesinde skor oyun boyunca saklanır ve güncellenir." },
                     { q: "Scratch'te koordinat sistemi nasıl çalışır? X ve Y eksenleri nedir? Sprite'ları koordinatlarla hareket ettirmek için hangi bloklar kullanılır? Örneklerle açıklayınız.", a: "Scratch'te sahne (Stage) 480x360 piksel boyutundadır. X ekseni: Yatay (-240 ile +240 arası). Sağa gidince artar, sola gidince azalır. Y ekseni: Dikey (-180 ile +180 arası). Yukarı gidince artar, aşağı gidince azalır. Merkez: (0, 0). Kullanılan bloklar: 'go to x: y:' → Belirli koordinata git. 'change x by 10' → Sağa 10 adım. 'change y by -10' → Aşağı 10 adım. 'glide to x: y:' → Kayarak git. Örnek: x: 100, y: 50 → Sağ üst köşe yakını." },
-                    { q: "Akış şeması (flowchart) nedir ve algoritmaları göstermek için nasıl kullanılır? Temel akış şeması sembollerini (başla/bitir, işlem, karar, giriş/çıkış) açıklayınız ve basit bir algoritma için akış şeması çiziniz.", a: "Akış şeması, algoritmaları görsel olarak gösteren diyagramdır. Temel semboller: 1. Oval (Başla/Bitir): Algoritmanın başlangıç ve bitişini gösterir. 2. Dikdörtgen (İşlem): Hesaplama veya işlem yapılır. Örn: 'Sayıyı 2 ile çarp'. 3. Eşkenar dörtgen (Giriş/Çıkış): Veri girişi veya sonuç gösterme. Örn: 'Sayı gir', 'Sonucu yazdır'. 4. Baklava (Karar): Evet/Hayır soruları. Örn: 'Sayı > 10 mı?'. 5. Oklar: İşlem akışını gösterir. Örnek akış şeması (Çift mi kontrolü): BAŞLA → Sayı Gir → Sayı 2'ye bölümünden kalan 0 mı? (Karar) → EVET ise 'Çift' yazdır, HAYIR ise 'Tek' yazdır → BİTİR. Akış şemaları algoritmaları anlamayı ve hata bulmayı kolaylaştırır." }
+                    { q: "Akış şeması (flowchart) nedir ve algoritmaları göstermek için nasıl kullanılır? Temel akış şeması sembollerini (başla/bitir, işlem, karar, giriş/çıkış) açıklayınız ve basit bir algoritma için akış şeması çiziniz.", a: "Akış şeması, algoritmaları görsel olarak gösteren diyagramdır. Temel semboller: 1. Oval (Başla/Bitir): Algoritmanın başlangıç ve bitişini gösterir. 2. Dikdörtgen (İşlem): Hesaplama veya işlem yapılır. Örn: 'Sayıyı 2 ile çarp'. 3. Eşkenar dörtgen (Giriş/Çıkış): Veri girişi veya sonuç gösterme. Örn: 'Sayı gir', 'Sonucu yazdır'. 4. Baklava (Karar): Evet/Hayır soruları. Örn: 'Sayı > 10 mı?'. 5. Oklar: İşlem akışını gösterir. Örnek akış şeması (Çift mi kontrolü): BAŞLA → Sayı Gir → Sayı 2'ye bölümünden kalan 0 mı? (Karar) → EVET ise 'Çift' yazdır, HAYIR ise 'Tek' yazdır → BİTİR. Akış şemaları algoritmaları anlamayı ve hata bulmayı kolaylaştırır." },
+                    { q: "Scratch'te liste (list) nedir ve ne için kullanılır? Basit bir alışveriş listesi uygulaması nasıl yapılır? Örnek verilerek açıklayınız.", a: "Liste, birden fazla değeri tek bir değişkende saklar. Değişkenden farkı: Değişken tek değer, liste çoklu değer tutar. Scratch'te liste oluşturma: 1. 'Make a List' → İsim ver (Örn: 'alışveriş'). 2. Liste bloklarını kullan: 'add [ekmek] to [alışveriş]', 'delete [1] of [alışveriş]', 'item [1] of [alışveriş]'. Alışveriş listesi uygulaması: 1. Liste oluştur: alışveriş. 2. Başlangıçta listeyi temizle. 3. Kullanıcıdan 'Ürün adı gir' sorusu sor. 4. Cevabı listeye ekle. 5. 'Listeyi göster' bloğu ile ekranda göster. 6. İstenirse 'show list' ile listeyi göster. Kullanım: Skor tablosu, envanter, isim listesi. Listeler veri yönetimini kolaylaştırır." },
+                    { q: "Scratch'te ses ve müzik kullanımını açıklayınız. Ses efektleri nasıl eklenir? Basit bir müzik projes i nasıl hazırlanır?", a: "Scratch'te ses kullanımı: 1. Ses Ekleme: 'Sounds' sekmesi → 'Choose a Sound' → Kütüphaneden seç veya kaydet. 2. Ses çalma: 'play sound [meow]', 'play sound [drum] until done'. 3. Ses efektleri: 'change [pitch] effect by [10]' (tiz/pes), 'set volume to [50]%'. Müzik projesi: 1. Piyano sprite'ı ekle veya çiz. 2. Her tuşa (sprite) tıklandığında farklı nota çalsın: 'when this sprite clicked' → 'play note [60] for [0.5] beats'. 3. Notalar: 60=Do, 62=Re, 64=Mi, 65=Fa, 67=Sol, 69=La, 71=Si. 4. Tempo ayarla: 'set tempo to [120]'. 5. Döngü ile melodi: 'repeat [4]' bloğu ile notaları tekrarla. Ses eklemek projeyi etkileşimli yapar. Arka plan müziği 'forever' döngüsü ile sürekli çalabilir." }
                 ]
             },
             6: {
@@ -509,32 +579,42 @@
                     { q: "Veri ve bilgi arasındaki farkı açıklayınız. Ham verinin bilgiye dönüşüm sürecini bir örnekle gösteriniz. Veri işleme aşamalarını yazınız.", a: "Veri: İşlenmemiş ham bilgilerdir (sayılar, kelimeler). Bilgi: İşlenmiş, anlamlı ve kullanılabilir veridir. Örnek: Veri: 25, 30, 28, 32 (sıcaklık değerleri). İşleme: Ortalama hesaplama. Bilgi: Haftalık ortalama sıcaklık 28.75°C. Veri işleme aşamaları: 1. Toplama: Veriyi biriktir. 2. Saklama: Veritabanında sakla. 3. İşleme: Hesapla, sırala, filtrele. 4. Analiz: Yorumla, sonuç çıkar. 5. Sunma: Grafik, rapor oluştur. Veri tek başına anlamsız, işlenince bilgi olur." },
                     { q: "Farklı dosya türlerini ve uzantılarını açıklayınız. En az 8 dosya uzantısı yazınız ve her birinin ne için kullanıldığını belirtiniz. Dosya uzantısının önemi nedir?", a: "Dosya uzantıları dosyanın türünü gösterir. Örnekler: 1. .docx - Word belgesi (metin). 2. .pdf - Taşınabilir belge formatı (evrensel). 3. .xlsx - Excel dosyası (tablo). 4. .pptx - PowerPoint sunumu. 5. .jpg/.png - Resim dosyaları. 6. .mp3 - Müzik dosyası. 7. .mp4 - Video dosyası. 8. .exe - Çalıştırılabilir program. 9. .html - Web sayfası. 10. .txt - Düz metin. Uzantı dosyanın hangi programla açılacağını belirler. Yanlış uzantı dosyayı açamaz hale getirir. Uzantıyı değiştirmek dosya türünü değiştirmez, sadece sistem algısını değiştirir." },
                     { q: "Dosya dönüştürme işlemi nedir? Neden dosya dönüştürmek gerekir? PDF'ten Word'e, resim formatları arası (JPG, PNG) dönüştürme örnekleri vererek açıklayınız.", a: "Dosya dönüştürme, bir formattaki dosyayı başka formata çevirmektir. Nedenler: 1. Uyumluluk: Farklı programlarda açılabilmesi için. 2. Boyut küçültme: JPG, PNG'den küçüktür. 3. Düzenleme: PDF'i düzenlemek için Word'e çevirme. 4. Kalite: PNG şeffaflık destekler, JPG desteklemez. Örnekler: PDF → Word: Metni düzenlemek için (Adobe, online araçlar). Word → PDF: Son hali paylaşmak için. JPG → PNG: Şeffaf arka plan için. PNG → JPG: Dosya boyutu küçültmek için. Video → MP3: Sadece sesi çıkarmak. Dönüştürme araçları: Online (Smallpdf, Convertio), programlar (Adobe Acrobat)." },
-                    { q: "Sıkıştırılmış dosyalar (ZIP, RAR) nedir? Dosyaları sıkıştırmanın avantajları nelerdir? Dosya sıkıştırma ve açma işlemini nasıl yaparsınız?", a: "Sıkıştırılmış dosyalar, birden fazla dosyayı tek bir arşive küçülterek paketler. Formatlar: ZIP (en yaygın, Windows destekli), RAR (daha iyi sıkıştırma), 7Z (ücretsiz, güçlü). Avantajları: 1. Dosya boyutu küçülür (depolama tasarrufu). 2. Çok dosyayı tek seferde gönderme. 3. E-posta ekleri için uygun. 4. İndirme/yükleme hızlanır. 5. Şifre koruması eklenebilir. Sıkıştırma: Dosyaları seç → Sağ tık → 'Sıkıştır' veya 'Send to → Compressed folder'. Açma: ZIP dosyasına çift tıkla → 'Extract All' → Hedef klasör seç. Programlar: Windows (built-in), WinRAR, 7-Zip, WinZip. Büyük projeler, toplu fotoğraflar için idealdir." }
+                    { q: "Sıkıştırılmış dosyalar (ZIP, RAR) nedir? Dosyaları sıkıştırmanın avantajları nelerdir? Dosya sıkıştırma ve açma işlemini nasıl yaparsınız?", a: "Sıkıştırılmış dosyalar, birden fazla dosyayı tek bir arşive küçülterek paketler. Formatlar: ZIP (en yaygın, Windows destekli), RAR (daha iyi sıkıştırma), 7Z (ücretsiz, güçlü). Avantajları: 1. Dosya boyutu küçülür (depolama tasarrufu). 2. Çok dosyayı tek seferde gönderme. 3. E-posta ekleri için uygun. 4. İndirme/yükleme hızlanır. 5. Şifre koruması eklenebilir. Sıkıştırma: Dosyaları seç → Sağ tık → 'Sıkıştır' veya 'Send to → Compressed folder'. Açma: ZIP dosyasına çift tıkla → 'Extract All' → Hedef klasör seç. Programlar: Windows (built-in), WinRAR, 7-Zip, WinZip. Büyük projeler, toplu fotoğraflar için idealdir." },
+                    { q: "Dosya yedekleme (backup) nedir ve neden önemlidir? Hangi yöntemlerle yedekleme yapılır? 3-2-1 yedekleme kuralını açıklayınız.", a: "Yedekleme, verilerin kopyasını güvenli bir yere kaydetmektir. Önem: 1. Donanım arızası, 2. Virüs saldırısı, 3. Kazara silme, 4. Hırsızlık durumlarında veriler korunur. Yedekleme yöntemleri: 1. Harici disk: USB, harici HDD. 2. Bulut: Google Drive, OneDrive, Dropbox. 3. NAS (Network Attached Storage): Ev/ofis sunucusu. 4. Otomatik yedekleme: Windows Backup, Time Machine (Mac). 3-2-1 Kuralı: 3 kopya (orijinal + 2 yedek), 2 farklı ortam (HDD + bulut), 1 kopya uzakta (bulut/farklı konum). Düzenli yedekleme veri kaybını önler." },
+                    { q: "Bilgisayar performansını etkileyen faktörler nelerdir? Yavaş çalışan bir bilgisayarı hızlandırmak için neler yapabilirsiniz?", a: "Performansı etkileyen faktörler: 1. RAM miktarı (4GB yetersiz, 8GB+yeterli). 2. İşlemci hızı (CPU). 3. Depolama türü (SSD hızlı, HDD yavaş). 4. Arka planda çalışan programlar. 5. Virüs/malware. 6. Disk doluluk oranı. 7. İşletim sistemi güncelliği. Hızlandırma yöntemleri: 1. Gereksiz programları kaldır. 2. Başlangıçta açılan uygulamaları azalt (Task Manager → Startup). 3. Disk temizliği yap. 4. Parçalanmış diski birleştir (HDD için). 5. RAM ekle. 6. HDD'yi SSD ile değiştir. 7. Virüs taraması. 8. Tarayıcı önbelleğini temizle. 9. Görsel efektleri azalt. 10. İşletim sistemini yeniden yükle (son çare). Düzenli bakım önemlidir." }
                 ],
                 "Ünite 2 - Etik ve Güvenlik": [
                     { q: "KVKK (Kişisel Verilerin Korunması Kanunu) nedir? Kişisel verilerinizin korunması için ne gibi haklarınız vardır?", a: "KVKK, kişilerin özel bilgilerinin korunmasını sağlayan kanundur. Haklarınız: 1. Verilerinizin işlenip işlenmediğini öğrenme. 2. İşlenmişse bilgi talep etme. 3. İşlenme amacını öğrenme. 4. Yanlış verilerin düzeltilmesini isteme. 5. Verilerin silinmesini talep etme. 6. İhlal durumunda şikayet etme. KVKK gizliliği korur." },
                     { q: "İki faktörlü kimlik doğrulama (2FA) nedir? Neden önemlidir ve nasıl çalışır? Örneklerle açıklayınız.", a: "2FA, hesaba girişte iki aşamalı doğrulamadır. Çalışma: 1. Şifrenizi girersiniz. 2. Telefonunuza kod gelir veya uygulama açılır. 3. Kodu girerek doğrularsınız. Önem: Şifreniz çalınsa bile kodunuz olmadan hesaba girilemez. Örnekler: Google, Instagram, banka uygulamaları. 2FA hesap güvenliğini katlar." },
                     { q: "Ransomware (fidye yazılımı) saldırısı nedir? Nasıl bulaşır ve kendimizi nasıl koruruz?", a: "Ransomware, dosyaları şifreleyip fidye isteyen zararlı yazılımdır. Bulaşma: E-posta ekleri, sahte linkler, güvenliksiz siteler. Korunma: 1. Düzenli yedekleme yapın. 2. Antivirüs kullanın. 3. Şüpheli ekleri açmayın. 4. Yazılımları güncel tutun. 5. Güvenlik duvarı aktif olsun. 6. Bilinmeyen kaynaklardan dosya indirmeyin. Fidye ödemeyin, uzman yardımı alın." },
-                    { q: "Sosyal medya güvenliğini sağlamak için almanız gereken önlemleri yazınız. Gizlilik ayarlarının önemi nedir? Sosyal medyada paylaşım yaparken nelere dikkat edilmelidir?", a: "Sosyal medya güvenlik önlemleri: 1. Güçlü şifre + 2FA kullan. 2. Gizlilik ayarlarını 'sadece arkadaşlar' yap. 3. Kişisel bilgileri (adres, telefon, doğum tarihi) paylaşma. 4. Konum bilgisini kapatın. 5. Tanımadığınız arkadaşlık isteklerini kabul etme. 6. Şüpheli linklere tıklama. 7. Fotoğraflarda kişisel bilgi olmasın. Paylaşım kuralları: Utanacağınız şeyleri paylaşmayın, geleceğinizi etkileyebilir. Başkalarının izni olmadan fotoğraflarını paylaşmayın. Gizlilik ayarları kimle ne paylaştığınızı kontrol eder." }
+                    { q: "Sosyal medya güvenliğini sağlamak için almanız gereken önlemleri yazınız. Gizlilik ayarlarının önemi nedir? Sosyal medyada paylaşım yaparken nelere dikkat edilmelidir?", a: "Sosyal medya güvenlik önlemleri: 1. Güçlü şifre + 2FA kullan. 2. Gizlilik ayarlarını 'sadece arkadaşlar' yap. 3. Kişisel bilgileri (adres, telefon, doğum tarihi) paylaşma. 4. Konum bilgisini kapatın. 5. Tanımadığınız arkadaşlık isteklerini kabul etme. 6. Şüpheli linklere tıklama. 7. Fotoğraflarda kişisel bilgi olmasın. Paylaşım kuralları: Utanacağınız şeyleri paylaşmayın, geleceğinizi etkileyebilir. Başkalarının izni olmadan fotoğraflarını paylaşmayın. Gizlilik ayarları kimle ne paylaştığınızı kontrol eder." },
+                    { q: "VPN (Virtual Private Network) nedir? Nasıl çalışır ve ne için kullanılır? Avantajları ve dezavantajları nelerdir?", a: "VPN, internette şifreli ve güvenli bağlantı sağlar. Çalışma: Verilerinizi şifreler, IP adresinizi gizler, başka ülkedeymiş gibi gösterir. Kullanım: 1. Güvenli bağlantı (halka açık WiFi'da). 2. Gizlilik koruma. 3. Engellenmiş sitelere erişim. 4. Uzaktan çalışma (şirket ağına güvenli bağlanma). Avantajlar: Gizlilik, güvenlik, coğrafi kısıtlamaları aşma. Dezavantajlar: Hız düşebilir, ücretli servisler gerekebilir, bazı siteler VPN engelleyebilir. VPN seçerken güvenilir sağlayıcı seçilmeli." },
+                    { q: "Dijital ayak izi nedir? İnternette bıraktığınız izlerin önemi ve gizliliğinizi koruma yolları nelerdir?", a: "Dijital ayak izi, internette yaptığınız her şeyin kaydıdır (ziyaret ettiğiniz siteler, yorumlar, beğeniler, aramalar). İki tür: 1. Aktif: Kendiniz paylaştığınız (sosyal medya gönderileri). 2. Pasif: Otomatik kaydedilenler (çerezler, IP adresi, konum). Önemi: Geleceğinizi etkileyebilir (iş başvurusu, üniversite). Dijital ayak iziniz silinmez veya zordur. Korunma: 1. Gizli mod kullan. 2. Çerezleri düzenli temizle. 3. Sosyal medyada dikkatli paylaş. 4. Google'da kendinizi arayın, ne görünüyor kontrol edin. 5. Eski hesapları silin. 6. VPN kullan. İnternette kalıcı iz bıraktığınızı unutmayın." }
                 ],
                 "Ünite 3 - İletişim ve İşbirliği": [
                     { q: "Bilgi okuryazarlığı nedir? İnternette güvenilir kaynak bulma ve bilgiyi değerlendirme kriterlerini yazınız.", a: "Bilgi okuryazarlığı, bilgiye erişme, değerlendirme ve kullanma becerisidir. Güvenilir kaynak kriterleri: 1. Yazarı belli olmalı. 2. Güncel olmalı. 3. Referansları olmalı. 4. Tarafsız olmalı. 5. .edu, .gov uzantılı siteler güvenilirdir. 6. Birden fazla kaynakla doğrulayın. Wikipedia başlangıç, resmi siteler kesin bilgi için kullanılır." },
                     { q: "Google Workspace (Docs, Sheets, Slides) araçlarını kullanarak işbirliği nasıl yapılır? Avantajlarını açıklayınız.", a: "Google Workspace işbirliği: 1. Belge oluşturun. 2. 'Paylaş' butonuna tıklayın. 3. E-posta ile paylaşın veya link oluşturun. 4. Düzenleme/görüntüleme izni verin. 5. Aynı anda birlikte çalışın. Avantajları: 1. Eş zamanlı çalışma. 2. Otomatik kayıt. 3. Yorum ekleme. 4. Sürüm geçmişi. 5. Her yerden erişim. Ekip çalışması kolaylaşır." },
                     { q: "Video konferans araçlarının (Zoom, Teams, Google Meet) kullanım alanlarını ve etkili bir online toplantı için kuralları yazınız.", a: "Kullanım alanları: Uzaktan eğitim, iş toplantıları, webinar, aile görüşmeleri. Etkili toplantı kuralları: 1. Mikrofonunuzu kapalı tutun (konuşmadığınızda). 2. Kamera açık olsun. 3. Dikkat dağıtıcı arka plan olmasın. 4. Zamanında katılın. 5. Sohbete aktif katılın. 6. El kaldırma özelliğini kullanın. 7. Dikkatli dinleyin. Online toplantı verimliliği artırır." },
-                    { q: "Dijital işbirliği araçlarında (Google Drive, OneDrive, Dropbox) dosya paylaşım izinlerini açıklayınız. 'Görüntüleme', 'Yorum yapma' ve 'Düzenleme' izinleri arasındaki farklar nedir?", a: "Dosya paylaşım izinleri: 1. Görüntüleme (View): Kişi sadece dosyayı görebilir, değiştiremez, indirebilir. Örnek: Final rapor paylaşımı. 2. Yorum yapma (Comment): Görüntüler, yorum ekler ama düzenleyemez. Örnek: Geri bildirim almak. 3. Düzenleme (Edit): Her şeyi yapabilir, dosyayı değiştirebilir. Örnek: Ortak proje çalışması. İzin seçimi dosyanın amacına göre yapılır. Hassas bilgiler sadece görüntüleme ile paylaşılmalı. İşbirliği projelerde düzenleme izni verilir." }
+                    { q: "Dijital işbirliği araçlarında (Google Drive, OneDrive, Dropbox) dosya paylaşım izinlerini açıklayınız. 'Görüntüleme', 'Yorum yapma' ve 'Düzenleme' izinleri arasındaki farklar nedir?", a: "Dosya paylaşım izinleri: 1. Görüntüleme (View): Kişi sadece dosyayı görebilir, değiştiremez, indirebilir. Örnek: Final rapor paylaşımı. 2. Yorum yapma (Comment): Görüntüler, yorum ekler ama düzenleyemez. Örnek: Geri bildirim almak. 3. Düzenleme (Edit): Her şeyi yapabilir, dosyayı değiştirebilir. Örnek: Ortak proje çalışması. İzin seçimi dosyanın amacına göre yapılır. Hassas bilgiler sadece görüntüleme ile paylaşılmalı. İşbirliği projelerde düzenleme izni verilir." },
+                    { q: "E-imza (elektronik imza) nedir? Nasıl çalışır ve hangi durumlarda kullanılır? E-imza güvenli midir?", a: "E-imza, dijital belgeleri onaylayan şifreli imzadır. Fiziksel imza gibi yasal geçerliliği vardır. Çalışma: Kişiye özel sertifika ve şifreleme kullanılır, belge değiştirilemez. Kullanım: 1. Resmi başvurular. 2. Sözleşmeler. 3. Banka işlemleri. 4. Vergi beyannameleri. 5. Dijital belgeler. Türleri: 1. Mobil imza (telefon ile). 2. Nitelikli e-imza (en güvenli, kart okuyucu gerekir). Güvenlik: Şifreleme ile korunur, değiştirilemez, kimlik doğrulaması vardır. E-imza zaman ve kağıt tasarrufu sağlar." },
+                    { q: "Siber güvenlik farkındalığı nedir? Çevrimiçi ortamlarda kendinizi ve başkalarını korumak için alınması gereken önlemler nelerdir?", a: "Siber güvenlik farkındalığı, dijital tehlikeleri tanıma ve önlem alma bilincidir. Önlemler: 1. Güçlü ve farklı şifreler kullan. 2. 2FA aktif et. 3. Güncel antivirüs. 4. Phishing/dolandırıcılık farkındalığı. 5. Şüpheli linklere tıklama. 6. Ek dosyalara dikkat. 7. Düzenli yedekleme. 8. İşletim sistemi güncellemeleri. 9. Halka açık WiFi'da dikkatli ol. 10. Çocukları eğit (ebeveyn kontrolü). 11. Özel bilgileri paylaşma. 12. Sosyal mühendislik saldırılarından haberdar ol. En büyük güvenlik açığı insan faktörüdür. Eğitim önemlidir." }
                 ],
                 "Ünite 4 - Ürün Oluşturma": [
                     { q: "HTML ve CSS nedir? Bir web sayfasının yapısında her birinin rolünü açıklayınız ve basit bir örnek veriniz.", a: "HTML (HyperText Markup Language): Web sayfasının iskeletini oluşturur, içeriği belirler. CSS (Cascading Style Sheets): Web sayfasının görünümünü düzenler, renk, boyut, düzen verir. Örnek: HTML ile başlık <h1>Merhaba</h1> oluşturulur, CSS ile h1 {color: blue; font-size: 24px;} denilerek mavi ve 24 punto yapılır. HTML yapı, CSS tasarımdır." },
                     { q: "Dijital içerik türlerini (metin, görsel, video, ses, podcast) açıklayınız. Her biri için uygun kullanım alanları ve araçlar yazınız.", a: "1. Metin: Blog, haber, makale. Araçlar: Word, Google Docs. 2. Görsel: Poster, infografik, fotoğraf. Araçlar: Canva, Photoshop. 3. Video: Eğitim videosu, vlog, film. Araçlar: iMovie, Adobe Premiere. 4. Ses: Müzik, efekt. Araçlar: Audacity. 5. Podcast: Ses yayını, röportaj. Araçlar: Anchor, SoundCloud. Her format farklı amaçla kullanılır." },
                     { q: "Etkili bir web sitesi tasarımı için dikkat edilmesi gereken tasarım prensiplerini yazınız.", a: "Web tasarım prensipleri: 1. Basit ve temiz tasarım. 2. Kolay navigasyon (menü). 3. Hızlı yükleme. 4. Mobil uyumlu (responsive). 5. Okunabilir fontlar. 6. Uyumlu renk paleti. 7. Beyaz alan kullanımı. 8. Tutarlılık. 9. Erişilebilirlik (engelliler için). 10. Net harekete geçirici butonlar. İyi tasarım kullanıcı deneyimini artırır." },
                     { q: "CSS'te renk, font ve düzen özelliklerini nasıl kullanırsınız? Class ve ID seçicilerini örneklerle açıklayınız. Temel CSS kodlama yapısını gösteriniz.", a: "CSS özellikleri: color (renk), font-size (boyut), font-family (yazı tipi), background-color (arka plan), margin (dış boşluk), padding (iç boşluk). Class seçici: Birden fazla elemana uygulanır. Örnek: .baslik {color: red;} → <h1 class='baslik'>. ID seçici: Tek bir elemana özel. Örnek: #logo {width: 200px;} → <img id='logo'>. Yapı: seçici {özellik: değer;}. Class nokta (.) ile, ID diyez (#) ile başlar. Class tekrar kullanılabilir, ID benzersizdir." },
-                    { q: "Microsoft Excel'de gelişmiş formüller (TOPLA, ORTALAMA, EĞER, EĞERSAY, TÜMÜNÜSAY) ve grafik oluşturmayı açıklayınız. Her formül için örnek vererek kullanımını gösteriniz.", a: "Excel formülleri = ile başlar. Örnekler: 1. =TOPLA(A1:A10) → A1'den A10'a kadar toplar. 2. =ORTALAMA(B1:B5) → B1-B5 ortalaması. 3. =EĞER(C1>50;\"Geçti\";\"Kaldı\") → C1 50'den büyükse Geçti, değilse Kaldı yazar. 4. =EĞERSAY(D1:D20;\">80\") → 80'den büyük kaç hücre var sayar. 5. =TÜMÜNÜSAY(E1:E15) → E1-E15 arasında dolu hücre sayısı. 6. =MAK(F1:F10) → En büyük değer. 7. =MİN(F1:F10) → En küçük değer. Grafik: Veriyi seç → Ekle sekmesi → Grafik türü seç (Sütun, Çizgi, Pasta). Grafik başlık, eksen etiketleri ekle. Grafikler veriyi görselleştirir, karşılaştırma kolaylaştırır. Excel ders notları, bütçe, istatistik için kullanılır." }
+                    { q: "Microsoft Excel'de gelişmiş formüller (TOPLA, ORTALAMA, EĞER, EĞERSAY, TÜMÜNÜSAY) ve grafik oluşturmayı açıklayınız. Her formül için örnek vererek kullanımını gösteriniz.", a: "Excel formülleri = ile başlar. Örnekler: 1. =TOPLA(A1:A10) → A1'den A10'a kadar toplar. 2. =ORTALAMA(B1:B5) → B1-B5 ortalaması. 3. =EĞER(C1>50;\"Geçti\";\"Kaldı\") → C1 50'den büyükse Geçti, değilse Kaldı yazar. 4. =EĞERSAY(D1:D20;\">80\") → 80'den büyük kaç hücre var sayar. 5. =TÜMÜNÜSAY(E1:E15) → E1-E15 arasında dolu hücre sayısı. 6. =MAK(F1:F10) → En büyük değer. 7. =MİN(F1:F10) → En küçük değer. Grafik: Veriyi seç → Ekle sekmesi → Grafik türü seç (Sütun, Çizgi, Pasta). Grafik başlık, eksen etiketleri ekle. Grafikler veriyi görselleştirir, karşılaştırma kolaylaştırır. Excel ders notları, bütçe, istatistik için kullanılır." },
+                    { q: "Responsive (duyarlı) web tasarımı nedir? Farklı cihazlarda (bilgisayar, tablet, telefon) web sitesi nasıl optimize edilir?", a: "Responsive tasarım, web sitesinin her ekran boyutuna uyum sağlamasıdır. Bilgisayar, tablet, telefonda düzgün görünür. Nasıl yapılır: 1. CSS media queries: Ekran boyutuna göre stil değişir. 2. Esnek grid sistem: Elementler yüzdelik genişlikte. 3. Esnek görseller: max-width: 100% ile görsel küçülür. 4. Viewport meta tag: <meta name='viewport' content='width=device-width'>. 5. Mobil öncelikli tasarım (mobile-first). Neden önemli: 1. Mobil kullanıcı sayısı arttı. 2. Google mobil uyumlu siteleri öne çıkarır (SEO). 3. Kullanıcı deneyimi iyileşir. 4. Tek site tüm cihazlarda çalışır. Test: Chrome DevTools ile farklı ekran boyutları test edilir." },
+                    { q: "Dijital proje yönetimi nedir? Bir projeyi baştan sona planlamak ve yürütmek için hangi adımları izlersiniz? Proje yönetim araçlarını açıklayınız.", a: "Proje yönetimi, hedefi belirlenen zamanda ve kaynakla tamamlamaktır. Adımlar: 1. Planlama: Hedef belirleme, kapsam tanımlama. 2. Tasarım: Taslak, wireframe oluşturma. 3. Görev dağılımı: Ekip üyelerine rol verme. 4. Zaman çizelgesi: Gantt şeması ile takvim oluşturma. 5. Uygulama: Geliştirme, kodlama, tasarım. 6. Test: Hata kontrolü, kullanıcı testi. 7. Teslim: Projeyi yayınlama, sunma. 8. Değerlendirme: Geri bildirim toplama. Araçlar: 1. Trello: Kanban kartlarıyla görev takibi. 2. Asana: Proje ve görev yönetimi. 3. Monday.com: Görsel proje panoları. 4. GitHub Projects: Yazılım projeleri için. 5. Google Sheets: Basit takip. Proje yönetimi ekip çalışmasını organize eder." }
                 ],
                 "Ünite 5 - Problem Çözme": [
                     { q: "Algoritma tasarımında kullanılan temel yapıları (sıralama, seçme, döngü) açıklayınız ve her biri için bir örnek veriniz.", a: "1. Sıralama: Komutlar sırayla çalışır. Örnek: Kahvaltı yap → Giyin → Okula git. 2. Seçme (Koşul): Duruma göre karar verilir. Örnek: EĞER yağmur yağıyorsa şemsiye al, DEĞİLSE alma. 3. Döngü: İşlem tekrarlanır. Örnek: Sınıftaki 30 öğrenciye tek tek yoklama yapana kadar tekrarla. Bu yapılar programlamanın temelidir." },
                     { q: "Veri analizi nedir? Grafik türlerini (çubuk, pasta, çizgi) ve kullanım alanlarını açıklayınız.", a: "Veri analizi, verileri inceleyerek anlamlı sonuçlar çıkarmaktır. Grafik türleri: 1. Çubuk grafik: Kategoriler arası karşılaştırma. Örnek: Sınıfların mevcudu. 2. Pasta grafik: Yüzdelik dilimler. Örnek: Bütçe dağılımı. 3. Çizgi grafik: Zaman içindeki değişim. Örnek: Aylık sıcaklık değişimi. Grafikler veriyi görselleştirir ve anlaşılır kılar." },
                     { q: "Python programlama dilinin temel özelliklerini yazınız. Değişken, liste ve fonksiyon kavramlarını açıklayınız.", a: "Python: Kolay öğrenilen, güçlü programlama dili. Değişken: Veri saklar. Örnek: yaş = 12. Liste: Birden fazla değer tutar. Örnek: isimler = ['Ali', 'Ayşe', 'Mehmet']. Fonksiyon: Belirli işi yapan kod bloğu. Örnek: def toplama(a, b): return a + b. Python'da girinti (indent) önemlidir. Kullanım alanları: Yapay zeka, veri bilimi, web." },
-                    { q: "Python'da döngü yapıları (for ve while) arasındaki farkı açıklayınız. Her biri için örnek kod yazınız. Döngülerin kullanım alanlarını belirtiniz.", a: "For döngüsü: Belirli sayıda tekrar için kullanılır. Örnek: for i in range(5): print(i) → 0'dan 4'e kadar yazdırır. Liste elemanlarında gezinme: for isim in ['Ali', 'Ayşe']: print(isim). While döngüsü: Koşul sağlandığı sürece çalışır. Örnek: sayi = 1; while sayi <= 5: print(sayi); sayi += 1. Kullanım: For → Belirli sayıda tekrar, liste gezinme. While → Koşula bağlı, sonsuz döngü riski var. For daha güvenli ve yaygın kullanılır. While koşul bilinmediğinde tercih edilir." }
+                    { q: "Python'da döngü yapıları (for ve while) arasındaki farkı açıklayınız. Her biri için örnek kod yazınız. Döngülerin kullanım alanlarını belirtiniz.", a: "For döngüsü: Belirli sayıda tekrar için kullanılır. Örnek: for i in range(5): print(i) → 0'dan 4'e kadar yazdırır. Liste elemanlarında gezinme: for isim in ['Ali', 'Ayşe']: print(isim). While döngüsü: Koşul sağlandığı sürece çalışır. Örnek: sayi = 1; while sayi <= 5: print(sayi); sayi += 1. Kullanım: For → Belirli sayıda tekrar, liste gezinme. While → Koşula bağlı, sonsuz döngü riski var. For daha güvenli ve yaygın kullanılır. While koşul bilinmediğinde tercih edilir." },
+                    { q: "Programlamada hata ayıklama (debugging) nedir? Hangi hata türleri vardır ve hata ayıklama yöntemlerini açıklayınız.", a: "Debugging, programdaki hataları bulma ve düzeltme sürecidir. Hata türleri: 1. Sözdizimi hatası (Syntax error): Kod kurallarına uygun değil. Örnek: print(Merhaba) → Tırnak eksik. 2. Mantık hatası: Program çalışır ama yanlış sonuç verir. Örnek: toplam = a - b yerine a + b olmalı. 3. Çalışma zamanı hatası (Runtime error): Program çalışırken hata verir. Örnek: Sıfıra bölme. Debugging yöntemleri: 1. Print ile değer kontrol etme: print(değişken) ile ara değerleri görmek. 2. Breakpoint kullanma: Programı belirli noktada durdurma. 3. Satır satır çalıştırma (step-by-step). 4. Hata mesajlarını okuma. 5. Test verisi ile deneme. İyi bir programcı hata ayıklama konusunda deneyimlidir." },
+                    { q: "Dijital bir proje sunumu nasıl hazırlanır? Proje sunumunda bulunması gereken temel öğeleri ve sunum tekniklerini açıklayınız.", a: "Proje sunumu, yapılan çalışmayı etkili şekilde anlatmaktır. Sunum öğeleri: 1. Giriş: Proje adı, amaç, hedef kitle. 2. Problem tanımı: Hangi sorunu çözüyor? 3. Çözüm yaklaşımı: Nasıl çözüldü, hangi araçlar kullanıldı? 4. Proje özellikleri: Neler yapabiliyor? 5. Demo/Gösterim: Çalışan projeyi gösterme. 6. Zorluklar ve çözümler: Karşılaşılan problemler. 7. Sonuç ve gelecek planları. Sunum teknikleri: 1. Görsel sunum: PowerPoint, Google Slides, Canva. 2. Canlı demo: Projeyi çalıştırarak gösterme. 3. Video kaydı: Ekran kaydı ile özellikler. 4. Prototip gösterimi: Figma, Canva ile tasarım. 5. Açık ve net konuşma. 6. Zaman yönetimi (genelde 5-10 dakika). 7. Soru-cevap için hazırlıklı olma. İyi sunum projenin değerini artırır." }
                 ]
             }
         };
@@ -554,13 +634,19 @@
             const outcomes = Object.keys(openEndedQuestions[grade]);
             outcomesList.innerHTML = outcomes.map(outcome => {
                 const questionCount = openEndedQuestions[grade][outcome].length;
+                const options = Array.from({length: questionCount}, (_, i) => i + 1)
+                    .map(n => `<option value="${n}">${n}</option>`).join('');
                 return `
                 <label class="checkbox-label">
-                    <input type="checkbox" value="${outcome}" onchange="updateQuestionCount()">
+                    <input type="checkbox" value="${outcome}" onchange="updateQuestionCount()" data-outcome="${outcome}">
                     <div class="checkbox-text">
                         <strong>${outcome}</strong>
-                        <small>${questionCount} açık uçlu soru</small>
+                        <small>Toplam ${questionCount} soru mevcut</small>
                     </div>
+                    <select class="form-control" id="count-${outcome.replace(/\s+/g, '-')}" style="width: 80px; margin-left: 10px;" onchange="updateQuestionCount()">
+                        <option value="1">1</option>
+                        ${options}
+                    </select>
                 </label>
                 `;
             }).join('');
@@ -572,12 +658,15 @@
             const grade = document.getElementById('gradeSelect').value;
             if (!grade) return;
 
-            const checkedOutcomes = Array.from(document.querySelectorAll('#outcomesList input[type="checkbox"]:checked'))
-                .map(cb => cb.value);
+            const checkedOutcomes = Array.from(document.querySelectorAll('#outcomesList input[type="checkbox"]:checked'));
 
             let totalQuestions = 0;
-            checkedOutcomes.forEach(outcome => {
-                totalQuestions += openEndedQuestions[grade][outcome].length;
+            checkedOutcomes.forEach(cb => {
+                const outcome = cb.value;
+                const selectId = 'count-' + outcome.replace(/\s+/g, '-');
+                const select = document.getElementById(selectId);
+                const count = select ? parseInt(select.value) : 1;
+                totalQuestions += count;
             });
 
             document.getElementById('questionCount').textContent = totalQuestions;
@@ -587,7 +676,7 @@
         function generateExam() {
             const grade = document.getElementById('gradeSelect').value;
             const schoolName = document.getElementById('schoolName').value || 'Okul Adı';
-            const examTitle = document.getElementById('examTitle').value || 'Açık Uçlu Sınav';
+            const examInfo = document.getElementById('examInfo').value || '';
             const checkedOutcomes = Array.from(document.querySelectorAll('#outcomesList input[type="checkbox"]:checked'))
                 .map(cb => cb.value);
 
@@ -607,22 +696,26 @@
 
             checkedOutcomes.forEach(outcome => {
                 const questions = openEndedQuestions[grade][outcome];
-                questions.forEach(q => {
+                const selectId = 'count-' + outcome.replace(/\s+/g, '-');
+                const select = document.getElementById(selectId);
+                const count = select ? parseInt(select.value) : questions.length;
+
+                for (let i = 0; i < Math.min(count, questions.length); i++) {
                     currentExam.push({
                         number: questionNumber++,
                         outcome: outcome,
-                        question: q.q,
-                        answer: q.a
+                        question: questions[i].q,
+                        answer: questions[i].a
                     });
-                });
+                }
             });
 
             // Önizleme oluştur
-            renderExam(schoolName, examTitle, grade);
+            renderExam(schoolName, examInfo, grade);
             document.getElementById('actionBar').style.display = 'flex';
         }
 
-        function renderExam(schoolName, examTitle, grade) {
+        function renderExam(schoolName, examInfo, grade) {
             const preview = document.getElementById('examPreview');
             const today = new Date().toLocaleDateString('tr-TR', {
                 year: 'numeric',
@@ -630,11 +723,12 @@
                 day: 'numeric'
             });
 
+            const examInfoText = examInfo ? ` - ${examInfo}` : '';
+
             preview.innerHTML = `
                 <div class="exam-header">
                     <div style="font-size: 1.5em; font-weight: bold; color: #333; margin-bottom: 5px;">${schoolName}</div>
-                    <div class="exam-title">${examTitle}</div>
-                    <div style="color: #666; margin-top: 10px;">${grade}. Sınıf Bilişim Teknolojileri Dersi</div>
+                    <div style="color: #666; margin-top: 10px; font-size: 1.2em;">${grade}. Sınıf Bilişim Teknolojileri Dersi${examInfoText}</div>
                     <div style="color: #999; margin-top: 5px; font-size: 0.9em;">${today}</div>
                 </div>
 
@@ -706,8 +800,8 @@
             showAnswers = !showAnswers;
             const grade = document.getElementById('gradeSelect').value;
             const schoolName = document.getElementById('schoolName').value || 'Okul Adı';
-            const examTitle = document.getElementById('examTitle').value || 'Açık Uçlu Sınav';
-            renderExam(schoolName, examTitle, grade);
+            const examInfo = document.getElementById('examInfo').value || '';
+            renderExam(schoolName, examInfo, grade);
         }
 
         function printExam(withAnswers) {
@@ -721,9 +815,9 @@
 
             const grade = document.getElementById('gradeSelect').value;
             const schoolName = document.getElementById('schoolName').value || 'Okul Adı';
-            const examTitle = document.getElementById('examTitle').value || 'Açık Uçlu Sınav';
+            const examInfo = document.getElementById('examInfo').value || '';
 
-            renderExam(schoolName, examTitle, grade);
+            renderExam(schoolName, examInfo, grade);
 
             // Cevapsız yazdırma için body'ye class ekle
             if (!withAnswers) {
@@ -735,7 +829,7 @@
                 setTimeout(() => {
                     document.body.classList.remove('hide-answers');
                     showAnswers = previousShowAnswers;
-                    renderExam(schoolName, examTitle, grade);
+                    renderExam(schoolName, examInfo, grade);
                 }, 100);
             }, 100);
         }
