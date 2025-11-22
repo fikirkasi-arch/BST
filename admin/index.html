@@ -53,31 +53,58 @@
             <!-- Stats Grid -->
             <div class="stats-grid">
                 <div class="stat-card">
-                    <div class="stat-icon blue">👥</div>
+                    <div class="stat-icon blue">👨‍🎓</div>
                     <div class="stat-info">
-                        <h4 id="totalUsers">0</h4>
+                        <h4 id="totalStudents">0</h4>
                         <p>Toplam Öğrenci</p>
                     </div>
                 </div>
                 <div class="stat-card">
-                    <div class="stat-icon green">📝</div>
+                    <div class="stat-icon green">👨‍🏫</div>
                     <div class="stat-info">
-                        <h4 id="totalQuizzes">11</h4>
-                        <p>Toplam Quiz</p>
+                        <h4 id="totalTeachers">0</h4>
+                        <p>Toplam Öğretmen</p>
                     </div>
                 </div>
                 <div class="stat-card">
-                    <div class="stat-icon orange">🎮</div>
+                    <div class="stat-icon orange">⏳</div>
                     <div class="stat-info">
-                        <h4 id="totalGames">8</h4>
-                        <p>Toplam Oyun</p>
+                        <h4 id="pendingTeachers">0</h4>
+                        <p>Bekleyen Onay</p>
                     </div>
                 </div>
                 <div class="stat-card">
-                    <div class="stat-icon purple">📚</div>
+                    <div class="stat-icon purple">👑</div>
                     <div class="stat-info">
-                        <h4 id="totalLessons">12</h4>
-                        <p>Toplam Ders</p>
+                        <h4 id="totalAdmins">1</h4>
+                        <p>Admin Sayısı</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- User Overview Cards -->
+            <div class="grid-2" style="margin-top: 30px;">
+                <div class="card">
+                    <div class="card-header">
+                        <h3><span>👨‍🎓</span> Öğrenci Listesi</h3>
+                        <a href="kullanicilar.html" style="color: #667eea; text-decoration: none; font-size: 14px;">Tümünü Gör →</a>
+                    </div>
+                    <div class="card-body">
+                        <div id="studentsList" style="max-height: 300px; overflow-y: auto;">
+                            <!-- Dinamik olarak doldurulacak -->
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h3><span>👨‍🏫</span> Öğretmen Listesi</h3>
+                        <span id="teacherStatusInfo" style="font-size: 12px; color: #666;"></span>
+                    </div>
+                    <div class="card-body">
+                        <div id="teachersList" style="max-height: 300px; overflow-y: auto;">
+                            <!-- Dinamik olarak doldurulacak -->
+                        </div>
                     </div>
                 </div>
             </div>
@@ -143,9 +170,9 @@
                     </div>
                     <div class="card-body">
                         <div style="display: grid; gap: 15px;">
-                            <a href="icerikler.html" class="btn btn-primary" style="justify-content: center; text-decoration: none;">
-                                ➕ Yeni İçerik Ekle
-                            </a>
+                            <button onclick="showChangePasswordModal()" class="btn btn-primary" style="justify-content: center;">
+                                🔐 Şifremi Değiştir
+                            </button>
                             <a href="kullanicilar.html" class="btn btn-secondary" style="justify-content: center; text-decoration: none;">
                                 👥 Kullanıcıları Görüntüle
                             </a>
@@ -202,30 +229,100 @@
 
         // LocalStorage'dan veri çek
         function loadDashboardData() {
-            // Kullanıcı verileri
-            const userData = JSON.parse(localStorage.getItem('bstUserData') || '{}');
-            const progress = JSON.parse(localStorage.getItem('bstProgress') || '{}');
+            // Yeni auth sisteminden kullanıcı verileri
+            const users = JSON.parse(localStorage.getItem('bst_users') || '[]');
+
+            const students = users.filter(u => u.role === 'student');
+            const teachers = users.filter(u => u.role === 'teacher' && u.status === 'active');
+            const pending = users.filter(u => u.role === 'teacher' && u.status === 'pending');
+            const admins = users.filter(u => u.role === 'admin');
 
             // İstatistikleri güncelle
-            document.getElementById('totalUsers').textContent = userData.totalUsers || 1;
-            document.getElementById('completedQuizzes').textContent = progress.completed?.quizzes?.length || 0;
-            document.getElementById('playedGames').textContent = progress.completed?.games?.length || 0;
+            document.getElementById('totalStudents').textContent = students.length;
+            document.getElementById('totalTeachers').textContent = teachers.length;
+            document.getElementById('pendingTeachers').textContent = pending.length;
+            document.getElementById('totalAdmins').textContent = admins.length;
 
-            // Ortalama quiz puanı
-            let avgScore = 0;
-            if (progress.scores) {
-                const scores = Object.values(progress.scores);
-                if (scores.length > 0) {
-                    avgScore = Math.round(scores.reduce((a, b) => a + (b.percentage || 0), 0) / scores.length);
-                }
-            }
-            document.getElementById('avgQuizScore').textContent = avgScore + '%';
+            // Öğrenci listesini göster
+            loadStudentsList(students);
+
+            // Öğretmen listesini göster
+            loadTeachersList(teachers);
 
             // Son aktiviteler
             loadActivityList();
 
             // Sistem bildirimleri
             loadSystemAlerts();
+        }
+
+        // Öğrenci listesi
+        function loadStudentsList(students) {
+            const list = document.getElementById('studentsList');
+
+            if (students.length === 0) {
+                list.innerHTML = `
+                    <div style="padding: 20px; text-align: center; color: #999;">
+                        <p>Henüz kayıtlı öğrenci yok</p>
+                    </div>
+                `;
+                return;
+            }
+
+            list.innerHTML = students.slice(0, 5).map(student => `
+                <div style="padding: 12px; border-bottom: 1px solid #f0f0f0; display: flex; justify-content: space-between; align-items: center;">
+                    <div>
+                        <strong>${student.name}</strong>
+                        <div style="font-size: 0.85em; color: #666;">
+                            📝 ${student.number} | 🎓 ${student.grade}. Sınıf
+                        </div>
+                        ${student.lastLogin ? `<div style="font-size: 0.8em; color: #999;">Son giriş: ${new Date(student.lastLogin).toLocaleDateString('tr-TR')}</div>` : ''}
+                    </div>
+                    <div style="font-size: 0.85em; color: #28a745;">
+                        ✓ Aktif
+                    </div>
+                </div>
+            `).join('');
+
+            if (students.length > 5) {
+                list.innerHTML += `
+                    <div style="padding: 12px; text-align: center;">
+                        <a href="kullanicilar.html" style="color: #667eea; text-decoration: none; font-size: 0.9em;">
+                            +${students.length - 5} öğrenci daha →
+                        </a>
+                    </div>
+                `;
+            }
+        }
+
+        // Öğretmen listesi
+        function loadTeachersList(teachers) {
+            const list = document.getElementById('teachersList');
+
+            if (teachers.length === 0) {
+                list.innerHTML = `
+                    <div style="padding: 20px; text-align: center; color: #999;">
+                        <p>Henüz kayıtlı öğretmen yok</p>
+                    </div>
+                `;
+                return;
+            }
+
+            list.innerHTML = teachers.map(teacher => `
+                <div style="padding: 12px; border-bottom: 1px solid #f0f0f0; display: flex; justify-content: space-between; align-items: center;">
+                    <div>
+                        <strong>👨‍🏫 ${teacher.name}</strong>
+                        <div style="font-size: 0.85em; color: #666;">
+                            📧 ${teacher.email}
+                        </div>
+                        ${teacher.school ? `<div style="font-size: 0.8em; color: #999;">🏫 ${teacher.school}</div>` : ''}
+                        ${teacher.lastLogin ? `<div style="font-size: 0.8em; color: #999;">Son giriş: ${new Date(teacher.lastLogin).toLocaleDateString('tr-TR')}</div>` : ''}
+                    </div>
+                    <div style="font-size: 0.85em; color: #28a745;">
+                        ✓ Onaylı
+                    </div>
+                </div>
+            `).join('');
         }
 
         // Aktivite listesi
@@ -458,8 +555,135 @@
             loadPendingTeachers();
         }
 
+        // Şifre değiştirme modal
+        function showChangePasswordModal() {
+            const modal = document.createElement('div');
+            modal.id = 'changePasswordModal';
+            modal.style.cssText = 'position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 9999;';
+
+            modal.innerHTML = `
+                <div style="background: white; border-radius: 20px; padding: 30px; width: 90%; max-width: 500px; max-height: 90vh; overflow-y: auto;">
+                    <h2 style="margin-bottom: 20px; color: #333;">🔐 Şifre Değiştir</h2>
+
+                    <div id="changePasswordMessage" style="display: none; padding: 12px; border-radius: 8px; margin-bottom: 15px;"></div>
+
+                    <div style="margin-bottom: 20px;">
+                        <label style="display: block; margin-bottom: 8px; font-weight: 600; color: #333;">Mevcut Şifre</label>
+                        <input type="password" id="currentPassword" placeholder="Mevcut şifreniz" style="width: 100%; padding: 12px; border: 2px solid #e0e0e0; border-radius: 10px;">
+                    </div>
+
+                    <div style="margin-bottom: 20px;">
+                        <label style="display: block; margin-bottom: 8px; font-weight: 600; color: #333;">Yeni Şifre</label>
+                        <input type="password" id="newPassword" placeholder="En az 6 karakter" style="width: 100%; padding: 12px; border: 2px solid #e0e0e0; border-radius: 10px;">
+                        <small style="color: #666; font-size: 12px;">En az 6 karakter olmalıdır</small>
+                    </div>
+
+                    <div style="margin-bottom: 20px;">
+                        <label style="display: block; margin-bottom: 8px; font-weight: 600; color: #333;">Yeni Şifre (Tekrar)</label>
+                        <input type="password" id="newPasswordConfirm" placeholder="Yeni şifrenizi tekrar girin" style="width: 100%; padding: 12px; border: 2px solid #e0e0e0; border-radius: 10px;">
+                    </div>
+
+                    <div style="display: flex; gap: 10px;">
+                        <button onclick="changeAdminPassword()" style="flex: 1; padding: 14px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; border-radius: 10px; font-weight: 600; cursor: pointer;">
+                            💾 Kaydet
+                        </button>
+                        <button onclick="closeChangePasswordModal()" style="flex: 1; padding: 14px; background: #6c757d; color: white; border: none; border-radius: 10px; font-weight: 600; cursor: pointer;">
+                            ❌ İptal
+                        </button>
+                    </div>
+                </div>
+            `;
+
+            document.body.appendChild(modal);
+        }
+
+        function closeChangePasswordModal() {
+            const modal = document.getElementById('changePasswordModal');
+            if (modal) {
+                modal.remove();
+            }
+        }
+
+        function changeAdminPassword() {
+            const currentPassword = document.getElementById('currentPassword').value;
+            const newPassword = document.getElementById('newPassword').value;
+            const newPasswordConfirm = document.getElementById('newPasswordConfirm').value;
+            const messageEl = document.getElementById('changePasswordMessage');
+
+            // Validasyon
+            if (!currentPassword || !newPassword || !newPasswordConfirm) {
+                messageEl.textContent = '❌ Lütfen tüm alanları doldurun!';
+                messageEl.style.display = 'block';
+                messageEl.style.background = '#f8d7da';
+                messageEl.style.color = '#721c24';
+                return;
+            }
+
+            if (newPassword.length < 6) {
+                messageEl.textContent = '❌ Yeni şifre en az 6 karakter olmalıdır!';
+                messageEl.style.display = 'block';
+                messageEl.style.background = '#f8d7da';
+                messageEl.style.color = '#721c24';
+                return;
+            }
+
+            if (newPassword !== newPasswordConfirm) {
+                messageEl.textContent = '❌ Yeni şifreler eşleşmiyor!';
+                messageEl.style.display = 'block';
+                messageEl.style.background = '#f8d7da';
+                messageEl.style.color = '#721c24';
+                return;
+            }
+
+            // Mevcut kullanıcıyı al
+            const session = Auth.getSession();
+            if (!session) {
+                alert('Oturum bulunamadı!');
+                return;
+            }
+
+            const users = JSON.parse(localStorage.getItem('bst_users') || '[]');
+            const user = users.find(u => u.id === session.userId);
+
+            if (!user) {
+                alert('Kullanıcı bulunamadı!');
+                return;
+            }
+
+            // Mevcut şifreyi kontrol et
+            if (user.password !== Auth.hashPassword(currentPassword)) {
+                messageEl.textContent = '❌ Mevcut şifre hatalı!';
+                messageEl.style.display = 'block';
+                messageEl.style.background = '#f8d7da';
+                messageEl.style.color = '#721c24';
+                return;
+            }
+
+            // Yeni şifreyi kaydet
+            user.password = Auth.hashPassword(newPassword);
+            const userIndex = users.findIndex(u => u.id === user.id);
+            users[userIndex] = user;
+            localStorage.setItem('bst_users', JSON.stringify(users));
+
+            messageEl.textContent = '✅ Şifreniz başarıyla değiştirildi!';
+            messageEl.style.display = 'block';
+            messageEl.style.background = '#d4edda';
+            messageEl.style.color = '#155724';
+
+            setTimeout(() => {
+                closeChangePasswordModal();
+            }, 2000);
+        }
+
         // Sayfa yüklendiğinde
         document.addEventListener('DOMContentLoaded', () => {
+            // Admin kontrolü yap
+            const session = Auth.getSession();
+            if (!session || session.role !== 'admin') {
+                window.location.href = '../giris.html';
+                return;
+            }
+
             loadDashboardData();
             createQuizChart();
             createActivityChart();
