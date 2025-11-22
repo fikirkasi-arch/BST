@@ -614,7 +614,120 @@
     </div>
 
     <script>
+        // Örnek sorular (ilk kullanımda yüklenecek)
+        const sampleQuestions = [
+            {
+                grade: "5",
+                subject: "Ünite 1 - Bilişim Temelleri",
+                difficulty: "kolay",
+                questionText: "Bilgisayarın beyni olarak adlandırılan ve tüm hesaplamaları yapan donanım bileşeni aşağıdakilerden hangisidir?",
+                options: ["RAM", "İşlemci (CPU)", "Sabit Disk", "Anakart"],
+                correctAnswer: 1,
+                explanation: "İşlemci (CPU), bilgisayarın tüm hesaplamalarını yapan ve komutları işleyen merkezi birimdir. Bu nedenle 'bilgisayarın beyni' olarak adlandırılır.",
+                createdAt: Date.now()
+            },
+            {
+                grade: "5",
+                subject: "Ünite 1 - Bilişim Temelleri",
+                difficulty: "orta",
+                questionText: "Aşağıdakilerden hangisi çıktı birimidir?",
+                options: ["Klavye", "Mouse", "Monitör", "Mikrofon"],
+                correctAnswer: 2,
+                explanation: "Monitör, bilgisayardan aldığı verileri ekranda görüntüleyen bir çıktı birimidir. Klavye, mouse ve mikrofon girdi birimleridir.",
+                createdAt: Date.now()
+            },
+            {
+                grade: "5",
+                subject: "Ünite 2 - Dijital Ürün",
+                difficulty: "kolay",
+                questionText: "Microsoft Word'de metni kalın yapmak için hangi kısayol tuşu kullanılır?",
+                options: ["Ctrl + I", "Ctrl + B", "Ctrl + U", "Ctrl + P"],
+                correctAnswer: 1,
+                explanation: "Ctrl + B (Bold) kısayol tuşu metni kalın yapmak için kullanılır. Ctrl + I italik, Ctrl + U altı çizili yapar.",
+                createdAt: Date.now()
+            },
+            {
+                grade: "5",
+                subject: "Ünite 3 - Ağlar ve İletişim",
+                difficulty: "orta",
+                questionText: "Okul veya ev gibi sınırlı bir alandaki bilgisayarları birbirine bağlayan ağ türü aşağıdakilerden hangisidir?",
+                options: ["WAN", "LAN", "MAN", "Internet"],
+                correctAnswer: 1,
+                explanation: "LAN (Local Area Network - Yerel Alan Ağı), ev, okul veya ofis gibi sınırlı alanlardaki bilgisayarları birbirine bağlayan ağ türüdür.",
+                createdAt: Date.now()
+            },
+            {
+                grade: "5",
+                subject: "Ünite 4 - Etik ve Güvenlik",
+                difficulty: "orta",
+                questionText: "Güçlü bir şifre oluştururken aşağıdakilerden hangisine dikkat edilmelidir?",
+                options: ["Sadece küçük harfler kullanılmalıdır", "En az 8 karakter, büyük-küçük harf, sayı ve sembol içermelidir", "Doğum tarihi kullanılmalıdır", "Basit ve hatırlanması kolay olmalıdır"],
+                correctAnswer: 1,
+                explanation: "Güçlü bir şifre en az 8 karakter uzunluğunda olmalı, büyük-küçük harf, sayı ve sembol içermelidir. Kişisel bilgiler (doğum tarihi gibi) kullanılmamalıdır.",
+                createdAt: Date.now()
+            },
+            {
+                grade: "6",
+                subject: "Ünite 1 - Bilişim Teknolojileri",
+                difficulty: "kolay",
+                questionText: "İnternet üzerinden veri depolama ve işleme hizmetine ne ad verilir?",
+                options: ["Sabit Disk", "USB Bellek", "Bulut Bilişim", "RAM"],
+                correctAnswer: 2,
+                explanation: "Bulut bilişim (Cloud Computing), verilerin internet üzerindeki sunucularda depolanması ve işlenmesidir. Google Drive, OneDrive gibi servisler bulut bilişim örnekleridir.",
+                createdAt: Date.now()
+            },
+            {
+                grade: "6",
+                subject: "Ünite 2 - Etik ve Güvenlik",
+                difficulty: "orta",
+                questionText: "KVKK ifadesinin açılımı aşağıdakilerden hangisidir?",
+                options: ["Kişisel Verileri Koruma Kanunu", "Kamu Verileri Koruma Kanunu", "Kişisel Verilerin Korunması Kanunu", "Kamu Verilerin Korunması Kanunu"],
+                correctAnswer: 2,
+                explanation: "KVKK, 'Kişisel Verilerin Korunması Kanunu' ifadesinin kısaltmasıdır. Bu kanun, kişilerin mahremiyetini ve kişisel verilerini korumayı amaçlar.",
+                createdAt: Date.now()
+            },
+            {
+                grade: "6",
+                subject: "Ünite 3 - İletişim ve İşbirliği",
+                difficulty: "kolay",
+                questionText: "Google Workspace'te bulunan tablolama programının adı nedir?",
+                options: ["Google Docs", "Google Slides", "Google Sheets", "Google Forms"],
+                correctAnswer: 2,
+                explanation: "Google Sheets, Google Workspace'in tablolama ve hesaplama programıdır. Microsoft Excel'e benzer şekilde çalışır.",
+                createdAt: Date.now()
+            },
+            {
+                grade: "6",
+                subject: "Ünite 4 - Ürün Oluşturma",
+                difficulty: "orta",
+                questionText: "Web sayfalarının yapısını oluşturan işaretleme dili hangisidir?",
+                options: ["CSS", "HTML", "JavaScript", "Python"],
+                correctAnswer: 1,
+                explanation: "HTML (HyperText Markup Language), web sayfalarının temel yapısını oluşturan işaretleme dilidir. CSS görünümü, JavaScript etkileşimi sağlar.",
+                createdAt: Date.now()
+            },
+            {
+                grade: "6",
+                subject: "Ünite 5 - Problem Çözme",
+                difficulty: "orta",
+                questionText: "Bir işi yapmak için adım adım yazılan talimatlara ne ad verilir?",
+                options: ["Program", "Algoritma", "Kod", "Fonksiyon"],
+                correctAnswer: 1,
+                explanation: "Algoritma, belirli bir problemi çözmek veya bir işi yapmak için adım adım yazılan talimatlardır. Yemek tarifi gibi düşünülebilir.",
+                createdAt: Date.now()
+            }
+        ];
+
+        // LocalStorage'dan soruları yükle veya örnek soruları kullan
         let questions = JSON.parse(localStorage.getItem('questionBank')) || [];
+
+        // Eğer soru bankası boşsa ve daha önce örnek sorular yüklenmediyse
+        if (questions.length === 0 && !localStorage.getItem('sampleQuestionsLoaded')) {
+            questions = [...sampleQuestions];
+            localStorage.setItem('questionBank', JSON.stringify(questions));
+            localStorage.setItem('sampleQuestionsLoaded', 'true');
+        }
+
         let editingIndex = -1;
 
         function renderQuestions() {
