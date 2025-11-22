@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Şifremi Unuttum - BST Eğitim Portalı</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+        }
+
+        .reset-container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            width: 100%;
+            max-width: 500px;
+            overflow: hidden;
+        }
+
+        .reset-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .reset-header h1 {
+            font-size: 24px;
+            margin-bottom: 8px;
+        }
+
+        .reset-header p {
+            opacity: 0.9;
+            font-size: 14px;
+        }
+
+        .reset-form {
+            padding: 30px;
+        }
+
+        .step {
+            display: none;
+        }
+
+        .step.active {
+            display: block;
+            animation: fadeIn 0.3s;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+            font-size: 14px;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+            margin-top: 10px;
+        }
+
+        .message {
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            font-size: 14px;
+            display: none;
+        }
+
+        .message.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .message.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .message.info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+
+        .back-link {
+            display: block;
+            margin-top: 20px;
+            text-align: center;
+            color: #667eea;
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        .back-link:hover {
+            text-decoration: underline;
+        }
+
+        .progress-steps {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 30px;
+            padding: 0 20px;
+        }
+
+        .progress-step {
+            flex: 1;
+            text-align: center;
+            position: relative;
+        }
+
+        .progress-step::after {
+            content: '';
+            position: absolute;
+            top: 15px;
+            left: 50%;
+            width: 100%;
+            height: 2px;
+            background: #e0e0e0;
+            z-index: -1;
+        }
+
+        .progress-step:last-child::after {
+            display: none;
+        }
+
+        .progress-step-circle {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: #e0e0e0;
+            color: #999;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .progress-step.active .progress-step-circle {
+            background: #667eea;
+            color: white;
+        }
+
+        .progress-step.completed .progress-step-circle {
+            background: #28a745;
+            color: white;
+        }
+
+        .progress-step-label {
+            font-size: 11px;
+            color: #666;
+        }
+
+        .password-strength {
+            margin-top: 8px;
+            font-size: 12px;
+        }
+
+        .password-strength-bar {
+            height: 4px;
+            border-radius: 2px;
+            background: #e0e0e0;
+            margin-top: 5px;
+            overflow: hidden;
+        }
+
+        .password-strength-fill {
+            height: 100%;
+            width: 0;
+            transition: all 0.3s;
+        }
+
+        .password-toggle {
+            position: absolute;
+            right: 15px;
+            top: 42px;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .form-group-relative {
+            position: relative;
+        }
+    </style>
+</head>
+<body>
+    <div class="reset-container">
+        <div class="reset-header">
+            <h1>🔑 Şifremi Unuttum</h1>
+            <p>Güvenlik sorularıyla şifrenizi sıfırlayın</p>
+        </div>
+
+        <div class="reset-form">
+            <div class="progress-steps">
+                <div class="progress-step active" id="progressStep1">
+                    <div class="progress-step-circle">1</div>
+                    <div class="progress-step-label">Kimlik</div>
+                </div>
+                <div class="progress-step" id="progressStep2">
+                    <div class="progress-step-circle">2</div>
+                    <div class="progress-step-label">Sorular</div>
+                </div>
+                <div class="progress-step" id="progressStep3">
+                    <div class="progress-step-circle">3</div>
+                    <div class="progress-step-label">Yeni Şifre</div>
+                </div>
+            </div>
+
+            <div class="message" id="message"></div>
+
+            <!-- Adım 1: Kullanıcı türü ve kimlik -->
+            <div class="step active" id="step1">
+                <div class="form-group">
+                    <label>Kullanıcı Türü</label>
+                    <select id="userType" onchange="updateIdentifierPlaceholder()">
+                        <option value="">Seçiniz</option>
+                        <option value="student">Öğrenci</option>
+                        <option value="teacher">Öğretmen</option>
+                        <option value="admin">Admin</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label id="identifierLabel">Email / Öğrenci Numarası</label>
+                    <input type="text" id="identifier" placeholder="Email veya numara giriniz">
+                </div>
+
+                <button class="btn btn-primary" onclick="submitStep1()">Devam Et →</button>
+                <a href="giris.html" class="back-link">← Giriş sayfasına dön</a>
+            </div>
+
+            <!-- Adım 2: Güvenlik soruları -->
+            <div class="step" id="step2">
+                <div id="securityQuestionsContainer"></div>
+
+                <button class="btn btn-primary" onclick="submitStep2()">Devam Et →</button>
+                <button class="btn btn-secondary" onclick="goToStep(1)">← Geri</button>
+            </div>
+
+            <!-- Adım 3: Yeni şifre -->
+            <div class="step" id="step3">
+                <div class="form-group form-group-relative">
+                    <label>Yeni Şifre</label>
+                    <input type="password" id="newPassword" placeholder="En az 6 karakter" oninput="checkPasswordStrength()">
+                    <span class="password-toggle" onclick="togglePassword('newPassword')">👁️</span>
+                    <div class="password-strength">
+                        <div class="password-strength-bar">
+                            <div class="password-strength-fill" id="strengthFill"></div>
+                        </div>
+                        <span id="strengthText"></span>
+                    </div>
+                </div>
+
+                <div class="form-group form-group-relative">
+                    <label>Yeni Şifre (Tekrar)</label>
+                    <input type="password" id="newPasswordConfirm" placeholder="Şifrenizi tekrar giriniz">
+                    <span class="password-toggle" onclick="togglePassword('newPasswordConfirm')">👁️</span>
+                </div>
+
+                <button class="btn btn-primary" onclick="submitStep3()">Şifremi Sıfırla</button>
+                <button class="btn btn-secondary" onclick="goToStep(2)">← Geri</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="scripts/auth.js"></script>
+    <script>
+        let currentUserData = null;
+        let securityQuestions = [];
+
+        function showMessage(text, type) {
+            const msg = document.getElementById('message');
+            msg.textContent = text;
+            msg.className = 'message ' + type;
+            msg.style.display = 'block';
+
+            if (type === 'success') {
+                setTimeout(() => {
+                    msg.style.display = 'none';
+                }, 3000);
+            }
+        }
+
+        function goToStep(stepNumber) {
+            document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
+            document.getElementById('step' + stepNumber).classList.add('active');
+
+            // Progress güncelle
+            for (let i = 1; i <= 3; i++) {
+                const step = document.getElementById('progressStep' + i);
+                step.classList.remove('active', 'completed');
+                if (i < stepNumber) {
+                    step.classList.add('completed');
+                } else if (i === stepNumber) {
+                    step.classList.add('active');
+                }
+            }
+
+            document.getElementById('message').style.display = 'none';
+        }
+
+        function updateIdentifierPlaceholder() {
+            const userType = document.getElementById('userType').value;
+            const identifierInput = document.getElementById('identifier');
+            const identifierLabel = document.getElementById('identifierLabel');
+
+            if (userType === 'student') {
+                identifierLabel.textContent = 'Öğrenci Numarası';
+                identifierInput.placeholder = 'Örn: 2024001';
+            } else {
+                identifierLabel.textContent = 'Email Adresi';
+                identifierInput.placeholder = 'Örn: ornek@mail.com';
+            }
+        }
+
+        function submitStep1() {
+            const userType = document.getElementById('userType').value;
+            const identifier = document.getElementById('identifier').value.trim();
+
+            if (!userType) {
+                showMessage('Lütfen kullanıcı türünü seçin!', 'error');
+                return;
+            }
+
+            if (!identifier) {
+                showMessage('Lütfen kimlik bilgisi girin!', 'error');
+                return;
+            }
+
+            // Güvenlik sorularını al
+            const result = Auth.getSecurityQuestions(identifier);
+
+            if (!result.success) {
+                showMessage(result.message, 'error');
+                return;
+            }
+
+            // Güvenlik sorularını göster
+            securityQuestions = result.questions;
+            currentUserData = { identifier, userType };
+
+            const container = document.getElementById('securityQuestionsContainer');
+            container.innerHTML = securityQuestions.map((q, i) => `
+                <div class="form-group">
+                    <label>${i + 1}. ${q}</label>
+                    <input type="text" id="answer${i}" placeholder="Cevabınızı giriniz">
+                </div>
+            `).join('');
+
+            goToStep(2);
+        }
+
+        function submitStep2() {
+            const answers = securityQuestions.map((q, i) =>
+                document.getElementById('answer' + i).value.trim()
+            );
+
+            if (answers.some(a => !a)) {
+                showMessage('Lütfen tüm güvenlik sorularını cevaplayın!', 'error');
+                return;
+            }
+
+            // Cevapları sakla (kontrol 3. adımda yapılacak)
+            currentUserData.securityAnswers = answers;
+            goToStep(3);
+        }
+
+        function submitStep3() {
+            const newPassword = document.getElementById('newPassword').value;
+            const confirmPassword = document.getElementById('newPasswordConfirm').value;
+
+            if (newPassword.length < 6) {
+                showMessage('Şifre en az 6 karakter olmalıdır!', 'error');
+                return;
+            }
+
+            if (newPassword !== confirmPassword) {
+                showMessage('Şifreler eşleşmiyor!', 'error');
+                return;
+            }
+
+            // Şifreyi sıfırla
+            const result = Auth.resetPassword(
+                currentUserData.identifier,
+                currentUserData.securityAnswers,
+                newPassword
+            );
+
+            if (result.success) {
+                showMessage(result.message + ' Giriş sayfasına yönlendiriliyorsunuz...', 'success');
+                setTimeout(() => {
+                    window.location.href = 'giris.html';
+                }, 2000);
+            } else {
+                showMessage(result.message, 'error');
+            }
+        }
+
+        function togglePassword(inputId) {
+            const input = document.getElementById(inputId);
+            input.type = input.type === 'password' ? 'text' : 'password';
+        }
+
+        function checkPasswordStrength() {
+            const password = document.getElementById('newPassword').value;
+            const fill = document.getElementById('strengthFill');
+            const text = document.getElementById('strengthText');
+
+            let strength = 0;
+            let color = '#e0e0e0';
+            let label = '';
+
+            if (password.length >= 6) strength += 25;
+            if (password.length >= 10) strength += 25;
+            if (/[A-Z]/.test(password)) strength += 25;
+            if (/[0-9]/.test(password)) strength += 25;
+
+            if (strength === 0) {
+                color = '#e0e0e0';
+                label = '';
+            } else if (strength <= 25) {
+                color = '#dc3545';
+                label = 'Zayıf';
+            } else if (strength <= 50) {
+                color = '#ffc107';
+                label = 'Orta';
+            } else if (strength <= 75) {
+                color = '#17a2b8';
+                label = 'İyi';
+            } else {
+                color = '#28a745';
+                label = 'Güçlü';
+            }
+
+            fill.style.width = strength + '%';
+            fill.style.background = color;
+            text.textContent = label;
+            text.style.color = color;
+        }
+    </script>
+</body>
+</html>
