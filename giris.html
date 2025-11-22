@@ -305,6 +305,10 @@
                 <span class="icon">👨‍🏫</span>
                 <span class="label">Öğretmen</span>
             </button>
+            <button class="user-type-btn" onclick="selectUserType('admin')" id="adminTypeBtn">
+                <span class="icon">👑</span>
+                <span class="label">Admin</span>
+            </button>
         </div>
 
         <div class="auth-tabs">
@@ -513,6 +517,30 @@
             <button type="submit" class="btn btn-primary">Kayıt Ol</button>
         </form>
 
+        <!-- Admin Giriş -->
+        <form class="auth-form" id="adminLoginForm">
+            <div class="message" id="adminLoginMessage"></div>
+
+            <div class="form-group">
+                <label>E-posta Adresi</label>
+                <input type="email" id="adminLoginEmail" placeholder="admin@bst.edu.tr" required>
+            </div>
+
+            <div class="form-group">
+                <label>Şifre</label>
+                <div class="password-wrapper">
+                    <input type="password" id="adminLoginPassword" placeholder="Şifreniz" required>
+                    <span class="password-toggle" onclick="togglePassword('adminLoginPassword')">👁️</span>
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Admin Girişi</button>
+
+            <div class="message info" style="display: block; margin-top: 15px;">
+                ℹ️ Varsayılan Admin: admin@bst.edu.tr / Admin123!
+            </div>
+        </form>
+
         <div class="auth-footer">
             <a href="index.html">← Ana Sayfaya Dön</a>
         </div>
@@ -532,6 +560,17 @@
             currentUserType = type;
             document.getElementById('studentTypeBtn').classList.toggle('active', type === 'student');
             document.getElementById('teacherTypeBtn').classList.toggle('active', type === 'teacher');
+            document.getElementById('adminTypeBtn').classList.toggle('active', type === 'admin');
+
+            // Admin için tab'ları gizle (sadece login var)
+            const tabs = document.querySelector('.auth-tabs');
+            if (type === 'admin') {
+                tabs.style.display = 'none';
+                currentTab = 'login';
+            } else {
+                tabs.style.display = 'flex';
+            }
+
             updateForms();
         }
 
@@ -553,12 +592,14 @@
                 } else {
                     document.getElementById('studentRegisterForm').classList.add('active');
                 }
-            } else {
+            } else if (currentUserType === 'teacher') {
                 if (currentTab === 'login') {
                     document.getElementById('teacherLoginForm').classList.add('active');
                 } else {
                     document.getElementById('teacherRegisterForm').classList.add('active');
                 }
+            } else if (currentUserType === 'admin') {
+                document.getElementById('adminLoginForm').classList.add('active');
             }
         }
 
@@ -681,6 +722,22 @@
                 }
             } else {
                 showMessage('teacherRegisterMessage', result.message, 'error');
+            }
+        });
+
+        // Admin Giriş
+        document.getElementById('adminLoginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const email = document.getElementById('adminLoginEmail').value;
+            const password = document.getElementById('adminLoginPassword').value;
+
+            const result = Auth.login(email, password, 'admin');
+
+            if (result.success) {
+                showMessage('adminLoginMessage', result.message, 'success');
+                setTimeout(() => window.location.href = 'admin/index.html', 1000);
+            } else {
+                showMessage('adminLoginMessage', result.message, 'error');
             }
         });
     </script>
