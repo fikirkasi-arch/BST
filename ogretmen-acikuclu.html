@@ -1,0 +1,714 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Açık Uçlu Sınav Oluşturucu - BST Öğretmen Araçları</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        h1 {
+            text-align: center;
+            color: #667eea;
+            margin-bottom: 10px;
+            font-size: 2.5em;
+        }
+        .subtitle { text-align: center; color: #666; margin-bottom: 30px; }
+
+        .workflow {
+            display: grid;
+            grid-template-columns: 400px 1fr;
+            gap: 30px;
+            margin: 20px 0;
+        }
+
+        .settings-panel {
+            background: #f5f5f5;
+            border-radius: 15px;
+            padding: 25px;
+            height: fit-content;
+            position: sticky;
+            top: 20px;
+        }
+
+        .panel-title {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1em;
+            transition: all 0.3s;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .checkbox-group {
+            display: grid;
+            gap: 10px;
+        }
+
+        .checkbox-label {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            padding: 12px;
+            background: white;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 2px solid #e0e0e0;
+        }
+
+        .checkbox-label:hover {
+            background: #f8f8ff;
+            border-color: #667eea;
+        }
+
+        .checkbox-label input[type="checkbox"] {
+            margin-top: 4px;
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
+
+        .checkbox-label input[type="checkbox"]:checked {
+            accent-color: #667eea;
+        }
+
+        .checkbox-text {
+            flex: 1;
+        }
+
+        .checkbox-text strong {
+            display: block;
+            color: #667eea;
+            margin-bottom: 4px;
+        }
+
+        .checkbox-text small {
+            color: #999;
+            font-size: 0.85em;
+        }
+
+        .btn {
+            padding: 14px 28px;
+            font-size: 1em;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            width: 100%;
+            justify-content: center;
+        }
+
+        .btn-success {
+            background: #28a745;
+            color: white;
+        }
+
+        .btn-warning {
+            background: #ffc107;
+            color: #333;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .preview-panel {
+            background: white;
+            border-radius: 15px;
+            padding: 0;
+            min-height: 600px;
+        }
+
+        .exam-paper {
+            padding: 40px;
+            background: white;
+        }
+
+        .exam-header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 3px solid #667eea;
+        }
+
+        .exam-title {
+            font-size: 2em;
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+
+        .exam-info {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin: 20px 0;
+            padding: 20px;
+            background: #f8f8ff;
+            border-radius: 10px;
+        }
+
+        .info-item {
+            display: flex;
+            align-items: center;
+        }
+
+        .info-label {
+            font-weight: bold;
+            margin-right: 10px;
+            min-width: 100px;
+            color: #667eea;
+        }
+
+        .info-line {
+            flex: 1;
+            border-bottom: 1px solid #333;
+            height: 1px;
+        }
+
+        .info-value {
+            flex: 1;
+            color: #666;
+        }
+
+        .question-item {
+            margin-bottom: 30px;
+            padding: 20px;
+            background: #fafafa;
+            border-radius: 10px;
+            border-left: 4px solid #667eea;
+        }
+
+        .question-number {
+            font-weight: bold;
+            color: #667eea;
+            font-size: 1.1em;
+            margin-bottom: 10px;
+        }
+
+        .question-text {
+            color: #333;
+            line-height: 1.6;
+            margin-bottom: 15px;
+            font-size: 1.05em;
+        }
+
+        .answer-space {
+            border: 2px dashed #ccc;
+            border-radius: 8px;
+            min-height: 80px;
+            padding: 15px;
+            background: white;
+            margin-top: 10px;
+        }
+
+        .answer-lines {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .answer-line {
+            border-bottom: 1px solid #ddd;
+            height: 25px;
+        }
+
+        .answer-content {
+            background: #e8f5e9;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #4caf50;
+            margin-top: 10px;
+        }
+
+        .answer-label {
+            font-weight: bold;
+            color: #2e7d32;
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        .answer-text {
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 80px 20px;
+            color: #999;
+        }
+
+        .empty-icon {
+            font-size: 5em;
+            margin-bottom: 20px;
+        }
+
+        .action-bar {
+            display: flex;
+            gap: 15px;
+            padding: 20px;
+            background: #f5f5f5;
+            border-radius: 0 0 15px 15px;
+            border-top: 2px solid #e0e0e0;
+        }
+
+        .stats-box {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .stats-number {
+            font-size: 2em;
+            font-weight: bold;
+        }
+
+        .stats-label {
+            font-size: 0.9em;
+            opacity: 0.9;
+        }
+
+        @media print {
+            body {
+                background: white;
+                padding: 0;
+            }
+            .container {
+                max-width: 100%;
+                box-shadow: none;
+                padding: 0;
+            }
+            .workflow {
+                display: block;
+            }
+            .settings-panel, .action-bar, .no-print {
+                display: none !important;
+            }
+            .preview-panel {
+                box-shadow: none;
+            }
+            .exam-paper {
+                padding: 20px;
+            }
+            .answer-content {
+                page-break-inside: avoid;
+            }
+            .question-item {
+                page-break-inside: avoid;
+            }
+
+            /* Cevapları gizle */
+            body.hide-answers .answer-content {
+                display: none !important;
+            }
+
+            /* Filigran */
+            body::before {
+                content: '📚 Bilişim Teknolojileri Eğitim Portalı';
+                position: fixed;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%) rotate(-45deg);
+                font-size: 3em;
+                color: rgba(0, 0, 0, 0.05);
+                z-index: -1;
+                white-space: nowrap;
+            }
+        }
+
+        @media (max-width: 1200px) {
+            .workflow {
+                grid-template-columns: 1fr;
+            }
+            .settings-panel {
+                position: static;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📝 Açık Uçlu Sınav Oluşturucu</h1>
+        <p class="subtitle">Kazanım bazlı açık uçlu sorularla sınav hazırlayın</p>
+
+        <div class="workflow">
+            <!-- Ayarlar Paneli -->
+            <div class="settings-panel">
+                <div class="panel-title">⚙️ Sınav Ayarları</div>
+
+                <div class="form-group">
+                    <label class="form-label">Sınıf Seviyesi</label>
+                    <select id="gradeSelect" class="form-control" onchange="loadOutcomes()">
+                        <option value="">Sınıf Seçin</option>
+                        <option value="5">5. Sınıf</option>
+                        <option value="6">6. Sınıf</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Okul Adı</label>
+                    <input type="text" id="schoolName" class="form-control" placeholder="Örn: Atatürk Ortaokulu">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Sınav Başlığı</label>
+                    <input type="text" id="examTitle" class="form-control" placeholder="Örn: 1. Dönem Yazılı Sınavı">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Kazanım Seçimi (Her kazanımdan 3 soru)</label>
+                    <div id="outcomesList" class="checkbox-group">
+                        <div style="padding: 20px; text-align: center; color: #999;">
+                            Önce sınıf seviyesi seçin
+                        </div>
+                    </div>
+                </div>
+
+                <div class="stats-box" id="statsBox" style="display: none;">
+                    <div class="stats-number" id="questionCount">0</div>
+                    <div class="stats-label">Toplam Soru</div>
+                </div>
+
+                <button class="btn btn-primary" onclick="generateExam()">
+                    🎯 Sınavı Oluştur
+                </button>
+            </div>
+
+            <!-- Önizleme Paneli -->
+            <div class="preview-panel">
+                <div id="examPreview" class="exam-paper">
+                    <div class="empty-state">
+                        <div class="empty-icon">📄</div>
+                        <h3>Sınav Oluşturmaya Hazır</h3>
+                        <p>Soldaki ayarlardan kazanımları seçin ve "Sınavı Oluştur" butonuna tıklayın</p>
+                    </div>
+                </div>
+                <div class="action-bar no-print" id="actionBar" style="display: none;">
+                    <button class="btn btn-success" onclick="printExam(false)">
+                        🖨️ Sınav Kağıdı (Cevapsız)
+                    </button>
+                    <button class="btn btn-warning" onclick="printExam(true)">
+                        📋 Cevap Anahtarlı
+                    </button>
+                    <button class="btn" style="background: #6c757d; color: white;" onclick="toggleAnswers()">
+                        👁️ Cevapları Göster/Gizle
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const openEndedQuestions = {
+            5: {
+                "Ünite 1 - Bilişim Temelleri": [
+                    { q: "Bilgisayarın temel donanım bileşenlerini (işlemci, RAM, hard disk, anakart) açıklayınız ve her birinin görevini yazınız.", a: "İşlemci (CPU): Bilgisayarın beyni olarak tüm hesaplamaları yapar. RAM: Geçici bellek olarak çalışan programları tutar. Hard Disk: Verileri kalıcı olarak saklar. Anakart: Tüm donanım parçalarını birbirine bağlar." },
+                    { q: "Giriş birimleri ile çıkış birimlerini örneklerle açıklayınız. En az 3'er örnek veriniz.", a: "Giriş Birimleri: Klavye (metin girişi), Mouse (işaretçi kontrolü), Mikrofon (ses girişi), Tarayıcı (görüntü girişi). Çıkış Birimleri: Monitör (görüntü çıktısı), Yazıcı (kağıt çıktısı), Hoparlör (ses çıktısı)." },
+                    { q: "İşletim sistemi nedir ve bir bilgisayarda neden gereklidir? Windows, Linux ve macOS işletim sistemlerini karşılaştırınız.", a: "İşletim sistemi, bilgisayarın donanımını yöneten ve uygulamaları çalıştıran temel yazılımdır. Windows: En yaygın, oyunlar için uygun. Linux: Açık kaynak, ücretsiz, güvenli. macOS: Apple ürünleri için, kullanıcı dostu." }
+                ],
+                "Ünite 2 - Dijital Ürün Tasarımı": [
+                    { q: "Dijital ürün tasarım sürecinin adımlarını (planlama, tasarım, uygulama, test, değerlendirme) sırasıyla açıklayınız.", a: "1. Planlama: Projenin amacı ve hedefi belirlenir. 2. Tasarım: Ürünün nasıl görüneceği çizilir. 3. Uygulama: Ürün kodlanır veya oluşturulur. 4. Test: Hatalar kontrol edilir. 5. Değerlendirme: Ürün kullanıcılarla test edilir ve geri bildirim alınır." },
+                    { q: "Microsoft Word'de bir belge hazırlarken kullanabileceğiniz biçimlendirme araçlarını (font, hizalama, madde işaretleri, resim ekleme) açıklayınız.", a: "Font: Yazı tipi, boyutu ve rengi değiştirilir. Hizalama: Metin sola, sağa, ortaya veya iki yana yaslanır. Madde İşaretleri: Liste oluşturulur. Resim Ekleme: Belgeye görsel eklenir. Kalın, İtalik, Altı Çizili gibi vurgu araçları kullanılır." },
+                    { q: "PowerPoint sunumu hazırlarken dikkat edilmesi gereken tasarım prensiplerini yazınız. Etkili bir sunum nasıl olmalıdır?", a: "Etkili sunum özellikleri: 1. Az metin, çok görsel kullanılmalı. 2. Okunabilir font boyutu (en az 24 punto). 3. Uyumlu renkler seçilmeli. 4. Her slayt tek bir ana fikir içermeli. 5. Animasyonlar abartısız kullanılmalı. 6. Slaytlar sıralı ve mantıklı olmalı." }
+                ],
+                "Ünite 3 - Ağlar ve İletişim": [
+                    { q: "LAN ve WAN ağlarını tanımlayınız. Aralarındaki farkları ve kullanım alanlarını açıklayınız.", a: "LAN (Yerel Alan Ağı): Ev, okul, ofis gibi sınırlı alanlardaki bilgisayarları birbirine bağlar. Hızlı ve güvenlidir. WAN (Geniş Alan Ağı): Şehirler, ülkeler arası bağlantıdır. İnternet en büyük WAN örneğidir. LAN daha hızlı, WAN daha geniş kapsamlıdır." },
+                    { q: "Router (yönlendirici) ve Switch'in (anahtar) görevlerini açıklayınız. Bir ağda neden her ikisine de ihtiyaç duyulur?", a: "Router: Farklı ağları birbirine bağlar ve internete erişim sağlar. Veri paketlerini doğru yere yönlendirir. Switch: Aynı ağdaki bilgisayarları birbirine bağlar. Router internete çıkış için, Switch aynı ağ içi iletişim için gereklidir." },
+                    { q: "E-posta kullanırken dikkat edilmesi gereken güvenlik kurallarını yazınız. Phishing saldırısından nasıl korunulur?", a: "E-posta güvenliği: 1. Tanımadığınız kişilerden gelen ekleri açmayın. 2. Şüpheli linklere tıklamayın. 3. Kişisel bilgilerinizi e-posta ile paylaşmayın. 4. Güçlü şifre kullanın. Phishing'den korunma: Resmi kuruluşların e-posta adreslerini kontrol edin, acil işlem isteyen mesajlara şüpheyle yaklaşın." }
+                ],
+                "Ünite 4 - Etik ve Güvenlik": [
+                    { q: "Güçlü bir şifre nasıl olmalıdır? Şifre güvenliği için uygulamanız gereken en az 5 kuralı yazınız.", a: "Güçlü şifre kuralları: 1. En az 8 karakter olmalı. 2. Büyük ve küçük harf içermeli. 3. Sayı içermeli. 4. Özel karakter (@, #, !, vb.) içermeli. 5. Kişisel bilgiler (doğum tarihi, isim) kullanılmamalı. 6. Her hesap için farklı şifre kullanılmalı. 7. Düzenli olarak değiştirilmeli." },
+                    { q: "Dijital vatandaşlık nedir? İnternette sorumlu bir birey olmanın gerekliliklerini açıklayınız.", a: "Dijital vatandaşlık, dijital ortamlarda etik, güvenli ve sorumlu davranmaktır. Gereklilikleri: 1. Başkalarına saygılı olmak. 2. Siber zorbalık yapmamak. 3. Kişisel bilgileri korumak. 4. Telif haklarına saygı göstermek. 5. Güvenilir kaynaklardan bilgi almak. 6. Dijital ayak izine dikkat etmek." },
+                    { q: "Siber zorbalık nedir? Karşılaştığınızda ne yapmanız gerektiğini adım adım yazınız.", a: "Siber zorbalık, internet üzerinden yapılan taciz, aşağılama ve tehdittir. Karşılaşınca yapılacaklar: 1. Sakin kalın ve karşılık vermeyin. 2. Kanıt olarak ekran görüntüsü alın. 3. Zorbanı engelleyin. 4. Ebeveyn veya öğretmeninize bildirin. 5. Gerekirse okul yönetimine veya kolluk kuvvetlerine başvurun. 6. Sosyal medya platformuna şikayet edin." }
+                ],
+                "Ünite 5 - Yapay Zeka": [
+                    { q: "Yapay zeka nedir? Günlük hayattan en az 5 yapay zeka kullanım örneği veriniz ve açıklayınız.", a: "Yapay zeka, makinelerin insan gibi düşünme ve öğrenme yeteneğidir. Örnekler: 1. Siri/Alexa: Sesli asistanlar. 2. Netflix/YouTube: Film önerileri. 3. Yüz tanıma: Telefon kilidi. 4. Google Translate: Dil çevirisi. 5. Spam filtresi: İstenmeyen e-postaları ayırma. 6. Otonom araçlar: Sürücüsüz otomobiller." },
+                    { q: "Makine öğrenmesi nedir? Geleneksel programlamadan farkını bir örnekle açıklayınız.", a: "Makine öğrenmesi, bilgisayarın verilerden öğrenerek kararlar almasıdır. Geleneksel programlamada: Tüm kurallar programcı tarafından yazılır. Makine öğrenmesinde: Bilgisayar verilerden öğrenir ve kendi kurallarını oluşturur. Örnek: Spam filtresi, binlerce e-postadan öğrenerek spam'i otomatik ayırt eder." },
+                    { q: "Yapay zekanın toplum üzerindeki olumlu ve olumsuz etkilerini tartışınız. Her birinden en az 3 örnek veriniz.", a: "Olumlu etkiler: 1. Hastalık teşhisinde yardımcı olur. 2. İş süreçlerini hızlandırır. 3. Eğitimde kişiselleştirilmiş öğrenme sağlar. Olumsuz etkiler: 1. İşsizliğe neden olabilir. 2. Gizlilik endişeleri yaratır. 3. Yanlı kararlar alabilir. 4. İnsanlar teknolojiye bağımlı hale gelebilir." }
+                ],
+                "Ünite 6 - Programlama (Scratch)": [
+                    { q: "Algoritma nedir? Sabah okula hazırlanma sürecinizi adım adım algoritma olarak yazınız.", a: "Algoritma, bir işi yapmak için sıralı adımlar dizisidir. Okula hazırlanma algoritması: 1. Uyan. 2. Yataktan kalk. 3. Yüzünü yıka. 4. Kahvaltı yap. 5. Giyin. 6. Çantanı hazırla. 7. Ayakkabılarını giy. 8. Okula git." },
+                    { q: "Scratch'te döngü ve koşul yapılarını açıklayınız. Her birinin kullanım amacını bir örnekle gösteriniz.", a: "Döngü: Bir işi tekrar tekrar yapmak için kullanılır. Örnek: 'Forever' bloğu ile sprite'ı sürekli hareket ettirmek. Koşul: Belirli bir durumda işlem yapmak için kullanılır. Örnek: 'If...then' bloğu ile sprite duvara çarparsa yön değiştirmesini sağlamak. Döngü tekrar, koşul seçim içindir." },
+                    { q: "Scratch'te değişken nedir ve ne için kullanılır? Bir oyunda skor tutmak için değişken nasıl kullanılır?", a: "Değişken, değişebilen bilgileri saklar. Skor, yaş, isim gibi değerler değişkende tutulur. Skor tutma: 1. 'skor' adında değişken oluştur. 2. Başlangıçta skor = 0 yap. 3. Her puan kazanıldığında 'skor'u 1 artır. 4. Skoru ekranda göster. Değişken sayesinde skor oyun boyunca saklanır ve güncellenir." }
+                ]
+            },
+            6: {
+                "Ünite 1 - Bilişim Teknolojileri": [
+                    { q: "Bilişim teknolojilerinin tarihsel gelişimini ana hatlarıyla açıklayınız. İlk bilgisayarlardan günümüze kadar olan dönüm noktalarını yazınız.", a: "Bilişim tarihi: 1. Abacus (M.Ö. 3000): İlk hesap makinesi. 2. Charles Babbage (1830): Analitik makine. 3. ENIAC (1946): İlk elektronik bilgisayar. 4. Transistör (1950'ler): Bilgisayarlar küçüldü. 5. Mikroişlemci (1971): Kişisel bilgisayarlar. 6. İnternet (1990'lar): Küresel ağ. 7. Akıllı telefonlar (2000'ler): Mobil bilişim." },
+                    { q: "Bulut bilişim nedir? Geleneksel veri depolama yöntemlerinden farkları ve avantajlarını açıklayınız.", a: "Bulut bilişim, verilerin internet üzerindeki sunucularda saklanmasıdır. Avantajları: 1. Her yerden erişim. 2. Otomatik yedekleme. 3. Büyük depolama alanı. 4. Paylaşım kolaylığı. 5. Maliyetten tasarruf. Geleneksel yöntem (hard disk, USB): Fiziksel hasar riski var, sınırlı alan, paylaşım zor. Bulut: Güvenli, esnek, erişilebilir." },
+                    { q: "Nesnelerin İnterneti (IoT) kavramını açıklayınız ve günlük hayattan 5 örnek veriniz.", a: "IoT, günlük nesnelerin internete bağlanarak iletişim kurmasıdır. Örnekler: 1. Akıllı termostat: Sıcaklığı uzaktan kontrol. 2. Akıllı saat: Sağlık verilerini takip. 3. Akıllı buzdolabı: Alışveriş listesi oluşturur. 4. Akıllı lamba: Telefonla açılır/kapanır. 5. Güvenlik kameraları: Uzaktan izleme. IoT hayatı kolaylaştırır ve otomasyon sağlar." }
+                ],
+                "Ünite 2 - Etik ve Güvenlik": [
+                    { q: "KVKK (Kişisel Verilerin Korunması Kanunu) nedir? Kişisel verilerinizin korunması için ne gibi haklarınız vardır?", a: "KVKK, kişilerin özel bilgilerinin korunmasını sağlayan kanundur. Haklarınız: 1. Verilerinizin işlenip işlenmediğini öğrenme. 2. İşlenmişse bilgi talep etme. 3. İşlenme amacını öğrenme. 4. Yanlış verilerin düzeltilmesini isteme. 5. Verilerin silinmesini talep etme. 6. İhlal durumunda şikayet etme. KVKK gizliliği korur." },
+                    { q: "İki faktörlü kimlik doğrulama (2FA) nedir? Neden önemlidir ve nasıl çalışır? Örneklerle açıklayınız.", a: "2FA, hesaba girişte iki aşamalı doğrulamadır. Çalışma: 1. Şifrenizi girersiniz. 2. Telefonunuza kod gelir veya uygulama açılır. 3. Kodu girerek doğrularsınız. Önem: Şifreniz çalınsa bile kodunuz olmadan hesaba girilemez. Örnekler: Google, Instagram, banka uygulamaları. 2FA hesap güvenliğini katlar." },
+                    { q: "Ransomware (fidye yazılımı) saldırısı nedir? Nasıl bulaşır ve kendimizi nasıl koruruz?", a: "Ransomware, dosyaları şifreleyip fidye isteyen zararlı yazılımdır. Bulaşma: E-posta ekleri, sahte linkler, güvenliksiz siteler. Korunma: 1. Düzenli yedekleme yapın. 2. Antivirüs kullanın. 3. Şüpheli ekleri açmayın. 4. Yazılımları güncel tutun. 5. Güvenlik duvarı aktif olsun. 6. Bilinmeyen kaynaklardan dosya indirmeyin. Fidye ödemeyin, uzman yardımı alın." }
+                ],
+                "Ünite 3 - İletişim ve İşbirliği": [
+                    { q: "Bilgi okuryazarlığı nedir? İnternette güvenilir kaynak bulma ve bilgiyi değerlendirme kriterlerini yazınız.", a: "Bilgi okuryazarlığı, bilgiye erişme, değerlendirme ve kullanma becerisidir. Güvenilir kaynak kriterleri: 1. Yazarı belli olmalı. 2. Güncel olmalı. 3. Referansları olmalı. 4. Tarafsız olmalı. 5. .edu, .gov uzantılı siteler güvenilirdir. 6. Birden fazla kaynakla doğrulayın. Wikipedia başlangıç, resmi siteler kesin bilgi için kullanılır." },
+                    { q: "Google Workspace (Docs, Sheets, Slides) araçlarını kullanarak işbirliği nasıl yapılır? Avantajlarını açıklayınız.", a: "Google Workspace işbirliği: 1. Belge oluşturun. 2. 'Paylaş' butonuna tıklayın. 3. E-posta ile paylaşın veya link oluşturun. 4. Düzenleme/görüntüleme izni verin. 5. Aynı anda birlikte çalışın. Avantajları: 1. Eş zamanlı çalışma. 2. Otomatik kayıt. 3. Yorum ekleme. 4. Sürüm geçmişi. 5. Her yerden erişim. Ekip çalışması kolaylaşır." },
+                    { q: "Video konferans araçlarının (Zoom, Teams, Google Meet) kullanım alanlarını ve etkili bir online toplantı için kuralları yazınız.", a: "Kullanım alanları: Uzaktan eğitim, iş toplantıları, webinar, aile görüşmeleri. Etkili toplantı kuralları: 1. Mikrofonunuzu kapalı tutun (konuşmadığınızda). 2. Kamera açık olsun. 3. Dikkat dağıtıcı arka plan olmasın. 4. Zamanında katılın. 5. Sohbete aktif katılın. 6. El kaldırma özelliğini kullanın. 7. Dikkatli dinleyin. Online toplantı verimliliği artırır." }
+                ],
+                "Ünite 4 - Ürün Oluşturma": [
+                    { q: "HTML ve CSS nedir? Bir web sayfasının yapısında her birinin rolünü açıklayınız ve basit bir örnek veriniz.", a: "HTML (HyperText Markup Language): Web sayfasının iskeletini oluşturur, içeriği belirler. CSS (Cascading Style Sheets): Web sayfasının görünümünü düzenler, renk, boyut, düzen verir. Örnek: HTML ile başlık <h1>Merhaba</h1> oluşturulur, CSS ile h1 {color: blue; font-size: 24px;} denilerek mavi ve 24 punto yapılır. HTML yapı, CSS tasarımdır." },
+                    { q: "Dijital içerik türlerini (metin, görsel, video, ses, podcast) açıklayınız. Her biri için uygun kullanım alanları ve araçlar yazınız.", a: "1. Metin: Blog, haber, makale. Araçlar: Word, Google Docs. 2. Görsel: Poster, infografik, fotoğraf. Araçlar: Canva, Photoshop. 3. Video: Eğitim videosu, vlog, film. Araçlar: iMovie, Adobe Premiere. 4. Ses: Müzik, efekt. Araçlar: Audacity. 5. Podcast: Ses yayını, röportaj. Araçlar: Anchor, SoundCloud. Her format farklı amaçla kullanılır." },
+                    { q: "Etkili bir web sitesi tasarımı için dikkat edilmesi gereken tasarım prensiplerini yazınız.", a: "Web tasarım prensipleri: 1. Basit ve temiz tasarım. 2. Kolay navigasyon (menü). 3. Hızlı yükleme. 4. Mobil uyumlu (responsive). 5. Okunabilir fontlar. 6. Uyumlu renk paleti. 7. Beyaz alan kullanımı. 8. Tutarlılık. 9. Erişilebilirlik (engelliler için). 10. Net harekete geçirici butonlar. İyi tasarım kullanıcı deneyimini artırır." }
+                ],
+                "Ünite 5 - Problem Çözme": [
+                    { q: "Algoritma tasarımında kullanılan temel yapıları (sıralama, seçme, döngü) açıklayınız ve her biri için bir örnek veriniz.", a: "1. Sıralama: Komutlar sırayla çalışır. Örnek: Kahvaltı yap → Giyin → Okula git. 2. Seçme (Koşul): Duruma göre karar verilir. Örnek: EĞER yağmur yağıyorsa şemsiye al, DEĞİLSE alma. 3. Döngü: İşlem tekrarlanır. Örnek: Sınıftaki 30 öğrenciye tek tek yoklama yapana kadar tekrarla. Bu yapılar programlamanın temelidir." },
+                    { q: "Veri analizi nedir? Grafik türlerini (çubuk, pasta, çizgi) ve kullanım alanlarını açıklayınız.", a: "Veri analizi, verileri inceleyerek anlamlı sonuçlar çıkarmaktır. Grafik türleri: 1. Çubuk grafik: Kategoriler arası karşılaştırma. Örnek: Sınıfların mevcudu. 2. Pasta grafik: Yüzdelik dilimler. Örnek: Bütçe dağılımı. 3. Çizgi grafik: Zaman içindeki değişim. Örnek: Aylık sıcaklık değişimi. Grafikler veriyi görselleştirir ve anlaşılır kılar." },
+                    { q: "Python programlama dilinin temel özelliklerini yazınız. Değişken, liste ve fonksiyon kavramlarını açıklayınız.", a: "Python: Kolay öğrenilen, güçlü programlama dili. Değişken: Veri saklar. Örnek: yaş = 12. Liste: Birden fazla değer tutar. Örnek: isimler = ['Ali', 'Ayşe', 'Mehmet']. Fonksiyon: Belirli işi yapan kod bloğu. Örnek: def toplama(a, b): return a + b. Python'da girinti (indent) önemlidir. Kullanım alanları: Yapay zeka, veri bilimi, web." }
+                ]
+            }
+        };
+
+        let currentExam = [];
+        let showAnswers = true;
+
+        function loadOutcomes() {
+            const grade = document.getElementById('gradeSelect').value;
+            const outcomesList = document.getElementById('outcomesList');
+
+            if (!grade) {
+                outcomesList.innerHTML = '<div style="padding: 20px; text-align: center; color: #999;">Önce sınıf seviyesi seçin</div>';
+                return;
+            }
+
+            const outcomes = Object.keys(openEndedQuestions[grade]);
+            outcomesList.innerHTML = outcomes.map(outcome => `
+                <label class="checkbox-label">
+                    <input type="checkbox" value="${outcome}" onchange="updateQuestionCount()">
+                    <div class="checkbox-text">
+                        <strong>${outcome}</strong>
+                        <small>3 açık uçlu soru</small>
+                    </div>
+                </label>
+            `).join('');
+
+            updateQuestionCount();
+        }
+
+        function updateQuestionCount() {
+            const checked = document.querySelectorAll('#outcomesList input[type="checkbox"]:checked').length;
+            const totalQuestions = checked * 3;
+            document.getElementById('questionCount').textContent = totalQuestions;
+            document.getElementById('statsBox').style.display = checked > 0 ? 'block' : 'none';
+        }
+
+        function generateExam() {
+            const grade = document.getElementById('gradeSelect').value;
+            const schoolName = document.getElementById('schoolName').value || 'Okul Adı';
+            const examTitle = document.getElementById('examTitle').value || 'Açık Uçlu Sınav';
+            const checkedOutcomes = Array.from(document.querySelectorAll('#outcomesList input[type="checkbox"]:checked'))
+                .map(cb => cb.value);
+
+            if (!grade) {
+                alert('❌ Lütfen sınıf seviyesi seçin!');
+                return;
+            }
+
+            if (checkedOutcomes.length === 0) {
+                alert('❌ Lütfen en az bir kazanım seçin!');
+                return;
+            }
+
+            // Sınavı oluştur
+            currentExam = [];
+            let questionNumber = 1;
+
+            checkedOutcomes.forEach(outcome => {
+                const questions = openEndedQuestions[grade][outcome];
+                questions.forEach(q => {
+                    currentExam.push({
+                        number: questionNumber++,
+                        outcome: outcome,
+                        question: q.q,
+                        answer: q.a
+                    });
+                });
+            });
+
+            // Önizleme oluştur
+            renderExam(schoolName, examTitle, grade);
+            document.getElementById('actionBar').style.display = 'flex';
+        }
+
+        function renderExam(schoolName, examTitle, grade) {
+            const preview = document.getElementById('examPreview');
+            const today = new Date().toLocaleDateString('tr-TR', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            });
+
+            preview.innerHTML = `
+                <div class="exam-header">
+                    <div style="font-size: 1.5em; font-weight: bold; color: #333; margin-bottom: 5px;">${schoolName}</div>
+                    <div class="exam-title">${examTitle}</div>
+                    <div style="color: #666; margin-top: 10px;">${grade}. Sınıf Bilişim Teknolojileri Dersi</div>
+                    <div style="color: #999; margin-top: 5px; font-size: 0.9em;">${today}</div>
+                </div>
+
+                <div class="exam-info">
+                    <div class="info-item">
+                        <span class="info-label">Adı Soyadı:</span>
+                        <span class="info-line"></span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Sınıfı:</span>
+                        <span class="info-line"></span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Numarası:</span>
+                        <span class="info-line"></span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Toplam Soru:</span>
+                        <span class="info-value">${currentExam.length} Soru</span>
+                    </div>
+                </div>
+
+                <div style="background: #fff9e6; padding: 15px; border-radius: 10px; border-left: 4px solid #ffc107; margin-bottom: 30px;">
+                    <strong>📌 Açıklama:</strong> Aşağıdaki soruları eksiksiz ve açık bir şekilde cevaplayınız. Cevaplarınızı okunaklı yazınız.
+                </div>
+
+                ${currentExam.map(q => `
+                    <div class="question-item">
+                        <div class="question-number">Soru ${q.number}</div>
+                        <div class="question-text">${q.question}</div>
+                        <div class="answer-space">
+                            <div class="answer-lines">
+                                <div class="answer-line"></div>
+                                <div class="answer-line"></div>
+                                <div class="answer-line"></div>
+                                <div class="answer-line"></div>
+                            </div>
+                        </div>
+                        ${showAnswers ? `
+                            <div class="answer-content">
+                                <span class="answer-label">✅ Cevap Anahtarı:</span>
+                                <div class="answer-text">${q.answer}</div>
+                            </div>
+                        ` : ''}
+                    </div>
+                `).join('')}
+
+                <div style="margin-top: 40px; padding: 20px; background: #f0f0f0; border-radius: 10px; text-align: center;">
+                    <div style="font-weight: bold; margin-bottom: 10px; color: #667eea;">💯 DEĞERLENDİRME</div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; margin-top: 15px;">
+                        <div>
+                            <div style="font-size: 0.9em; color: #666;">Toplam Puan</div>
+                            <div style="font-size: 1.5em; font-weight: bold; margin-top: 5px;">_____ / 100</div>
+                        </div>
+                        <div>
+                            <div style="font-size: 0.9em; color: #666;">Öğretmen İmzası</div>
+                            <div style="border-bottom: 2px solid #333; margin-top: 20px; height: 2px;"></div>
+                        </div>
+                        <div>
+                            <div style="font-size: 0.9em; color: #666;">Tarih</div>
+                            <div style="border-bottom: 2px solid #333; margin-top: 20px; height: 2px;"></div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function toggleAnswers() {
+            showAnswers = !showAnswers;
+            const grade = document.getElementById('gradeSelect').value;
+            const schoolName = document.getElementById('schoolName').value || 'Okul Adı';
+            const examTitle = document.getElementById('examTitle').value || 'Açık Uçlu Sınav';
+            renderExam(schoolName, examTitle, grade);
+        }
+
+        function printExam(withAnswers) {
+            if (currentExam.length === 0) {
+                alert('❌ Önce sınav oluşturun!');
+                return;
+            }
+
+            const previousShowAnswers = showAnswers;
+            showAnswers = withAnswers;
+
+            const grade = document.getElementById('gradeSelect').value;
+            const schoolName = document.getElementById('schoolName').value || 'Okul Adı';
+            const examTitle = document.getElementById('examTitle').value || 'Açık Uçlu Sınav';
+
+            renderExam(schoolName, examTitle, grade);
+
+            // Cevapsız yazdırma için body'ye class ekle
+            if (!withAnswers) {
+                document.body.classList.add('hide-answers');
+            }
+
+            setTimeout(() => {
+                window.print();
+                setTimeout(() => {
+                    document.body.classList.remove('hide-answers');
+                    showAnswers = previousShowAnswers;
+                    renderExam(schoolName, examTitle, grade);
+                }, 100);
+            }, 100);
+        }
+    </script>
+</body>
+</html>
