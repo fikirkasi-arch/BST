@@ -135,6 +135,7 @@
     <script>
         // Glossary Data - Sozluk.html'den alınan terimler
         const glossaryData = [
+            // 5. SINIF - ÜNİTE 1: Bilişim Temelleri (10 kart)
             { tr: "Bilişim", en: "Information Technology", def: "Bilgi işleme ve iletişim teknolojilerinin bilimi.", grade: "5-sinif", unit: "U1", related: ["Teknoloji", "Bilgisayar"] },
             { tr: "Bilgisayar", en: "Computer", def: "Veri işleyen, saklayan ve sonuç üreten elektronik cihaz.", grade: "5-sinif", unit: "U1", related: ["Donanım", "Yazılım"] },
             { tr: "Donanım", en: "Hardware", def: "Bilgisayarın fiziksel parçaları; görebildiğimiz, dokunabildiğimiz kısımlar.", grade: "5-sinif", unit: "U1", related: ["Klavye", "Mouse"] },
@@ -145,19 +146,126 @@
             { tr: "SSD", en: "Solid State Drive", def: "Elektronik depolama; HDD'den çok daha hızlı ama pahalı.", grade: "5-sinif", unit: "U1", related: ["Depolama", "HDD"] },
             { tr: "Byte", en: "Byte", def: "8 bit = 1 byte. Bir karakteri temsil eder.", grade: "5-sinif", unit: "U1", related: ["Bit", "KB", "MB"] },
             { tr: "USB", en: "Universal Serial Bus", def: "Evrensel bağlantı standardı. Flash bellek, klavye, mouse için.", grade: "5-sinif", unit: "U1", related: ["Port", "Depolama"] },
+
+            // 5. SINIF - ÜNİTE 2: Dijital Ürün Tasarımı (10 kart)
             { tr: "Microsoft Word", en: "Word", def: "Metin belgesi oluşturmak için kelime işlemci.", grade: "5-sinif", unit: "U2", related: ["Belge", "Ofis"] },
             { tr: "PowerPoint", en: "PowerPoint", def: "Slayt sunumu hazırlama ve sunma programı.", grade: "5-sinif", unit: "U2", related: ["Sunum", "Slayt"] },
             { tr: "Paint", en: "Paint", def: "Dijital resim çizme ve düzenleme programı.", grade: "5-sinif", unit: "U2", related: ["Grafik", "Tasarım"] },
+            { tr: "Excel", en: "Excel", def: "Hesap tablosu programı; veri analizi ve grafik yapma.", grade: "5-sinif", unit: "U2", related: ["Tablo", "Grafik"] },
+            { tr: "Font", en: "Font", def: "Yazı tipi; metnin görünümünü ve stilini belirler.", grade: "5-sinif", unit: "U2", related: ["Karakter", "Stil"] },
+            { tr: "Canva", en: "Canva", def: "Online tasarım programı; poster, logo, sunum yapımı için.", grade: "5-sinif", unit: "U2", related: ["Tasarım", "Grafik"] },
+            { tr: "PDF", en: "Portable Document Format", def: "Taşınabilir belge formatı; her cihazda aynı görünür.", grade: "5-sinif", unit: "U2", related: ["Dosya", "Belge"] },
+            { tr: "Kesme-Kopyalama", en: "Cut-Copy-Paste", def: "Metni veya nesneyi keserek/kopyalayarak başka yere taşıma.", grade: "5-sinif", unit: "U2", related: ["Ctrl+C", "Ctrl+V"] },
+            { tr: "Slayt", en: "Slide", def: "Sunumun bir sayfası; metin, resim, video içerebilir.", grade: "5-sinif", unit: "U2", related: ["PowerPoint", "Sunum"] },
+            { tr: "Şablon", en: "Template", def: "Hazır tasarım kalıbı; hızlı belge/sunum oluşturmak için.", grade: "5-sinif", unit: "U2", related: ["Tasarım", "Şablon"] },
+
+            // 5. SINIF - ÜNİTE 3: Ağlar ve İletişim (10 kart)
             { tr: "İnternet", en: "Internet", def: "Dünya çapında milyonlarca bilgisayarı birbirine bağlayan ağ.", grade: "5-sinif", unit: "U3", related: ["Web", "WWW"] },
             { tr: "E-posta", en: "Email", def: "Elektronik posta; dijital olarak mesaj göndermek ve almak.", grade: "5-sinif", unit: "U3", related: ["İletişim", "Gmail"] },
+            { tr: "Web Tarayıcı", en: "Web Browser", def: "İnternette gezinmek için kullanılan program (Chrome, Firefox, Edge).", grade: "5-sinif", unit: "U3", related: ["İnternet", "Web"] },
+            { tr: "Arama Motoru", en: "Search Engine", def: "İnternette bilgi aramak için kullanılan sistem (Google, Bing).", grade: "5-sinif", unit: "U3", related: ["Google", "Arama"] },
+            { tr: "URL", en: "URL", def: "Web sitesinin adresi; örnek: www.meb.gov.tr", grade: "5-sinif", unit: "U3", related: ["Adres", "Link"] },
+            { tr: "İndirme-Yükleme", en: "Download-Upload", def: "Dosya indirme (alma) ve yükleme (gönderme) işlemleri.", grade: "5-sinif", unit: "U3", related: ["Dosya", "Transfer"] },
+            { tr: "WiFi", en: "WiFi", def: "Kablosuz internet bağlantısı teknolojisi.", grade: "5-sinif", unit: "U3", related: ["Kablosuz", "İnternet"] },
+            { tr: "Modem", en: "Modem", def: "İnternet sinyalini bilgisayara ileten cihaz.", grade: "5-sinif", unit: "U3", related: ["Router", "İnternet"] },
+            { tr: "IP Adresi", en: "IP Address", def: "İnternetteki her cihazın benzersiz numarası.", grade: "5-sinif", unit: "U3", related: ["Adres", "Ağ"] },
+            { tr: "Sosyal Medya", en: "Social Media", def: "İnsanların paylaşım yaptığı, iletişim kurduğu platformlar.", grade: "5-sinif", unit: "U3", related: ["İletişim", "Paylaşım"] },
+
+            // 5. SINIF - ÜNİTE 4: Etik ve Güvenlik (10 kart)
             { tr: "Siber Güvenlik", en: "Cybersecurity", def: "Dijital dünyada kendini ve verilerini koruma.", grade: "5-sinif", unit: "U4", related: ["Virüs", "Şifre"] },
             { tr: "Güçlü Şifre", en: "Strong Password", def: "En az 8 karakter, büyük-küçük harf, sayı, sembol içeren şifre.", grade: "5-sinif", unit: "U4", related: ["Güvenlik"] },
+            { tr: "Phishing (Oltalama)", en: "Phishing", def: "Sahte e-posta/mesajla bilgi çalmaya çalışma.", grade: "5-sinif", unit: "U4", related: ["Dolandırıcılık", "Güvenlik"] },
+            { tr: "Virüs", en: "Virus", def: "Bilgisayara zarar veren kötü amaçlı yazılım.", grade: "5-sinif", unit: "U4", related: ["Zararlı", "Antivirüs"] },
+            { tr: "Antivirüs", en: "Antivirus", def: "Virüsleri bulan ve temizleyen koruma programı.", grade: "5-sinif", unit: "U4", related: ["Güvenlik", "Koruma"] },
+            { tr: "Dijital Ayak İzi", en: "Digital Footprint", def: "İnternette bıraktığımız her iz ve kayıt.", grade: "5-sinif", unit: "U4", related: ["Gizlilik", "İnternet"] },
+            { tr: "Gizlilik", en: "Privacy", def: "Kişisel bilgilerimizin korunması ve gizli tutulması.", grade: "5-sinif", unit: "U4", related: ["Güvenlik", "Kişisel"] },
+            { tr: "Telif Hakkı", en: "Copyright", def: "Bir eserin yaratıcısına ait yasal sahiplik hakkı.", grade: "5-sinif", unit: "U4", related: ["Eser", "Hak"] },
+            { tr: "Siber Zorbalık", en: "Cyberbullying", def: "İnternette birine kötü davranma, rahatsız etme.", grade: "5-sinif", unit: "U4", related: ["Zorbalık", "Dijital"] },
+            { tr: "Dijital Vatandaşlık", en: "Digital Citizenship", def: "İnternette sorumlu, etik ve saygılı davranmak.", grade: "5-sinif", unit: "U4", related: ["Etik", "Sorumluluk"] },
+
+            // 5. SINIF - ÜNİTE 5: Yapay Zeka (10 kart)
             { tr: "Yapay Zeka", en: "Artificial Intelligence", def: "Makinelerin insan gibi düşünmesi, öğrenmesi ve karar vermesi.", grade: "5-sinif", unit: "U5", related: ["Makine Öğrenmesi"] },
+            { tr: "Makine Öğrenmesi", en: "Machine Learning", def: "Bilgisayarların verilerden öğrenerek gelişmesi.", grade: "5-sinif", unit: "U5", related: ["Yapay Zeka", "Öğrenme"] },
+            { tr: "Chatbot", en: "Chatbot", def: "Sohbet edebilen yapay zeka programı.", grade: "5-sinif", unit: "U5", related: ["AI", "Sohbet"] },
+            { tr: "Robotik", en: "Robotics", def: "Robot tasarlama ve programlama bilimi.", grade: "5-sinif", unit: "U5", related: ["Robot", "Otomasyon"] },
+            { tr: "Veri Seti", en: "Dataset", def: "Yapay zekanın öğrenmesi için kullanılan bilgi toplama.", grade: "5-sinif", unit: "U5", related: ["Veri", "Eğitim"] },
+            { tr: "Tanıma Sistemleri", en: "Recognition Systems", def: "Yüz, ses, nesne tanıma yapan AI sistemleri.", grade: "5-sinif", unit: "U5", related: ["Yüz Tanıma", "AI"] },
+            { tr: "Sesli Asistan", en: "Voice Assistant", def: "Sesle komut alan yapay zeka (Siri, Alexa, Google Assistant).", grade: "5-sinif", unit: "U5", related: ["Ses", "AI"] },
+            { tr: "Otomasyon", en: "Automation", def: "İşlerin otomatik olarak yapılması, insan müdahalesi olmadan.", grade: "5-sinif", unit: "U5", related: ["Otomatik", "Robot"] },
+            { tr: "Derin Öğrenme", en: "Deep Learning", def: "Yapay sinir ağları kullanan gelişmiş makine öğrenmesi.", grade: "5-sinif", unit: "U5", related: ["AI", "Öğrenme"] },
+            { tr: "Tahmin Sistemi", en: "Prediction System", def: "Geçmiş verilere bakarak gelecek hakkında tahmin yapma.", grade: "5-sinif", unit: "U5", related: ["AI", "Tahmin"] },
+
+            // 5. SINIF - ÜNİTE 6: Programlama (10 kart)
             { tr: "Scratch", en: "Scratch", def: "Çocuklar için blok tabanlı programlama dili.", grade: "5-sinif", unit: "U6", related: ["Programlama", "Blok"] },
             { tr: "Algoritma", en: "Algorithm", def: "Bir işi yapmak için adım adım talimatlar dizisi.", grade: "5-sinif", unit: "U6", related: ["Lojik", "Program"] },
+            { tr: "Kod", en: "Code", def: "Bilgisayara verilen komutlar ve talimatlar.", grade: "5-sinif", unit: "U6", related: ["Programlama", "Yazılım"] },
+            { tr: "Döngü (Loop)", en: "Loop", def: "Bir işlemi tekrar tekrar yapma komutu.", grade: "5-sinif", unit: "U6", related: ["Tekrar", "For"] },
+            { tr: "Koşul (If)", en: "Condition", def: "Eğer... o zaman... şeklinde karar verme yapısı.", grade: "5-sinif", unit: "U6", related: ["If", "Karar"] },
+            { tr: "Değişken", en: "Variable", def: "Veri saklayan kutu; değeri değişebilir.", grade: "5-sinif", unit: "U6", related: ["Veri", "Değer"] },
+            { tr: "Sprite", en: "Sprite", def: "Scratch'te hareket eden karakter veya nesne.", grade: "5-sinif", unit: "U6", related: ["Karakter", "Scratch"] },
+            { tr: "Olay (Event)", en: "Event", def: "Bir şey olduğunda başlatılan eylem (tıklama, tuş basma).", grade: "5-sinif", unit: "U6", related: ["Başlangıç", "Tetikleyici"] },
+            { tr: "Hata Ayıklama", en: "Debugging", def: "Kodlardaki hataları bulma ve düzeltme işlemi.", grade: "5-sinif", unit: "U6", related: ["Hata", "Test"] },
+            { tr: "Blok Kodlama", en: "Block Coding", def: "Kod bloklarını puzzle gibi birleştirerek programlama.", grade: "5-sinif", unit: "U6", related: ["Scratch", "Görsel"] },
+
+            // 6. SINIF - ÜNİTE 1: Bilişim Teknolojileri (10 kart)
+            { tr: "Bulut Bilişim", en: "Cloud Computing", def: "İnternet üzerinden veri depolama ve işleme hizmeti.", grade: "6-sinif", unit: "U1", related: ["Google Drive", "OneDrive"] },
+            { tr: "Veri", en: "Data", def: "İşlenmemiş ham bilgi ve sayılar.", grade: "6-sinif", unit: "U1", related: ["Bilgi", "İşleme"] },
+            { tr: "Bilgi", en: "Information", def: "İşlenmiş, anlamlı hale getirilmiş veri.", grade: "6-sinif", unit: "U1", related: ["Veri", "Analiz"] },
+            { tr: "Veri Tabanı", en: "Database", def: "Verilerin düzenli şekilde saklandığı sistem.", grade: "6-sinif", unit: "U1", related: ["SQL", "Kayıt"] },
+            { tr: "Yedekleme", en: "Backup", def: "Verilerin kopyasını alma; kayıp önleme.", grade: "6-sinif", unit: "U1", related: ["Kopya", "Güvenlik"] },
+            { tr: "Format Atma", en: "Formatting", def: "Diskteki tüm verileri silme ve sıfırlama işlemi.", grade: "6-sinif", unit: "U1", related: ["Silme", "Temizleme"] },
+            { tr: "Sıkıştırma", en: "Compression", def: "Dosya boyutunu küçültme işlemi (ZIP, RAR).", grade: "6-sinif", unit: "U1", related: ["ZIP", "Arşiv"] },
+            { tr: "Piksel", en: "Pixel", def: "Dijital görüntünün en küçük birimi; renk noktası.", grade: "6-sinif", unit: "U1", related: ["Çözünürlük", "Resim"] },
+            { tr: "Çözünürlük", en: "Resolution", def: "Görüntüdeki piksel sayısı; yüksek = daha net.", grade: "6-sinif", unit: "U1", related: ["Piksel", "Kalite"] },
+            { tr: "GPS", en: "GPS", def: "Uydu ile konum belirleme sistemi.", grade: "6-sinif", unit: "U1", related: ["Konum", "Navigasyon"] },
+
+            // 6. SINIF - ÜNİTE 2: Etik ve Güvenlik (10 kart)
             { tr: "KVKK", en: "Personal Data Protection Law", def: "Kişisel Verilerin Korunması Kanunu.", grade: "6-sinif", unit: "U2", related: ["Gizlilik"] },
+            { tr: "Kişisel Veri", en: "Personal Data", def: "Bir kişiyi tanımlayan bilgiler (ad, TC, adres, telefon).", grade: "6-sinif", unit: "U2", related: ["Gizlilik", "KVKK"] },
+            { tr: "İki Faktörlü Doğrulama", en: "Two-Factor Authentication", def: "Şifre + SMS/kod ile çifte güvenlik.", grade: "6-sinif", unit: "U2", related: ["Güvenlik", "2FA"] },
+            { tr: "Firewall (Güvenlik Duvarı)", en: "Firewall", def: "İstenmeyen erişimleri engelleyen koruma sistemi.", grade: "6-sinif", unit: "U2", related: ["Güvenlik", "Koruma"] },
+            { tr: "Spam", en: "Spam", def: "İstenmeyen, gereksiz toplu e-posta veya mesaj.", grade: "6-sinif", unit: "U2", related: ["E-posta", "Çöp"] },
+            { tr: "Ransomware", en: "Ransomware", def: "Dosyaları kilitleyen ve fidye isteyen zararlı yazılım.", grade: "6-sinif", unit: "U2", related: ["Virüs", "Fidye"] },
+            { tr: "Şifreleme", en: "Encryption", def: "Verileri kodlayarak okunamaz hale getirme.", grade: "6-sinif", unit: "U2", related: ["Güvenlik", "Kod"] },
+            { tr: "VPN", en: "Virtual Private Network", def: "Güvenli ve gizli internet bağlantısı sağlayan sistem.", grade: "6-sinif", unit: "U2", related: ["Güvenlik", "Gizlilik"] },
+            { tr: "Çerez (Cookie)", en: "Cookie", def: "Web sitelerinin bilgisayarınıza kaydettiği küçük dosyalar.", grade: "6-sinif", unit: "U2", related: ["Web", "İzleme"] },
+            { tr: "Açık Kaynak", en: "Open Source", def: "Kaynak kodu herkese açık, ücretsiz yazılım.", grade: "6-sinif", unit: "U2", related: ["Yazılım", "Ücretsiz"] },
+
+            // 6. SINIF - ÜNİTE 3: İletişim ve İşbirliği (10 kart)
+            { tr: "Video Konferans", en: "Video Conference", def: "İnternet üzerinden görüntülü toplantı yapma.", grade: "6-sinif", unit: "U3", related: ["Zoom", "Teams"] },
+            { tr: "Ekran Paylaşımı", en: "Screen Sharing", def: "Ekranınızı başkalarına gösterme özelliği.", grade: "6-sinif", unit: "U3", related: ["Sunum", "İşbirliği"] },
+            { tr: "Bulut Depolama", en: "Cloud Storage", def: "Dosyaları internet üzerinde saklama (Google Drive, OneDrive).", grade: "6-sinif", unit: "U3", related: ["Depolama", "Bulut"] },
+            { tr: "Ortak Çalışma", en: "Collaboration", def: "Birden fazla kişinin aynı dosya üzerinde çalışması.", grade: "6-sinif", unit: "U3", related: ["İşbirliği", "Google Docs"] },
+            { tr: "Google Classroom", en: "Google Classroom", def: "Online eğitim ve ödev yönetim platformu.", grade: "6-sinif", unit: "U3", related: ["Eğitim", "Online"] },
+            { tr: "Microsoft Teams", en: "Microsoft Teams", def: "İşbirliği ve iletişim platformu; toplantı, sohbet, dosya paylaşımı.", grade: "6-sinif", unit: "U3", related: ["İşbirliği", "Toplantı"] },
+            { tr: "Zoom", en: "Zoom", def: "Popüler video konferans uygulaması.", grade: "6-sinif", unit: "U3", related: ["Toplantı", "Video"] },
+            { tr: "WhatsApp", en: "WhatsApp", def: "Anlık mesajlaşma ve arama uygulaması.", grade: "6-sinif", unit: "U3", related: ["Mesajlaşma", "İletişim"] },
+            { tr: "EBA", en: "EBA", def: "Eğitim Bilişim Ağı; MEB'in eğitim platformu.", grade: "6-sinif", unit: "U3", related: ["Eğitim", "Türkiye"] },
+            { tr: "QR Kod", en: "QR Code", def: "Karekod; telefon kamerasıyla taranan 2D barkod.", grade: "6-sinif", unit: "U3", related: ["Kod", "Tarama"] },
+
+            // 6. SINIF - ÜNİTE 4: Ürün Oluşturma (10 kart)
             { tr: "HTML", en: "HTML", def: "Web sayfalarının yapısını oluşturan işaretleme dili.", grade: "6-sinif", unit: "U4", related: ["Web", "CSS"] },
-            { tr: "Python", en: "Python", def: "Öğrenmesi kolay, güçlü programlama dili.", grade: "6-sinif", unit: "U5", related: ["Programlama"] }
+            { tr: "CSS", en: "CSS", def: "Web sayfalarının görünümünü ve stilini belirleyen dil.", grade: "6-sinif", unit: "U4", related: ["HTML", "Stil"] },
+            { tr: "JavaScript", en: "JavaScript", def: "Web sayfalarına etkileşim kazandıran programlama dili.", grade: "6-sinif", unit: "U4", related: ["Web", "Kod"] },
+            { tr: "Web Sitesi", en: "Website", def: "İnternet üzerindeki bilgi ve içerik sayfaları.", grade: "6-sinif", unit: "U4", related: ["Web", "Sayfa"] },
+            { tr: "Video Düzenleme", en: "Video Editing", def: "Videoları kesme, birleştirme, efekt ekleme işlemleri.", grade: "6-sinif", unit: "U4", related: ["Montaj", "Kurgu"] },
+            { tr: "Podcast", en: "Podcast", def: "Ses kaydı şeklinde yayınlanan içerik serisi.", grade: "6-sinif", unit: "U4", related: ["Ses", "Yayın"] },
+            { tr: "Animasyon", en: "Animation", def: "Durağan görsellerin hareketli hale getirilmesi.", grade: "6-sinif", unit: "U4", related: ["Hareket", "Video"] },
+            { tr: "3D Modelleme", en: "3D Modeling", def: "Üç boyutlu dijital nesneler oluşturma.", grade: "6-sinif", unit: "U4", related: ["Tasarım", "3D"] },
+            { tr: "Infografik", en: "Infographic", def: "Bilgiyi görsel olarak anlatan tasarım.", grade: "6-sinif", unit: "U4", related: ["Grafik", "Bilgi"] },
+            { tr: "Logo", en: "Logo", def: "Bir markayı temsil eden görsel sembol.", grade: "6-sinif", unit: "U4", related: ["Marka", "Tasarım"] },
+
+            // 6. SINIF - ÜNİTE 5: Problem Çözme ve Programlama (10 kart)
+            { tr: "Python", en: "Python", def: "Öğrenmesi kolay, güçlü programlama dili.", grade: "6-sinif", unit: "U5", related: ["Programlama"] },
+            { tr: "Fonksiyon", en: "Function", def: "Belirli bir işi yapan, tekrar kullanılabilen kod parçası.", grade: "6-sinif", unit: "U5", related: ["Kod", "Modül"] },
+            { tr: "Liste (List)", en: "List", def: "Birden fazla veriyi sırayla saklayan yapı.", grade: "6-sinif", unit: "U5", related: ["Dizi", "Array"] },
+            { tr: "Sözdizimi (Syntax)", en: "Syntax", def: "Programlama dilinin yazım kuralları.", grade: "6-sinif", unit: "U5", related: ["Kural", "Gramer"] },
+            { tr: "Yorum Satırı", en: "Comment", def: "Kodun ne yaptığını açıklayan, çalıştırılmayan notlar.", grade: "6-sinif", unit: "U5", related: ["Açıklama", "#"] },
+            { tr: "Print Komutu", en: "Print", def: "Ekrana metin yazdıran komut.", grade: "6-sinif", unit: "U5", related: ["Yazdır", "Çıktı"] },
+            { tr: "Input Komutu", en: "Input", def: "Kullanıcıdan veri alan komut.", grade: "6-sinif", unit: "U5", related: ["Girdi", "Kullanıcı"] },
+            { tr: "Operatör", en: "Operator", def: "Matematiksel veya mantıksal işlemler yapan simgeler (+, -, *, /).", grade: "6-sinif", unit: "U5", related: ["İşlem", "Hesaplama"] },
+            { tr: "İndeks", en: "Index", def: "Listede bir elemanın sıra numarası (0'dan başlar).", grade: "6-sinif", unit: "U5", related: ["Sıra", "Liste"] },
+            { tr: "While Döngüsü", en: "While Loop", def: "Bir koşul sağlandığı sürece tekrarlanan döngü.", grade: "6-sinif", unit: "U5", related: ["Döngü", "Koşul"] }
         ];
 
         let currentCards = [];
