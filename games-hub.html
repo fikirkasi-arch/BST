@@ -17,6 +17,8 @@
         .games-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 30px; }
         .game-card { background: white; border-radius: 20px; padding: 30px; cursor: pointer; transition: all 0.3s; box-shadow: 0 5px 20px rgba(0,0,0,0.2); position: relative; overflow: hidden; }
         .game-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 8px; background: linear-gradient(90deg, #667eea 0%, #764ba2 100%); }
+        .game-card.special-game { border: 4px solid #FFD700; box-shadow: 0 5px 30px rgba(255, 215, 0, 0.4); }
+        .game-card.special-game::after { content: '⭐ ÖZEL OYUN'; position: absolute; top: 15px; right: 15px; background: #FFD700; color: #333; padding: 5px 12px; border-radius: 15px; font-size: 0.75em; font-weight: bold; }
         .game-card:hover { transform: translateY(-8px); box-shadow: 0 15px 40px rgba(0,0,0,0.3); }
         .game-icon { font-size: 4em; text-align: center; margin-bottom: 20px; }
         .game-title { font-size: 1.5em; font-weight: bold; color: #333; margin-bottom: 10px; text-align: center; }
@@ -36,7 +38,7 @@
 <body>
     <div class="container">
         <h1>🎮 Oyunlar Merkezi</h1>
-        <p class="subtitle">Eğlenerek öğren! 33 interaktif oyun ve quiz</p>
+        <p class="subtitle">Eğlenerek öğren! 37 interaktif oyun ve quiz</p>
 
         <div class="filters">
             <button class="filter-btn active" onclick="filterGames('all')">🌟 Tümü</button>
@@ -54,6 +56,14 @@
                 <div class="game-title">Donanım Eşleştirme</div>
                 <div class="game-desc">Bilgisayar parçalarını doğru şekilde eşleştir, donanım bilgini test et!</div>
                 <div><span class="game-badge">Eşleştirme</span><span class="game-badge">Donanım</span></div>
+            </div>
+
+            <div class="game-card special-game" data-grade="5-sinif" data-type="simulation" onclick="window.open('oyunlar/pc-assembly.html', '_blank')">
+                <div class="game-icon">🖥️</div>
+                <div class="game-unit">5. Sınıf - Ünite 1</div>
+                <div class="game-title">Bilgisayar Montaj Simülasyonu</div>
+                <div class="game-desc">Bilgisayar parçalarını doğru sıraya yerleştir, bilgisayar toplama deneyimi kazan!</div>
+                <div><span class="game-badge">Simülasyon</span><span class="game-badge">Donanım</span><span class="game-badge">Montaj</span></div>
             </div>
 
             <div class="game-card" data-grade="5-sinif" data-type="simulation" onclick="window.open('oyunlar/5sinif-unite2-proje-simu.html', '_blank')">
@@ -78,6 +88,14 @@
                 <div class="game-title">Güçlü Şifre Oyunu</div>
                 <div class="game-desc">Güçlü şifreler oluştur, siber güvenlik prensiplerini öğren!</div>
                 <div><span class="game-badge">Güvenlik</span><span class="game-badge">Oyun</span></div>
+            </div>
+
+            <div class="game-card special-game" data-grade="5-sinif" data-type="game" onclick="window.open('oyunlar/escape-room.html', '_blank')">
+                <div class="game-icon">🔓</div>
+                <div class="game-unit">5. Sınıf - Ünite 4</div>
+                <div class="game-title">Siber Güvenlik Escape Room</div>
+                <div class="game-desc">5 odadan kaçarak siber güvenlik uzmanı ol! Şifreler, phishing ve güvenlik duvarı bilgini test et!</div>
+                <div><span class="game-badge">Macera</span><span class="game-badge">Güvenlik</span><span class="game-badge">Escape</span></div>
             </div>
 
             <div class="game-card" data-grade="5-sinif" data-type="game" onclick="window.open('oyunlar/5sinif-unite5-ai-tahmin.html', '_blank')">
@@ -113,6 +131,14 @@
                 <div><span class="game-badge">Quiz</span><span class="game-badge">Güvenlik</span></div>
             </div>
 
+            <div class="game-card special-game" data-grade="6-sinif" data-type="game" onclick="window.open('oyunlar/hacker-defender.html', '_blank')">
+                <div class="game-icon">⚔️</div>
+                <div class="game-unit">6. Sınıf - Ünite 2</div>
+                <div class="game-title">Hacker vs. Savunucu</div>
+                <div class="game-desc">Siber güvenlik savaşında yer al! Hacker veya Savunucu rolünü seç, stratejik saldırı ve savunma yap!</div>
+                <div><span class="game-badge">Strateji</span><span class="game-badge">Güvenlik</span><span class="game-badge">Savaş</span></div>
+            </div>
+
             <div class="game-card" data-grade="6-sinif" data-type="game" onclick="window.open('oyunlar/6sinif-unite3-akis-diyagram.html', '_blank')">
                 <div class="game-icon">🌐</div>
                 <div class="game-unit">6. Sınıf - Ünite 3</div>
@@ -135,6 +161,14 @@
                 <div class="game-title">Sunum Tasarım Oyunu</div>
                 <div class="game-desc">Etkili sunumlar tasarla, tasarım prensiplerini uygula!</div>
                 <div><span class="game-badge">Sunum</span><span class="game-badge">Tasarım</span></div>
+            </div>
+
+            <div class="game-card special-game" data-grade="6-sinif" data-type="game" onclick="window.open('oyunlar/coding-parkour.html', '_blank')">
+                <div class="game-icon">🏃</div>
+                <div class="game-unit">6. Sınıf - Ünite 5</div>
+                <div class="game-title">Kodlama Parkuru</div>
+                <div class="game-desc">Platform oyunu ile algoritma öğren! Scratch ve Python blokları ile engelleri aş!</div>
+                <div><span class="game-badge">Platform</span><span class="game-badge">Algoritma</span><span class="game-badge">Kodlama</span></div>
             </div>
 
             <!-- YENİ OYUNLAR -->
@@ -322,15 +356,15 @@
             <h2>📊 Oyunlar Merkezi İstatistikleri</h2>
             <div class="stat-grid">
                 <div class="stat-item">
-                    <div class="stat-number">33</div>
+                    <div class="stat-number">37</div>
                     <div class="stat-label">Toplam Oyun ve Quiz</div>
                 </div>
                 <div class="stat-item">
-                    <div class="stat-number">18</div>
+                    <div class="stat-number">20</div>
                     <div class="stat-label">5. Sınıf</div>
                 </div>
                 <div class="stat-item">
-                    <div class="stat-number">15</div>
+                    <div class="stat-number">17</div>
                     <div class="stat-label">6. Sınıf</div>
                 </div>
                 <div class="stat-item">
