@@ -2,14 +2,44 @@
 from __future__ import annotations
 
 import json
+import os
 from dataclasses import dataclass, field, asdict
 from datetime import date, time
 from pathlib import Path
 from typing import Dict, List, Optional, TypedDict
 from uuid import uuid4
 
-CONFIG_PATH = Path("config.json")
-MEDIA_DIR = CONFIG_PATH.parent / "JinniBellSesler"
+def _resolve_data_dir() -> Path:
+    """Kullanılabilir en iyi veri dizinini belirle."""
+
+    override = os.environ.get("JINNIBELL_DATA_DIR")
+    if override:
+        return Path(override)
+
+    if os.name == "nt":
+        appdata = os.environ.get("APPDATA") or os.environ.get("LOCALAPPDATA")
+        if appdata:
+            return Path(appdata) / "JinniBellPro"
+
+    try:
+        return Path.home() / ".jinnibellpro"
+    except Exception:
+        # Bazı ortamlarda kullanıcı dizini çözümlenemez; çalışma dizinine düş.
+        return Path.cwd() / "jinnibellpro_data"
+
+
+DATA_DIR = _resolve_data_dir()
+CONFIG_PATH = DATA_DIR / "config.json"
+MEDIA_DIR = DATA_DIR / "JinniBellSesler"
+SOUND_ROUTE_KEYS = [
+    "student_entry",
+    "teacher_entry",
+    "lesson_exit",
+    "recess_music",
+    "istiklal",
+    "siren",
+    "moment_of_silence",
+]
 
 WEEKDAYS = [
     "Pazartesi",
@@ -31,7 +61,13 @@ def time_to_str(value: time) -> str:
     return value.strftime("%H:%M")
 
 
+def ensure_data_dir() -> Path:
+    DATA_DIR.mkdir(parents=True, exist_ok=True)
+    return DATA_DIR
+
+
 def ensure_media_dir() -> Path:
+    ensure_data_dir()
     MEDIA_DIR.mkdir(parents=True, exist_ok=True)
     return MEDIA_DIR
 
@@ -42,10 +78,12 @@ class CeremonyItem(TypedDict, total=False):
     location: str
     start_ms: int
     end_ms: Optional[int]
+    highlight_ms: Optional[int]
     duration_sec: Optional[int]
     status: str
     status_detail: Optional[str]
     cache_path: Optional[str]
+    zones: List[str]
 
 
 class SoundAsset(TypedDict, total=False):
@@ -53,6 +91,14 @@ class SoundAsset(TypedDict, total=False):
     name: str
     path: str
     tags: List[str]
+
+
+class SoundZone(TypedDict, total=False):
+    zone_id: str
+    name: str
+    color: str
+    enabled: bool
+    note: str
 
 
 def _default_announcement_settings() -> Dict[str, Dict[str, object]]:
@@ -98,9 +144,26 @@ class BellConfig:
     announcement_settings: Dict[str, Dict[str, object]] = field(
         default_factory=_default_announcement_settings
     )
+    theme_mode: str = "light"
+    touch_mode: bool = False
+    sound_zones: List[SoundZone] = field(
+        default_factory=lambda: [
+            {
+                "zone_id": "main",
+                "name": "Genel Salon",
+                "color": "#2563eb",
+                "enabled": True,
+                "note": "Varsayılan çıkış",
+            }
+        ]
+    )
+    sound_routes: Dict[str, List[str]] = field(
+        default_factory=lambda: {key: ["main"] for key in SOUND_ROUTE_KEYS}
+    )
 
     @classmethod
     def load(cls) -> "BellConfig":
+        ensure_data_dir()
         if CONFIG_PATH.exists():
             data = json.loads(CONFIG_PATH.read_text(encoding="utf-8"))
             # Convert dicts to dataclasses
@@ -130,6 +193,13 @@ class BellConfig:
                     end_ms = int(raw["end_minute"]) * 60 * 1000
                 if end_ms is not None:
                     item["end_ms"] = int(end_ms)
+                highlight_ms = raw.get("highlight_ms")
+                if highlight_ms is not None:
+                    item["highlight_ms"] = int(highlight_ms)
+                zones = raw.get("zones") or []
+                if isinstance(zones, str):
+                    zones = [zones]
+                item["zones"] = list(zones)
                 playlist.append(item)
 
             library: List[SoundAsset] = []
@@ -153,6 +223,38 @@ class BellConfig:
                 announcement_settings[key]["enabled"] = bool(value.get("enabled", False))
                 announcement_settings[key]["path"] = value.get("path", "")
 
+            zones: List[SoundZone] = []
+            for raw in data.get("sound_zones", []):
+                if not raw:
+                    continue
+                zones.append(
+                    {
+                        "zone_id": raw.get("zone_id") or uuid4().hex,
+                        "name": raw.get("name", "Bölge"),
+                        "color": raw.get("color", "#2563eb"),
+                        "enabled": bool(raw.get("enabled", True)),
+                        "note": raw.get("note", ""),
+                    }
+                )
+            if not zones:
+                zones = [
+                    {
+                        "zone_id": "main",
+                        "name": "Genel Salon",
+                        "color": "#2563eb",
+                        "enabled": True,
+                        "note": "Varsayılan çıkış",
+                    }
+                ]
+
+            routes: Dict[str, List[str]] = {key: ["main"] for key in SOUND_ROUTE_KEYS}
+            raw_routes = data.get("sound_routes") or {}
+            for key, value in raw_routes.items():
+                if isinstance(value, list):
+                    routes[key] = [str(v) for v in value if v]
+                elif isinstance(value, str):
+                    routes[key] = [v.strip() for v in value.split(",") if v.strip()]
+
             instance = cls(
                 daily_schedule={**{day: [] for day in WEEKDAYS}, **schedule},
                 sound_files=data.get("sound_files", {}),
@@ -170,11 +272,16 @@ class BellConfig:
                 launch_on_boot=data.get("launch_on_boot", False),
                 launch_on_boot_service=data.get("launch_on_boot_service", False),
                 announcement_settings=announcement_settings,
+                theme_mode=data.get("theme_mode", "light"),
+                touch_mode=bool(data.get("touch_mode", False)),
+                sound_zones=zones,
+                sound_routes=routes,
             )
             return instance
         return cls()
 
     def save(self) -> None:
+        ensure_data_dir()
         serializable = asdict(self)
         serializable["daily_schedule"] = {
             day: [asdict(event) for event in events]
