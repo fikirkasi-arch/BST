@@ -329,23 +329,76 @@ function spreadPenalty(r,c,len,dir,n){
   return d1+d2;
 }
 
-function build(entries, chosenSize, seed=0){
+function buildSinglePass(entries, chosenSize, seed=0, forceSort=true){
   let n = chosenSize==='auto'? autoSize(entries): Number(chosenSize);
   n = Math.min(25, Math.max(11, n));
   const grid = makeGrid(n);
   const rndf = rnd(seed||0);
-  entries = entries.slice().sort((a,b)=> b.answer.length - a.answer.length);
-  const first = entries.shift();
+  let localEntries = entries.slice();
+  if(forceSort){
+    localEntries.sort((a,b)=> b.answer.length - a.answer.length);
+  }
+  const first = localEntries.shift();
+  if(!first) return {grid, placed:[]};
+
   const startC = Math.max(0, Math.floor((n - first.answer.length)/2));
   placeWord(grid, first.answer, Math.floor(n/2), startC, 'across');
   const placed=[{...first, ...{r:Math.floor(n/2), c:startC, dir:'across'}}];
-  for(const e of entries){
+  for(const e of localEntries){
     if(rndf()>0.5) e.answer = e.answer; // seed tüketici
     const bp = bestPlacement(grid, e.answer);
     if(bp){ placeWord(grid, e.answer, bp.r, bp.c, bp.dir); placed.push({...e, ...bp}); }
   }
-  const {numbers, across, down} = annotate(grid, placed);
-  return {grid, placed, numbers, across, down};
+  return {grid, placed};
+}
+
+function build(entries, chosenSize, seed=0){
+  // 1. Deneme: Standart (Uzunluk Sıralı)
+  let best = buildSinglePass(entries, chosenSize, seed, true);
+  if(best.placed.length === entries.length) return finalizeBuild(best);
+
+  // 2. Deneme: Boyut Artırma (Otomatikse)
+  if(chosenSize === 'auto') {
+    const baseSize = autoSize(entries);
+    const sizes = [baseSize+2, baseSize+4, 25];
+    for(const s of sizes){
+       if(s > 25) break;
+       const res = buildSinglePass(entries, s, seed, true);
+       if(res.placed.length > best.placed.length) best = res;
+       if(best.placed.length === entries.length) return finalizeBuild(best);
+    }
+  }
+
+  // 3. Deneme: Karıştırma (Shuffle)
+  // Eğer hala açıkta kalan varsa, listeyi karıştırıp tekrar deneyelim.
+  // Not: Çok fazla deneme tarayıcıyı kilitleyebilir, sınırı düşük tutuyoruz (10-15).
+  let shuffleSize = (chosenSize === 'auto') ? Math.min(25, autoSize(entries)+2) : Number(chosenSize);
+  const limit = 15;
+  const rng = rnd(seed||0); // shuffle için RNG
+
+  for(let i=0; i<limit; i++){
+    // Hafif karıştırma: Önce uzunluğa göre sırala, sonra rastgele ikilileri yer değiştir
+    let mixed = entries.slice().sort((a,b)=> b.answer.length - a.answer.length);
+    if(i > 0) {
+      // 5 rastgele yer değiştirme
+      for(let k=0; k<5; k++){
+        const idx1 = Math.floor(rng() * mixed.length);
+        const idx2 = Math.floor(rng() * mixed.length);
+        [mixed[idx1], mixed[idx2]] = [mixed[idx2], mixed[idx1]];
+      }
+    }
+    // forceSort=false diyerek bizim karışık sırayı kullanmasını sağlıyoruz
+    const res = buildSinglePass(mixed, shuffleSize, seed, false);
+    if(res.placed.length > best.placed.length) best = res;
+    if(best.placed.length === entries.length) return finalizeBuild(best);
+  }
+
+  return finalizeBuild(best);
+}
+
+function finalizeBuild(result){
+  const {numbers, across, down} = annotate(result.grid, result.placed);
+  return {grid: result.grid, placed: result.placed, numbers, across, down};
 }
 
 function annotate(grid, placed){
